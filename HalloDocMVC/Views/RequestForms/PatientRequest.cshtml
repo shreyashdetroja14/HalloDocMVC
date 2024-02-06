@@ -1,0 +1,158 @@
+﻿@{
+    ViewData["Title"] = "Patient Request";
+    Layout = "~/Views/Shared/_RequestLayout.cshtml";
+}
+
+@section AddStyles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <link href="@Url.Content("~/css/requestform.css")" rel="stylesheet" type="text/css" />
+}
+
+<div class="main p-4">
+    <div class="back pb-4 d-flex justify-content-end">
+        <a asp-area="" asp-controller="RequestForms" asp-action="SubmitRequest" class="btn back-btn">
+            <img src="/images/backIcon.svg" alt="">
+            Back
+        </a>
+    </div>
+    <form class="container bg-white p-4  request-form">
+        <div class="info mb-4">
+            <h2 class="mb-3">Patient Information</h2>
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control" placeholder="Enter Symptoms" id="floatingTextarea2"
+                                  name="symptoms" style="height: 100px"></textarea>
+                        <label for="floatingTextarea2">Enter Brief Details of Symptoms (Optional)</label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" name="fname"
+                               placeholder="First Name">
+                        <label for="floatingInput">First Name</label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" name="lname"
+                               placeholder="Last Name">
+                        <label for="floatingInput">Last Name</label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control" id="floatingInput" name="dob" placeholder="DOB">
+                        <label for="floatingInput">Date Of Birth</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-info mb-4">
+            <h2 class="mb-3">Patient Contact Information</h2>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="floatingInput" name="email"
+                               placeholder="abc@xyz.pqr">
+                        <label for="floatingInput">Email</label>
+                    </div>
+                </div>
+                <div class="col-sm-6 pb-3">
+                    <!-- <div class="input-group mb-3 h-100">
+                        <select class=" btn btn-outline-secondary" aria-label="Default select example">
+                            <option selected>Country</option>
+                            <option value="1">+91</option>
+                            <option value="2">+1</option>
+                            <option value="3">+216</option>
+                        </select>
+                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="9876598765"
+                            pattern="[0-9]{10}">
+                    </div> -->
+                    <input class="form-control w-100" id="phone" type="tel" name="phone" />
+
+                </div>
+            </div>
+        </div>
+
+        <div class="location-info mb-4">
+            <h2 class="mb-3">Patient Location</h2>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" name="street"
+                               placeholder="Street">
+                        <label for="floatingInput">Street</label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" name="city"
+                               placeholder="City">
+                        <label for="floatingInput">City</label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" name="state"
+                               placeholder="City">
+                        <label for="floatingInput">State</label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" name="zipcode"
+                               placeholder="City">
+                        <label for="floatingInput">Zipcode</label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" name="room"
+                               placeholder="City">
+                        <label for="floatingInput">Room # / Suite (Optional)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="upload-docs mb-4">
+            <h2 class="mb-3">(Optional) Upload Photo Or Document</h2>
+            <div class="row">
+                <div class="col-12">
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control px-3 py-2 file-upload" id="inputGroupFile02"
+                               name="documents">
+
+                        <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
+                               for="inputGroupFile02">
+                            <span class="px-3 py-2">Select File</span>
+                            <div class="btn btn-info p-3 text-white fw-bold rounded-0">
+                                <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="submit mb-4 d-flex justify-content-end">
+            <input type="submit" value="Submit" class="btn btn-info py-2 px-3 text-white">
+            <input type="reset" value="Cancel" class="btn btn-outline-info py-2 px-3 ms-3">
+        </div>
+
+    </form>
+</div>
+
+@section AddScript{
+    <script>
+        const phoneInputField = document.querySelector("#phone");
+        const phoneInput = window.intlTelInput(phoneInputField, {
+            preferredCountries: ["us", "in", "au", "de"],
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+    </script>
+}

@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Submit Request";
+    Layout = "~/Views/Shared/_RequestLayout.cshtml";
+}
+
+@section AddStyles {
+    <link href="@Url.Content("~/css/submitrequest.css")" rel="stylesheet" type="text/css" />
+}
+
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <div class="heading ms-auto d-flex justify-content-evenly align-items-center">
+        <div class="empty"></div>
+        <h1 class="mb-4">I am a...</h1>
+        <a asp-area="" asp-controller="Home" asp-action="Index" class="btn back-btn">
+            <img src="/images/backIcon.svg" alt="">
+            Back
+        </a>
+    </div>
+    <div class="content ">
+        <div class="patient alert alert-primary">
+            <a asp-area="" asp-controller="RequestForms" asp-action="PatientRequest">PATIENT</a>
+        </div>
+        <div class="family alert alert-info">
+            <a asp-area="" asp-controller="RequestForms" asp-action="FamilyRequest">FAMILY/FRIEND</a>
+        </div>
+        <div class="concierge alert alert-success">
+            <a asp-area="" asp-controller="RequestForms" asp-action="ConciergeRequest">CONCIERGE</a>
+        </div>
+        <div class="business px-3 alert alert-danger">
+            <a asp-area="" asp-controller="RequestForms" asp-action="BusinessRequest">BUSINESS PARTNERS</a>
+        </div>
+    </div>
+</div>
+

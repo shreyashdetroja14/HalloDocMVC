@@ -1,0 +1,43 @@
+﻿.main {
+    background-color: #FAFAFA;
+}
+
+.back-btn {
+    color: #0dcaf0;
+    font-weight: bold;
+    font-size: large;
+    border: 1px solid #0dcaf0;
+}
+
+    .back-btn:hover {
+        color: #0dcaf0;
+        font-weight: bold;
+        font-size: large;
+        box-shadow: 0 0 3px #0dcaf0;
+    }
+
+form {
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.iti--allow-dropdown {
+    width: 100%;
+    height: 60px;
+}
+
+.iti input {
+    height: 60px;
+}
+
+/*.iti__country-list {
+    background-color: gray;
+}*/
+
+input[type=tel] {
+    height: 100%;
+}
+
+input[type=file] {
+    display: none;
+}

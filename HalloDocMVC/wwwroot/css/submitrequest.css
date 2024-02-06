@@ -1,0 +1,43 @@
+﻿.heading {
+    width: 100%;
+}
+
+.back-btn {
+    color: #0dcaf0;
+    font-weight: bold;
+    font-size: large;
+    border: 1px solid #0dcaf0;
+}
+
+    .back-btn:hover {
+        color: #0dcaf0;
+        font-weight: bold;
+        font-size: large;
+        box-shadow: 0 0 3px #0dcaf0;
+    }
+
+.content {
+    width: 300px;
+}
+
+    .content div {
+        max-width: 100%;
+    }
+
+        .content div a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            width: 100%;
+        }
+
+@media screen and (max-width: 458px) {
+    .heading {
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .empty {
+        display: none;
+    }
+}

@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HalloDocMVC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/requestlayout.css" />
+    @if (IsSectionDefined("AddStyles"))
+    {
+        @RenderSection("AddStyles", required: false)
+    }
+</head>
+<body>
+
+    <div class="container-fluid p-0 d-flex flex-column justify-content-between">
+        <div class="navbar pe-3">
+            <img src="/images/HalloDocLogo.png" alt="" class="navbar-logo">
+            <button class="theme-btn btn btn-outline-info"><img src="/images/themeIcon.svg" alt=""></button>
+        </div>
+
+        @RenderBody()
+
+        <div class="footer w-100 d-flex justify-content-center justify-content-sm-end py-4 pe-4 bg-dark ">
+            <a href="#" class=" pe-3 border-end text-white text-decoration-none">Terms & Conditions</a>
+            <a href="#" class=" ps-3 text-white text-decoration-none">Privacy Policy</a>
+        </div>
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @if (IsSectionDefined("AddScript"))
+    {
+        @RenderSection("AddScript", required: false)
+    }
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/theme.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

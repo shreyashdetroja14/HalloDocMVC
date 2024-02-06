@@ -1,0 +1,51 @@
+﻿.container-fluid {
+    min-height: 100vh;
+}
+
+.navbar {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-logo {
+    max-width: 200px;
+    height: auto;
+}
+
+.theme-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1;
+}
+
+    .theme-btn:hover {
+        background-color: transparent;
+        box-shadow: 0 0 10px #0dcaf0;
+    }
+
+
+/*Theme toggle classes*/
+
+.dark-bg {
+    background-color: #222 !important;
+}
+
+.gray-bg {
+    background-color: #444 !important;
+}
+
+.light-text {
+    color: #fff !important;
+}
+
+.light-border {
+    border-color: #fff !important;
+}
+
+.bg-opacity {
+    opacity: 0.5;
+}
+
+.label-icon-dark {
+    filter: invert(100%) sepia(95%) saturate(0%) hue-rotate(185deg) brightness(106%) contrast(105%);
+}
