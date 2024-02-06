@@ -3,16 +3,47 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - HalloDocMVC</title>
+    <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/HalloDocMVC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/TestProject.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout.css" />
+    @if (IsSectionDefined("AddStyles"))
+    {
+        @RenderSection("AddStyles", required: false)
+    }
 </head>
 <body>
-    <header>
+
+    <button class="theme-btn btn btn-outline-info"><img src="~/images/themeIcon.svg" alt=""></button>
+    <div class="bg-image"></div>
+    <div class="container-fluid d-flex flex-column justify-content-between align-items-center">
+
+        <div class="logo-div">
+            <img src="~/images/HalloDocLogo.png" alt="" class="logo">
+        </div>
+
+        @RenderBody()
+
+        <div class="footer w-100 d-flex justify-content-center py-4 ">
+            <a href="#" class="pe-3 border-end">Terms & Conditions</a>
+            <a href="#" class="ps-3">Privacy Policy</a>
+        </div>
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/theme.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+@*<header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">HalloDocMVC</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TestProject</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -38,12 +69,6 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - HalloDocMVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - TestProject - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>
+    </footer>*@
