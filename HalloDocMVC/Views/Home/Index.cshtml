@@ -1,8 +1,28 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@*@page
+@model TestProject.Views.Home.Index1Model
+@{
+}*@
+
+@{
+    ViewData["Title"] = "Index";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@section AddStyles{
+    <style>
+        .bg-image, .container-fluid{
+            max-width: 768px;
+        } 
+    </style>
+}
+
+<div class="links w-100 d-flex flex-column align-items-center">
+    <a asp-area="" asp-controller="RequestForms" asp-action="SubmitRequest"
+       class="w-100 text-center p-3 mb-5 btn btn-info text-white fs-5">
+        Submit
+        A Request
+    </a>
+    <a asp-area="" asp-controller="Login" asp-action="PatientLogin" class="w-100 text-center p-3 mb-5 btn btn-primary text-white fs-5">
+        Registered
+        Patients
+    </a>
 </div>

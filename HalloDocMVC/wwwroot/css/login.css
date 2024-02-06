@@ -1,0 +1,44 @@
+﻿.back-btn {
+    color: #0dcaf0;
+    font-weight: bold;
+    font-size: large;
+}
+
+    .back-btn:hover {
+        color: #0dcaf0;
+        font-weight: bold;
+        font-size: large;
+        border: 1px solid #0dcaf0;
+    }
+
+.form-floating img {
+    position: absolute;
+    top: 16px;
+    right: 12px;
+}
+
+.form-control {
+    border-color: #636363;
+    color: #636363;
+    border-radius: 7px;
+    background: transparent;
+    transition: box-shadow .1s ease-in-out;
+}
+
+    .form-control:focus {
+        background-color: transparent;
+        box-shadow: 0 0 0 2px #0dcaf0;
+    }
+
+label {
+    color: #636363;
+}
+
+.forgot-pass {
+    text-shadow: 0 0 10px black;
+    text-decoration: none;
+}
+
+    .forgot-pass:hover {
+        text-decoration: underline;
+    }
