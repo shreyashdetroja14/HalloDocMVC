@@ -1,9 +1,4 @@
-﻿@*@page
-@model TestProject.Views.Home.LoginModel
-@{
-}*@
-
-@{
+﻿@{
     ViewData["Title"] = "Login Page";
 }
 
@@ -11,6 +6,7 @@
 
     <link href="@Url.Content("~/css/login.css")" rel="stylesheet" type="text/css" />
 }
+@model HalloDocMVC.Models.Aspnetuser
 
 <div class="login-area w-100">
     <a asp-area="" asp-controller="Home" asp-action="Index" class="btn back-btn">
@@ -18,19 +14,20 @@
         Back
     </a>
     <h1 class="mb-4 mt-2 h2 text-center">Login To Your Account</h1>
-    <form class="d-flex flex-column">
+    <p class="text-center text-danger">@ViewBag.Email</p>   
+    <form class="d-flex flex-column" asp-action="CheckLogin" asp-controller="Login">
         <div class="form-floating mb-4">
-            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+            <input asp-for="Email" type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
             <label for="floatingInput">Email</label>
             <img src="~/images/usernameIcon.svg" alt="" class="label-icon">
         </div>
         <div class="form-floating mb-4">
-            <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+            <input asp-for="Passwordhash" type="password" class="form-control" id="floatingPassword" placeholder="Password">
             <label for="floatingPassword">Password</label>
             <img src="~/images/passwordShowIcon.svg" alt="" class="label-icon">
         </div>
 
-        <button type="submit" class="btn btn-info rounded-3 text-white fw-bold w-100 py-3 mb-4">Log In</button>
+        <input type="submit" class="btn btn-info rounded-3 text-white fw-bold w-100 py-3 mb-4" value="Submit">
         <a asp-area="" asp-controller="Login" asp-action="ForgotPassword" class="align-self-center forgot-pass text-info fw-bold">
             Forgot
             Password?

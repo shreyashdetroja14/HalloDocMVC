@@ -9,10 +9,6 @@ namespace HalloDocMVC.Models;
 [Table("aspnetusers")]
 public partial class Aspnetuser
 {
-    [Key]
-    [Column("id")]
-    public int Id { get; set; }
-
     [Column("username")]
     [StringLength(256)]
     public string Username { get; set; } = null!;
@@ -37,4 +33,9 @@ public partial class Aspnetuser
 
     [Column("modifieddate", TypeName = "timestamp without time zone")]
     public DateTime? Modifieddate { get; set; }
+
+    [Key]
+    [Column("id")]
+    [StringLength(128)]
+    public string Id { get; set; } = null!;
 }

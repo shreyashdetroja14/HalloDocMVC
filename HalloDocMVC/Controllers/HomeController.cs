@@ -6,11 +6,11 @@ namespace HalloDocMVC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly HallodocContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(HallodocContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -21,6 +21,39 @@ namespace HalloDocMVC.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        public IActionResult AddUser()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateUser([Bind("Username,Passwordhash,Email,Phonenumber,Ip, Id")] Aspnetuser aspnetuser)
+        {
+            /*Console.WriteLine(aspnetuser);*/
+
+            var id = Guid.NewGuid().ToString();
+            var createddate = DateTime.Now;
+            Console.WriteLine(aspnetuser.Id);
+            aspnetuser.Id = id;
+            Console.WriteLine(aspnetuser.Id);
+
+            aspnetuser.Createddate = createddate;
+            aspnetuser.Modifieddate = createddate;
+
+            if (ModelState.IsValid)
+            {
+
+                _context.Add(aspnetuser);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Login");
+            }
+            
+            return View("AddUser");
+
+
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

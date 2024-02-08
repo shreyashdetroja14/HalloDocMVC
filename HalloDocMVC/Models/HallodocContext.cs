@@ -25,6 +25,8 @@ public partial class HallodocContext : DbContext
         modelBuilder.Entity<Aspnetuser>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("aspnetusers_pkey");
+
+            entity.Property(e => e.Createddate).HasDefaultValueSql("LOCALTIMESTAMP");
         });
 
         OnModelCreatingPartial(modelBuilder);
