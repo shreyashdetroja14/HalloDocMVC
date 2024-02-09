@@ -15,18 +15,29 @@ public partial class HallodocContext : DbContext
     {
     }
 
-    public virtual DbSet<Aspnetuser> Aspnetusers { get; set; }
+    public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+
+    public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("name=HalloDocDbCS");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Aspnetuser>(entity =>
+        modelBuilder.Entity<AspNetUser>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("aspnetusers_pkey");
+            entity.HasKey(e => e.Id).HasName("AspNetUsers_pkey");
 
-            entity.Property(e => e.Createddate).HasDefaultValueSql("LOCALTIMESTAMP");
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.UserId).HasName("User_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.AspNetUser).WithMany(p => p.Users).HasConstraintName("fk_AspNetUser");
         });
 
         OnModelCreatingPartial(modelBuilder);

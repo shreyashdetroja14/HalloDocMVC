@@ -6,36 +6,34 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HalloDocMVC.Models;
 
-[Table("aspnetusers")]
-public partial class Aspnetuser
+public partial class AspNetUser
 {
-    [Column("username")]
+    [Key]
+    [StringLength(128)]
+    public string Id { get; set; } = null!;
+
     [StringLength(256)]
-    public string Username { get; set; } = null!;
+    public string UserName { get; set; } = null!;
 
-    [Column("passwordhash", TypeName = "character varying")]
-    public string? Passwordhash { get; set; }
+    [Column(TypeName = "character varying")]
+    public string? PasswordHash { get; set; }
 
-    [Column("email")]
     [StringLength(256)]
     public string? Email { get; set; }
 
-    [Column("phonenumber")]
     [StringLength(20)]
-    public string? Phonenumber { get; set; }
+    public string? PhoneNumber { get; set; }
 
-    [Column("ip")]
+    [Column("IP")]
     [StringLength(20)]
     public string? Ip { get; set; }
 
-    [Column("createddate", TypeName = "timestamp without time zone")]
-    public DateTime Createddate { get; set; }
+    [Column(TypeName = "timestamp without time zone")]
+    public DateTime CreatedDate { get; set; }
 
-    [Column("modifieddate", TypeName = "timestamp without time zone")]
-    public DateTime? Modifieddate { get; set; }
+    [Column(TypeName = "timestamp without time zone")]
+    public DateTime? ModifiedDate { get; set; }
 
-    [Key]
-    [Column("id")]
-    [StringLength(128)]
-    public string Id { get; set; } = null!;
+    [InverseProperty("AspNetUser")]
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

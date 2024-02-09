@@ -6,7 +6,7 @@
 
     <link href="@Url.Content("~/css/login.css")" rel="stylesheet" type="text/css" />
 }
-@model HalloDocMVC.Models.Aspnetuser
+@model HalloDocMVC.Models.AspNetUser
 
 <div class="login-area w-100">
     <a asp-area="" asp-controller="Home" asp-action="Index" class="btn back-btn">
@@ -22,7 +22,7 @@
             <img src="~/images/usernameIcon.svg" alt="" class="label-icon">
         </div>
         <div class="form-floating mb-4">
-            <input asp-for="Passwordhash" type="password" class="form-control" id="floatingPassword" placeholder="Password">
+            <input asp-for="PasswordHash" type="password" class="form-control" id="floatingPassword" placeholder="Password">
             <label for="floatingPassword">Password</label>
             <img src="~/images/passwordShowIcon.svg" alt="" class="label-icon">
         </div>

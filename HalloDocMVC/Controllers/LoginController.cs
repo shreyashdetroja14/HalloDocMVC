@@ -23,9 +23,9 @@ namespace HalloDocMVC.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CheckLogin(Aspnetuser aspnetuser)
+        public async Task<IActionResult> CheckLogin(AspNetUser aspnetuser)
         {
-            var user = await _context.Aspnetusers.FirstOrDefaultAsync(u => u.Email == aspnetuser.Email && u.Passwordhash == aspnetuser.Passwordhash);
+            var user = await _context.AspNetUsers.FirstOrDefaultAsync(u => u.Email == aspnetuser.Email && u.PasswordHash == aspnetuser.PasswordHash);
 
             if (user == null)
             {
