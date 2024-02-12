@@ -22,6 +22,12 @@ public partial class Region
     public string? Abbreviation { get; set; }
 
     [InverseProperty("Region")]
+    public virtual ICollection<Business> Businesses { get; set; } = new List<Business>();
+
+    [InverseProperty("Region")]
+    public virtual ICollection<Concierge> Concierges { get; set; } = new List<Concierge>();
+
+    [InverseProperty("Region")]
     public virtual ICollection<RequestClient> RequestClients { get; set; } = new List<RequestClient>();
 
     [InverseProperty("Region")]

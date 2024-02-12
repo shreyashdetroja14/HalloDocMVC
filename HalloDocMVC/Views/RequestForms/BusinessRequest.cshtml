@@ -3,6 +3,8 @@
     Layout = "~/Views/Shared/_RequestLayout.cshtml";
 }
 
+@model HalloDocMVC.ViewModels.BusinessRequestViewModel
+
 @section AddStyles{
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
@@ -38,7 +40,7 @@
         </a>
     </div>
 
-    <form class="container bg-white p-4 request-form">
+    <form asp-action="BusinessRequest" class="container bg-white p-4 request-form">
 
 
         <div class="family-info mb-4">
@@ -46,41 +48,41 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" name="fname"
+                        <input type="text" asp-for="BusinessFirstName" class="form-control" id="BusinessFirstName" 
                                placeholder="First Name">
-                        <label for="floatingInput">Your First Name</label>
+                        <label asp-for="BusinessFirstName">Your First Name</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" name="lname"
+                        <input type="text" asp-for="BusinessLastName" class="form-control" id="BusinessLastName" 
                                placeholder="Last Name">
-                        <label for="floatingInput">Your Last Name</label>
+                        <label asp-for="BusinessLastName">Your Last Name</label>
                     </div>
                 </div>
                 <div class="col-sm-6 pb-3">
-                    <input class="form-control w-100" id="phone" type="tel" name="phone" />
+                    <input type="tel" asp-for="BusinessPhoneNumber" class="form-control w-100" id="BusinessPhone" />
 
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="floatingInput" name="email"
+                        <input type="email" asp-for="BusinessEmail" class=" form-control" id="BusinessEmail" 
                                placeholder="abc@xyz.pqr">
                         <label for="floatingInput">Your Email</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" name="property"
-                               placeholder="House/Property Name">
-                        <label for="floatingInput">House/Property Name</label>
+                        <input type="text" asp-for="BusinessName" class="form-control" id="BusinessName"
+                               placeholder="Business/Property Name">
+                        <label asp-for="BusinessName">Business/Property Name</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="number" class="form-control" id="floatingInput" name="case"
+                        <input type="number" asp-for="BusinessCaseNumber" class="form-control" id="BusinessCaseNumber" 
                                placeholder="Case Number">
-                        <label for="floatingInput">Case Number (Optional)</label>
+                        <label asp-for="BusinessCaseNumber">Case Number (Optional)</label>
                     </div>
                 </div>
             </div>
@@ -91,30 +93,30 @@
             <div class="row">
                 <div class="col-12">
                     <div class="form-floating mb-3">
-                        <textarea class="form-control" placeholder="Enter Symptoms" id="floatingTextarea2"
-                                  name="pt-symptoms" style="height: 100px"></textarea>
-                        <label for="floatingTextarea2">Enter Brief Details of Symptoms (Optional)</label>
+                        <textarea asp-for="PatientInfo.Symptoms" class="form-control" placeholder="Enter Symptoms" id="Symptoms"
+                                   style="height: 100px"></textarea>
+                        <label asp-for="PatientInfo.Symptoms">Enter Brief Details of Symptoms (Optional)</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" name="pt-fname"
+                        <input type="text" asp-for="PatientInfo.FirstName" class="form-control" id="FirstName" 
                                placeholder="First Name">
-                        <label for="floatingInput">First Name</label>
+                        <label asp-for="PatientInfo.FirstName">First Name</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" name="pt-lname"
+                        <input type="text" asp-for="PatientInfo.LastName" class="form-control" id="LastName"
                                placeholder="Last Name">
-                        <label for="floatingInput">Last Name</label>
+                        <label asp-for="PatientInfo.LastName">Last Name</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="date" class="form-control" id="floatingInput" name="pt-dob"
+                        <input type="date" asp-for="PatientInfo.DOB" class="form-control" id="DOB" 
                                placeholder="DOB">
-                        <label for="floatingInput">Date Of Birth</label>
+                        <label asp-for="PatientInfo.DOB">Date Of Birth</label>
                     </div>
                 </div>
             </div>
@@ -125,13 +127,13 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="floatingInput" name="pt-email"
+                        <input type="email" asp-for="PatientInfo.Email" class="form-control" id="Email"
                                placeholder="abc@xyz.pqr">
-                        <label for="floatingInput">Email</label>
+                        <label asp-for="PatientInfo.Email">Email</label>
                     </div>
                 </div>
                 <div class="col-sm-6 pb-3">
-                    <input class="form-control w-100" id="pt-phone" type="tel" name="pt-phone" />
+                    <input type="tel" asp-for="PatientInfo.PhoneNumber" class="form-control w-100" id="PhoneNumber" />
 
                 </div>
             </div>
@@ -142,37 +144,37 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" name="street"
+                        <input type="text" asp-for="PatientInfo.Street" class="form-control" id="Street" 
                                placeholder="Street">
-                        <label for="floatingInput">Street</label>
+                        <label asp-for="PatientInfo.Street">Street</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" name="city"
+                        <input type="text" asp-for="PatientInfo.City" class="form-control" id="City" 
                                placeholder="City">
-                        <label for="floatingInput">City</label>
+                        <label asp-for="PatientInfo.City">City</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" name="state"
-                               placeholder="City">
-                        <label for="floatingInput">State</label>
+                        <input type="text" asp-for="PatientInfo.State" class="form-control" id="State"
+                               placeholder="State">
+                        <label asp-for="PatientInfo.State">State</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" name="zipcode"
-                               placeholder="City">
-                        <label for="floatingInput">Zipcode</label>
+                        <input type="text" asp-for="PatientInfo.ZipCode" class="form-control" id="ZipCode"
+                               placeholder="Zip Code">
+                        <label asp-for="PatientInfo.ZipCode">Zipcode</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" name="pt-room"
-                               placeholder="City">
-                        <label for="floatingInput">Room # / Suite (Optional)</label>
+                        <input type="text" asp-for="PatientInfo.Room" class="form-control" id="Room"
+                               placeholder="Room">
+                        <label asp-for="PatientInfo.Room">Room # / Suite (Optional)</label>
                     </div>
                 </div>
             </div>
@@ -188,8 +190,8 @@
 
 @section AddScript{
     <script>
-        const phoneInputField = document.querySelector("#phone");
-        const ptphoneInputField = document.querySelector("#pt-phone");
+        const phoneInputField = document.querySelector("#BusinessPhone");
+        const ptphoneInputField = document.querySelector("#PhoneNumber");
 
         const phoneInput = window.intlTelInput(phoneInputField, {
             preferredCountries: ["us", "in", "au", "de"],

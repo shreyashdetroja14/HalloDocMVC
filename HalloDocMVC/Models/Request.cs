@@ -107,6 +107,9 @@ public partial class Request
     public int? CreatedUserId { get; set; }
 
     [InverseProperty("Request")]
+    public virtual ICollection<RequestBusiness> RequestBusinesses { get; set; } = new List<RequestBusiness>();
+
+    [InverseProperty("Request")]
     public virtual ICollection<RequestClient> RequestClients { get; set; } = new List<RequestClient>();
 
     [ForeignKey("RequestTypeId")]

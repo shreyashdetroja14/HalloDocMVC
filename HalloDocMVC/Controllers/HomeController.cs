@@ -30,7 +30,7 @@ namespace HalloDocMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateUser([Bind("UserName,PasswordHash,Email,PhoneNumber,Ip, Id")] AspNetUser aspnetuser)
+        public async Task<IActionResult> CreateUser([Bind("UserName,PasswordHash,Email,PhoneNumber,Ip")] AspNetUser aspnetuser)
         {
             Console.WriteLine(aspnetuser);
 
@@ -42,6 +42,8 @@ namespace HalloDocMVC.Controllers
 
             aspnetuser.CreatedDate = createddate;
             aspnetuser.ModifiedDate = createddate;
+
+            ModelState.Remove("Id");
 
             if (ModelState.IsValid)
             {

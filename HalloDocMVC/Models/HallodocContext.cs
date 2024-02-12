@@ -17,9 +17,15 @@ public partial class HallodocContext : DbContext
 
     public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
 
+    public virtual DbSet<Business> Businesses { get; set; }
+
+    public virtual DbSet<Concierge> Concierges { get; set; }
+
     public virtual DbSet<Region> Regions { get; set; }
 
     public virtual DbSet<Request> Requests { get; set; }
+
+    public virtual DbSet<RequestBusiness> RequestBusinesses { get; set; }
 
     public virtual DbSet<RequestClient> RequestClients { get; set; }
 
@@ -39,6 +45,26 @@ public partial class HallodocContext : DbContext
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
         });
 
+        modelBuilder.Entity<Business>(entity =>
+        {
+            entity.HasKey(e => e.BusinessId).HasName("business_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.Region).WithMany(p => p.Businesses).HasConstraintName("fk_region");
+        });
+
+        modelBuilder.Entity<Concierge>(entity =>
+        {
+            entity.HasKey(e => e.ConciergeId).HasName("concierge_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.Region).WithMany(p => p.Concierges)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_region");
+        });
+
         modelBuilder.Entity<Region>(entity =>
         {
             entity.HasKey(e => e.RegionId).HasName("region_pkey");
@@ -55,6 +81,19 @@ public partial class HallodocContext : DbContext
                 .HasConstraintName("fk_request_type");
 
             entity.HasOne(d => d.User).WithMany(p => p.Requests).HasConstraintName("fk_user");
+        });
+
+        modelBuilder.Entity<RequestBusiness>(entity =>
+        {
+            entity.HasKey(e => e.RequestBusinessId).HasName("request_business_pkey");
+
+            entity.HasOne(d => d.Business).WithMany(p => p.RequestBusinesses)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_business");
+
+            entity.HasOne(d => d.Request).WithMany(p => p.RequestBusinesses)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_request");
         });
 
         modelBuilder.Entity<RequestClient>(entity =>
