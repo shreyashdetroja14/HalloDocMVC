@@ -24,11 +24,7 @@
             <div class="col-6 fw-bold">Current Status</div>
             <div class="col-3 fw-bold">Document</div>
         </div>
-        <div class="row p-3 d-flex align-items-center">
-            <div class="col-3">Sept 27, 2023</div>
-            <div class="col-6">Accepted</div>
-            <div class="col-3"></div>
-        </div>
+        
         @{
             foreach(var request in Model)
             {
@@ -38,7 +34,7 @@
                     <div class="col-3">
                         @if (request.Count != 0)
                         {
-                            <a href="#" class="btn btn-outline-info">(@request.Count) documents</a>
+                            <a asp-controller="Patient" asp-action="ViewDocuments" asp-route-requestid="@request.RequestId" class="btn btn-outline-info">(@request.Count) documents</a>
                         }
                     </div>
                     
@@ -63,30 +59,7 @@
             <a href="#" class="btn btn-outline-info p-2"><img src="~/images/plusIcon.svg" alt=""></a>
         </div>
         <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed d-flex" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#flush-collapseOne">
-                        <img src="~/images/clockIcon.svg" alt="">
-                        <span class="px-2 fw-bold">Created Date: </span>
-                        <span> Dec 5, 2023</span>
-                    </button>
-                </h2>
-                <div id="flush-collapseOne" class="accordion-collapse collapse">
-                    <div class="accordion-body">
-                        <div class="mb-2">
-                            <img src="~/images/doctorIcon.svg" alt="">
-                            <span class="px-2">Provider: </span>
-                            <span> - </span>
-                        </div>
-                        <div>
-                            <img src="~/images/checkCircleIcon.svg" alt="">
-                            <span class="px-2">Current Status: </span>
-                            <span> Active </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
 
 
             @{
@@ -116,7 +89,7 @@
                                         <span>@request.PhysicianId</span>
                                     }
                                 </div>
-                                <div>
+                                <div class="mb-2">
                                     <img src="~/images/checkCircleIcon.svg" alt="">
                                     <span class="px-2">Current Status: </span>
                                     <span> @request.Status </span>
@@ -125,7 +98,7 @@
                                 @if (request.Count != 0)
                                 {
                                     <div>
-                                        <a href="#" class="btn btn-outline-info w-100">(@request.Count) Documents</a>
+                                        <a asp-controller="Patient" asp-action="ViewDocuments" asp-route-requestid="@request.RequestId" class="btn btn-outline-info w-100">(@request.Count) documents</a>
                                     </div>
                                 }
                             </div>

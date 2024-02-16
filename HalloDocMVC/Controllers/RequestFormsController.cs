@@ -253,6 +253,23 @@ namespace HalloDocMVC.Controllers
                 _context.Add(requestClientNew);
                 await _context.SaveChangesAsync();
 
+                if (frvm.PatientInfo.MultipleFiles != null)
+                {
+
+                    List<string> files = UploadFilesToServer(frvm.PatientInfo.MultipleFiles, requestNew.RequestId);
+                    foreach (string file in files)
+                    {
+                        var reqwisefileNew = new RequestWiseFile();
+                        reqwisefileNew.RequestId = requestNew.RequestId;
+                        reqwisefileNew.FileName = file;
+                        reqwisefileNew.CreatedDate = DateTime.Now;
+
+                        _context.Add(reqwisefileNew);
+                        await _context.SaveChangesAsync();
+                    }
+
+                }
+
                 return RedirectToAction("SubmitRequest");
             }
             return View("~/Views/Home/Index.cshtml");

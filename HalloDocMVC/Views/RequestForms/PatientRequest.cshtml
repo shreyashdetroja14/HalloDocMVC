@@ -212,19 +212,20 @@
             }
             
         }
-
+    </script>
+    <script>
         const actualBtn = document.querySelector('#MultipleFiles');
 
         const fileChosen = document.querySelector('#filename');
-        
+
 
         actualBtn.addEventListener('change', function () {
             fileChosen.textContent = '';
-            for(var i=0; i<this.files.length; i++){
+            for (var i = 0; i < this.files.length; i++) {
                 fileChosen.textContent += this.files[i].name + ', ';
             }
             fileChosen.textContent = fileChosen.textContent.slice(0, fileChosen.textContent.length - 2);
-            
+
         })
     </script>
 }

@@ -2,8 +2,10 @@
 {
     
     public class DashboardRequestViewModel
-    { 
+    {
+
         public int RequestId { get; set; }
+
         public DateOnly CreateDate { get; set;}
 
         public short Status { get; set; } 
