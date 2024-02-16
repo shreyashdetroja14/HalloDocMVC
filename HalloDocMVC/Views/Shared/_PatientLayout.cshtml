@@ -1,0 +1,118 @@
+﻿
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HalloDocMVC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patientlayout.css" />
+    @if (IsSectionDefined("AddStyles"))
+    {
+        @RenderSection("AddStyles", required: false)
+    }
+</head>
+<body>
+
+    <div class="wrapper p-0 d-flex flex-column">
+        <div class="header">
+            <div class="navbar navbar-expand-md">
+                <div class="container-fluid">
+                    <div>
+                        <button class="navbar-toggler border p-2" type="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasNavbar">
+                            <img src="~/images/listIcon.svg" alt="">
+                        </button>
+                        <img src="~/images/HalloDocLogo.png" alt="" class="navbar-logo">
+                    </div>
+                    <div>
+                        <span class="d-none d-md-inline">Welcome</span>
+                        <span class="fw-bold d-none d-md-inline">
+                            @ViewBag.FullName
+                        </span>
+                        <button class="btn btn-outline-info ms-2 d-none d-md-inline">Logout</button>
+                        <button class="btn btn-outline-info p-2 d-md-none">
+                            <img src="~/images/logoutIcon.svg" alt="">
+                        </button>
+                        <button class="theme-btn btn btn-outline-info ms-2 ">
+                            <img src="~/images/themeIcon.svg" alt="">
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="navbar navbar-expand-md p-0">
+                <div class="offcanvas offcanvas-md offcanvas-start" tabindex="-1" id="offcanvasNavbar">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
+                            Welcome <span class="fw-bold">
+                                @ViewBag.FullName
+                            </span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body d-md-block">
+                        <ul class="nav nav-tabs border-0 shadow d-block d-md-flex" id="ex1" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" href="#" role="tab">Dashboard</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a data-mdb-tab-init class="nav-link" href="#" role="tab">Profile</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- <ul class="nav nav-tabs mb-3 border-0 shadow " id="ex1" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" href="#" role="tab">Dashboard</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a data-mdb-tab-init class="nav-link" href="#" role="tab">Profile</a>
+                </li>
+            </ul> -->
+        </div>
+
+        @RenderBody() 
+
+        <div class="footer w-100 d-flex justify-content-center justify-content-sm-end py-4 pe-4 bg-dark ">
+            <a href="#" class=" pe-3 border-end text-white text-decoration-none">Terms & Conditions</a>
+            <a href="#" class=" ps-3 text-white text-decoration-none">Privacy Policy</a>
+        </div>
+
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @if (IsSectionDefined("AddScript"))
+    {
+        @RenderSection("AddScript", required: false)
+    }
+    <script>
+        const navLinks = document.querySelectorAll(".nav-link");
+        navLinks.forEach(navLink => {
+            navLink.addEventListener('click', (event) => {
+                removeActiveClass();
+                navLink.classList.add('active');
+            })
+        })
+
+        function removeActiveClass() {
+            navLinks.forEach(navLink => {
+                navLink.classList.remove('active');
+            })
+        }
+    </script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/theme.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+<!DOCTYPE html>
+

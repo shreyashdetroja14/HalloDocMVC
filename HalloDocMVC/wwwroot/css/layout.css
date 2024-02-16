@@ -60,24 +60,4 @@ body {
 }
 
 
-/*Theme toggle classes*/
 
-.dark-bg {
-    background-color: #222;
-}
-
-.light-text {
-    color: #fff !important;
-}
-
-.light-border {
-    border-color: #fff !important;
-}
-
-.bg-opacity {
-    opacity: 0.5;
-}
-
-.label-icon-dark {
-    filter: invert(100%) sepia(95%) saturate(0%) hue-rotate(185deg) brightness(106%) contrast(105%);
-}

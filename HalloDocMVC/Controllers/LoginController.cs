@@ -34,7 +34,7 @@ namespace HalloDocMVC.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Dashboard", "Patient", new {user.Id});
             }
         }
     }

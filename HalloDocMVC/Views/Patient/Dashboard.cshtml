@@ -1,0 +1,186 @@
+﻿
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_PatientLayout.cshtml";
+}
+
+@section AddStyles{
+
+    <link href="@Url.Content("~/css/dashboard.css")" rel="stylesheet" type="text/css" />
+}
+
+@model List<HalloDocMVC.ViewModels.DashboardRequestViewModel>
+
+<div class="main-content container-fluid px-4 py-5">
+    <h1 class="h2 mb-3">Medical History</h1>
+
+    <div class="requests-md container-fluid rounded-3 d-none d-md-flex flex-column bg-white shadow">
+        <div class=" py-3 d-flex justify-content-end">
+            <a href="#" class="btn btn-outline-info ">Create New Request</a>
+
+        </div>
+        <div class="req-header row p-3 d-flex align-items-center">
+            <div class="col-3 fw-bold">Created Date</div>
+            <div class="col-6 fw-bold">Current Status</div>
+            <div class="col-3 fw-bold">Document</div>
+        </div>
+        <div class="row p-3 d-flex align-items-center">
+            <div class="col-3">Sept 27, 2023</div>
+            <div class="col-6">Accepted</div>
+            <div class="col-3"></div>
+        </div>
+        @{
+            foreach(var request in Model)
+            {
+                <div class="row p-3 d-flex align-items-center">
+                    <div class="col-3">@request.CreateDate</div>
+                    <div class="col-6">@request.Status</div>
+                    <div class="col-3">
+                        @if (request.Count != 0)
+                        {
+                            <a href="#" class="btn btn-outline-info">(@request.Count) documents</a>
+                        }
+                    </div>
+                    
+                    
+                </div>
+            }
+        }
+        @*<div class="row p-3 d-flex align-items-center">
+            <div class="col-3">Sept 27, 2023</div>
+            <div class="col-6">Accepted</div>
+            <div class="col-3"><button class="btn btn-outline-info">(1) documents</button></div>
+        </div>
+        <div class="row p-3 d-flex align-items-center">
+            <div class="col-3">Sept 27, 2023</div>
+            <div class="col-6">Accepted</div>
+            <div class="col-3"></div>
+        </div>*@
+    </div>
+
+    <div class="requests rounded-3 d-flex d-md-none flex-column bg-white shadow">
+        <div class=" p-3 d-flex justify-content-end">
+            <a href="#" class="btn btn-outline-info p-2"><img src="~/images/plusIcon.svg" alt=""></a>
+        </div>
+        <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed d-flex" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#flush-collapseOne">
+                        <img src="~/images/clockIcon.svg" alt="">
+                        <span class="px-2 fw-bold">Created Date: </span>
+                        <span> Dec 5, 2023</span>
+                    </button>
+                </h2>
+                <div id="flush-collapseOne" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <div class="mb-2">
+                            <img src="~/images/doctorIcon.svg" alt="">
+                            <span class="px-2">Provider: </span>
+                            <span> - </span>
+                        </div>
+                        <div>
+                            <img src="~/images/checkCircleIcon.svg" alt="">
+                            <span class="px-2">Current Status: </span>
+                            <span> Active </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            @{
+                foreach(var request in Model)
+                {
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed d-flex" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#flush-collapse-@request.RequestId">
+                                <img src="~/images/clockIcon.svg" alt="">
+                                <span class="px-2 fw-bold">Created Date: </span>
+                                <span>@request.CreateDate</span>
+                            </button>
+                        </h2>
+                        <div id="flush-collapse-@request.RequestId" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <div class="mb-2">
+                                    <img src="~/images/doctorIcon.svg" alt="">
+                                    <span class="px-2">Provider: </span>
+
+                                    @if (request.PhysicianId == 0)
+                                    {
+                                        <span>-</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@request.PhysicianId</span>
+                                    }
+                                </div>
+                                <div>
+                                    <img src="~/images/checkCircleIcon.svg" alt="">
+                                    <span class="px-2">Current Status: </span>
+                                    <span> @request.Status </span>
+                                </div>
+                                
+                                @if (request.Count != 0)
+                                {
+                                    <div>
+                                        <a href="#" class="btn btn-outline-info w-100">(@request.Count) Documents</a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+
+            @*<div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed d-flex" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#flush-collapseTwo">
+                        <img src="~/images/clockIcon.svg" alt="">
+                        <span class="px-2 fw-bold">Created Date: </span>
+                        <span> Sept 25, 2023</span>
+                    </button>
+                </h2>
+                <div id="flush-collapseTwo" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <div class="mb-2">
+                            <img src="~/images/doctorIcon.svg" alt="">
+                            <span class="px-2">Provider: </span>
+                            <span> Dr. Agola </span>
+                        </div>
+                        <div class="mb-2">
+                            <img src="~/images/checkCircleIcon.svg" alt="">
+                            <span class="px-2">Current Status: </span>
+                            <span> Pending </span>
+                        </div>
+                        <div>
+                            <a href="#" class="btn btn-outline-info w-100">(1) Documents</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#flush-collapseThree">
+                        Accordion Item #3
+                    </button>
+                </h2>
+                <div id="flush-collapseThree" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        Placeholder content for this accordion, which is intended to
+                        demonstrate the <code>.accordion-flush</code> class. This is the third item's accordion
+                        body. Nothing more exciting happening here in terms of content, but just filling up the
+                        space to make it look, at least at first glance, a bit more representative of how this
+                        would look in a real-world application.
+                    </div>
+                </div>
+            </div>*@
+        </div>
+
+    </div>
+</div>
+

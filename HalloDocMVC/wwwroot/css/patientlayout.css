@@ -1,0 +1,37 @@
+﻿.wrapper {
+    min-height: 100vh;
+}
+
+.header, .footer {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: auto;
+}
+
+.navbar {
+    border-bottom: 1px solid rgb(108, 117, 125, 0.27);
+}
+
+.navbar-logo {
+    max-width: 150px;
+    height: auto;
+}
+
+
+.theme-btn:hover {
+    background-color: transparent;
+    box-shadow: 0 0 10px #0dcaf0;
+}
+
+.nav-link {
+    color: #212529;
+    border: none !important;
+}
+
+.active {
+    color: #0dcaf0 !important;
+    border-bottom: 2px solid #0dcaf0 !important;
+}
+
+
+

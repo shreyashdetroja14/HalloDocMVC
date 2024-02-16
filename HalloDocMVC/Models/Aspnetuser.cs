@@ -40,5 +40,8 @@ public partial class AspNetUser
     public DateTime? ModifiedDate { get; set; }
 
     [InverseProperty("AspNetUser")]
+    public virtual ICollection<Physician> Physicians { get; set; } = new List<Physician>();
+
+    [InverseProperty("AspNetUser")]
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

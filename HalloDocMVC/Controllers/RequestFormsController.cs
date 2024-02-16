@@ -21,7 +21,7 @@ namespace HalloDocMVC.Controllers
             aspnetuserNew.Id = Guid.NewGuid().ToString();
 
             aspnetuserNew.UserName = prvm.Email;
-            aspnetuserNew.PasswordHash = "passworddefault";
+            aspnetuserNew.PasswordHash = prvm.Password;
             aspnetuserNew.Email = prvm.Email;
             aspnetuserNew.PhoneNumber = prvm.PhoneNumber;
             aspnetuserNew.CreatedDate = DateTime.Now;
@@ -73,6 +73,32 @@ namespace HalloDocMVC.Controllers
             return requestClientNew;
         }
 
+        public List<string> UploadFilesToServer(IEnumerable<IFormFile> MultipleFiles, int requestid)
+        {
+            List<string> files = new List<string>();
+            foreach (var UploadFile in MultipleFiles)
+            {
+                string FilePath = "wwwroot\\Upload\\" + requestid;
+                string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                string newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}-{DateTime.Now.ToString("yyyyMMddhhmmss")}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
+
+                string fileNameWithPath = Path.Combine(path, newfilename);
+                files.Add(FilePath.Replace("wwwroot\\Upload\\", "/Upload/") + "/" + newfilename);
+
+                using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                {
+                    UploadFile.CopyTo(stream);
+                }
+            }
+            return files;
+        }
+
         public IActionResult SubmitRequest()
         {
             return View();
@@ -85,6 +111,16 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PatientRequest(PatientRequestViewModel prvm)
         {
+            if(prvm.Password == null || prvm.ConfirmPassword == null)
+            {
+                var emailFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == prvm.Email);
+                if(emailFetched == null)
+                {
+                    ViewBag.Msg = "Please Enter And Confirm Password";
+                    return View(prvm);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == prvm.Email);
@@ -125,6 +161,49 @@ namespace HalloDocMVC.Controllers
                     _context.Add(requestClientNew);
                     await _context.SaveChangesAsync();
 
+                    if (prvm.MultipleFiles != null)
+                    {
+                        /*foreach (var UploadFile in prvm.MultipleFiles)
+                        {
+                            string FilePath = "wwwroot\\Upload\\" + requestNew.RequestId;
+                            string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+
+                            if (!Directory.Exists(path))
+                            {
+                                Directory.CreateDirectory(path);
+                            }
+
+                            string newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}-{DateTime.Now.ToString("yyyyMMddhhmmss")}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
+
+                            string fileNameWithPath = Path.Combine(path, newfilename);
+                            prvm.File = FilePath.Replace("wwwroot\\Upload\\", "/Upload/") + "/" + newfilename;
+
+                            using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                            {
+                                UploadFile.CopyTo(stream);
+                            }
+                            var reqwisefileNew = new RequestWiseFile();
+                            reqwisefileNew.RequestId = requestNew.RequestId;
+                            reqwisefileNew.FileName = prvm.File;
+                            reqwisefileNew.CreatedDate = DateTime.Now;
+
+                            _context.Add(reqwisefileNew);
+                            await _context.SaveChangesAsync();
+                        }*/
+
+                        List<string> files = UploadFilesToServer(prvm.MultipleFiles, requestNew.RequestId);
+                        foreach(string file in files)
+                        {
+                            var reqwisefileNew = new RequestWiseFile();
+                            reqwisefileNew.RequestId = requestNew.RequestId;
+                            reqwisefileNew.FileName = file;
+                            reqwisefileNew.CreatedDate = DateTime.Now;
+
+                            _context.Add(reqwisefileNew);
+                            await _context.SaveChangesAsync();
+                        }
+
+                    }
                 }
                 return RedirectToAction("SubmitRequest");
             }
@@ -311,5 +390,20 @@ namespace HalloDocMVC.Controllers
             }
             return View("~/Views/Home/Index.cshtml");
         }
+
+        
+        public async Task<IActionResult> CheckUserAccount(string? email)
+        {
+            if(email != null)
+            {
+                var emailFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == email);
+                if(emailFetched != null)
+                {
+                    return Json(new { status = "valid" });
+                }
+            }
+            return Json(new { status = "invalid" });
+        }
+        
     }
 }

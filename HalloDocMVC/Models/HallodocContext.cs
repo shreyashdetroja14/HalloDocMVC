@@ -21,6 +21,8 @@ public partial class HallodocContext : DbContext
 
     public virtual DbSet<Concierge> Concierges { get; set; }
 
+    public virtual DbSet<Physician> Physicians { get; set; }
+
     public virtual DbSet<Region> Regions { get; set; }
 
     public virtual DbSet<Request> Requests { get; set; }
@@ -30,6 +32,8 @@ public partial class HallodocContext : DbContext
     public virtual DbSet<RequestClient> RequestClients { get; set; }
 
     public virtual DbSet<RequestType> RequestTypes { get; set; }
+
+    public virtual DbSet<RequestWiseFile> RequestWiseFiles { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -63,6 +67,17 @@ public partial class HallodocContext : DbContext
             entity.HasOne(d => d.Region).WithMany(p => p.Concierges)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_region");
+        });
+
+        modelBuilder.Entity<Physician>(entity =>
+        {
+            entity.HasKey(e => e.PhysicianId).HasName("physician_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.AspNetUser).WithMany(p => p.Physicians).HasConstraintName("fk_asp_net_user");
+
+            entity.HasOne(d => d.Region).WithMany(p => p.Physicians).HasConstraintName("fk_region");
         });
 
         modelBuilder.Entity<Region>(entity =>
@@ -110,6 +125,17 @@ public partial class HallodocContext : DbContext
         modelBuilder.Entity<RequestType>(entity =>
         {
             entity.HasKey(e => e.RequestTypeId).HasName("request_type_pkey");
+        });
+
+        modelBuilder.Entity<RequestWiseFile>(entity =>
+        {
+            entity.HasKey(e => e.RequestWiseFileId).HasName("request_wise_file_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.Request).WithMany(p => p.RequestWiseFiles)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_request");
         });
 
         modelBuilder.Entity<User>(entity =>

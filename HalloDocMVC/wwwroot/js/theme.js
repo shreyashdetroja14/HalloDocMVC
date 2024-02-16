@@ -57,7 +57,6 @@ themeBtn.addEventListener('click', () => {
         uploadLabel.classList.toggle('gray-bg');
     }
 
-    console.log(itiList);
     itiList.forEach(e => {
         toggleCSSclasses(e, 'gray-bg');
     })

@@ -14,7 +14,7 @@
         Back
     </a>
     <h1 class="mb-4 mt-2 h2 text-center">Login To Your Account</h1>
-    <p class="text-center text-danger">@ViewBag.Email</p>   
+    <p class="text-center text-danger fw-bold">@ViewBag.Email</p>   
     <form class="d-flex flex-column" asp-action="CheckLogin" asp-controller="Login">
         <div class="form-floating mb-4">
             <input asp-for="Email" type="email" class="form-control" id="floatingInput" placeholder="name@example.com">

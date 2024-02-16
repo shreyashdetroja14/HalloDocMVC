@@ -116,6 +116,9 @@ public partial class Request
     [InverseProperty("Requests")]
     public virtual RequestType RequestType { get; set; } = null!;
 
+    [InverseProperty("Request")]
+    public virtual ICollection<RequestWiseFile> RequestWiseFiles { get; set; } = new List<RequestWiseFile>();
+
     [ForeignKey("UserId")]
     [InverseProperty("Requests")]
     public virtual User? User { get; set; }

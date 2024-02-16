@@ -14,6 +14,10 @@
 
         public string? PhoneNumber { get; set; }
 
+        public string? Password { get; set; } 
+
+        public string? ConfirmPassword { get; set; } 
+
         public string? Street { get; set;}
 
         public string? City { get; set; }
@@ -25,5 +29,7 @@
         public string? Room { get; set;}
 
         public string? File { get; set;}
+
+        public IEnumerable<IFormFile>? MultipleFiles { get; set; }
     }
 }

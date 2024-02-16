@@ -18,7 +18,7 @@
             Back
         </a>
     </div>
-    <form asp-action="PatientRequest" class="container bg-white p-4  request-form">
+    <form asp-action="PatientRequest" class="container bg-white p-4  request-form"  enctype="multipart/form-data">
         <div class="info mb-4">
             <h2 class="mb-3">Patient Information</h2>
             <div class="row">
@@ -74,7 +74,23 @@
                             pattern="[0-9]{10}">
                     </div> -->
                     <input type="tel" asp-for="PhoneNumber" class="form-control w-100" id="phone" />
+                </div>
+                <div class="col-sm-6 d-none" id="passfield">
+                    <div class="form-floating mb-3">
+                        <input type="password" asp-for="Password" class="form-control" id="password"
+                               placeholder="Password">
+                        <label asp-for="Password">Password</label>
+                    </div>
+                    <span class="text-danger">@ViewBag.Msg</span>
+                </div>
 
+                <div class="col-sm-6 d-none" id="confirmpassfield">
+                    <div class="form-floating mb-3">
+                        <input type="password" asp-for="ConfirmPassword" class="form-control" id="confirmpassword"
+                               placeholder="Confirm Password">
+                        <label asp-for="ConfirmPassword">Confirm Password</label>
+                    </div>
+                    <span class="text-danger">@ViewBag.Msg</span>
                 </div>
             </div>
         </div>
@@ -125,11 +141,11 @@
             <div class="row">
                 <div class="col-12">
                     <div class="input-group mb-3">
-                        <input type="file" asp-for="File" class="form-control px-3 py-2 file-upload" id="file">
+                        <input type="file" asp-for="MultipleFiles" multiple class="form-control px-3 py-2 file-upload" id="MultipleFiles">
 
                         <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
-                               asp-for="File">
-                            <span class="px-3 py-2">Select File</span>
+                               asp-for="MultipleFiles">
+                            <span class="px-3 py-2" id="filename">Select File</span>
                             <div class="btn btn-info p-3 text-white fw-bold rounded-0">
                                 <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
                             </div>
@@ -155,5 +171,60 @@
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
+    </script>
+    <script>
+        const emailInput = document.querySelector("#email");
+
+        emailInput.addEventListener('blur', async () => {
+            const mailId = emailInput.value;
+            await checkUser(mailId);
+        })
+
+        window.addEventListener('load', async () => {
+            const mailId = emailInput.value;
+            if(mailId){
+                await checkUser(mailId);
+            }
+            
+        });
+
+        async function checkUser(mailId) {
+
+            
+            const url = `http://localhost:5059/RequestForms/CheckUserAccount?email=${mailId}`;
+            
+            try{
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.status == 'invalid') {
+                    document.querySelector('#passfield').classList.remove("d-none");
+                    document.querySelector('#confirmpassfield').classList.remove("d-none");
+                    console.log('removed d-none');
+                }
+                else {
+                    document.querySelector('#passfield').classList.add("d-none");
+                    document.querySelector('#confirmpassfield').classList.add("d-none");
+                    console.log('added d-none');
+                }
+            }catch(error){
+                console.log(error);
+            }
+            
+        }
+
+        const actualBtn = document.querySelector('#MultipleFiles');
+
+        const fileChosen = document.querySelector('#filename');
+        
+
+        actualBtn.addEventListener('change', function () {
+            fileChosen.textContent = '';
+            for(var i=0; i<this.files.length; i++){
+                fileChosen.textContent += this.files[i].name + ', ';
+            }
+            fileChosen.textContent = fileChosen.textContent.slice(0, fileChosen.textContent.length - 2);
+            
+        })
     </script>
 }
