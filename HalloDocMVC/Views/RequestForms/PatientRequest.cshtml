@@ -18,14 +18,14 @@
             Back
         </a>
     </div>
-    <form asp-action="PatientRequest" class="container bg-white p-4  request-form"  enctype="multipart/form-data">
+    <form asp-action="PatientRequest" class="container bg-white p-4  request-form" enctype="multipart/form-data">
         <div class="info mb-4">
             <h2 class="mb-3">Patient Information</h2>
             <div class="row">
                 <div class="col-12">
                     <div class="form-floating mb-3">
                         <textarea asp-for="Symptoms" class="form-control" placeholder="Enter Symptoms" id="symptoms"
-                                    style="height: 100px"></textarea>
+                                  style="height: 100px"></textarea>
                         <label asp-for="Symptoms">Enter Brief Details of Symptoms (Optional)</label>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="email" asp-for="Email" class="form-control" id="email" 
+                        <input type="email" asp-for="Email" class="form-control" id="email"
                                placeholder="abc@xyz.pqr">
                         <label asp-for="Email">Email</label>
                     </div>
@@ -121,7 +121,7 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" asp-for="ZipCode" class="form-control" id="zipcode" 
+                        <input type="text" asp-for="ZipCode" class="form-control" id="zipcode"
                                placeholder="Zipcode">
                         <label asp-for="ZipCode">Zipcode</label>
                     </div>
@@ -182,18 +182,18 @@
 
         window.addEventListener('load', async () => {
             const mailId = emailInput.value;
-            if(mailId){
+            if (mailId) {
                 await checkUser(mailId);
             }
-            
+
         });
 
         async function checkUser(mailId) {
 
-            
+
             const url = `http://localhost:5059/RequestForms/CheckUserAccount?email=${mailId}`;
-            
-            try{
+
+            try {
                 const response = await fetch(url);
                 const data = await response.json();
 
@@ -207,10 +207,10 @@
                     document.querySelector('#confirmpassfield').classList.add("d-none");
                     console.log('added d-none');
                 }
-            }catch(error){
+            } catch (error) {
                 console.log(error);
             }
-            
+
         }
     </script>
     <script>

@@ -6,19 +6,19 @@
 
         public string FirstName { get; set; } = null!;
 
-        public string? LastName { get; set;}
+        public string? LastName { get; set; }
 
-        public DateTime? DOB { get; set; }
+        public string? DOB { get; set; }
 
         public string Email { get; set; } = null!;
 
         public string? PhoneNumber { get; set; }
 
-        public string? Password { get; set; } 
+        public string? Password { get; set; }
 
-        public string? ConfirmPassword { get; set; } 
+        public string? ConfirmPassword { get; set; }
 
-        public string? Street { get; set;}
+        public string? Street { get; set; }
 
         public string? City { get; set; }
 
@@ -26,9 +26,9 @@
 
         public string? ZipCode { get; set; }
 
-        public string? Room { get; set;}
+        public string? Room { get; set; }
 
-        public string? File { get; set;}
+        public string? File { get; set; }
 
         public IEnumerable<IFormFile>? MultipleFiles { get; set; }
     }

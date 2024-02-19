@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "ViewDocuments";
     Layout = "~/Views/Shared/_PatientLayout.cshtml";
 }
@@ -45,7 +44,7 @@
                     </div>
                 </form>
 
-                @if(ViewBag.Message != null)
+                @if (ViewBag.Message != null)
                 {
                     <span class="text-danger">@ViewBag.Message</span>
                 }
@@ -76,8 +75,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        
-                        @if(Model.FileInfo != null)
+
+                        @if (Model.FileInfo != null)
                         {
                             @foreach (var item in Model.FileInfo)
                             {
@@ -102,8 +101,8 @@
 
             <div class="requestfiles d-md-none">
                 <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
-                    
-                    @if(Model.FileInfo != null)
+
+                    @if (Model.FileInfo != null)
                     {
                         @foreach (var item in Model.FileInfo)
                         {

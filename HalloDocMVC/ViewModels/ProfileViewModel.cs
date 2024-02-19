@@ -6,7 +6,7 @@
 
         public string? LastName { get; set; }
 
-        public DateOnly DOB { get; set; }
+        public string DOB { get; set; } = null!;
 
         public string? PhoneNumber { get; set; }
 

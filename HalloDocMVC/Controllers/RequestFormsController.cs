@@ -2,6 +2,7 @@
 using HalloDocMVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace HalloDocMVC.Controllers
 {
@@ -14,7 +15,7 @@ namespace HalloDocMVC.Controllers
             _context = context;
         }
 
-        public AspNetUser CreateAspnetuser (PatientRequestViewModel prvm)
+        public AspNetUser CreateAspnetuser(PatientRequestViewModel prvm)
         {
             var aspnetuserNew = new AspNetUser();
 
@@ -28,7 +29,7 @@ namespace HalloDocMVC.Controllers
 
             return aspnetuserNew;
         }
-        public User CreateUser (PatientRequestViewModel prvm, AspNetUser aspnetuserNew)
+        public User CreateUser(PatientRequestViewModel prvm, AspNetUser aspnetuserNew)
         {
             var userNew = new User();
 
@@ -41,31 +42,46 @@ namespace HalloDocMVC.Controllers
             userNew.City = prvm.City;
             userNew.State = prvm.State;
             userNew.ZipCode = prvm.ZipCode;
-            userNew.IntDate = prvm.DOB?.Day;
+
+            if (prvm.DOB != null)
+            {
+                DateTime dateTime = DateTime.ParseExact(prvm.DOB, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                userNew.IntYear = dateTime.Year;
+                userNew.StrMonth = dateTime.ToString("MMMM");
+                userNew.IntDate = dateTime.Day;
+            }
+
+            /*userNew.IntDate = prvm.DOB?.Day;
             userNew.StrMonth = prvm.DOB?.ToString("MMMM");
-            userNew.IntYear = prvm.DOB?.Year;
+            userNew.IntYear = prvm.DOB?.Year;*/
 
             userNew.CreatedBy = "admin";
             userNew.CreatedDate = DateTime.Now;
 
             return userNew;
         }
-        public RequestClient CreateRequestClient (PatientRequestViewModel PatientInfo, Request requestNew)
+        public RequestClient CreateRequestClient(PatientRequestViewModel PatientInfo, Request requestNew)
         {
             var requestClientNew = new RequestClient();
             requestClientNew.RequestId = requestNew.RequestId;
             requestClientNew.FirstName = PatientInfo.FirstName;
             requestClientNew.LastName = PatientInfo.LastName;
-            requestClientNew.PhoneNumber = PatientInfo.Email;
+            requestClientNew.PhoneNumber = PatientInfo.PhoneNumber;
             requestClientNew.Location = PatientInfo.Room;
             requestClientNew.Address = PatientInfo.Street + ", " + PatientInfo.City + ", " + PatientInfo.State + ", " + PatientInfo.ZipCode;
             requestClientNew.NotiMobile = PatientInfo.PhoneNumber;
             requestClientNew.NotiEmail = PatientInfo.Email;
             requestClientNew.Notes = PatientInfo.Symptoms;
             requestClientNew.Email = PatientInfo.Email;
-            requestClientNew.IntDate = PatientInfo.DOB?.Day;
-            requestClientNew.StrMonth = PatientInfo.DOB?.ToString("MMMM");
-            requestClientNew.IntYear = PatientInfo.DOB?.Year;
+
+            if (PatientInfo.DOB != null)
+            {
+                DateTime dateTime = DateTime.ParseExact(PatientInfo.DOB, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                requestClientNew.IntYear = dateTime.Year;
+                requestClientNew.StrMonth = dateTime.ToString("MMMM");
+                requestClientNew.IntDate = dateTime.Day;
+            }
+
             requestClientNew.Street = PatientInfo.Street;
             requestClientNew.City = PatientInfo.City;
             requestClientNew.State = PatientInfo.State;
@@ -111,10 +127,10 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PatientRequest(PatientRequestViewModel prvm)
         {
-            if(prvm.Password == null || prvm.ConfirmPassword == null)
+            if (prvm.Password == null || prvm.ConfirmPassword == null)
             {
                 var emailFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == prvm.Email);
-                if(emailFetched == null)
+                if (emailFetched == null)
                 {
                     ViewBag.Msg = "Please Enter And Confirm Password";
                     return View(prvm);
@@ -192,7 +208,7 @@ namespace HalloDocMVC.Controllers
                         }*/
 
                         List<string> files = UploadFilesToServer(prvm.MultipleFiles, requestNew.RequestId);
-                        foreach(string file in files)
+                        foreach (string file in files)
                         {
                             var reqwisefileNew = new RequestWiseFile();
                             reqwisefileNew.RequestId = requestNew.RequestId;
@@ -219,7 +235,7 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> FamilyRequest(FamilyRequestViewModel frvm)
         {
-            if (ModelState.IsValid) 
+            if (ModelState.IsValid)
             {
                 var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == frvm.PatientInfo.Email);
                 if (aspnetuserFetched == null)
@@ -284,7 +300,7 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConciergeRequest(ConciergeRequestViewModel crvm)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == crvm.PatientInfo.Email);
                 if (aspnetuserFetched == null)
@@ -344,9 +360,9 @@ namespace HalloDocMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> BusinessRequest (BusinessRequestViewModel brvm)
+        public async Task<IActionResult> BusinessRequest(BusinessRequestViewModel brvm)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == brvm.PatientInfo.Email);
                 if (aspnetuserFetched == null)
@@ -354,7 +370,7 @@ namespace HalloDocMVC.Controllers
                     // SEND MAIL WITH REGISTER LINK
                 }
                 var businessFetched = await _context.Businesses.FirstOrDefaultAsync(m => m.PhoneNumber == brvm.BusinessPhoneNumber && m.Name == brvm.BusinessName);
-                if(businessFetched == null)
+                if (businessFetched == null)
                 {
                     var businessNew = new Business();
                     businessNew.Name = brvm.BusinessName;
@@ -395,7 +411,7 @@ namespace HalloDocMVC.Controllers
 
                 var requestBusinessNew = new RequestBusiness();
                 requestBusinessNew.RequestId = requestNew.RequestId;
-                if(businessFetched != null)
+                if (businessFetched != null)
                 {
                     requestBusinessNew.BusinessId = businessFetched.BusinessId;
                 }
@@ -408,19 +424,19 @@ namespace HalloDocMVC.Controllers
             return View("~/Views/Home/Index.cshtml");
         }
 
-        
+
         public async Task<IActionResult> CheckUserAccount(string? email)
         {
-            if(email != null)
+            if (email != null)
             {
                 var emailFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == email);
-                if(emailFetched != null)
+                if (emailFetched != null)
                 {
                     return Json(new { status = "valid" });
                 }
             }
             return Json(new { status = "invalid" });
         }
-        
+
     }
 }

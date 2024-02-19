@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Profile";
     Layout = "~/Views/Shared/_PatientLayout.cshtml";
 }
@@ -14,32 +13,32 @@
 
 <div class="main p-4">
     <div class="back pb-4 d-flex justify-content-end">
-        <a asp-area="" asp-controller="RequestForms" asp-action="SubmitRequest" class="btn back-btn">
+        <a asp-area="" asp-controller="Patient" asp-action="Dashboard" class="btn back-btn">
             <img src="/images/backIcon.svg" alt="">
             Back
         </a>
     </div>
-    <form asp-action="Profile" class="container bg-white p-4  request-form">
+    <form asp-action="EditProfile" class="container bg-white p-4  request-form">
         <div class="info mb-4">
             <h2 class="mb-3">General Information</h2>
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" asp-for="FirstName" class="form-control" id="firstname"
+                        <input type="text" asp-for="FirstName" class="form-control" id="FirstName"
                                placeholder="First Name">
                         <label asp-for="FirstName">First Name</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" asp-for="LastName" class="form-control" id="lastname"
+                        <input type="text" asp-for="LastName" class="form-control" id="LastName"
                                placeholder="Last Name">
                         <label asp-for="LastName">Last Name</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="date" asp-for="DOB" class="form-control" id="dob" placeholder="DOB">
+                        <input type="date" asp-for="DOB" class="form-control" id="DOB" placeholder="DOB">
                         <label asp-for="DOB">Date Of Birth</label>
                     </div>
                 </div>
@@ -51,13 +50,13 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="email" asp-for="Email" class="form-control" id="email"
-                               placeholder="abc@xyz.pqr">
+                        <input type="email" asp-for="Email" class="form-control" id="Email"
+                               placeholder="abc@xyz.pqr" autocomplete="off" readonly>
                         <label asp-for="Email">Email</label>
                     </div>
                 </div>
                 <div class="col-sm-6 pb-3">
-                    <input type="tel" asp-for="PhoneNumber" class="form-control w-100" id="phone" />
+                    <input type="tel" asp-for="PhoneNumber" class="form-control w-100" id="PhoneNumber" />
                 </div>
             </div>
         </div>
@@ -67,28 +66,28 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" asp-for="Street" class="form-control" id="street"
+                        <input type="text" asp-for="Street" class="form-control" id="Street"
                                placeholder="Street">
                         <label asp-for="Street">Street</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" asp-for="City" class="form-control" id="city"
+                        <input type="text" asp-for="City" class="form-control" id="City"
                                placeholder="City">
                         <label asp-for="City">City</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" asp-for="State" class="form-control" id="state"
+                        <input type="text" asp-for="State" class="form-control" id="State"
                                placeholder="State">
                         <label asp-for="State">State</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" asp-for="ZipCode" class="form-control" id="zipcode"
+                        <input type="text" asp-for="ZipCode" class="form-control" id="ZipCode"
                                placeholder="Zipcode">
                         <label asp-for="ZipCode">Zipcode</label>
                     </div>
@@ -97,8 +96,10 @@
         </div>
 
         <div class="submit mb-4 d-flex justify-content-end">
-            <input type="submit" value="Submit" class="btn btn-info py-2 px-3 text-white">
-            <input type="reset" value="Cancel" class="btn btn-outline-info py-2 px-3 ms-3">
+            <input type="submit" value="Submit" class="btn btn-info py-2 px-3 text-white d-none">
+            <input type="reset" value="Cancel" class="btn cancelbtn btn-outline-info py-2 px-3 ms-3 d-none">
+
+            <button type="button" class="btn btn-info text-white py-2 px-3" id="editbtn">Edit</button>
         </div>
 
     </form>
@@ -107,12 +108,44 @@
 
 @section AddScript{
     <script>
-        const phoneInputField = document.querySelector("#phone");
+        const phoneInputField = document.querySelector("#PhoneNumber");
         const phoneInput = window.intlTelInput(phoneInputField, {
             preferredCountries: ["us", "in", "au", "de"],
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
+    </script>
+    <script>
+        const editBtn = document.querySelector('#editbtn');
+        const submitBtn = document.querySelector('input[type="submit"]');
+        const cancelBtn = document.querySelector('input[type="reset"]');
+        const inputTags = document.querySelectorAll('input');
+        const emailInp = document.querySelector('input[type="email"]');
+
+        inputTags.forEach(input => {
+            input.readOnly = true;
+        })
+
+        editBtn.addEventListener('click', () => {
+            editBtn.classList.add('d-none');
+            submitBtn.classList.remove('d-none');
+            cancelBtn.classList.remove('d-none');
+            inputTags.forEach(input => {
+                input.readOnly = false;
+            })
+
+            emailInp.readOnly = true;
+        })
+
+        cancelBtn.addEventListener('click', () => {
+            submitBtn.classList.add('d-none');
+            cancelBtn.classList.add('d-none');
+            editBtn.classList.remove('d-none');
+            inputTags.forEach(input => {
+                input.readOnly = true;
+            })
+        })
+
     </script>
 }
 

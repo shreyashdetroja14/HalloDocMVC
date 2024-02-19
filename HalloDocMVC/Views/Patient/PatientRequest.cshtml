@@ -1,36 +1,15 @@
 ﻿@{
-    ViewData["Title"] = "Family Request";
-    Layout = "~/Views/Shared/_RequestLayout.cshtml";
+    ViewData["Title"] = "Patient Request";
+    Layout = "~/Views/Shared/_PatientLayout.cshtml";
 }
 
 @model HalloDocMVC.ViewModels.FamilyRequestViewModel
 
-@section AddStyles{
+@section AddStyles {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <link href="@Url.Content("~/css/requestform.css")" rel="stylesheet" type="text/css" />
 }
-
-
-<div class="modal fade" id="myModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body text-center p-5">
-                <img src="~/images/exclamationIcon.svg" alt="">
-                <h3 class="my-4">Information</h3>
-                <p class="text-secondary">
-                    When submitting a request, you must provide correct contact
-                    information for the patient
-                    or the responsible party. Failure to provide the correct email and phone number will
-                    delay service or be declined.
-                </p>
-            </div>
-            <div class="modal-footer d-flex justify-content-center">
-                <button type="button" class="btn btn-info text-white px-3 py-2" data-bs-dismiss="modal">OK</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="main p-4">
     <div class="back pb-4 d-flex justify-content-end">
@@ -40,45 +19,10 @@
         </a>
     </div>
 
-    <form asp-action="FamilyRequest" class="container bg-white p-4  request-form" enctype="multipart/form-data">
 
-        <div class="family-info mb-4">
-            <h2 class="mb-3">Family/Friend Information</h2>
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-floating mb-3">
-                        <input type="text" asp-for="FamilyFirstName" class="form-control" id="FamilyFirstName"
-                               placeholder="First Name">
-                        <label asp-for="FamilyFirstName">Your First Name</label>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-floating mb-3">
-                        <input type="text" asp-for="FamilyLastName" class="form-control" id="FamilyLastName"
-                               placeholder="Last Name">
-                        <label asp-for="FamilyLastName">Your Last Name</label>
-                    </div>
-                </div>
-                <div class="col-sm-6 pb-3">
-                    <input type="tel" asp-for="FamilyPhoneNumber" class="form-control w-100" id="familyphone" />
+    <form asp-action="@(ViewBag.Requesttype == 3 ? "FamilyRequest" : "PatientRequest")" class="container bg-white p-4  request-form" enctype="multipart/form-data">
 
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-floating mb-3">
-                        <input type="email" asp-for="FamilyEmail" class="form-control" id="FamilyEmail"
-                               placeholder="abc@xyz.pqr">
-                        <label asp-for="FamilyEmail">Your Email</label>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-floating mb-3">
-                        <input type="text" asp-for="FamilyRelation" class="form-control" id="FamilyRelation"
-                               placeholder="Relation">
-                        <label asp-for="FamilyRelation">Your Relation With Patient</label>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <input type="hidden" name="UserId" value="@ViewBag.UserId" />
 
         <div class="info mb-4">
             <h2 class="mb-3">Patient Information</h2>
@@ -124,16 +68,6 @@
                     </div>
                 </div>
                 <div class="col-sm-6 pb-3">
-                    <!-- <div class="input-group mb-3 h-100">
-                        <select class=" btn btn-outline-secondary" aria-label="Default select example">
-                            <option selected>Country</option>
-                            <option value="1">+91</option>
-                            <option value="2">+1</option>
-                            <option value="3">+216</option>
-                        </select>
-                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="9876598765"
-                            pattern="[0-9]{10}">
-                    </div> -->
                     <input type="tel" asp-for="PatientInfo.PhoneNumber" class="form-control w-100" id="phone" />
 
                 </div>
@@ -181,6 +115,24 @@
             </div>
         </div>
 
+
+
+        @if (ViewBag.Requesttype == 3)
+        {
+            <div class="contact-info mb-4">
+                <h2 class="mb-3">Relation</h2>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="FamilyRelation" class="form-control" id="FamilyRelation"
+                                   placeholder="Relation">
+                            <label asp-for="FamilyRelation">Your Relation With Patient (Optional)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
         <div class="upload-docs mb-4">
             <h2 class="mb-3">(Optional) Upload Photo Or Document</h2>
             <div class="row">
@@ -208,29 +160,16 @@
     </form>
 </div>
 
-@section AddScript{
+@section AddScript {
     <script>
-        const phoneInputField = document.querySelector("#familyphone");
-        const ptphoneInputField = document.querySelector("#phone");
-
+        const phoneInputField = document.querySelector("#phone");
         const phoneInput = window.intlTelInput(phoneInputField, {
             preferredCountries: ["us", "in", "au", "de"],
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
-
-        const ptphoneInput = window.intlTelInput(ptphoneInputField, {
-            preferredCountries: ["us", "in", "au", "de"],
-            utilsScript:
-                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        });
     </script>
 
-    <script type="text/javascript">
-        $(window).on('load', function () {
-            $('#myModal').modal('show');
-        });
-    </script>
     <script>
         const actualBtn = document.querySelector('#PatientInfo_MultipleFiles');
 
@@ -247,4 +186,5 @@
         })
     </script>
 }
+
 

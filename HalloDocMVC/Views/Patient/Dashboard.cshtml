@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Dashboard";
     Layout = "~/Views/Shared/_PatientLayout.cshtml";
 }
@@ -14,19 +13,47 @@
 <div class="main-content container-fluid px-4 py-5">
     <h1 class="h2 mb-3">Medical History</h1>
 
+    <!-- Modal -->
+    <div class="modal fade" id="requesttype" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h1 class="modal-title fs-5" id="requesttypeLabel">Create New Request</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Here, I want to create request for...</p>
+                    <div class="d-flex justify-content-center">
+                        <a asp-action="PatientRequest" asp-route-UserId="@ViewBag.UserId" class="btn btn-info mx-2 text-white">Me</a>
+                        <a asp-action="FamilyRequest" asp-route-UserId="@ViewBag.UserId" class="btn btn-outline-info mx-2">Someone Else</a>
+                    </div>
+
+
+                </div>
+                @* <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Understood</button>
+                </div> *@
+            </div>
+        </div>
+    </div>
+
     <div class="requests-md container-fluid rounded-3 d-none d-md-flex flex-column bg-white shadow">
+
+        <!-- Modal toggler -->
         <div class=" py-3 d-flex justify-content-end">
-            <a href="#" class="btn btn-outline-info ">Create New Request</a>
+            <button type="button" data-bs-toggle="modal" data-bs-target="#requesttype" class="btn btn-outline-info ">Create New Request</button>
 
         </div>
+
         <div class="req-header row p-3 d-flex align-items-center">
             <div class="col-3 fw-bold">Created Date</div>
             <div class="col-6 fw-bold">Current Status</div>
             <div class="col-3 fw-bold">Document</div>
         </div>
-        
+
         @{
-            foreach(var request in Model)
+            foreach (var request in Model)
             {
                 <div class="row p-3 d-flex align-items-center">
                     <div class="col-3">@request.CreateDate</div>
@@ -37,33 +64,33 @@
                             <a asp-controller="Patient" asp-action="ViewDocuments" asp-route-requestid="@request.RequestId" class="btn btn-outline-info">(@request.Count) documents</a>
                         }
                     </div>
-                    
-                    
+
+
                 </div>
             }
         }
         @*<div class="row p-3 d-flex align-items-center">
-            <div class="col-3">Sept 27, 2023</div>
-            <div class="col-6">Accepted</div>
-            <div class="col-3"><button class="btn btn-outline-info">(1) documents</button></div>
+        <div class="col-3">Sept 27, 2023</div>
+        <div class="col-6">Accepted</div>
+        <div class="col-3"><button class="btn btn-outline-info">(1) documents</button></div>
         </div>
         <div class="row p-3 d-flex align-items-center">
-            <div class="col-3">Sept 27, 2023</div>
-            <div class="col-6">Accepted</div>
-            <div class="col-3"></div>
+        <div class="col-3">Sept 27, 2023</div>
+        <div class="col-6">Accepted</div>
+        <div class="col-3"></div>
         </div>*@
     </div>
 
     <div class="requests rounded-3 d-flex d-md-none flex-column bg-white shadow">
         <div class=" p-3 d-flex justify-content-end">
-            <a href="#" class="btn btn-outline-info p-2"><img src="~/images/plusIcon.svg" alt=""></a>
+            <button href="#" type="button" data-bs-toggle="modal" data-bs-target="#requesttype" class="btn btn-outline-info p-2"><img src="~/images/plusIcon.svg" alt=""></button>
         </div>
         <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
-            
+
 
 
             @{
-                foreach(var request in Model)
+                foreach (var request in Model)
                 {
                     <div class="accordion-item">
                         <h2 class="accordion-header">
@@ -94,7 +121,7 @@
                                     <span class="px-2">Current Status: </span>
                                     <span> @request.Status </span>
                                 </div>
-                                
+
                                 @if (request.Count != 0)
                                 {
                                     <div>
@@ -109,48 +136,48 @@
 
 
             @*<div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed d-flex" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#flush-collapseTwo">
-                        <img src="~/images/clockIcon.svg" alt="">
-                        <span class="px-2 fw-bold">Created Date: </span>
-                        <span> Sept 25, 2023</span>
-                    </button>
-                </h2>
-                <div id="flush-collapseTwo" class="accordion-collapse collapse">
-                    <div class="accordion-body">
-                        <div class="mb-2">
-                            <img src="~/images/doctorIcon.svg" alt="">
-                            <span class="px-2">Provider: </span>
-                            <span> Dr. Agola </span>
-                        </div>
-                        <div class="mb-2">
-                            <img src="~/images/checkCircleIcon.svg" alt="">
-                            <span class="px-2">Current Status: </span>
-                            <span> Pending </span>
-                        </div>
-                        <div>
-                            <a href="#" class="btn btn-outline-info w-100">(1) Documents</a>
-                        </div>
-                    </div>
-                </div>
+            <h2 class="accordion-header">
+            <button class="accordion-button collapsed d-flex" type="button" data-bs-toggle="collapse"
+            data-bs-target="#flush-collapseTwo">
+            <img src="~/images/clockIcon.svg" alt="">
+            <span class="px-2 fw-bold">Created Date: </span>
+            <span> Sept 25, 2023</span>
+            </button>
+            </h2>
+            <div id="flush-collapseTwo" class="accordion-collapse collapse">
+            <div class="accordion-body">
+            <div class="mb-2">
+            <img src="~/images/doctorIcon.svg" alt="">
+            <span class="px-2">Provider: </span>
+            <span> Dr. Agola </span>
+            </div>
+            <div class="mb-2">
+            <img src="~/images/checkCircleIcon.svg" alt="">
+            <span class="px-2">Current Status: </span>
+            <span> Pending </span>
+            </div>
+            <div>
+            <a href="#" class="btn btn-outline-info w-100">(1) Documents</a>
+            </div>
+            </div>
+            </div>
             </div>
             <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#flush-collapseThree">
-                        Accordion Item #3
-                    </button>
-                </h2>
-                <div id="flush-collapseThree" class="accordion-collapse collapse">
-                    <div class="accordion-body">
-                        Placeholder content for this accordion, which is intended to
-                        demonstrate the <code>.accordion-flush</code> class. This is the third item's accordion
-                        body. Nothing more exciting happening here in terms of content, but just filling up the
-                        space to make it look, at least at first glance, a bit more representative of how this
-                        would look in a real-world application.
-                    </div>
-                </div>
+            <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#flush-collapseThree">
+            Accordion Item #3
+            </button>
+            </h2>
+            <div id="flush-collapseThree" class="accordion-collapse collapse">
+            <div class="accordion-body">
+            Placeholder content for this accordion, which is intended to
+            demonstrate the <code>.accordion-flush</code> class. This is the third item's accordion
+            body. Nothing more exciting happening here in terms of content, but just filling up the
+            space to make it look, at least at first glance, a bit more representative of how this
+            would look in a real-world application.
+            </div>
+            </div>
             </div>*@
         </div>
 
