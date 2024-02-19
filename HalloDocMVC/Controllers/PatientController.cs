@@ -1,8 +1,6 @@
 ﻿using HalloDocMVC.Models;
-using HalloDocMVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO.Compression;
 

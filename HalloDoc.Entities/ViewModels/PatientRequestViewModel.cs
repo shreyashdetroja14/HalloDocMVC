@@ -1,4 +1,4 @@
-﻿namespace HalloDocMVC.ViewModels
+﻿namespace HalloDocEntities.ViewModels
 {
     public class PatientRequestViewModel
     {
