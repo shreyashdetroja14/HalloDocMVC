@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using HalloDocEntities.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace HalloDocMVC.Models;
+namespace HalloDocEntities.Data;
 
-public partial class HallodocContext : DbContext
+public partial class HalloDocContext : DbContext
 {
-    public HallodocContext()
+    public HalloDocContext()
     {
     }
 
-    public HallodocContext(DbContextOptions<HallodocContext> options)
+    public HalloDocContext(DbContextOptions<HalloDocContext> options)
         : base(options)
     {
     }

@@ -1,5 +1,7 @@
-﻿using HalloDocMVC.Models;
-using HalloDocMVC.ViewModels;
+﻿using HalloDocEntities.Data;
+
+using HalloDocEntities.Models;
+using HalloDocEntities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -8,9 +10,9 @@ namespace HalloDocMVC.Controllers
 {
     public class RequestFormsController : Controller
     {
-        private readonly HallodocContext _context;
+        private readonly HalloDocContext _context;
 
-        public RequestFormsController(HallodocContext context)
+        public RequestFormsController(HalloDocContext context)
         {
             _context = context;
         }

@@ -1,12 +1,18 @@
-using HalloDocMVC.Models;
+using HalloDocEntities.Data;
+using HalloDocEntities.Models;
+using HalloDocRepository.Repository;
+using HalloDocRepository.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<HallodocContext>(options =>
+builder.Services.AddDbContext<HalloDocContext>(options =>
 options.UseNpgsql(builder.Configuration.GetConnectionString("HalloDocDbCS")));
+
+builder.Services.AddScoped<ILoginRepository, LoginRepository>();
+builder.Services.AddScoped<IAspNetUserRepository, AspNetUserRepository>();
 
 var app = builder.Build();
 

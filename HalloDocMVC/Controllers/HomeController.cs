@@ -1,4 +1,6 @@
-﻿using HalloDocMVC.Models;
+﻿using HalloDocEntities.Data;
+
+using HalloDocEntities.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,9 +8,9 @@ namespace HalloDocMVC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly HallodocContext _context;
+        private readonly HalloDocContext _context;
 
-        public HomeController(HallodocContext context)
+        public HomeController(HalloDocContext context)
         {
             _context = context;
         }
@@ -58,10 +60,6 @@ namespace HalloDocMVC.Controllers
 
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        
     }
 }

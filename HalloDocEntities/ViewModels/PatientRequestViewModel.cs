@@ -1,4 +1,6 @@
-﻿namespace HalloDocEntities.ViewModels
+﻿using Microsoft.AspNetCore.Http;
+
+namespace HalloDocEntities.ViewModels
 {
     public class PatientRequestViewModel
     {

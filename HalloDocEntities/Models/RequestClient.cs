@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace HalloDocMVC.Models;
+namespace HalloDocEntities.Models;
 
 [Table("request_client")]
 public partial class RequestClient

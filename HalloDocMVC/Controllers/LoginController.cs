@@ -1,18 +1,23 @@
-﻿using BCrypt.Net;
-using HalloDocMVC.Models;
-using HalloDocMVC.ViewModels;
+﻿using HalloDocEntities.Data;
+
+using BCrypt.Net;
+using HalloDocEntities.Models;
+using HalloDocEntities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using HalloDocRepository.Repository.Interface;
 
 namespace HalloDocMVC.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly HallodocContext _context;
+        private readonly HalloDocContext _context;
+        private readonly ILoginRepository _loginRepository;
 
-        public LoginController(HallodocContext context)
+        public LoginController(HalloDocContext context, ILoginRepository loginRepository)
         {
             _context = context;
+            _loginRepository = loginRepository;
         }
 
         public IActionResult Index()
@@ -25,29 +30,26 @@ namespace HalloDocMVC.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CheckLogin(AspNetUser aspnetuser)
+        public async Task<IActionResult> CheckLogin(LoginViewModel LoginInfo)
         {
-            /*var user = await _context.AspNetUsers.FirstOrDefaultAsync(u => u.Email == aspnetuser.Email && u.PasswordHash == aspnetuser.PasswordHash);
+            string aspnetuserId = await _loginRepository.CheckLogin(LoginInfo);
 
-            if (user == null)
+            if (aspnetuserId.Equals(""))
             {
-                ViewBag.Message = "INVALID EMAIL OR PASSWORD";
                 return View("Index");
             }
-            else
-            {
-                return RedirectToAction("Dashboard", "Patient", new { user.Id });
-            }*/
 
-            var userFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == aspnetuser.Email);
+            return RedirectToAction("Dashboard", "Patient", new { id = aspnetuserId });
+
+            /*var userFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == logininfo.Email);
             if (userFetched != null)
             {
-                if (BCrypt.Net.BCrypt.Verify(aspnetuser.PasswordHash, userFetched.PasswordHash))
+                if (BCrypt.Net.BCrypt.Verify(logininfo.Password, userFetched.PasswordHash))
                 {
                     return RedirectToAction("Dashboard", "Patient", new { id = userFetched.Id });
                 }
             }
-            return View("Index");
+            return View("Index");*/
         }
 
         public IActionResult CreateAccount()
@@ -92,10 +94,11 @@ namespace HalloDocMVC.Controllers
             var userNew = new User();
             userNew.AspNetUserId = aspnetuserNew.Id;
             userNew.Email = aspnetuserNew.Email;
-            userNew.FirstName = requestClientFetched?.FirstName ?? "abc";
+            
             if (requestClientFetched != null)
             {
                 var requests = _context.Requests.Where(x => x.RequestId == requestClientFetched.RequestId).ToList();
+                userNew.FirstName = requestClientFetched.FirstName;
                 userNew.LastName = requestClientFetched?.LastName;
                 userNew.Mobile = requestClientFetched?.PhoneNumber;
                 userNew.Street = requestClientFetched?.Street;

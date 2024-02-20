@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace HalloDocMVC.Models;
+namespace HalloDocEntities.Models;
 
 [Table("asp_net_users")]
 public partial class AspNetUser

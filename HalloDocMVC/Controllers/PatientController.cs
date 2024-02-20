@@ -1,4 +1,7 @@
-﻿using HalloDocMVC.Models;
+﻿using HalloDocEntities.Data;
+
+using HalloDocEntities.Models;
+using HalloDocEntities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -8,9 +11,9 @@ namespace HalloDocMVC.Controllers
 {
     public class PatientController : Controller
     {
-        private readonly HallodocContext _context;
+        private readonly HalloDocContext _context;
 
-        public PatientController(HallodocContext context)
+        public PatientController(HalloDocContext context)
         {
             _context = context;
         }

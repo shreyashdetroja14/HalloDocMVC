@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace HalloDocMVC.Models;
+namespace HalloDocEntities.Models;
 
 [Table("user")]
 public partial class User
@@ -67,7 +67,7 @@ public partial class User
 
     [Column("created_by")]
     [StringLength(128)]
-    public string CreatedBy { get; set; } = null!;
+    public string? CreatedBy { get; set; }
 
     [Column("created_date", TypeName = "timestamp without time zone")]
     public DateTime CreatedDate { get; set; }
