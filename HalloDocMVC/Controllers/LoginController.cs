@@ -32,10 +32,17 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CheckLogin(LoginViewModel LoginInfo)
         {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Message = "Invalid Email or Password";
+                return View("Index");
+            }
+
             string aspnetuserId = await _loginRepository.CheckLogin(LoginInfo);
 
             if (aspnetuserId.Equals(""))
             {
+                ViewBag.Message = "Invalid Email or Password";
                 return View("Index");
             }
 
@@ -73,7 +80,24 @@ namespace HalloDocMVC.Controllers
                 return View(Credentials);
             }
 
-            var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == Credentials.Email);
+            string status = await _loginRepository.CreateAccount(Credentials);
+
+            if (status.Equals("user exists"))
+            {
+                ViewBag.Message = "You already have an account with this email!";
+                return View();
+            }
+            else if (status.Equals("not eligible"))
+            {
+                ViewBag.Message = "Looks like you are not eligible to create an account!";
+                return View(Credentials);
+            }
+            else
+            {
+                return View("~/Views/Login/Index.cshtml");
+            }
+
+            /*var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == Credentials.Email);
             if (aspnetuserFetched != null)
             {
                 ViewBag.Message = "You already have an account with this email!";
@@ -127,7 +151,7 @@ namespace HalloDocMVC.Controllers
                 return View(Credentials);
             }
 
-            return View("~/Views/Login/Index.cshtml");
+            return View("~/Views/Login/Index.cshtml");*/
         }
 
         public IActionResult ResetPassword()
@@ -151,7 +175,17 @@ namespace HalloDocMVC.Controllers
                 return View(Credentials);
             }
 
-            var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == Credentials.Email);
+            bool isPasswordReset = await _loginRepository.ResetPassword(Credentials);
+
+            if (!isPasswordReset)
+            {
+                ViewBag.Message = "Please try again";
+                return View(Credentials);
+            }
+
+            return View("~/Views/Login/Index.cshtml");
+
+            /*var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == Credentials.Email);
             if (aspnetuserFetched == null)
             {
                 ViewBag.Message = "Please enter correct Email";
@@ -160,9 +194,9 @@ namespace HalloDocMVC.Controllers
             aspnetuserFetched.PasswordHash = BCrypt.Net.BCrypt.HashPassword(Credentials.Password);
 
             _context.AspNetUsers.Update(aspnetuserFetched);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();*/
 
-            return View("~/Views/Login/Index.cshtml");
+
         }
     }
 }

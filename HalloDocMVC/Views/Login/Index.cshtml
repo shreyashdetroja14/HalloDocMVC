@@ -20,11 +20,13 @@
             <input asp-for="Email" type="email" class="form-control" id="Email" placeholder="name@example.com">
             <label for="Email">Email</label>
             <img src="~/images/usernameIcon.svg" alt="" class="label-icon">
+            <span asp-validation-for="Email" class="text-danger"></span>
         </div>
         <div class="form-floating mb-4">
             <input asp-for="Password" type="password" class="form-control" id="Password" placeholder="Password">
             <label for="Password">Password</label>
             <img src="~/images/passwordShowIcon.svg" alt="" class="label-icon">
+            <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 
         <input type="submit" class="btn btn-info rounded-3 text-white fw-bold w-100 py-3 mb-4" value="Submit">

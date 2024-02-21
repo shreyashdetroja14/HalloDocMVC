@@ -139,93 +139,93 @@ namespace HalloDocMVC.Controllers
                 }
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == prvm.Email);
-                if (aspnetuserFetched == null)
+                return View("~/Views/Home/Index.cshtml");
+            }
+            var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == prvm.Email);
+            if (aspnetuserFetched == null)
+            {
+                var aspnetuserNew = CreateAspnetuser(prvm);
+                _context.Add(aspnetuserNew);
+                await _context.SaveChangesAsync();
+
+                var userNew = CreateUser(prvm, aspnetuserNew);
+                _context.Add(userNew);
+                await _context.SaveChangesAsync();
+            }
+
+            aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == prvm.Email);
+            var userFetched = await _context.Users.FirstOrDefaultAsync(m => m.Email == prvm.Email);
+            if (userFetched != null && aspnetuserFetched != null)
+            {
+                var requestNew = new Request();
+
+                requestNew.RequestTypeId = 2;
+                requestNew.UserId = userFetched.UserId;
+                requestNew.FirstName = prvm.FirstName;
+                requestNew.LastName = prvm.LastName;
+                requestNew.PhoneNumber = prvm.PhoneNumber;
+                requestNew.Email = prvm.Email;
+                requestNew.Status = 1;
+                requestNew.CreatedDate = DateTime.Now;
+                requestNew.IsUrgentEmailSent = false;
+                requestNew.PatientAccountId = aspnetuserFetched?.Id;
+                requestNew.CreatedUserId = userFetched.UserId;
+
+                _context.Add(requestNew);
+                await _context.SaveChangesAsync();
+
+                var requestClientNew = CreateRequestClient(prvm, requestNew);
+
+                _context.Add(requestClientNew);
+                await _context.SaveChangesAsync();
+
+                if (prvm.MultipleFiles != null)
                 {
-                    var aspnetuserNew = CreateAspnetuser(prvm);
-                    _context.Add(aspnetuserNew);
-                    await _context.SaveChangesAsync();
-
-                    var userNew = CreateUser(prvm, aspnetuserNew);
-                    _context.Add(userNew);
-                    await _context.SaveChangesAsync();
-                }
-
-                aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == prvm.Email);
-                var userFetched = await _context.Users.FirstOrDefaultAsync(m => m.Email == prvm.Email);
-                if (userFetched != null && aspnetuserFetched != null)
-                {
-                    var requestNew = new Request();
-
-                    requestNew.RequestTypeId = 2;
-                    requestNew.UserId = userFetched.UserId;
-                    requestNew.FirstName = prvm.FirstName;
-                    requestNew.LastName = prvm.LastName;
-                    requestNew.PhoneNumber = prvm.PhoneNumber;
-                    requestNew.Email = prvm.Email;
-                    requestNew.Status = 1;
-                    requestNew.CreatedDate = DateTime.Now;
-                    requestNew.IsUrgentEmailSent = false;
-                    requestNew.PatientAccountId = aspnetuserFetched?.Id;
-                    requestNew.CreatedUserId = userFetched.UserId;
-
-                    _context.Add(requestNew);
-                    await _context.SaveChangesAsync();
-
-                    var requestClientNew = CreateRequestClient(prvm, requestNew);
-
-                    _context.Add(requestClientNew);
-                    await _context.SaveChangesAsync();
-
-                    if (prvm.MultipleFiles != null)
+                    /*foreach (var UploadFile in prvm.MultipleFiles)
                     {
-                        /*foreach (var UploadFile in prvm.MultipleFiles)
+                        string FilePath = "wwwroot\\Upload\\" + requestNew.RequestId;
+                        string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+
+                        if (!Directory.Exists(path))
                         {
-                            string FilePath = "wwwroot\\Upload\\" + requestNew.RequestId;
-                            string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
-
-                            if (!Directory.Exists(path))
-                            {
-                                Directory.CreateDirectory(path);
-                            }
-
-                            string newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}-{DateTime.Now.ToString("yyyyMMddhhmmss")}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
-
-                            string fileNameWithPath = Path.Combine(path, newfilename);
-                            prvm.File = FilePath.Replace("wwwroot\\Upload\\", "/Upload/") + "/" + newfilename;
-
-                            using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
-                            {
-                                UploadFile.CopyTo(stream);
-                            }
-                            var reqwisefileNew = new RequestWiseFile();
-                            reqwisefileNew.RequestId = requestNew.RequestId;
-                            reqwisefileNew.FileName = prvm.File;
-                            reqwisefileNew.CreatedDate = DateTime.Now;
-
-                            _context.Add(reqwisefileNew);
-                            await _context.SaveChangesAsync();
-                        }*/
-
-                        List<string> files = UploadFilesToServer(prvm.MultipleFiles, requestNew.RequestId);
-                        foreach (string file in files)
-                        {
-                            var reqwisefileNew = new RequestWiseFile();
-                            reqwisefileNew.RequestId = requestNew.RequestId;
-                            reqwisefileNew.FileName = file;
-                            reqwisefileNew.CreatedDate = DateTime.Now;
-
-                            _context.Add(reqwisefileNew);
-                            await _context.SaveChangesAsync();
+                            Directory.CreateDirectory(path);
                         }
 
+                        string newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}-{DateTime.Now.ToString("yyyyMMddhhmmss")}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
+
+                        string fileNameWithPath = Path.Combine(path, newfilename);
+                        prvm.File = FilePath.Replace("wwwroot\\Upload\\", "/Upload/") + "/" + newfilename;
+
+                        using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                        {
+                            UploadFile.CopyTo(stream);
+                        }
+                        var reqwisefileNew = new RequestWiseFile();
+                        reqwisefileNew.RequestId = requestNew.RequestId;
+                        reqwisefileNew.FileName = prvm.File;
+                        reqwisefileNew.CreatedDate = DateTime.Now;
+
+                        _context.Add(reqwisefileNew);
+                        await _context.SaveChangesAsync();
+                    }*/
+
+                    List<string> files = UploadFilesToServer(prvm.MultipleFiles, requestNew.RequestId);
+                    foreach (string file in files)
+                    {
+                        var reqwisefileNew = new RequestWiseFile();
+                        reqwisefileNew.RequestId = requestNew.RequestId;
+                        reqwisefileNew.FileName = file;
+                        reqwisefileNew.CreatedDate = DateTime.Now;
+
+                        _context.Add(reqwisefileNew);
+                        await _context.SaveChangesAsync();
                     }
+
                 }
-                return RedirectToAction("SubmitRequest");
             }
-            return View("~/Views/Home/Index.cshtml");
+            return RedirectToAction("SubmitRequest");
         }
 
         public IActionResult FamilyRequest()

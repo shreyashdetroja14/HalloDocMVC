@@ -12,5 +12,7 @@ namespace HalloDocRepository.Repository.Interface
         Task<String> CheckLogin(LoginViewModel LoginInfo);
 
         Task<string> CreateAccount(CreateAccountViewModel Credentials);
+
+        Task<bool> ResetPassword(CreateAccountViewModel Credentials);
     }
 }
