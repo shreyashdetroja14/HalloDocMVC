@@ -5,9 +5,11 @@ VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalloDocMVC", "HalloDocMVC\HalloDocMVC.csproj", "{5CF17FF3-CC12-4323-91F8-2755A2959478}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HalloDocRepository", "HalloDocRepository\HalloDocRepository.csproj", "{B38EA477-E9D9-41CA-880F-AE814B189E22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalloDocRepository", "HalloDocRepository\HalloDocRepository.csproj", "{B38EA477-E9D9-41CA-880F-AE814B189E22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HalloDocEntities", "HalloDocEntities\HalloDocEntities.csproj", "{3C1B4261-F5C3-4627-ABCC-7E4875002705}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalloDocEntities", "HalloDocEntities\HalloDocEntities.csproj", "{3C1B4261-F5C3-4627-ABCC-7E4875002705}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HalloDocServices", "HalloDocServices\HalloDocServices.csproj", "{B0A96324-B9B4-4688-9B44-FA3C5038C850}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{3C1B4261-F5C3-4627-ABCC-7E4875002705}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C1B4261-F5C3-4627-ABCC-7E4875002705}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C1B4261-F5C3-4627-ABCC-7E4875002705}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0A96324-B9B4-4688-9B44-FA3C5038C850}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0A96324-B9B4-4688-9B44-FA3C5038C850}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0A96324-B9B4-4688-9B44-FA3C5038C850}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0A96324-B9B4-4688-9B44-FA3C5038C850}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

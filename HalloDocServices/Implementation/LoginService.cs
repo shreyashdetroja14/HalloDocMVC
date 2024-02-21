@@ -1,7 +1,9 @@
 ﻿using HalloDocEntities.Data;
 using HalloDocEntities.Models;
-using HalloDocEntities.ViewModels;
+using HalloDocRepository.Interface;
 using HalloDocRepository.Repository.Interface;
+using HalloDocServices.Interface;
+using HalloDocServices.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,22 +14,26 @@ using static System.Net.Mime.MediaTypeNames;
 
 //G:\test\hallodoc3tier\HalloDocMVC\HalloDocMVC.sln
 
-namespace HalloDocRepository.Repository
+namespace HalloDocServices.Implementation
 {
-    public class LoginRepository : ILoginRepository
+    public class LoginService : ILoginService
     {
         private readonly HalloDocContext _context;
+        private readonly IUserRepository _userRepository;
+        private readonly IRequestRepository _requestRepository;
 
-        public LoginRepository(HalloDocContext context)
+        public LoginService(HalloDocContext context, IUserRepository userRepository, IRequestRepository requestRepository)
         {
             _context = context;
+            _userRepository = userRepository;
+            _requestRepository = requestRepository;
 
         }
         public async Task<string> CheckLogin(LoginViewModel LoginInfo)
         {
             string id = "";
 
-            var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == LoginInfo.Email);
+            var aspnetuserFetched = await _userRepository.GetAspNetUserByEmail(LoginInfo.Email);
             if (aspnetuserFetched != null)
             {
                 if (BCrypt.Net.BCrypt.Verify(LoginInfo.Password, aspnetuserFetched.PasswordHash))
@@ -40,13 +46,13 @@ namespace HalloDocRepository.Repository
 
         public async Task<string> CreateAccount(CreateAccountViewModel Credentials)
         {
-            var aspuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == Credentials.Email);
+            var aspuserFetched = await _userRepository.GetAspNetUserByEmail(Credentials.Email);
             if (aspuserFetched != null)
             {
                 return "user exists";
             }
 
-            var requestClientFetched = await _context.RequestClients.OrderBy(x => x.RequestClientId).LastOrDefaultAsync(m => m.Email == Credentials.Email);
+            var requestClientFetched = await _requestRepository.GetLastRequestClient(Credentials.Email);
             if (requestClientFetched == null)
             {
                 return "not eligible";
@@ -55,7 +61,22 @@ namespace HalloDocRepository.Repository
             {
                 var aspnetuserNew = new AspNetUser();
                 var userNew = new User();
-                var requests = _context.Requests.Where(x => x.RequestId == requestClientFetched.RequestId).ToList();
+                var requestClientsFetched = await _requestRepository.GetRequestsClientsByEmail(Credentials.Email);
+                var requestsFetched = await _requestRepository.GetAllRequests();
+
+                List<Request> requestsForClient = new List<Request>();
+                if (requestsFetched != null)
+                {
+                    requestClientsFetched.ForEach(item =>
+                    {
+                        var request = requestsFetched.FirstOrDefault(x => x.RequestId == item.RequestId);
+                        if (request != null)
+                        {
+                            requestsForClient.Add(request);
+
+                        }
+                    });
+                }
 
                 aspnetuserNew.Id = Guid.NewGuid().ToString();
                 aspnetuserNew.UserName = Credentials.Email;
@@ -63,8 +84,7 @@ namespace HalloDocRepository.Repository
                 aspnetuserNew.PasswordHash = BCrypt.Net.BCrypt.HashPassword(Credentials.Password);
                 aspnetuserNew.CreatedDate = DateTime.Now;
 
-                _context.AspNetUsers.Add(aspnetuserNew);
-                await _context.SaveChangesAsync();
+                await _userRepository.CreateAspNetUser(aspnetuserNew);
 
                 userNew.AspNetUserId = aspnetuserNew.Id;
                 userNew.Email = aspnetuserNew.Email;
@@ -80,19 +100,17 @@ namespace HalloDocRepository.Repository
                 userNew.IntYear = requestClientFetched?.IntYear;
                 userNew.CreatedDate = DateTime.Now;
 
-                _context.Users.Add(userNew);
-                await _context.SaveChangesAsync();
+                userNew = await _userRepository.CreateUser(userNew);
 
-
-                foreach (var request in requests)
+                requestsForClient.ForEach(request =>
                 {
                     request.UserId = userNew.UserId;
                     request.PatientAccountId = aspnetuserNew.Id.ToString();
                     request.ModifiedDate = DateTime.Now;
-                    _context.Update(request);
-                }
+                });
 
-                await _context.SaveChangesAsync();
+                bool status = await _requestRepository.UpdateRequests(requestsForClient);
+                
 
                 return "account created";
             }

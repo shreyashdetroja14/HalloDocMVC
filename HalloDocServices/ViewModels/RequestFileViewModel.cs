@@ -1,8 +1,9 @@
-﻿namespace HalloDocEntities.ViewModels
+﻿namespace HalloDocServices.ViewModels
 {
     public class RequestFileViewModel
     {
         public int FileId { get; set; }
+
         public string FileName { get; set; } = null!;
 
         public string? Uploader { get; set; }

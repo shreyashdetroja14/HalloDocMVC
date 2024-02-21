@@ -1,13 +1,13 @@
-﻿using HalloDocEntities.ViewModels;
+﻿using HalloDocServices.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HalloDocRepository.Repository.Interface
+namespace HalloDocServices.Interface
 {
-    public interface ILoginRepository
+    public interface ILoginService
     {
         Task<String> CheckLogin(LoginViewModel LoginInfo);
 

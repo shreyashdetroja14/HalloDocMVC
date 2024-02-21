@@ -1,5 +1,5 @@
 ﻿
-namespace HalloDocEntities.ViewModels
+namespace HalloDocServices.ViewModels
 {
     public class FamilyRequestViewModel
     {

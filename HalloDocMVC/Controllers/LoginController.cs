@@ -1,23 +1,22 @@
 ﻿using HalloDocEntities.Data;
 
-using BCrypt.Net;
 using HalloDocEntities.Models;
-using HalloDocEntities.ViewModels;
+using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HalloDocRepository.Repository.Interface;
+using HalloDocServices.Interface;
 
 namespace HalloDocMVC.Controllers
 {
     public class LoginController : Controller
     {
         private readonly HalloDocContext _context;
-        private readonly ILoginRepository _loginRepository;
+        private readonly ILoginService _loginService;
 
-        public LoginController(HalloDocContext context, ILoginRepository loginRepository)
+        public LoginController(HalloDocContext context, ILoginService loginService)
         {
             _context = context;
-            _loginRepository = loginRepository;
+            _loginService = loginService;
         }
 
         public IActionResult Index()
@@ -38,7 +37,7 @@ namespace HalloDocMVC.Controllers
                 return View("Index");
             }
 
-            string aspnetuserId = await _loginRepository.CheckLogin(LoginInfo);
+            string aspnetuserId = await _loginService.CheckLogin(LoginInfo);
 
             if (aspnetuserId.Equals(""))
             {
@@ -80,7 +79,7 @@ namespace HalloDocMVC.Controllers
                 return View(Credentials);
             }
 
-            string status = await _loginRepository.CreateAccount(Credentials);
+            string status = await _loginService.CreateAccount(Credentials);
 
             if (status.Equals("user exists"))
             {
@@ -175,7 +174,7 @@ namespace HalloDocMVC.Controllers
                 return View(Credentials);
             }
 
-            bool isPasswordReset = await _loginRepository.ResetPassword(Credentials);
+            bool isPasswordReset = await _loginService.ResetPassword(Credentials);
 
             if (!isPasswordReset)
             {

@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BCrypt.Net" Version="0.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.15">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,8 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HalloDocEntities\HalloDocEntities.csproj" />
-    <ProjectReference Include="..\HalloDocRepository\HalloDocRepository.csproj" />
+    <ProjectReference Include="..\HalloDocServices\HalloDocServices.csproj" />
   </ItemGroup>
 
 </Project>

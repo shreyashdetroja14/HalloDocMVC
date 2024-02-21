@@ -1,7 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace HalloDocEntities.ViewModels
+﻿
+namespace HalloDocServices.ViewModels
 {
     public class UserDetailsViewModel
     {

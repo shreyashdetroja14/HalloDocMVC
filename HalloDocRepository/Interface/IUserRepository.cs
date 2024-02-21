@@ -1,17 +1,18 @@
 ﻿using HalloDocEntities.Models;
-using HalloDocEntities.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HalloDocRepository.Repository.Interface
+namespace HalloDocRepository.Interface
 {
-    public interface IAspNetUserRepository
+    public interface IUserRepository
     {
         Task<AspNetUser> GetAspNetUserByEmail(string email);
 
-        AspNetUser CreateAspNetUser(CreateAccountViewModel Credentials);
+        Task<AspNetUser> CreateAspNetUser(AspNetUser aspnetuser);
+
+        Task<User> CreateUser(User user);
     }
 }

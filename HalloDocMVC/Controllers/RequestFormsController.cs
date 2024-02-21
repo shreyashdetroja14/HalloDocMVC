@@ -1,7 +1,7 @@
 ﻿using HalloDocEntities.Data;
 
 using HalloDocEntities.Models;
-using HalloDocEntities.ViewModels;
+using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
