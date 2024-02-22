@@ -1,6 +1,8 @@
 ﻿using HalloDocEntities.Data;
 
 using HalloDocEntities.Models;
+using HalloDocServices.Implementation;
+using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,13 +13,15 @@ namespace HalloDocMVC.Controllers
     public class RequestFormsController : Controller
     {
         private readonly HalloDocContext _context;
+        private readonly IRequestFormService _requestFormService;
 
-        public RequestFormsController(HalloDocContext context)
+        public RequestFormsController(HalloDocContext context, IRequestFormService requestFormService)
         {
             _context = context;
+            _requestFormService = requestFormService;
         }
 
-        public AspNetUser CreateAspnetuser(PatientRequestViewModel prvm)
+        /*public AspNetUser CreateAspnetuser(PatientRequestViewModel prvm)
         {
             var aspnetuserNew = new AspNetUser();
 
@@ -53,9 +57,9 @@ namespace HalloDocMVC.Controllers
                 userNew.IntDate = dateTime.Day;
             }
 
-            /*userNew.IntDate = prvm.DOB?.Day;
+            *//*userNew.IntDate = prvm.DOB?.Day;
             userNew.StrMonth = prvm.DOB?.ToString("MMMM");
-            userNew.IntYear = prvm.DOB?.Year;*/
+            userNew.IntYear = prvm.DOB?.Year;*//*
 
             userNew.CreatedBy = "admin";
             userNew.CreatedDate = DateTime.Now;
@@ -115,7 +119,7 @@ namespace HalloDocMVC.Controllers
                 }
             }
             return files;
-        }
+        }*/
 
         public IActionResult SubmitRequest()
         {
@@ -131,8 +135,8 @@ namespace HalloDocMVC.Controllers
         {
             if (prvm.Password == null || prvm.ConfirmPassword == null)
             {
-                var emailFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == prvm.Email);
-                if (emailFetched == null)
+                bool isUserExist = await _requestFormService.CheckUser(prvm.Email);
+                if (!isUserExist)
                 {
                     ViewBag.Msg = "Please Enter And Confirm Password";
                     return View(prvm);
@@ -143,89 +147,14 @@ namespace HalloDocMVC.Controllers
             {
                 return View("~/Views/Home/Index.cshtml");
             }
-            var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == prvm.Email);
-            if (aspnetuserFetched == null)
+
+            bool isrequestcreated = await _requestFormService.CreatePatientRequest(prvm);
+            if (isrequestcreated)
             {
-                var aspnetuserNew = CreateAspnetuser(prvm);
-                _context.Add(aspnetuserNew);
-                await _context.SaveChangesAsync();
-
-                var userNew = CreateUser(prvm, aspnetuserNew);
-                _context.Add(userNew);
-                await _context.SaveChangesAsync();
+                return RedirectToAction("SubmitRequest");
             }
-
-            aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == prvm.Email);
-            var userFetched = await _context.Users.FirstOrDefaultAsync(m => m.Email == prvm.Email);
-            if (userFetched != null && aspnetuserFetched != null)
-            {
-                var requestNew = new Request();
-
-                requestNew.RequestTypeId = 2;
-                requestNew.UserId = userFetched.UserId;
-                requestNew.FirstName = prvm.FirstName;
-                requestNew.LastName = prvm.LastName;
-                requestNew.PhoneNumber = prvm.PhoneNumber;
-                requestNew.Email = prvm.Email;
-                requestNew.Status = 1;
-                requestNew.CreatedDate = DateTime.Now;
-                requestNew.IsUrgentEmailSent = false;
-                requestNew.PatientAccountId = aspnetuserFetched?.Id;
-                requestNew.CreatedUserId = userFetched.UserId;
-
-                _context.Add(requestNew);
-                await _context.SaveChangesAsync();
-
-                var requestClientNew = CreateRequestClient(prvm, requestNew);
-
-                _context.Add(requestClientNew);
-                await _context.SaveChangesAsync();
-
-                if (prvm.MultipleFiles != null)
-                {
-                    /*foreach (var UploadFile in prvm.MultipleFiles)
-                    {
-                        string FilePath = "wwwroot\\Upload\\" + requestNew.RequestId;
-                        string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
-
-                        if (!Directory.Exists(path))
-                        {
-                            Directory.CreateDirectory(path);
-                        }
-
-                        string newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}-{DateTime.Now.ToString("yyyyMMddhhmmss")}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
-
-                        string fileNameWithPath = Path.Combine(path, newfilename);
-                        prvm.File = FilePath.Replace("wwwroot\\Upload\\", "/Upload/") + "/" + newfilename;
-
-                        using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
-                        {
-                            UploadFile.CopyTo(stream);
-                        }
-                        var reqwisefileNew = new RequestWiseFile();
-                        reqwisefileNew.RequestId = requestNew.RequestId;
-                        reqwisefileNew.FileName = prvm.File;
-                        reqwisefileNew.CreatedDate = DateTime.Now;
-
-                        _context.Add(reqwisefileNew);
-                        await _context.SaveChangesAsync();
-                    }*/
-
-                    List<string> files = UploadFilesToServer(prvm.MultipleFiles, requestNew.RequestId);
-                    foreach (string file in files)
-                    {
-                        var reqwisefileNew = new RequestWiseFile();
-                        reqwisefileNew.RequestId = requestNew.RequestId;
-                        reqwisefileNew.FileName = file;
-                        reqwisefileNew.CreatedDate = DateTime.Now;
-
-                        _context.Add(reqwisefileNew);
-                        await _context.SaveChangesAsync();
-                    }
-
-                }
-            }
-            return RedirectToAction("SubmitRequest");
+            return RedirectToAction("Index", "Home");
+            
         }
 
         public IActionResult FamilyRequest()
@@ -237,60 +166,28 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> FamilyRequest(FamilyRequestViewModel frvm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == frvm.PatientInfo.Email);
-                if (aspnetuserFetched == null)
-                {
-                    // SEND MAIL WITH REGISTER LINK
-                }
+                return View("~/Views/Home/Index.cshtml");
+            }
+            
+            bool isUserExists = await _requestFormService.CheckUser(frvm.PatientInfo.Email);
+            if (!isUserExists)
+            {
+                var receiver = frvm.PatientInfo.Email;
 
-                var userFetched = await _context.Users.FirstOrDefaultAsync(m => m.Email == frvm.PatientInfo.Email);
-                var requestorUser = await _context.Users.FirstOrDefaultAsync(m => m.Email == frvm.FamilyEmail);
+                var subject = "Create Account from HalloDoc@Admin";
+                var message = "Tap on link to create account on HalloDoc: http://localhost:5059/Login/CreateAccount";
 
-                var requestNew = new Request();
+                await _requestFormService.SendMail(receiver, subject, message);
+            }
 
-                requestNew.RequestTypeId = 3;
-                requestNew.UserId = userFetched?.UserId;
-                requestNew.FirstName = frvm.FamilyFirstName;
-                requestNew.LastName = frvm.FamilyLastName;
-                requestNew.PhoneNumber = frvm.FamilyPhoneNumber;
-                requestNew.Email = frvm.FamilyEmail;
-                requestNew.Status = 1;
-                requestNew.CreatedDate = DateTime.Now;
-                requestNew.IsUrgentEmailSent = false;
-                requestNew.RelationName = frvm.FamilyRelation;
-                requestNew.PatientAccountId = aspnetuserFetched?.Id;
-                requestNew.CreatedUserId = requestorUser?.UserId;
-
-                _context.Add(requestNew);
-                await _context.SaveChangesAsync();
-
-                var requestClientNew = CreateRequestClient(frvm.PatientInfo, requestNew);
-
-                _context.Add(requestClientNew);
-                await _context.SaveChangesAsync();
-
-                if (frvm.PatientInfo.MultipleFiles != null)
-                {
-
-                    List<string> files = UploadFilesToServer(frvm.PatientInfo.MultipleFiles, requestNew.RequestId);
-                    foreach (string file in files)
-                    {
-                        var reqwisefileNew = new RequestWiseFile();
-                        reqwisefileNew.RequestId = requestNew.RequestId;
-                        reqwisefileNew.FileName = file;
-                        reqwisefileNew.CreatedDate = DateTime.Now;
-
-                        _context.Add(reqwisefileNew);
-                        await _context.SaveChangesAsync();
-                    }
-
-                }
-
+            bool isrequestcreated = await _requestFormService.CreateFamilyRequest(frvm);
+            if (isrequestcreated)
+            {
                 return RedirectToAction("SubmitRequest");
             }
-            return View("~/Views/Home/Index.cshtml");
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult ConciergeRequest()
@@ -302,57 +199,29 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConciergeRequest(ConciergeRequestViewModel crvm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == crvm.PatientInfo.Email);
-                if (aspnetuserFetched == null)
-                {
-                    // SEND MAIL WITH REGISTER LINK
-                }
-                var conciergeFetched = await _context.Requests.FirstOrDefaultAsync(m => m.Email == crvm.ConciergeEmail && m.RequestTypeId == 4);
-                if (conciergeFetched == null)
-                {
-                    var conciergeNew = new Concierge();
-                    conciergeNew.ConciergeName = crvm.ConciergePropertyName;
-                    conciergeNew.Address = crvm.ConciergeStreet + ", " + crvm.ConciergeCity + ", " + crvm.ConciergeState + ", " + crvm.ConciergeZipCode;
-                    conciergeNew.Street = crvm.ConciergeStreet;
-                    conciergeNew.City = crvm.ConciergeCity;
-                    conciergeNew.State = crvm.ConciergeState;
-                    conciergeNew.ZipCode = crvm.ConciergeZipCode;
-                    conciergeNew.CreatedDate = DateTime.Now;
-                    conciergeNew.RegionId = 1;
+                return View("~/Views/Home/Index.cshtml");
+            }
+            
+            bool isUserExists = await _requestFormService.CheckUser(crvm.PatientInfo.Email);
+            if (!isUserExists)
+            {
+                var receiver = crvm.PatientInfo.Email;
 
-                    _context.Add(conciergeNew);
-                    await _context.SaveChangesAsync();
-                }
-                var userFetched = await _context.Users.FirstOrDefaultAsync(m => m.Email == crvm.PatientInfo.Email);
-                var requestorUser = await _context.Users.FirstOrDefaultAsync(m => m.Email == crvm.ConciergeEmail);
+                var subject = "Create Account from HalloDoc@Admin";
+                var message = "Tap on link to create account on HalloDoc: http://localhost:5059/Login/CreateAccount";
 
-                var requestNew = new Request();
+                await _requestFormService.SendMail(receiver, subject, message);
+            }
 
-                requestNew.RequestTypeId = 4;
-                requestNew.UserId = userFetched?.UserId;
-                requestNew.FirstName = crvm.ConciergeFirstName;
-                requestNew.LastName = crvm.ConciergeLastName;
-                requestNew.PhoneNumber = crvm.ConciergePhoneNumber;
-                requestNew.Email = crvm.ConciergeEmail;
-                requestNew.Status = 1;
-                requestNew.CreatedDate = DateTime.Now;
-                requestNew.IsUrgentEmailSent = false;
-                requestNew.PatientAccountId = aspnetuserFetched?.Id;
-                requestNew.CreatedUserId = requestorUser?.UserId;
-
-                _context.Add(requestNew);
-                await _context.SaveChangesAsync();
-
-                var requestClientNew = CreateRequestClient(crvm.PatientInfo, requestNew);
-
-                _context.Add(requestClientNew);
-                await _context.SaveChangesAsync();
-
+            bool isrequestcreated = await _requestFormService.CreateConciergeRequest(crvm);
+            if (isrequestcreated)
+            {
                 return RedirectToAction("SubmitRequest");
             }
-            return View("~/Views/Home/Index.cshtml");
+            return RedirectToAction("Index", "Home");
+
         }
 
         public IActionResult BusinessRequest()
@@ -364,66 +233,28 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BusinessRequest(BusinessRequestViewModel brvm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == brvm.PatientInfo.Email);
-                if (aspnetuserFetched == null)
-                {
-                    // SEND MAIL WITH REGISTER LINK
-                }
-                var businessFetched = await _context.Businesses.FirstOrDefaultAsync(m => m.PhoneNumber == brvm.BusinessPhoneNumber && m.Name == brvm.BusinessName);
-                if (businessFetched == null)
-                {
-                    var businessNew = new Business();
-                    businessNew.Name = brvm.BusinessName;
-                    businessNew.PhoneNumber = brvm.BusinessPhoneNumber;
-                    businessNew.CreatedBy = "admin";
-                    businessNew.CreatedDate = DateTime.Now;
+                return View("~/Views/Home/Index.cshtml");
+            }
+            bool isUserExists = await _requestFormService.CheckUser(brvm.PatientInfo.Email);
+            if (!isUserExists)
+            {
+                var receiver = brvm.PatientInfo.Email;
 
-                    _context.Add(businessNew);
-                    await _context.SaveChangesAsync();
-                }
+                var subject = "Create Account from HalloDoc@Admin";
+                var message = "Tap on link to create account on HalloDoc: http://localhost:5059/Login/CreateAccount";
 
-                var userFetched = await _context.Users.FirstOrDefaultAsync(m => m.Email == brvm.PatientInfo.Email);
-                var requestorUser = await _context.Users.FirstOrDefaultAsync(m => m.Email == brvm.BusinessEmail);
+                await _requestFormService.SendMail(receiver, subject, message);
+            }
 
-                var requestNew = new Request();
-
-                requestNew.RequestTypeId = 1;
-                requestNew.UserId = userFetched?.UserId;
-                requestNew.FirstName = brvm.BusinessFirstName;
-                requestNew.LastName = brvm.BusinessLastName;
-                requestNew.PhoneNumber = brvm.BusinessPhoneNumber;
-                requestNew.Email = brvm.BusinessEmail;
-                requestNew.Status = 1;
-                requestNew.CreatedDate = DateTime.Now;
-                requestNew.IsUrgentEmailSent = false;
-                requestNew.PatientAccountId = aspnetuserFetched?.Id;
-                requestNew.CreatedUserId = requestorUser?.UserId;
-
-                _context.Add(requestNew);
-                await _context.SaveChangesAsync();
-
-                var requestClientNew = CreateRequestClient(brvm.PatientInfo, requestNew);
-
-                _context.Add(requestClientNew);
-                await _context.SaveChangesAsync();
-
-                businessFetched = await _context.Businesses.FirstOrDefaultAsync(m => m.PhoneNumber == brvm.BusinessPhoneNumber && m.Name == brvm.BusinessName);
-
-                var requestBusinessNew = new RequestBusiness();
-                requestBusinessNew.RequestId = requestNew.RequestId;
-                if (businessFetched != null)
-                {
-                    requestBusinessNew.BusinessId = businessFetched.BusinessId;
-                }
-
-                _context.Add(requestBusinessNew);
-                await _context.SaveChangesAsync();
-
+            bool isrequestcreated = await _requestFormService.CreateBusinessRequest(brvm);
+            if (isrequestcreated)
+            {
                 return RedirectToAction("SubmitRequest");
             }
-            return View("~/Views/Home/Index.cshtml");
+            return RedirectToAction("Index", "Home");
+            
         }
 
 
@@ -431,8 +262,8 @@ namespace HalloDocMVC.Controllers
         {
             if (email != null)
             {
-                var emailFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == email);
-                if (emailFetched != null)
+                bool isUserExist = await _requestFormService.CheckUser(email);
+                if (isUserExist)
                 {
                     return Json(new { status = "valid" });
                 }

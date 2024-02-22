@@ -2,6 +2,7 @@
 using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using HalloDocServices.Interface;
+using System.Text;
 
 namespace HalloDocMVC.Controllers
 {
@@ -12,6 +13,20 @@ namespace HalloDocMVC.Controllers
         public LoginController(ILoginService loginService)
         {
             _loginService = loginService;
+        }
+
+        public static string? decrypt(string emailToken)
+        {
+            if (emailToken == null)
+            {
+                return null;
+            }
+            else
+            {
+                byte[] encryptedEmail = Convert.FromBase64String(emailToken);
+                string email = ASCIIEncoding.ASCII.GetString(encryptedEmail);
+                return email;
+            }
         }
 
         public IActionResult Index()
@@ -68,9 +83,13 @@ namespace HalloDocMVC.Controllers
             return View();
         }
 
-        public IActionResult CreateAccount()
+        public IActionResult CreateAccount(string emailtoken)
         {
-            return View();
+            
+            CreateAccountViewModel Credentials = new CreateAccountViewModel();
+            string? email = decrypt(emailtoken);
+            Credentials.Email = email;
+            return View(Credentials);
         }
 
         [HttpPost]

@@ -9,12 +9,33 @@ namespace HalloDocRepository.Repository.Interface
 {
     public interface IRequestRepository
     {
+        // Request Client 
+
         Task<RequestClient> GetLastRequestClient(string email);
 
         Task<List<RequestClient>> GetRequestsClientsByEmail(string email);
 
+        Task<RequestClient> CreateRequestClient(RequestClient requestClient);
+
+
+        // Request 
+
         Task<List<Request>> GetAllRequests();
 
         Task<bool> UpdateRequests(List<Request> requests);
+
+        Task<Request> CreateRequest(Request request);
+
+        Task<Request> GetRequestByConciergeEmail(string email);
+
+
+        // Request Wise File
+
+        Task<List<RequestWiseFile>> CreateRequestWiseFiles(List<RequestWiseFile> requestWiseFiles);
+
+
+        // Request Business
+
+        Task<RequestBusiness> CreateRequestBusiness(RequestBusiness requestBusiness);
     }
 }

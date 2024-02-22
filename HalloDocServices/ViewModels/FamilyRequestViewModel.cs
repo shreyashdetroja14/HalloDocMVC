@@ -9,7 +9,7 @@ namespace HalloDocServices.ViewModels
 
         public string? FamilyPhoneNumber { get; set; }
 
-        public string? FamilyEmail { get; set; }
+        public string? FamilyEmail { get; set; } 
 
         public string? FamilyRelation { get; set; }
 

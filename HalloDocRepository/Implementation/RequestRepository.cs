@@ -43,5 +43,43 @@ namespace HalloDocRepository.Implementation
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<Request> CreateRequest(Request request)
+        {
+            _context.Add(request);
+            await _context.SaveChangesAsync();
+
+            return request;
+        }
+
+        public async Task<RequestClient> CreateRequestClient(RequestClient requestClient)
+        {
+            _context.Add(requestClient);
+            await _context.SaveChangesAsync();
+
+            return requestClient;
+        }
+
+        public async Task<List<RequestWiseFile>> CreateRequestWiseFiles(List<RequestWiseFile> requestWiseFiles)
+        {
+            _context.RequestWiseFiles.AddRange(requestWiseFiles);
+            await _context.SaveChangesAsync();
+
+            return requestWiseFiles;
+        }
+
+        public async Task<Request> GetRequestByConciergeEmail(string email)
+        {
+            var conciergeRequest = await _context.Requests.FirstOrDefaultAsync(m => m.Email == email && m.RequestTypeId == 4);
+            return conciergeRequest;
+        }
+
+        public async Task<RequestBusiness> CreateRequestBusiness(RequestBusiness requestBusiness)
+        {
+            _context.Add(requestBusiness);
+            await _context.SaveChangesAsync();
+
+            return requestBusiness;
+        }
     }
 }

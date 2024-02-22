@@ -9,6 +9,8 @@ namespace HalloDocRepository.Interface
 {
     public interface IUserRepository
     {
+        // AspNetUser
+
         Task<AspNetUser> GetAspNetUserByEmail(string email);
 
         Task<AspNetUser> GetAspNetUserById(string id);
@@ -17,7 +19,25 @@ namespace HalloDocRepository.Interface
 
         Task<bool> UpdateAspNetUser(AspNetUser aspnetuser);
 
+
+        // User
+
         Task<User> CreateUser(User user);
 
+        Task<User> GetUserByAspNetUserId(string? aspnetuserId);
+
+        Task<User> GetUserByEmail(string? email);
+
+
+        // Concierge
+
+        Task<Concierge> CreateConcierge(Concierge concierge);
+
+
+        // Business
+
+        Task<Business> GetBusinessByPhoneAndName(string? phone, string name);
+
+        Task<Business> CreateBusiness(Business business);
     }
 }

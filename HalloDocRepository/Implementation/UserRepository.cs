@@ -2,6 +2,7 @@
 using HalloDocEntities.Models;
 using HalloDocRepository.Interface;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,6 +52,40 @@ namespace HalloDocRepository.Implementation
         {
             var aspnetuser = await _context.AspNetUsers.FindAsync(id);
             return aspnetuser;
+        }
+
+        public async Task<User> GetUserByAspNetUserId(string? aspnetuserId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.AspNetUserId == aspnetuserId);
+            return user;
+        }
+
+        public async Task<User> GetUserByEmail(string? email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            return user;
+        }
+
+        public async Task<Concierge> CreateConcierge(Concierge concierge)
+        {
+            _context.Add(concierge);
+            await _context.SaveChangesAsync();
+
+            return concierge;
+        }
+
+        public async Task<Business> GetBusinessByPhoneAndName(string? phone, string name)
+        {
+            var business = await _context.Businesses.FirstOrDefaultAsync(m => m.PhoneNumber == phone && m.Name == name);
+            return business;
+        }
+
+        public async Task<Business> CreateBusiness(Business business)
+        {
+            _context.Add(business);
+            await _context.SaveChangesAsync();
+
+            return business;
         }
     }
 }
