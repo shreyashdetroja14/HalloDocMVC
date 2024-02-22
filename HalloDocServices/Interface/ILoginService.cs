@@ -9,10 +9,16 @@ namespace HalloDocServices.Interface
 {
     public interface ILoginService
     {
-        Task<String> CheckLogin(LoginViewModel LoginInfo);
+        Task<string> CheckLogin(LoginViewModel LoginInfo);
 
         Task<string> CreateAccount(CreateAccountViewModel Credentials);
 
         Task<bool> ResetPassword(CreateAccountViewModel Credentials);
+
+        Task<bool> CheckUser(string email);
+
+        Task<bool> SendMail(string receiver, string subject, string message);
+
+        Task<bool> ValidateToken(string token);
     }
 }

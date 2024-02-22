@@ -38,5 +38,19 @@ namespace HalloDocRepository.Implementation
 
             return user;
         }
+
+        public async Task<bool> UpdateAspNetUser(AspNetUser aspnetuser)
+        {
+            _context.AspNetUsers.Update(aspnetuser);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<AspNetUser> GetAspNetUserById(string id)
+        {
+            var aspnetuser = await _context.AspNetUsers.FindAsync(id);
+            return aspnetuser;
+        }
     }
 }

@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
@@ -118,7 +120,7 @@ namespace HalloDocServices.Implementation
 
         public async Task<bool> ResetPassword(CreateAccountViewModel Credentials)
         {
-            var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == Credentials.Email);
+            var aspnetuserFetched = await _userRepository.GetAspNetUserByEmail(Credentials.Email);
             if (aspnetuserFetched == null)
             {
                 return false;
@@ -126,9 +128,51 @@ namespace HalloDocServices.Implementation
             aspnetuserFetched.PasswordHash = BCrypt.Net.BCrypt.HashPassword(Credentials.Password);
             aspnetuserFetched.ModifiedDate = DateTime.Now;
 
-            _context.AspNetUsers.Update(aspnetuserFetched);
-            await _context.SaveChangesAsync();
+            await _userRepository.UpdateAspNetUser(aspnetuserFetched);
 
+            return true;
+        }
+
+        public async Task<bool> CheckUser(string email)
+        {
+            var aspnetuser = await _userRepository.GetAspNetUserByEmail(email);
+            if (aspnetuser == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<bool> SendMail(string receiver, string subject, string message)
+        {
+            var mail = "tatva.dotnet.shreyashdetroja@outlook.com";
+            var password = "Dotnet_tatvasoft@14";
+
+            var aspnetuserFetched = await _userRepository.GetAspNetUserByEmail(receiver);
+
+            string mailbody = message + "?email=" + receiver + "&token=" + aspnetuserFetched.Id;
+
+            var client = new SmtpClient("smtp.office365.com")
+            {
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(mail, password)
+            };
+
+            await client.SendMailAsync(new MailMessage(from: mail, to: receiver, subject, mailbody));
+
+            return true;
+        }
+
+        public async Task<bool> ValidateToken(string token)
+        {
+            var aspuserFetched = await _userRepository.GetAspNetUserById(token);
+            if(aspuserFetched == null)
+            {
+                return false;
+            }
             return true;
         }
     }

@@ -39,7 +39,7 @@ namespace HalloDocRepository.Implementation
 
         public async Task<bool> UpdateRequests(List<Request> requests)
         {
-            _context.UpdateRange(requests);
+            _context.Requests.UpdateRange(requests);
             await _context.SaveChangesAsync();
             return true;
         }

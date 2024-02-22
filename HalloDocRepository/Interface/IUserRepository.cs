@@ -11,8 +11,13 @@ namespace HalloDocRepository.Interface
     {
         Task<AspNetUser> GetAspNetUserByEmail(string email);
 
+        Task<AspNetUser> GetAspNetUserById(string id);
+
         Task<AspNetUser> CreateAspNetUser(AspNetUser aspnetuser);
 
+        Task<bool> UpdateAspNetUser(AspNetUser aspnetuser);
+
         Task<User> CreateUser(User user);
+
     }
 }

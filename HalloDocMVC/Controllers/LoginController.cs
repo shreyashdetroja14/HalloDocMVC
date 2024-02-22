@@ -1,21 +1,16 @@
-﻿using HalloDocEntities.Data;
-
-using HalloDocEntities.Models;
+﻿
 using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using HalloDocServices.Interface;
 
 namespace HalloDocMVC.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly HalloDocContext _context;
         private readonly ILoginService _loginService;
 
-        public LoginController(HalloDocContext context, ILoginService loginService)
+        public LoginController(ILoginService loginService)
         {
-            _context = context;
             _loginService = loginService;
         }
 
@@ -23,10 +18,7 @@ namespace HalloDocMVC.Controllers
         {
             return View();
         }
-        public IActionResult ForgotPassword()
-        {
-            return View();
-        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CheckLogin(LoginViewModel LoginInfo)
@@ -47,15 +39,33 @@ namespace HalloDocMVC.Controllers
 
             return RedirectToAction("Dashboard", "Patient", new { id = aspnetuserId });
 
-            /*var userFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == logininfo.Email);
-            if (userFetched != null)
+        }
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel Info)
+        {
+            bool isEmailValid = await _loginService.CheckUser(Info.Email);
+            if (!isEmailValid)
             {
-                if (BCrypt.Net.BCrypt.Verify(logininfo.Password, userFetched.PasswordHash))
-                {
-                    return RedirectToAction("Dashboard", "Patient", new { id = userFetched.Id });
-                }
+                ViewBag.Message = "There is no account with this email. Enter a valid email.";
+                return View();
             }
-            return View("Index");*/
+
+            var receiver = Info.Email;
+
+            var subject = "Reset Password from HalloDoc@Admin";
+            var message = "Tap on link to reset password: http://localhost:5059/Login/ResetPassword";
+
+            await _loginService.SendMail(receiver, subject, message);
+
+            ViewBag.Message = "We have sent you a mail on your email address. Please reset your password from that link.";
+            return View();
         }
 
         public IActionResult CreateAccount()
@@ -95,67 +105,18 @@ namespace HalloDocMVC.Controllers
             {
                 return View("~/Views/Login/Index.cshtml");
             }
-
-            /*var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == Credentials.Email);
-            if (aspnetuserFetched != null)
-            {
-                ViewBag.Message = "You already have an account with this email!";
-                return View();
-            }
-            var aspnetuserNew = new AspNetUser();
-            aspnetuserNew.Id = Guid.NewGuid().ToString();
-            aspnetuserNew.UserName = Credentials.Email;
-            aspnetuserNew.Email = Credentials.Email;
-            aspnetuserNew.PasswordHash = BCrypt.Net.BCrypt.HashPassword(Credentials.Password);
-            aspnetuserNew.CreatedDate = DateTime.Now;
-
-            _context.AspNetUsers.Add(aspnetuserNew);
-            await _context.SaveChangesAsync();
-
-            var requestClientFetched = await _context.RequestClients.OrderBy(x => x.RequestClientId).LastOrDefaultAsync(m => m.Email == Credentials.Email);
-
-            var userNew = new User();
-            userNew.AspNetUserId = aspnetuserNew.Id;
-            userNew.Email = aspnetuserNew.Email;
-            
-            if (requestClientFetched != null)
-            {
-                var requests = _context.Requests.Where(x => x.RequestId == requestClientFetched.RequestId).ToList();
-                userNew.FirstName = requestClientFetched.FirstName;
-                userNew.LastName = requestClientFetched?.LastName;
-                userNew.Mobile = requestClientFetched?.PhoneNumber;
-                userNew.Street = requestClientFetched?.Street;
-                userNew.City = requestClientFetched?.City;
-                userNew.State = requestClientFetched?.State;
-                userNew.ZipCode = requestClientFetched?.ZipCode;
-                userNew.StrMonth = requestClientFetched?.StrMonth;
-                userNew.IntDate = requestClientFetched?.IntDate;
-                userNew.IntYear = requestClientFetched?.IntYear;
-                userNew.CreatedBy = "admin";
-                userNew.CreatedDate = DateTime.Now;
-
-                _context.Users.Add(userNew);
-                await _context.SaveChangesAsync();
-
-                foreach (var request in requests)
-                {
-                    request.UserId = userNew.UserId;
-                    _context.Update(request);
-                }
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                ViewBag.Message = "Looks like you are not eligible to create an account!";
-                return View(Credentials);
-            }
-
-            return View("~/Views/Login/Index.cshtml");*/
         }
 
-        public IActionResult ResetPassword()
+        public async Task<IActionResult> ResetPassword(string email, string token)
         {
-            return View();
+            bool isTokenValid = await _loginService.ValidateToken(token);
+            if (!isTokenValid)
+            {
+                return NotFound();
+            }
+            CreateAccountViewModel Credentials = new CreateAccountViewModel();
+            Credentials.Email = email;
+            return View(Credentials);
         }
 
         [HttpPost]
@@ -178,24 +139,11 @@ namespace HalloDocMVC.Controllers
 
             if (!isPasswordReset)
             {
-                ViewBag.Message = "Please try again";
+                ViewBag.Message = "Unfortunately there is no account with this email";
                 return View(Credentials);
             }
 
             return View("~/Views/Login/Index.cshtml");
-
-            /*var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == Credentials.Email);
-            if (aspnetuserFetched == null)
-            {
-                ViewBag.Message = "Please enter correct Email";
-                return View(Credentials);
-            }
-            aspnetuserFetched.PasswordHash = BCrypt.Net.BCrypt.HashPassword(Credentials.Password);
-
-            _context.AspNetUsers.Update(aspnetuserFetched);
-            await _context.SaveChangesAsync();*/
-
-
         }
     }
 }
