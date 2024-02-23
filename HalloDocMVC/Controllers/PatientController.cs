@@ -1,6 +1,7 @@
 ﻿using HalloDocEntities.Data;
 
 using HalloDocEntities.Models;
+using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,12 @@ namespace HalloDocMVC.Controllers
     public class PatientController : Controller
     {
         private readonly HalloDocContext _context;
+        private readonly IPatientService _patientService;
 
-        public PatientController(HalloDocContext context)
+        public PatientController(HalloDocContext context, IPatientService patientService)
         {
             _context = context;
+            _patientService = patientService;
         }
 
         public async Task<IActionResult> GoToDashboard(int UserId)
@@ -40,19 +43,33 @@ namespace HalloDocMVC.Controllers
                 
             }*/
 
-            var userFetched = await _context.Users.FirstOrDefaultAsync(m => m.AspNetUserId == id);
+            /*var userFetched = await _context.Users.FirstOrDefaultAsync(m => m.AspNetUserId == id);*/
 
-            if (userFetched == null)
+            int userId = await _patientService.CheckUser(id);
+            if (userId == 0)
             {
                 return NotFound();
             }
-            var filecountgrouped = (from rwf in _context.RequestWiseFiles
+
+            List<DashboardRequestViewModel> requestlist = await _patientService.GetRequestList(userId);
+
+            /*var filecountgrouped = (from rwf in _context.RequestWiseFiles
                                     group rwf by rwf.RequestId into gp
                                     select new
                                     {
                                         RequestId = gp.Key,
                                         Cnt = gp.Count()
                                     }).ToList();
+
+            var filecountgrouped = _context.RequestWiseFiles
+                                    .GroupBy(rwf => rwf.RequestId)
+                                    .Select(gp => new
+                                    {
+                                        RequestId = gp.Key,
+                                        Cnt = gp.Count()
+                                    })
+                                    .ToList();
+
 
 
             var data = from requests in _context.Requests.ToList()
@@ -73,7 +90,7 @@ namespace HalloDocMVC.Controllers
             List<DashboardRequestViewModel> requestlist = new List<DashboardRequestViewModel>();
             foreach (var r in data)
             {
-                /*Debug.Print(($@"""{r.RequestId}"" ""{r.CreatedDate}"" ""{r.FileCount}"" "));*/
+                *//*Debug.Print(($@"""{r.RequestId}"" ""{r.CreatedDate}"" ""{r.FileCount}"" "));*//*
                 requestlist.Add(new DashboardRequestViewModel
                 {
                     RequestId = r.RequestId,
@@ -84,11 +101,12 @@ namespace HalloDocMVC.Controllers
                 });
 
 
-            }
+            }*/
 
             //Pass user id to layout
-            ViewBag.Fullname = userFetched?.FirstName + " " + userFetched?.LastName;
-            ViewBag.UserId = userFetched?.UserId;
+            //ViewBag.Fullname = userFetched?.FirstName + " " + userFetched?.LastName;
+            //ViewBag.UserId = userFetched?.UserId;
+            ViewBag.UserId = userId;
 
             return View(requestlist);
         }

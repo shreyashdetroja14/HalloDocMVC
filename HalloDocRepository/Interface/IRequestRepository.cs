@@ -28,10 +28,16 @@ namespace HalloDocRepository.Repository.Interface
 
         Task<Request> GetRequestByConciergeEmail(string email);
 
+        Task<List<Request>> GetAllRequestsByUserId(int userId);
+
+        Task<List<Request>> GetRequestsWithFileCount(int userId);
+
 
         // Request Wise File
 
         Task<List<RequestWiseFile>> CreateRequestWiseFiles(List<RequestWiseFile> requestWiseFiles);
+
+        Task<List<RequestWiseFile>> GetAllRequestWiseFiles();
 
 
         // Request Business

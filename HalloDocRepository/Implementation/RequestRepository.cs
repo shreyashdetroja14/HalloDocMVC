@@ -81,5 +81,22 @@ namespace HalloDocRepository.Implementation
 
             return requestBusiness;
         }
+
+        public async Task<List<RequestWiseFile>> GetAllRequestWiseFiles()
+        {
+            List<RequestWiseFile> requestWiseFiles = await _context.RequestWiseFiles.ToListAsync();
+            return requestWiseFiles;
+        }
+
+        public async Task<List<Request>> GetAllRequestsByUserId(int userId)
+        {
+            List<Request> requests = await _context.Requests.Where(r => r.UserId == userId).ToListAsync();
+            return requests;
+        }
+
+        public async Task<List<Request>> GetRequestsWithFileCount(int userId)
+        {
+            return await _context.Requests.Include(x => x.RequestWiseFiles).Where(x => x.UserId == userId).ToListAsync();
+        }
     }
 }
