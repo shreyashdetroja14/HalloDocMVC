@@ -22,5 +22,7 @@ namespace HalloDocServices.Interface
         Task<int> GetUserInfoByRequestId(int requestId);
 
         Task<RequestWiseFile> RequestFileData(int fileId);
+
+        Task<ProfileViewModel> GetProfileDetails(int userId);
     }
 }

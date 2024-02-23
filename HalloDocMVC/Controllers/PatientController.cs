@@ -266,36 +266,10 @@ namespace HalloDocMVC.Controllers
 
         public async Task<IActionResult> Profile(int UserId)
         {
-            var userFetched = await _context.Users.FirstOrDefaultAsync(x => x.UserId == UserId);
-            if (userFetched != null)
-            {
-                ProfileViewModel ProfileDetails = new ProfileViewModel();
-                ProfileDetails.FirstName = userFetched.FirstName;
-                ProfileDetails.LastName = userFetched.LastName;
-                if (userFetched.IntDate.HasValue && userFetched.IntYear.HasValue && userFetched.StrMonth != null)
-                {
-                    DateTime monthDateTime = DateTime.ParseExact(userFetched.StrMonth, "MMMM", CultureInfo.InvariantCulture);
-                    int month = monthDateTime.Month;
-                    DateOnly date = new DateOnly((int)userFetched.IntYear, month, userFetched.IntDate.Value);
-                    ProfileDetails.DOB = date.ToString("yyyy-MM-dd");
-                }
-                ProfileDetails.PhoneNumber = userFetched.Mobile;
-                ProfileDetails.Email = userFetched.Email;
-                ProfileDetails.Street = userFetched.Street;
-                ProfileDetails.City = userFetched.City;
-                ProfileDetails.State = userFetched.State;
-                ProfileDetails.ZipCode = userFetched.ZipCode;
-
-
-
-                // Send userid to view 
-                ViewBag.Fullname = userFetched?.FirstName + " " + userFetched?.LastName;
-                ViewBag.UserId = userFetched?.UserId;
-
-                return View(ProfileDetails);
-            }
-
-            return View();
+            var profileDetails = await _patientService.GetProfileDetails(UserId);
+            
+            ViewBag.UserId = profileDetails.UserId;
+            return View(profileDetails);
         }
 
         [HttpPost]

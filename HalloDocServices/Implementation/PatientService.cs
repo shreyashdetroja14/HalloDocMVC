@@ -4,6 +4,7 @@ using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace HalloDocServices.Implementation
 {
@@ -145,6 +146,31 @@ namespace HalloDocServices.Implementation
         {
             var requestwisefileFetched = await _requestRepository.GetRequestWiseFileByFileId(fileId);
             return requestwisefileFetched;
+        }
+
+        public async Task<ProfileViewModel> GetProfileDetails(int userId)
+        {
+            var userFetched = await _userRepository.GetUserByUserId(userId);
+
+            ProfileViewModel ProfileDetails = new ProfileViewModel();
+            ProfileDetails.UserId = userId;
+            ProfileDetails.FirstName = userFetched.FirstName;
+            ProfileDetails.LastName = userFetched.LastName;
+            if (userFetched.IntDate.HasValue && userFetched.IntYear.HasValue && userFetched.StrMonth != null)
+            {
+                DateTime monthDateTime = DateTime.ParseExact(userFetched.StrMonth, "MMMM", CultureInfo.InvariantCulture);
+                int month = monthDateTime.Month;
+                DateOnly date = new DateOnly((int)userFetched.IntYear, month, userFetched.IntDate.Value);
+                ProfileDetails.DOB = date.ToString("yyyy-MM-dd");
+            }
+            ProfileDetails.PhoneNumber = userFetched.Mobile;
+            ProfileDetails.Email = userFetched.Email;
+            ProfileDetails.Street = userFetched.Street;
+            ProfileDetails.City = userFetched.City;
+            ProfileDetails.State = userFetched.State;
+            ProfileDetails.ZipCode = userFetched.ZipCode;
+
+            return ProfileDetails;
         }
     }
 }
