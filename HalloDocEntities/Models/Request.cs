@@ -106,6 +106,10 @@ public partial class Request
     [Column("created_user_id")]
     public int? CreatedUserId { get; set; }
 
+    [ForeignKey("PhysicianId")]
+    [InverseProperty("Requests")]
+    public virtual Physician? Physician { get; set; }
+
     [InverseProperty("Request")]
     public virtual ICollection<RequestBusiness> RequestBusinesses { get; set; } = new List<RequestBusiness>();
 

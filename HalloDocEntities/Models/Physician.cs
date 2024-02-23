@@ -139,4 +139,7 @@ public partial class Physician
     [ForeignKey("RegionId")]
     [InverseProperty("Physicians")]
     public virtual Region? Region { get; set; }
+
+    [InverseProperty("Physician")]
+    public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
 }

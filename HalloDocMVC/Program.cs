@@ -1,11 +1,10 @@
 using HalloDocEntities.Data;
-using HalloDocEntities.Models;
 using HalloDocRepository.Implementation;
 using HalloDocRepository.Interface;
-using HalloDocServices.Interface;
 using Microsoft.EntityFrameworkCore;
 using HalloDocServices.Implementation;
-using HalloDocRepository.Repository.Interface;
+using HalloDocServices.Interface;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +18,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IRequestFormService, RequestFormService>();
 builder.Services.AddScoped<IPatientService, PatientService>();
+builder.Services.AddScoped<IPhysicianRepository, PhysicianRepository>();
 
 var app = builder.Build();
 

@@ -1,6 +1,6 @@
 ﻿using HalloDocEntities.Data;
 using HalloDocEntities.Models;
-using HalloDocRepository.Repository.Interface;
+using HalloDocRepository.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -96,7 +96,31 @@ namespace HalloDocRepository.Implementation
 
         public async Task<List<Request>> GetRequestsWithFileCount(int userId)
         {
-            return await _context.Requests.Include(x => x.RequestWiseFiles).Where(x => x.UserId == userId).ToListAsync();
+            return await _context.Requests.Include(x => x.RequestWiseFiles).Include(x => x.Physician).Where(x => x.UserId == userId).ToListAsync();
+        }
+
+        public async Task<List<RequestWiseFile>> GetRequestWiseFilesByRequestId(int requestId)
+        {
+            var requestwisefiles = await _context.RequestWiseFiles.Where(x => x.RequestId == requestId).ToListAsync();
+            return requestwisefiles;
+        }
+
+        public async Task<Request> GetRequestByRequestId(int requestId)
+        {
+            var request = await _context.Requests.FirstOrDefaultAsync(x => x.RequestId == requestId);
+            return request;
+        }
+
+        public async Task<List<Request>> GetRequestByRequestIdAsList(int requestId)
+        {
+            var requestAsList = await _context.Requests.Where(x => x.RequestId == requestId).ToListAsync();
+            return requestAsList;
+        }
+
+        public async Task<RequestWiseFile> GetRequestWiseFileByFileId(int fileId)
+        {
+            var requestwisefile = await _context.RequestWiseFiles.FindAsync(fileId);
+            return requestwisefile;
         }
     }
 }

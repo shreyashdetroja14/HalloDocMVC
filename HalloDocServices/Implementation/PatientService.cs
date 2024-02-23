@@ -1,14 +1,9 @@
-﻿using HalloDocRepository.Interface;
-using HalloDocRepository.Repository.Interface;
+﻿using HalloDocEntities.Models;
+using HalloDocRepository.Interface;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HalloDocServices.Implementation
 {
@@ -47,7 +42,7 @@ namespace HalloDocServices.Implementation
             {
                 count = x.RequestWiseFiles.Count,
                 request = x,
-                files = x.RequestWiseFiles
+                physicianName = x.Physician?.FirstName + " " + x.Physician?.LastName
             });
 
             List<DashboardRequestViewModel> requestlist = new List<DashboardRequestViewModel>();
@@ -60,11 +55,96 @@ namespace HalloDocServices.Implementation
                     CreateDate = DateOnly.FromDateTime(r.request.CreatedDate),
                     Status = r.request.Status,
                     Count = r.count,
-                    PhysicianId = r.request.PhysicianId
+                    PhysicianName = r.physicianName
                 });
             }
 
             return requestlist;
+        }
+
+        public async Task<List<RequestFileViewModel>> GetRequestFiles(int requestId)
+        {
+            var requestwisefilesFetched = await _requestRepository.GetRequestWiseFilesByRequestId(requestId);
+            var requestFetched = await _requestRepository.GetRequestByRequestIdAsList(requestId);
+            
+
+            var data = requestwisefilesFetched.Join(requestFetched,
+                rwf => rwf.RequestId,
+                req => req.RequestId,
+                (rwf, req) => new {rwf, req}
+                );
+
+            /*var data = from requests in _context.Requests.ToList()
+                       join files in requestwisefilesFetched
+                       on requests.RequestId equals files.RequestId
+                       select new
+                       {
+                           requests,
+                           files
+                       };*/
+
+            List<RequestFileViewModel> requestfilelist = new List<RequestFileViewModel>();
+            foreach (var row in data)
+            {
+                requestfilelist.Add(new RequestFileViewModel
+                {
+                    FileId = row.rwf.RequestWiseFileId,
+                    FileName = Path.GetFileName(row.rwf.FileName),
+                    Uploader = row.req.FirstName + " " + row.req.LastName,
+                    UploadDate = DateOnly.FromDateTime(row.rwf.CreatedDate),
+                    FilePath = row.rwf.FileName
+                });
+            }
+
+            return requestfilelist;
+        }
+
+        public async Task<int> GetUserInfoByRequestId(int requestId)
+        {
+            var requestFetched = await _requestRepository.GetRequestByRequestId(requestId);
+            return requestFetched.UserId??0;
+        }
+
+        public async Task UploadFiles(IEnumerable<IFormFile> MultipleFiles, int requestId)
+        {
+            List<string> files = new List<string>();
+            foreach (var UploadFile in MultipleFiles)
+            {
+                string FilePath = "wwwroot\\Upload\\" + requestId;
+                string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                string newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}-{DateTime.Now.ToString("yyyyMMddhhmmss")}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
+
+                string fileNameWithPath = Path.Combine(path, newfilename);
+                files.Add(FilePath.Replace("wwwroot\\Upload\\", "/Upload/") + "/" + newfilename);
+
+                using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                {
+                    UploadFile.CopyTo(stream);
+                }
+            }
+            List<RequestWiseFile> requestWiseFiles = new List<RequestWiseFile>();
+            foreach (string file in files)
+            {
+                var reqwisefileNew = new RequestWiseFile();
+                reqwisefileNew.RequestId = requestId;
+                reqwisefileNew.FileName = file;
+                reqwisefileNew.CreatedDate = DateTime.Now;
+
+                requestWiseFiles.Add(reqwisefileNew);
+            }
+            await _requestRepository.CreateRequestWiseFiles(requestWiseFiles);
+        }
+
+        public async Task<RequestWiseFile> RequestFileData(int fileId)
+        {
+            var requestwisefileFetched = await _requestRepository.GetRequestWiseFileByFileId(fileId);
+            return requestwisefileFetched;
         }
     }
 }

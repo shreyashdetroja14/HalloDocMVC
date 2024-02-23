@@ -52,7 +52,7 @@
                 <div>
                     <div class="heading d-flex justify-content-between align-items-center">
                         <h4>Documents</h4>
-                        <a asp-action="DownloadAllFiles" asp-route-id="@Model.FileInfo?.FirstOrDefault()?.FileId" class="btn btn-outline-info p-2 d-none d-md-inline">
+                        <a asp-action="DownloadAllFiles" asp-route-id="@Model.RequestId" class="btn btn-outline-info p-2 d-none d-md-inline">
                             Download All
                         </a>
                         <a asp-action="DownloadAllFiles" asp-route-id="@Model.FileInfo?.FirstOrDefault()?.FileId" class="btn btn-outline-info p-2 d-md-none">

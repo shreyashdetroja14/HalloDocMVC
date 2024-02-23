@@ -28,6 +28,8 @@ namespace HalloDocRepository.Interface
 
         Task<User> GetUserByEmail(string? email);
 
+        Task<User> GetUserByUserId(int userId);
+
 
         // Concierge
 

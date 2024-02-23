@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HalloDocRepository.Repository.Interface
+namespace HalloDocRepository.Interface
 {
     public interface IRequestRepository
     {
@@ -32,12 +32,22 @@ namespace HalloDocRepository.Repository.Interface
 
         Task<List<Request>> GetRequestsWithFileCount(int userId);
 
+        Task<Request> GetRequestByRequestId(int requestId);
+
+        Task<List<Request>> GetRequestByRequestIdAsList(int requestId);
+
+
+
 
         // Request Wise File
 
         Task<List<RequestWiseFile>> CreateRequestWiseFiles(List<RequestWiseFile> requestWiseFiles);
 
         Task<List<RequestWiseFile>> GetAllRequestWiseFiles();
+
+        Task<List<RequestWiseFile>> GetRequestWiseFilesByRequestId(int requestId);
+
+        Task<RequestWiseFile> GetRequestWiseFileByFileId(int fileId);
 
 
         // Request Business

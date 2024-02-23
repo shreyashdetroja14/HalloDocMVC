@@ -12,6 +12,6 @@
 
         public int? Count { get; set; }
 
-        public int? PhysicianId { get; set; }
+        public string PhysicianName { get; set; } = null!;
     }
 }

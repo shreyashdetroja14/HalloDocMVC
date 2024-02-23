@@ -1,7 +1,6 @@
 ﻿using HalloDocEntities.Data;
 using HalloDocEntities.Models;
 using HalloDocRepository.Interface;
-using HalloDocRepository.Repository.Interface;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using Microsoft.EntityFrameworkCore;

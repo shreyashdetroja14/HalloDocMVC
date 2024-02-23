@@ -107,13 +107,13 @@
                                     <img src="~/images/doctorIcon.svg" alt="">
                                     <span class="px-2">Provider: </span>
 
-                                    @if (request.PhysicianId == 0)
+                                    @if (request.PhysicianName.Equals(" "))
                                     {
                                         <span>-</span>
                                     }
                                     else
                                     {
-                                        <span>@request.PhysicianId</span>
+                                        <span>@request.PhysicianName</span>
                                     }
                                 </div>
                                 <div class="mb-2">

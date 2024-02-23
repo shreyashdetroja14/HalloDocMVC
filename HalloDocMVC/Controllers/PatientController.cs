@@ -113,7 +113,10 @@ namespace HalloDocMVC.Controllers
 
         public async Task<IActionResult> ViewDocuments(int requestid)
         {
-            var requestwisefilesFetched = _context.RequestWiseFiles.Where(x => x.RequestId == requestid).ToList();
+
+            List<RequestFileViewModel> requestfilelist = await _patientService.GetRequestFiles(requestid);
+
+            /*var requestwisefilesFetched = _context.RequestWiseFiles.Where(x => x.RequestId == requestid).ToList();
             var data = from requests in _context.Requests.ToList()
                        join files in requestwisefilesFetched
                        on requests.RequestId equals files.RequestId
@@ -134,7 +137,7 @@ namespace HalloDocMVC.Controllers
                     UploadDate = DateOnly.FromDateTime(row.files.CreatedDate),
                     FilePath = row.files.FileName
                 });
-            }
+            }*/
             ViewDocumentsViewModel vrvm = new()
             {
                 RequestId = requestid,
@@ -144,25 +147,30 @@ namespace HalloDocMVC.Controllers
 
 
             // Pass user id to layout
-            var requestFetched = await _context.Requests.FirstOrDefaultAsync(x => x.RequestId == requestid);
+            /*var requestFetched = await _context.Requests.FirstOrDefaultAsync(x => x.RequestId == requestid);
             if (requestFetched != null)
             {
                 var userFetched = await _context.Users.FirstOrDefaultAsync(x => x.UserId == requestFetched.UserId);
                 ViewBag.Fullname = userFetched?.FirstName + " " + userFetched?.LastName;
                 ViewBag.UserId = userFetched?.UserId;
-            }
-
+            }*/
+            int userId = await _patientService.GetUserInfoByRequestId(requestid);
+            ViewBag.UserId = userId;
 
 
             return View(vrvm);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UploadRequestFile(IEnumerable<IFormFile>? MultipleFiles, int requestid)
         {
 
-            if (MultipleFiles != null)
+            if (MultipleFiles?.Count() != 0)
             {
-                List<string> files = new List<string>();
+                await _patientService.UploadFiles(MultipleFiles, requestid);
+
+                /*List<string> files = new List<string>();
                 foreach (var UploadFile in MultipleFiles)
                 {
                     string FilePath = "wwwroot\\Upload\\" + requestid;
@@ -192,33 +200,48 @@ namespace HalloDocMVC.Controllers
 
                     _context.Add(reqwisefileNew);
                     await _context.SaveChangesAsync();
-                }
+                }*/
             }
             return RedirectToAction("ViewDocuments", new { requestid });
         }
 
-        public IActionResult DownloadFile(int id)
+        public async Task<IActionResult> DownloadFile(int id)
         {
-            var requestwisefileFetched = _context.RequestWiseFiles.Find(id);
-            string FilePath = "wwwroot\\" + requestwisefileFetched?.FileName;
+            var requestFileData = await _patientService.RequestFileData(id);
+
+            //var requestwisefileFetched = _context.RequestWiseFiles.Find(id);
+            string FilePath = "wwwroot\\" + requestFileData?.FileName;
             var path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
             //var path = "G:\\test\\hallodoccopy\\HalloDocMVC\\wwwroot\\" + requestwisefileFetched?.FileName;
             var bytes = System.IO.File.ReadAllBytes(path);
             var newfilename = Path.GetFileName(path);
 
             return File(bytes, "application/octet-stream", newfilename);
+
         }
 
-        public IActionResult DownloadAllFiles(int id)
+        public async Task<IActionResult> DownloadAllFiles(int id)
         {
+            var filesRow = await _patientService.GetRequestFiles(id);
+            MemoryStream ms = new MemoryStream();
+            using (ZipArchive zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                filesRow.ForEach(file =>
+                {
+                    string FilePath = "wwwroot\\" + file.FilePath;
+                    string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
 
-            var requestFetched = _context.RequestWiseFiles.Find(id);
-            if (requestFetched != null)
-            {
-                id = requestFetched.RequestId;
-            }
+                    ZipArchiveEntry zipEntry = zip.CreateEntry(Path.GetFileName(file.FileName));
+                    using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+                    using (Stream zipEntryStream = zipEntry.Open())
+                    {
+                        fs.CopyTo(zipEntryStream);
+                    }
+                });
+            return File(ms.ToArray(), "application/zip", "download.zip");
 
-            var filesRow = _context.RequestWiseFiles.Where(x => x.RequestId == id).ToList();
+
+
+            /*var filesRow = _context.RequestWiseFiles.Where(x => x.RequestId == id).ToList();
             MemoryStream ms = new MemoryStream();
             using (ZipArchive zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
                 filesRow.ForEach(file =>
@@ -236,7 +259,7 @@ namespace HalloDocMVC.Controllers
                         fs.CopyTo(zipEntryStream);
                     }
                 });
-            return File(ms.ToArray(), "application/zip", "download.zip");
+            return File(ms.ToArray(), "application/zip", "download.zip");*/
         }
 
 

@@ -87,5 +87,11 @@ namespace HalloDocRepository.Implementation
 
             return business;
         }
+
+        public async Task<User> GetUserByUserId(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            return user;
+        }
     }
 }
