@@ -14,19 +14,19 @@ body {
 /*Theme toggle classes*/
 
 .dark-bg {
-    background-color: #222 !important;
+    background-color: #0B1215 !important;
 }
 
 .gray-bg {
-    background-color: #444 !important;
+    background-color: #3e3e42 !important;
 }
 
 .light-text {
-    color: #fff !important;
+    color: #f5f5f5 !important;
 }
 
 .light-border {
-    border-color: #fff !important;
+    border-color: #f5f5f5 !important;
 }
 
 .bg-opacity {

@@ -122,5 +122,21 @@ namespace HalloDocRepository.Implementation
             var requestwisefile = await _context.RequestWiseFiles.FindAsync(fileId);
             return requestwisefile;
         }
+
+        public async Task<List<Request>> GetRequestsByEmail(string email)
+        {
+            List<Request> requests = new List<Request>();
+            requests = await _context.Requests.Where(m => m.Email == email).ToListAsync();
+
+            return requests;
+        }
+
+        public async Task<bool> UpdateRequestClients(List<RequestClient> requestClients)
+        {
+            _context.RequestClients.UpdateRange(requestClients);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

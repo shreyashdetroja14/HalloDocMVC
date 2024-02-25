@@ -93,5 +93,13 @@ namespace HalloDocRepository.Implementation
             var user = await _context.Users.FindAsync(userId);
             return user;
         }
+
+        public async Task<User> UpdateUser(User user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return user;
+        }
     }
 }

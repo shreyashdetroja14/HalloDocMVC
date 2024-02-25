@@ -19,10 +19,20 @@ namespace HalloDocServices.Interface
 
         Task UploadFiles(IEnumerable<IFormFile> MultipleFiles, int requestId);
  
-        Task<int> GetUserInfoByRequestId(int requestId);
+        Task<int> GetUserIdByRequestId(int requestId);
+
+        Task<string> GetAspNetUserIdByUserId(int userId);
 
         Task<RequestWiseFile> RequestFileData(int fileId);
 
         Task<ProfileViewModel> GetProfileDetails(int userId);
+
+        Task EditProfile(ProfileViewModel ProfileDetails);
+
+        Task<PatientRequestViewModel> GetPatientInfo(int userId);
+
+        Task<int> CreatePatientRequest(FamilyRequestViewModel frvm);
+
+        Task CreateFamilyRequest(FamilyRequestViewModel frvm, int userId);
     }
 }

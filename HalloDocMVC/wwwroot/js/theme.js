@@ -5,6 +5,7 @@ const isDarkThemeEnable = false;
 const toggleCSSclasses = (el, ...cls) => cls.map(cl => el.classList.toggle(cl));
 
 const formControls = document.querySelectorAll('.form-control');
+const transparentInputs = document.querySelectorAll('.transparent');
 const labels = document.querySelectorAll('label');
 const labelIcons = document.querySelectorAll('.label-icon');
 const footerLinks = document.querySelectorAll('.footer a');
@@ -26,6 +27,9 @@ themeBtn.addEventListener('click', () => {
         toggleCSSclasses(e, 'light-text', 'light-border', 'gray-bg');
     });
 
+    transparentInputs.forEach(e => {
+        toggleCSSclasses(e,'gray-bg');
+    });
 
     labels.forEach(e => {
         toggleCSSclasses(e, 'light-text');

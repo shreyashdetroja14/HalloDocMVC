@@ -1,4 +1,5 @@
 ﻿using HalloDocEntities.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,9 @@ namespace HalloDocRepository.Interface
         Task<List<RequestClient>> GetRequestsClientsByEmail(string email);
 
         Task<RequestClient> CreateRequestClient(RequestClient requestClient);
+
+        Task<bool> UpdateRequestClients(List<RequestClient> requestClients);
+
 
 
         // Request 
@@ -36,7 +40,7 @@ namespace HalloDocRepository.Interface
 
         Task<List<Request>> GetRequestByRequestIdAsList(int requestId);
 
-
+        Task<List<Request>> GetRequestsByEmail(string email);
 
 
         // Request Wise File

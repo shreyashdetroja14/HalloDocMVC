@@ -1,38 +1,33 @@
-﻿using HalloDocEntities.Data;
+﻿
 
-using HalloDocEntities.Models;
+
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 using System.IO.Compression;
 
 namespace HalloDocMVC.Controllers
 {
     public class PatientController : Controller
     {
-        private readonly HalloDocContext _context;
         private readonly IPatientService _patientService;
 
-        public PatientController(HalloDocContext context, IPatientService patientService)
+        public PatientController( IPatientService patientService)
         {
-            _context = context;
             _patientService = patientService;
         }
 
         public async Task<IActionResult> GoToDashboard(int UserId)
         {
-            var userFetched = await _context.Users.FindAsync(UserId);
-            if (userFetched != null)
+            //var userFetched = await _context.Users.FindAsync(UserId);
+
+            string aspnetuserId = await _patientService.GetAspNetUserIdByUserId(UserId);
+            if (aspnetuserId.Equals(""))
             {
-                var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Id == userFetched.AspNetUserId);
-                if (aspnetuserFetched != null)
-                {
-                    return RedirectToAction("Dashboard", new { id = aspnetuserFetched.Id });
-                }
+                return NotFound();
             }
-            return NotFound();
+            return RedirectToAction("Dashboard", new { id = aspnetuserId });
+            
         }
 
 
@@ -154,7 +149,7 @@ namespace HalloDocMVC.Controllers
                 ViewBag.Fullname = userFetched?.FirstName + " " + userFetched?.LastName;
                 ViewBag.UserId = userFetched?.UserId;
             }*/
-            int userId = await _patientService.GetUserInfoByRequestId(requestid);
+            int userId = await _patientService.GetUserIdByRequestId(requestid);
             ViewBag.UserId = userId;
 
 
@@ -166,7 +161,7 @@ namespace HalloDocMVC.Controllers
         public async Task<IActionResult> UploadRequestFile(IEnumerable<IFormFile>? MultipleFiles, int requestid)
         {
 
-            if (MultipleFiles?.Count() != 0)
+            if (MultipleFiles != null && MultipleFiles?.Count() != 0)
             {
                 await _patientService.UploadFiles(MultipleFiles, requestid);
 
@@ -280,7 +275,9 @@ namespace HalloDocMVC.Controllers
             {
                 return View("~/Views/Patient/Profile.cshtml", ProfileDetails);
             }
-            var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == ProfileDetails.Email);
+
+            await _patientService.EditProfile(ProfileDetails);
+            /*var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == ProfileDetails.Email);
             if (aspnetuserFetched != null)
             {
                 aspnetuserFetched.PhoneNumber = ProfileDetails.PhoneNumber;
@@ -344,195 +341,53 @@ namespace HalloDocMVC.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-            }
+            }*/
 
-            return RedirectToAction("Dashboard", new { id = aspnetuserFetched?.Id });
+            return RedirectToAction("GoToDashboard", new { UserId = ProfileDetails.UserId });
         }
 
         public async Task<IActionResult> PatientRequest(int UserId)
         {
             PatientRequestViewModel PatientInfo = new PatientRequestViewModel();
 
-            var userFetched = await _context.Users.FindAsync(UserId);
-            if (userFetched != null)
-            {
-                PatientInfo.FirstName = userFetched.FirstName;
-                PatientInfo.LastName = userFetched.LastName;
-                PatientInfo.Email = userFetched.Email;
-                PatientInfo.PhoneNumber = userFetched.Mobile;
-                if (userFetched.IntDate.HasValue && userFetched.IntYear.HasValue && userFetched.StrMonth != null)
-                {
-                    DateTime monthDateTime = DateTime.ParseExact(userFetched.StrMonth, "MMMM", CultureInfo.InvariantCulture);
-                    int month = monthDateTime.Month;
-                    DateOnly date = new DateOnly((int)userFetched.IntYear, month, userFetched.IntDate.Value);
-                    PatientInfo.DOB = date.ToString("yyyy-MM-dd");
-                }
-            }
+            PatientInfo = await _patientService.GetPatientInfo(UserId);
 
             FamilyRequestViewModel frvm = new FamilyRequestViewModel();
             frvm.PatientInfo = PatientInfo;
 
             // Send data to view
-            ViewBag.Fullname = userFetched?.FirstName + " " + userFetched?.LastName;
-            ViewBag.UserId = userFetched?.UserId;
+            //ViewBag.Fullname = userFetched?.FirstName + " " + userFetched?.LastName;
+            ViewBag.UserId = UserId;
             ViewBag.RequestType = 2;
+
             return View(frvm);
         }
 
-        public AspNetUser CreateAspnetuser(PatientRequestViewModel prvm)
-        {
-            var aspnetuserNew = new AspNetUser();
-
-            aspnetuserNew.Id = Guid.NewGuid().ToString();
-
-            aspnetuserNew.UserName = prvm.Email;
-            aspnetuserNew.PasswordHash = prvm.Password;
-            aspnetuserNew.Email = prvm.Email;
-            aspnetuserNew.PhoneNumber = prvm.PhoneNumber;
-            aspnetuserNew.CreatedDate = DateTime.Now;
-
-            return aspnetuserNew;
-        }
-        public User CreateUser(PatientRequestViewModel prvm, AspNetUser aspnetuserNew)
-        {
-            var userNew = new User();
-
-            userNew.AspNetUserId = aspnetuserNew.Id;
-            userNew.FirstName = prvm.FirstName;
-            userNew.LastName = prvm.LastName;
-            userNew.Email = prvm.Email;
-            userNew.Mobile = prvm.PhoneNumber;
-            userNew.Street = prvm.Street;
-            userNew.City = prvm.City;
-            userNew.State = prvm.State;
-            userNew.ZipCode = prvm.ZipCode;
-
-            if (prvm.DOB != null)
-            {
-                DateTime dateTime = DateTime.ParseExact(prvm.DOB, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-                userNew.IntYear = dateTime.Year;
-                userNew.StrMonth = dateTime.ToString("MMMM");
-                userNew.IntDate = dateTime.Day;
-            }
-
-            userNew.CreatedBy = "admin";
-            userNew.CreatedDate = DateTime.Now;
-
-            return userNew;
-        }
-        public RequestClient CreateRequestClient(PatientRequestViewModel PatientInfo, Request requestNew)
-        {
-            var requestClientNew = new RequestClient();
-            requestClientNew.RequestId = requestNew.RequestId;
-            requestClientNew.FirstName = PatientInfo.FirstName;
-            requestClientNew.LastName = PatientInfo.LastName;
-            requestClientNew.PhoneNumber = PatientInfo.PhoneNumber;
-            requestClientNew.Location = PatientInfo.Room;
-            requestClientNew.Address = PatientInfo.Street + ", " + PatientInfo.City + ", " + PatientInfo.State + ", " + PatientInfo.ZipCode;
-            requestClientNew.NotiMobile = PatientInfo.PhoneNumber;
-            requestClientNew.NotiEmail = PatientInfo.Email;
-            requestClientNew.Notes = PatientInfo.Symptoms;
-            requestClientNew.Email = PatientInfo.Email;
-
-            if (PatientInfo.DOB != null)
-            {
-                DateTime dateTime = DateTime.ParseExact(PatientInfo.DOB, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-                requestClientNew.IntYear = dateTime.Year;
-                requestClientNew.StrMonth = dateTime.ToString("MMMM");
-                requestClientNew.IntDate = dateTime.Day;
-            }
-
-            requestClientNew.Street = PatientInfo.Street;
-            requestClientNew.City = PatientInfo.City;
-            requestClientNew.State = PatientInfo.State;
-            requestClientNew.ZipCode = PatientInfo.ZipCode;
-            return requestClientNew;
-        }
-
-        public List<string> UploadFilesToServer(IEnumerable<IFormFile> MultipleFiles, int requestid)
-        {
-            List<string> files = new List<string>();
-            foreach (var UploadFile in MultipleFiles)
-            {
-                string FilePath = "wwwroot\\Upload\\" + requestid;
-                string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
-
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                string newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}-{DateTime.Now.ToString("yyyyMMddhhmmss")}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
-
-                string fileNameWithPath = Path.Combine(path, newfilename);
-                files.Add(FilePath.Replace("wwwroot\\Upload\\", "/Upload/") + "/" + newfilename);
-
-                using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
-                {
-                    UploadFile.CopyTo(stream);
-                }
-            }
-            return files;
-        }
+        
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PatientRequest(FamilyRequestViewModel frvm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == frvm.PatientInfo.Email);
-                var userFetched = await _context.Users.FirstOrDefaultAsync(m => m.Email == frvm.PatientInfo.Email);
-                if (userFetched != null && aspnetuserFetched != null)
-                {
-                    var requestNew = new Request();
-
-                    requestNew.RequestTypeId = 2;
-                    requestNew.UserId = userFetched.UserId;
-                    requestNew.FirstName = frvm.PatientInfo.FirstName;
-                    requestNew.LastName = frvm.PatientInfo.LastName;
-                    requestNew.PhoneNumber = frvm.PatientInfo.PhoneNumber;
-                    requestNew.Email = frvm.PatientInfo.Email;
-                    requestNew.Status = 1;
-                    requestNew.CreatedDate = DateTime.Now;
-                    requestNew.IsUrgentEmailSent = false;
-                    requestNew.PatientAccountId = aspnetuserFetched?.Id;
-                    requestNew.CreatedUserId = userFetched.UserId;
-
-                    _context.Add(requestNew);
-                    await _context.SaveChangesAsync();
-
-                    var requestClientNew = CreateRequestClient(frvm.PatientInfo, requestNew);
-
-                    _context.Add(requestClientNew);
-                    await _context.SaveChangesAsync();
-
-                    if (frvm.PatientInfo.MultipleFiles != null)
-                    {
-                        List<string> files = UploadFilesToServer(frvm.PatientInfo.MultipleFiles, requestNew.RequestId);
-                        foreach (string file in files)
-                        {
-                            var reqwisefileNew = new RequestWiseFile();
-                            reqwisefileNew.RequestId = requestNew.RequestId;
-                            reqwisefileNew.FileName = file;
-                            reqwisefileNew.CreatedDate = DateTime.Now;
-
-                            _context.Add(reqwisefileNew);
-                            await _context.SaveChangesAsync();
-                        }
-                    }
-                    return RedirectToAction("Dashboard", new { id = aspnetuserFetched?.Id });
-                }
+                return View("~/Views/Home/Index.cshtml");
             }
-            return View("~/Views/Home/Index.cshtml");
+
+            int userRequestUserId = await _patientService.CreatePatientRequest(frvm);
+
+            return RedirectToAction("GoToDashboard", new { UserId = userRequestUserId });
+
+
+
         }
 
         public async Task<IActionResult> FamilyRequest(int UserId)
         {
-            var userFetched = await _context.Users.FindAsync(UserId);
+            //var userFetched = await _context.Users.FindAsync(UserId);
             // Send data to view 
-            ViewBag.Fullname = userFetched?.FirstName + " " + userFetched?.LastName;
-            ViewBag.UserId = userFetched?.UserId;
+            //ViewBag.Fullname = userFetched?.FirstName + " " + userFetched?.LastName;
+            ViewBag.UserId = UserId;
             ViewBag.RequestType = 3;
 
             return View("~/Views/Patient/PatientRequest.cshtml");
@@ -542,54 +397,14 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> FamilyRequest(FamilyRequestViewModel frvm, int UserId)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var aspnetuserFetched = await _context.AspNetUsers.FirstOrDefaultAsync(m => m.Email == frvm.PatientInfo.Email);
-                var userFetched = await _context.Users.FirstOrDefaultAsync(m => m.Email == frvm.PatientInfo.Email);
-                var requestorUser = await _context.Users.FindAsync(UserId);
-                if (requestorUser != null)
-                {
-                    var requestNew = new Request();
-
-                    requestNew.RequestTypeId = 3;
-                    requestNew.UserId = userFetched?.UserId;
-                    requestNew.FirstName = requestorUser?.FirstName;
-                    requestNew.LastName = requestorUser?.LastName;
-                    requestNew.PhoneNumber = requestorUser?.Mobile;
-                    requestNew.Email = requestorUser?.Email;
-                    requestNew.Status = 1;
-                    requestNew.CreatedDate = DateTime.Now;
-                    requestNew.IsUrgentEmailSent = false;
-                    requestNew.PatientAccountId = aspnetuserFetched?.Id;
-                    requestNew.CreatedUserId = requestorUser?.UserId;
-                    requestNew.RelationName = frvm.FamilyRelation;
-
-                    _context.Add(requestNew);
-                    await _context.SaveChangesAsync();
-
-                    var requestClientNew = CreateRequestClient(frvm.PatientInfo, requestNew);
-
-                    _context.Add(requestClientNew);
-                    await _context.SaveChangesAsync();
-
-                    if (frvm.PatientInfo.MultipleFiles != null)
-                    {
-                        List<string> files = UploadFilesToServer(frvm.PatientInfo.MultipleFiles, requestNew.RequestId);
-                        foreach (string file in files)
-                        {
-                            var reqwisefileNew = new RequestWiseFile();
-                            reqwisefileNew.RequestId = requestNew.RequestId;
-                            reqwisefileNew.FileName = file;
-                            reqwisefileNew.CreatedDate = DateTime.Now;
-
-                            _context.Add(reqwisefileNew);
-                            await _context.SaveChangesAsync();
-                        }
-                    }
-                    return RedirectToAction("GoToDashboard", new { UserId = requestorUser?.UserId });
-                }
+                return View("~/Views/Home/Index.cshtml");
             }
-            return View("~/Views/Home/Index.cshtml");
+
+            await _patientService.CreateFamilyRequest(frvm, UserId);
+
+            return RedirectToAction("GoToDashboard", new { UserId });
         }
     }
 }

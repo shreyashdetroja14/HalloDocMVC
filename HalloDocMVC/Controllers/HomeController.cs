@@ -3,6 +3,7 @@
 using HalloDocEntities.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Net;
 
 namespace HalloDocMVC.Controllers
 {
@@ -41,7 +42,7 @@ namespace HalloDocMVC.Controllers
             Console.WriteLine(aspnetuser.Id);
             aspnetuser.Id = id;
             Console.WriteLine(aspnetuser.Id);
-
+            aspnetuser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(aspnetuser.PasswordHash);
             aspnetuser.CreatedDate = createddate;
             aspnetuser.ModifiedDate = createddate;
 

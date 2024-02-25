@@ -30,6 +30,8 @@ namespace HalloDocRepository.Interface
 
         Task<User> GetUserByUserId(int userId);
 
+        Task<User> UpdateUser(User user);
+
 
         // Concierge
 
