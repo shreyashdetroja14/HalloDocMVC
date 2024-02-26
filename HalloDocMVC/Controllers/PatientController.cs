@@ -382,11 +382,13 @@ namespace HalloDocMVC.Controllers
 
         }
 
-        public async Task<IActionResult> FamilyRequest(int UserId)
+        public IActionResult FamilyRequest(int UserId)
         {
             //var userFetched = await _context.Users.FindAsync(UserId);
             // Send data to view 
             //ViewBag.Fullname = userFetched?.FirstName + " " + userFetched?.LastName;
+
+
             ViewBag.UserId = UserId;
             ViewBag.RequestType = 3;
 

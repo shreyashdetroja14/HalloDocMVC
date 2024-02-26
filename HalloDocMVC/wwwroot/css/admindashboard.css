@@ -1,0 +1,94 @@
+﻿/*.new-req {
+    color: #0E15AE;
+    background-color: #b3b3ff;
+}
+
+.new-req-active {
+    color: #FFF;
+    background-color: #0E15AE;
+}*/
+
+.text-toclose {
+    color: #3333cc;
+}
+
+.bg-toclose {
+    background-color: #d6d6f5;
+}
+
+.bg-toclose-active {
+    background-color: #3333cc;
+}
+
+.text-unpaid {
+    color: #6600cc;
+}
+
+.bg-unpaid {
+    background-color: #e6ccff;
+}
+
+.bg-unpaid-active {
+    background-color: #6600cc;
+}
+
+.newicon, .pendingicon, .activeicon, .concludeicon, .tocloseicon, .unpaidicon {
+    width: 30px;
+    height: 24px;
+}
+
+.tocloseicon {
+    color: #3333cc;
+}
+
+.unpaidicon {
+    color: #6600cc;
+}
+
+.activeicon{
+    color: #fff;
+}
+
+/*.searchbar{
+    width: 15%;
+}*/
+
+/*th, td{
+    white-space: nowrap;
+}*/
+
+.bg-patient {
+    background-color: #00b33c;
+}
+
+.bg-family {
+    background-color: #ff9933;
+}
+
+.bg-business {
+    background-color: #ffb3cc;
+}
+
+.bg-concierge {
+    background-color: #66a3ff;
+}
+
+.accordion-button, .accordion-body {
+    background-color: #e7f1ff;
+    color: #000;
+}
+
+    .accordion-button::after, .accordion-button:not(.collapsed)::after {
+        background: none;
+    }
+
+    .accordion-button:not(.collapsed){
+        color: black;
+    }
+
+
+    @media screen and (max-width: 1199px) {
+        th, td {
+                white-space: nowrap;
+            }
+        }
