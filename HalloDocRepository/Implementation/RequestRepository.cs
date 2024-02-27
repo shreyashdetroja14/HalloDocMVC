@@ -37,6 +37,13 @@ namespace HalloDocRepository.Implementation
             return requests;
         }
 
+        public IEnumerable<Request> GetAllIEnumerableRequests()
+        {
+            var requests =  _context.Requests.AsEnumerable();
+
+            return requests;
+        }
+
         public async Task<bool> UpdateRequests(List<Request> requests)
         {
             _context.Requests.UpdateRange(requests);
@@ -137,6 +144,48 @@ namespace HalloDocRepository.Implementation
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<int> GetNewRequestCount()
+        {
+            int count = await _context.Requests.Where(x => x.Status == 1).CountAsync();
+            return count;
+        }
+
+        public async Task<int> GetPendingRequestCount()
+        {
+            int count = await _context.Requests.Where(x => x.Status == 2).CountAsync();
+            return count;
+        }
+
+        public async Task<int> GetActiveRequestCount()
+        {
+            int count = await _context.Requests.Where(x => x.Status == 4 || x.Status == 5).CountAsync();
+            return count;
+        }
+
+        public async Task<int> GetConcludeRequestCount()
+        {
+            int count = await _context.Requests.Where(x => x.Status == 6).CountAsync();
+            return count;
+        }
+
+        public async Task<int> GetToCloseRequestCount()
+        {
+            int count = await _context.Requests.Where(x => x.Status == 3 || x.Status == 7 || x.Status == 8).CountAsync();
+            return count;
+        }
+
+        public async Task<int> GetUnpaidRequestCount()
+        {
+            int count = await _context.Requests.Where(x => x.Status == 9).CountAsync();
+            return count;
+        }
+
+        public async Task<int> GetClearedRequestCount()
+        {
+            int count = await _context.Requests.Where(x => x.Status == 10).CountAsync();
+            return count;
         }
     }
 }

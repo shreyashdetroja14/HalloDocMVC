@@ -100,7 +100,8 @@ tr p{
 
 
     @media screen and (max-width: 1199px) {
-        th, td {
-                white-space: nowrap;
-            }
+        th, 
+        td {
+            white-space: nowrap;
         }
+    }

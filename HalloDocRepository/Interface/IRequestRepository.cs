@@ -25,6 +25,7 @@ namespace HalloDocRepository.Interface
         // Request 
 
         Task<List<Request>> GetAllRequests();
+        IEnumerable<Request> GetAllIEnumerableRequests();
 
         Task<bool> UpdateRequests(List<Request> requests);
 
@@ -42,6 +43,19 @@ namespace HalloDocRepository.Interface
 
         Task<List<Request>> GetRequestsByEmail(string email);
 
+        Task<int> GetNewRequestCount();
+
+        Task<int> GetPendingRequestCount();
+
+        Task<int> GetActiveRequestCount();
+
+        Task<int> GetConcludeRequestCount();
+
+        Task<int> GetToCloseRequestCount();
+
+        Task<int> GetUnpaidRequestCount();
+
+        Task<int> GetClearedRequestCount();
 
         // Request Wise File
 

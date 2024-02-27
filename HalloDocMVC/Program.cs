@@ -13,12 +13,15 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<HalloDocContext>(options =>
 options.UseNpgsql(builder.Configuration.GetConnectionString("HalloDocDbCS")));
 
-builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
+builder.Services.AddScoped<IPhysicianRepository, PhysicianRepository>();
+
+builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IRequestFormService, RequestFormService>();
 builder.Services.AddScoped<IPatientService, PatientService>();
-builder.Services.AddScoped<IPhysicianRepository, PhysicianRepository>();
+builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+
 
 var app = builder.Build();
 
