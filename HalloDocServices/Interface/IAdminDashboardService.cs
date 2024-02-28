@@ -11,6 +11,6 @@ namespace HalloDocServices.Interface
     {
         Task<AdminDashboardViewModel> GetViewModelData(int requestStatus);
 
-        List<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern);
+        List<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern, int? searchRegion);
     }
 }

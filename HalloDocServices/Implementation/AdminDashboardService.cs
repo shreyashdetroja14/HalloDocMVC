@@ -36,10 +36,12 @@ namespace HalloDocServices.Implementation
             return viewModel;
         }
 
-        public List<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern)
+        public List<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern, int? searchRegion)
         {
             List<RequestRowViewModel> viewModels = new List<RequestRowViewModel>();
-            var requests = _requestRepository.GetAllIEnumerableRequests();
+            var requests = _requestRepository.GetAllIEnumerableRequests().AsQueryable();
+
+            
 
             int[] myarray = new int[3];
             switch (requestStatus)
@@ -106,10 +108,18 @@ namespace HalloDocServices.Implementation
                 requests = requests.Where(x => x.RequestTypeId == requestType);
             }
 
+            
+
             if(searchPattern != null)
             {
+                /*x.RequestClients.FirstOrDefault() != null ? (x.RequestClients.FirstOrDefault().FirstName != null ? x.RequestClients.FirstOrDefault().FirstName : "") : ""*/
                 //requests = requests.Where(x => x.FirstName.Contains(searchPattern));
-                requests = requests.AsQueryable().Where(x => EF.Functions.Like(x.RequestClients.FirstOrDefault().FirstName, "%" + searchPattern + "%"));
+                requests = requests.Where(x => EF.Functions.Like(x.RequestClients.FirstOrDefault().FirstName, "%" + searchPattern + "%"));
+            }
+
+            if(searchRegion != null)
+            {
+                requests = requests.Where(x => x.RequestClients.FirstOrDefault().RegionId == searchRegion);
             }
 
             foreach(var request in requests)

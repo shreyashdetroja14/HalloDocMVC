@@ -187,7 +187,7 @@
 
 @section AddScript{
     <script>
-        async function GetPartialViewData(requestStatus, requestType = null, searchPattern){
+        async function GetPartialViewData(requestStatus, requestType = null, searchPattern = null, searchRegion = null){
             try {
                 let url = `/AdminDashBoard/FetchRequests?requestStatus=${requestStatus}`;
 
@@ -197,6 +197,10 @@
 
                 if (searchPattern) {
                     url += `&searchPattern=${encodeURIComponent(searchPattern)}`; // Encode for URL safety
+                }
+
+                if (searchRegion) {
+                    url += `&searchRegion=${encodeURIComponent(searchRegion)}`; // Encode for URL safety
                 }
 
                 const response = await fetch(url);
@@ -219,7 +223,8 @@
         const urlparams = {
             requestStatus: 1,
             requestType: null,
-            searchPattern: null
+            searchPattern: null,
+            searchRegion: null,
         }
 
         document.addEventListener("DOMContentLoaded",async () => {
@@ -236,7 +241,7 @@
             btn.addEventListener('click',async () => {
                 urlparams.requestStatus = 1;
                 console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus);
+                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
             });
         });
 
@@ -246,7 +251,7 @@
             btn.addEventListener('click', async () => {
                 urlparams.requestStatus = 2;
                 console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
+                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
             });
         });
 
@@ -256,7 +261,7 @@
             btn.addEventListener('click', async () => {
                 urlparams.requestStatus = 3;
                 console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
+                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
             });
         });
 
@@ -266,7 +271,7 @@
             btn.addEventListener('click', async () => {
                 urlparams.requestStatus = 4;
                 console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
+                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
             });
         });
 
@@ -276,7 +281,7 @@
             btn.addEventListener('click', async () => {
                 urlparams.requestStatus = 5;
                 console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
+                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
             });
         });
 
@@ -286,7 +291,7 @@
             btn.addEventListener('click', async () => {
                 urlparams.requestStatus = 6;
                 console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
+                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
             });
         });
 
@@ -298,7 +303,7 @@
             urlparams.requestType = null;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
-            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
         const patientBtn = document.querySelector('.patient-btn');
@@ -306,7 +311,7 @@
             urlparams.requestType = 2;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
-            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
         const familyBtn = document.querySelector('.family-btn');
@@ -314,7 +319,7 @@
             urlparams.requestType = 3;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
-            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
         const businessBtn = document.querySelector('.business-btn');
@@ -322,7 +327,7 @@
             urlparams.requestType = 1;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
-            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
         const conciergeBtn = document.querySelector('.concierge-btn');
@@ -330,7 +335,7 @@
             urlparams.requestType = 4;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
-            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
 
@@ -349,16 +354,27 @@
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
             console.log(urlparams.searchPattern);
-            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         })
 
 
         //selectlist
         const selectList = document.querySelector('.selectlist');
 
-        selectList.addEventListener('change', () => {
+        selectList.addEventListener('change', async () => {
             const regionValue = selectList.value;
             console.log(regionValue);
+
+            if(regionValue == 0){
+                urlparams.searchRegion = null;
+            }else{
+                urlparams.searchRegion = regionValue;
+            }
+            console.log(urlparams.requestStatus);
+            console.log(urlparams.requestType);
+            console.log(urlparams.searchPattern);
+            console.log(urlparams.searchRegion);
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         })
         
     </script>

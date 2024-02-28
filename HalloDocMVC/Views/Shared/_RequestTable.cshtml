@@ -135,11 +135,11 @@
                     <td>@request.Address</td>
                     @if (status != 4 && status != 6)
                     {
-                        <td>
+                        @*<td>
                             <p>Case transferred to DR. AGOLA by admin</p>
                             
-                        </td>
-                        @*@if(request.Notes != null)
+                        </td>*@
+                        @if(request.Notes != null)
                         {
                             <td>
                                 @foreach (var note in request.Notes)
@@ -151,7 +151,7 @@
                         else
                         {
                             <td>-</td>
-                        }*@
+                        }
                     }
                     
                     <td>

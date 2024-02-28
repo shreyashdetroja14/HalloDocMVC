@@ -24,10 +24,10 @@ namespace HalloDocMVC.Controllers
             return View(viewModel);
         }
 
-        public IActionResult FetchRequests(int requestStatus, int? requestType, string? searchPattern)
+        public IActionResult FetchRequests(int requestStatus, int? requestType, string? searchPattern, int? searchRegion)
         {
             List<RequestRowViewModel> viewModels = new List<RequestRowViewModel>();
-            viewModels = _adminDashboardService.GetViewModelData(requestStatus, requestType, searchPattern);
+            viewModels = _adminDashboardService.GetViewModelData(requestStatus, requestType, searchPattern, searchRegion);
 
             return PartialView("_RequestTable", viewModels);
         }
