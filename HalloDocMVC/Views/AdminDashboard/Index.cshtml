@@ -146,7 +146,7 @@
             <div class="search-filter-bar d-flex flex-column flex-lg-row justify-content-lg-between bg-white p-3">
                 <div class="d-flex flex-column flex-md-row">
                     <input type="text" class="form-control searchbar me-2 mb-2" placeholder="&#128269; Search Patient" />
-                    <select class="form-select searchbar me-2 mb-2">
+                    <select class="form-select selectlist me-2 mb-2">
                         <option selected disabled>Search by Region</option>
                         <option value="0">All Regions</option>
                         <option value="1">Gujarat</option>
@@ -187,7 +187,7 @@
 
 @section AddScript{
     <script>
-        async function GetPartialViewData(requestStatus, requestType = null){
+        async function GetPartialViewData(requestStatus, requestType = null, searchPattern){
             try {
                 let url = `/AdminDashBoard/FetchRequests?requestStatus=${requestStatus}`;
 
@@ -195,9 +195,9 @@
                     url += `&requestType=${requestType}`;
                 }
 
-                //if (searchNameFilter) {
-                //    url += `&searchNameFilter=${encodeURIComponent(searchNameFilter)}`; // Encode for URL safety
-                //}
+                if (searchPattern) {
+                    url += `&searchPattern=${encodeURIComponent(searchPattern)}`; // Encode for URL safety
+                }
 
                 const response = await fetch(url);
 
@@ -219,7 +219,7 @@
         const urlparams = {
             requestStatus: 1,
             requestType: null,
-            searchInputPattern: null
+            searchPattern: null
         }
 
         document.addEventListener("DOMContentLoaded",async () => {
@@ -246,7 +246,7 @@
             btn.addEventListener('click', async () => {
                 urlparams.requestStatus = 2;
                 console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus);
+                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
             });
         });
 
@@ -256,7 +256,7 @@
             btn.addEventListener('click', async () => {
                 urlparams.requestStatus = 3;
                 console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus);
+                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
             });
         });
 
@@ -266,7 +266,7 @@
             btn.addEventListener('click', async () => {
                 urlparams.requestStatus = 4;
                 console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus);
+                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
             });
         });
 
@@ -276,7 +276,7 @@
             btn.addEventListener('click', async () => {
                 urlparams.requestStatus = 5;
                 console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus);
+                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
             });
         });
 
@@ -286,7 +286,7 @@
             btn.addEventListener('click', async () => {
                 urlparams.requestStatus = 6;
                 console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus);
+                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
             });
         });
 
@@ -298,7 +298,7 @@
             urlparams.requestType = null;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
-            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType);
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
         });
 
         const patientBtn = document.querySelector('.patient-btn');
@@ -306,7 +306,7 @@
             urlparams.requestType = 2;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
-            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType);
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
         });
 
         const familyBtn = document.querySelector('.family-btn');
@@ -314,7 +314,7 @@
             urlparams.requestType = 3;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
-            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType);
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
         });
 
         const businessBtn = document.querySelector('.business-btn');
@@ -322,7 +322,7 @@
             urlparams.requestType = 1;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
-            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType);
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
         });
 
         const conciergeBtn = document.querySelector('.concierge-btn');
@@ -330,11 +330,31 @@
             urlparams.requestType = 4;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
-            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType);
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
         });
 
+
+        //searchbar
+        const searchbar = document.querySelector('.searchbar');
+        searchbar.addEventListener('keyup', async () => {
+            const searchPattern = searchbar.value;
+            console.log(searchPattern);
+
+            if(searchPattern !== ""){
+                urlparams.searchPattern = searchPattern;
+            }else{
+                urlparams.searchPattern = null;
+
+            }
+            console.log(urlparams.requestStatus);
+            console.log(urlparams.requestType);
+            console.log(urlparams.searchPattern);
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern);
+        })
+
+
         //selectlist
-        const selectList = document.querySelector('.form-select');
+        const selectList = document.querySelector('.selectlist');
 
         selectList.addEventListener('change', () => {
             const regionValue = selectList.value;

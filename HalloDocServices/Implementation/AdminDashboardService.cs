@@ -36,12 +36,45 @@ namespace HalloDocServices.Implementation
             return viewModel;
         }
 
-        public async Task<List<RequestRowViewModel>> GetViewModelData(int requestStatus, int? requestType)
+        public List<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern)
         {
             List<RequestRowViewModel> viewModels = new List<RequestRowViewModel>();
             var requests = _requestRepository.GetAllIEnumerableRequests();
 
-            switch(requestStatus)
+            int[] myarray = new int[3];
+            switch (requestStatus)
+            {
+                case 1:
+                    myarray[0] = 1;
+                    break;
+
+                case 2:
+                    myarray[0] = 2;
+                    break;
+
+                case 3:
+                    myarray[0] = 4;
+                    myarray[1] = 5;
+                    break;
+
+                case 4:
+                    myarray[0] = 6;
+                    break;
+
+                case 5:
+                    myarray[0] = 3;
+                    myarray[1] = 7;
+                    myarray[2] = 8;
+                    break;
+
+                case 6:
+                    myarray[0] = 9;
+                    break;
+            }
+
+            requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Where(x => myarray.Contains(x.Status));
+
+            /*switch(requestStatus)
             {
                 case 1: 
                     requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Where(x => x.Status == 1);
@@ -66,11 +99,17 @@ namespace HalloDocServices.Implementation
                 case 6:
                     requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Where(x => x.Status == 9);
                     break;
-            }
-            
-            if(requestType != null)
+            }*/
+
+            if (requestType != null)
             {
                 requests = requests.Where(x => x.RequestTypeId == requestType);
+            }
+
+            if(searchPattern != null)
+            {
+                //requests = requests.Where(x => x.FirstName.Contains(searchPattern));
+                requests = requests.AsQueryable().Where(x => EF.Functions.Like(x.RequestClients.FirstOrDefault().FirstName, "%" + searchPattern + "%"));
             }
 
             foreach(var request in requests)
