@@ -1,0 +1,167 @@
+﻿
+@{
+    ViewData["Title"] = "ViewCase";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+@section AddStyles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <link href="@Url.Content("~/css/requestform.css")" rel="stylesheet" type="text/css" />
+}
+
+@model HalloDocServices.ViewModels.ProfileViewModel
+
+
+<div class="main">
+    
+    <partial name="_NavbarLinks"></partial>
+    <div class="p-4">
+
+        <div class="back pb-4 d-flex justify-content-end">
+            <a class="btn back-btn">
+                <img src="/images/backIcon.svg" alt="">
+                Back
+            </a>
+        </div>
+        <form asp-action="EditProfile" class="container bg-white p-4  request-form">
+            <input type="number" asp-for="UserId" class="form-control" id="UserId" hidden>
+            <div class="info mb-4">
+                <h2 class="mb-3">Patient Information</h2>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" placeholder="Enter Symptoms" id="symptoms"
+                                      style="height: 100px"></textarea>
+                            <label>Patient Notes</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="FirstName" class="form-control" id="FirstName"
+                                   placeholder="First Name">
+                            <label asp-for="FirstName">First Name</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="LastName" class="form-control" id="LastName"
+                                   placeholder="Last Name">
+                            <label asp-for="LastName">Last Name</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="date" asp-for="DOB" class="form-control" id="DOB" placeholder="DOB">
+                            <label asp-for="DOB">Date Of Birth</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="email" asp-for="Email" class="form-control" id="Email"
+                                   placeholder="abc@xyz.pqr" autocomplete="off" readonly>
+                            <label asp-for="Email">Email</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 pb-3">
+                        <input type="tel" asp-for="PhoneNumber" class="form-control w-100" id="PhoneNumber" />
+                    </div>
+                </div>
+            </div>
+
+            @*<div class="contact-info mb-4">
+                <h2 class="mb-3">Contact Information</h2>
+                <div class="row">
+                    
+                </div>
+            </div>
+
+            <div class="location-info mb-4">
+                <h2 class="mb-3">Location Information</h2>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="Street" class="form-control" id="Street"
+                                   placeholder="Street">
+                            <label asp-for="Street">Street</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="City" class="form-control" id="City"
+                                   placeholder="City">
+                            <label asp-for="City">City</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="State" class="form-control" id="State"
+                                   placeholder="State">
+                            <label asp-for="State">State</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="ZipCode" class="form-control" id="ZipCode"
+                                   placeholder="Zipcode">
+                            <label asp-for="ZipCode">Zipcode</label>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+
+            <div class="submit mb-4 d-flex justify-content-end">
+                <input type="submit" value="Submit" class="btn btn-info py-2 px-3 text-white d-none">
+                <input type="reset" value="Cancel" class="btn cancelbtn btn-outline-info py-2 px-3 ms-3 d-none">
+
+                <button type="button" class="btn btn-info text-white py-2 px-3" id="editbtn">Edit</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+
+@section AddScript{
+    <script>
+        const phoneInputField = document.querySelector("#PhoneNumber");
+        const phoneInput = window.intlTelInput(phoneInputField, {
+            preferredCountries: ["us", "in", "au", "de"],
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+    </script>
+    <script>
+        const editBtn = document.querySelector('#editbtn');
+        const submitBtn = document.querySelector('input[type="submit"]');
+        const cancelBtn = document.querySelector('input[type="reset"]');
+        const inputTags = document.querySelectorAll('input');
+        const emailInp = document.querySelector('input[type="email"]');
+
+        inputTags.forEach(input => {
+            input.readOnly = true;
+        })
+
+        editBtn.addEventListener('click', () => {
+            editBtn.classList.add('d-none');
+            submitBtn.classList.remove('d-none');
+            cancelBtn.classList.remove('d-none');
+            inputTags.forEach(input => {
+                input.readOnly = false;
+            })
+
+            emailInp.readOnly = true;
+        })
+
+        cancelBtn.addEventListener('click', () => {
+            submitBtn.classList.add('d-none');
+            cancelBtn.classList.add('d-none');
+            editBtn.classList.remove('d-none');
+            inputTags.forEach(input => {
+                input.readOnly = true;
+            })
+        })
+
+    </script>
+}

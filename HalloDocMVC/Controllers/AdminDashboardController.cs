@@ -31,5 +31,7 @@ namespace HalloDocMVC.Controllers
 
             return PartialView("_RequestTable", viewModels);
         }
+
+        public IActionResult ViewCase() { return View(); }
     }
 }
