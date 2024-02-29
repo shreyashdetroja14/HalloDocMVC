@@ -33,13 +33,6 @@ namespace HalloDocMVC.Controllers
 
         public async Task<IActionResult> Dashboard(string id)
         {
-            /*if (string.IsNullOrWhiteSpace(id))
-            {
-                
-            }*/
-
-            /*var userFetched = await _context.Users.FirstOrDefaultAsync(m => m.AspNetUserId == id);*/
-
             int userId = await _patientService.CheckUser(id);
             if (userId == 0)
             {

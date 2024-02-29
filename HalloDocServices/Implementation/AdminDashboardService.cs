@@ -18,12 +18,15 @@ namespace HalloDocServices.Implementation
         private readonly IUserRepository _userRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly IPhysicianRepository _physicianRepository;
-        public AdminDashboardService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository) 
+        private readonly INotesAndLogsRepository _notesAndLogsRepository;
+        public AdminDashboardService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository)
         {
             _userRepository = userRepository;
             _requestRepository = requestRepository;
             _physicianRepository = physicianRepository;
-        }
+            _notesAndLogsRepository = notesAndLogsRepository;
+            _notesAndLogsRepository = notesAndLogsRepository;
+         }
 
         public async Task<AdminDashboardViewModel> GetViewModelData(int requestStatus)
         {
@@ -215,6 +218,73 @@ namespace HalloDocServices.Implementation
                 requestClient.NotiMobile = CaseInfo.PhoneNumber;
 
                 await _requestRepository.UpdateRequestClient(requestClient);
+
+                return true;
+            }
+        }
+
+        public async Task<ViewNotesViewModel> GetViewNotesViewModelData(int requestId)
+        {
+            ViewNotesViewModel ViewNotes = new ViewNotesViewModel();
+
+            var requestNotes = await _notesAndLogsRepository.GetNoteByRequestId(requestId);
+            var requestStatusLogs = _notesAndLogsRepository.GetStatusLogsByRequestId(requestId).ToList();
+
+            ViewNotes.RequestId = requestId;
+            ViewNotes.AdminNotes = requestNotes?.AdminNotes;
+            ViewNotes.PhysicianNotes = requestNotes?.PhysicianNotes;
+            List<string> transfernotes = new List<string>();
+            foreach(var log in requestStatusLogs)
+            {
+                if(log.Notes != null)
+                {
+                    if (log.Status == 3)
+                    {
+                        if (log.PhysicianId != null)
+                        {
+                            ViewNotes.PhysicianCancellationNotes = log.Notes;
+                        }
+                        else if (log.AdminId != null)
+                        {
+                            ViewNotes.AdminCancellationNotes = log.Notes;
+                        }
+                    }
+                    else if (log.Status == 7)
+                    {
+                        ViewNotes.PatientCancellationNotes = log.Notes;
+                    }
+                    else
+                    {
+                        transfernotes.Add(log.Notes);
+                    }
+                }
+            }
+            ViewNotes.TransferNotes = transfernotes;
+
+            return ViewNotes;
+        }
+
+        public async Task<bool> AddAdminNote(int requestId, string AdminNotesInput)
+        {
+            var requestNote = await _notesAndLogsRepository.GetNoteByRequestId(requestId);
+            if (requestNote == null)
+            {
+                RequestNote note = new RequestNote();
+
+                note.AdminNotes = AdminNotesInput;
+                note.RequestId = requestId;
+                note.CreatedBy = "sd";
+                note.CreatedDate = DateTime.Now;
+
+                await _notesAndLogsRepository.AddRequestNote(note);
+
+                return true;
+            }
+            else
+            {
+                requestNote.AdminNotes = AdminNotesInput;
+
+                await _notesAndLogsRepository.UpdateRequestNote(requestNote);
 
                 return true;
             }

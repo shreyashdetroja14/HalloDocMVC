@@ -16,6 +16,8 @@ options.UseNpgsql(builder.Configuration.GetConnectionString("HalloDocDbCS")));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IPhysicianRepository, PhysicianRepository>();
+builder.Services.AddScoped<INotesAndLogsRepository, NotesAndLogsRepository>();
+
 
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IRequestFormService, RequestFormService>();

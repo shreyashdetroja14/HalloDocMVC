@@ -16,5 +16,9 @@ namespace HalloDocServices.Interface
         ViewCaseViewModel GetViewCaseViewModelData(int requestId);
 
         Task<bool> UpdateViewCaseInfo(ViewCaseViewModel CaseInfo);
+
+        Task<ViewNotesViewModel> GetViewNotesViewModelData(int requestId);
+
+        Task<bool> AddAdminNote(int requestId, string AdminNotesInput);
     }
 }

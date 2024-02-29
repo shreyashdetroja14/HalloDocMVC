@@ -61,7 +61,27 @@ namespace HalloDocMVC.Controllers
 
         public async Task<IActionResult> ViewNotes(int requestId)
         {
-            return View();
+            ViewNotesViewModel ViewNotes = new ViewNotesViewModel();
+            ViewNotes = await _adminDashboardService.GetViewNotesViewModelData(requestId);
+            return View(ViewNotes);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ViewNotes(int requestId, string? AdminNotesInput)
+        {
+            bool isNoteAdded = false;
+            if (AdminNotesInput != null)
+            {
+                isNoteAdded = await _adminDashboardService.AddAdminNote(requestId, AdminNotesInput);
+            }
+            if(isNoteAdded)
+            {
+                return RedirectToAction("ViewNotes", new { requestId });
+            }
+            else
+            {
+                return View(AdminNotesInput);
+            }
         }
     }
 }

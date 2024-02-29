@@ -4,11 +4,11 @@
     Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
 }
 
+@model HalloDocServices.ViewModels.AdminViewModels.ViewNotesViewModel
 
 <div class="main">
 
     <partial name="_NavbarLinks"></partial>
-
     <div class="container mt-4">
         <div class="d-flex justify-content-between mb-3">
             <h2>Notes</h2>
@@ -23,8 +23,12 @@
                     <i class="bi bi-sign-turn-slight-right h3"></i>
                     <div class="ms-2">
                         <p class="fs-4 fw-bold">Transfer Notes</p>
-                        <p class="m-0">Admin transferred to DR. AGOLA on 27/09/2023 at 9:34:08AM: test assign</p>
-                        <p class="m-0">Admin transferred to DR. AGOLA on 27/09/2023 at 9:34:08AM: test assign</p>
+                        @foreach(var note in Model.TransferNotes)
+                        {
+                            <p class="m-0">@note</p>
+                        }
+                        @* <p class="m-0">Admin transferred to DR. AGOLA on 27/09/2023 at 9:34:08AM: test assign</p>
+                        <p class="m-0">Admin transferred to DR. AGOLA on 27/09/2023 at 9:34:08AM: test assign</p> *@
                     </div>
                 </div>
             </div>
@@ -33,7 +37,7 @@
                     <i class="bi bi-sign-turn-slight-right h3"></i>
                     <div class="ms-2">
                         <p class="fs-4 fw-bold">Physician Notes</p>
-                        <p class="m-0">test add, concluded</p>
+                        <p class="m-0">@Model.PhysicianNotes</p>
                     </div>
                 </div>
             </div>
@@ -42,17 +46,53 @@
                     <i class="bi bi-sign-turn-slight-right h3"></i>
                     <div class="ms-2">
                         <p class="fs-4 fw-bold">Admin Notes</p>
-                        <p class="m-0">-</p>
+                        <p class="m-0">@Model.AdminNotes</p>
                     </div>
                 </div>
             </div>
+            @if(Model.AdminCancellationNotes != null)
+            {
+                <div class="col-12 col-md-6 p-2">
+                    <div class="d-flex bg-white shadow-sm p-3 rounded-3">
+                        <i class="bi bi-sign-turn-slight-right h3"></i>
+                        <div class="ms-2">
+                            <p class="fs-4 fw-bold">Admin Cancellation Notes</p>
+                            <p class="m-0">@Model.AdminCancellationNotes</p>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if(Model.PhysicianCancellationNotes != null)
+            {
+                <div class="col-12 col-md-6 p-2">
+                    <div class="d-flex bg-white shadow-sm p-3 rounded-3">
+                        <i class="bi bi-sign-turn-slight-right h3"></i>
+                        <div class="ms-2">
+                            <p class="fs-4 fw-bold">Physician Cancellation Notes</p>
+                            <p class="m-0">@Model.PhysicianCancellationNotes</p>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if(Model.PatientCancellationNotes != null)
+            {
+                <div class="col-12 col-md-6 p-2">
+                    <div class="d-flex bg-white shadow-sm p-3 rounded-3">
+                        <i class="bi bi-sign-turn-slight-right h3"></i>
+                        <div class="ms-2">
+                            <p class="fs-4 fw-bold">Patient Cancellation Notes</p>
+                            <p class="m-0">@Model.PatientCancellationNotes</p>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
         <div class="row">
             <div class="col-12 p-2">
-                <form class="bg-white shadow-sm p-3 rounded-3">
+                <form asp-action="ViewNotes" asp-route-requestId="@Model.RequestId" class="bg-white shadow-sm p-3 rounded-3">
                     <div class="form-floating mb-3">
-                        <textarea class="form-control border-info" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 150px"></textarea>
-                        <label for="floatingTextarea2" class="text-info">Comments</label>
+                        <textarea asp-for="AdminNotesInput" class="form-control border-info" placeholder="admin notes" id="AdminNotesInput" style="height: 150px"></textarea>
+                        <label asp-for="AdminNotesInput" class="text-info">Admin Notes</label>
                     </div>
                     <div class="d-flex justify-content-end">
                         <input type="submit" value="Save Changes" class="btn btn-info text-white"/>
