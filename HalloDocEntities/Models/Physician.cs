@@ -133,12 +133,22 @@ public partial class Physician
     public string? SyncEmailAddress { get; set; }
 
     [ForeignKey("AspNetUserId")]
-    [InverseProperty("Physicians")]
+    [InverseProperty("PhysicianAspNetUsers")]
     public virtual AspNetUser? AspNetUser { get; set; }
+
+    [ForeignKey("ModifiedBy")]
+    [InverseProperty("PhysicianModifiedByNavigations")]
+    public virtual AspNetUser? ModifiedByNavigation { get; set; }
 
     [ForeignKey("RegionId")]
     [InverseProperty("Physicians")]
     public virtual Region? Region { get; set; }
+
+    [InverseProperty("Physician")]
+    public virtual ICollection<RequestStatusLog> RequestStatusLogPhysicians { get; set; } = new List<RequestStatusLog>();
+
+    [InverseProperty("TransToPhysician")]
+    public virtual ICollection<RequestStatusLog> RequestStatusLogTransToPhysicians { get; set; } = new List<RequestStatusLog>();
 
     [InverseProperty("Physician")]
     public virtual ICollection<Request> Requests { get; set; } = new List<Request>();

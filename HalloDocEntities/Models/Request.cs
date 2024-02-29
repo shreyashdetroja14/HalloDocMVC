@@ -116,6 +116,12 @@ public partial class Request
     [InverseProperty("Request")]
     public virtual ICollection<RequestClient> RequestClients { get; set; } = new List<RequestClient>();
 
+    [InverseProperty("Request")]
+    public virtual ICollection<RequestNote> RequestNotes { get; set; } = new List<RequestNote>();
+
+    [InverseProperty("Request")]
+    public virtual ICollection<RequestStatusLog> RequestStatusLogs { get; set; } = new List<RequestStatusLog>();
+
     [ForeignKey("RequestTypeId")]
     [InverseProperty("Requests")]
     public virtual RequestType RequestType { get; set; } = null!;

@@ -16,6 +16,8 @@ public partial class HalloDocContext : DbContext
     {
     }
 
+    public virtual DbSet<Admin> Admins { get; set; }
+
     public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
 
     public virtual DbSet<Business> Businesses { get; set; }
@@ -32,6 +34,10 @@ public partial class HalloDocContext : DbContext
 
     public virtual DbSet<RequestClient> RequestClients { get; set; }
 
+    public virtual DbSet<RequestNote> RequestNotes { get; set; }
+
+    public virtual DbSet<RequestStatusLog> RequestStatusLogs { get; set; }
+
     public virtual DbSet<RequestType> RequestTypes { get; set; }
 
     public virtual DbSet<RequestWiseFile> RequestWiseFiles { get; set; }
@@ -43,6 +49,19 @@ public partial class HalloDocContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Admin>(entity =>
+        {
+            entity.HasKey(e => e.AdminId).HasName("admin_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.AspNetUser).WithMany(p => p.AdminAspNetUsers)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_asp_net_user");
+
+            entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.AdminModifiedByNavigations).HasConstraintName("fk_modified_by");
+        });
+
         modelBuilder.Entity<AspNetUser>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("asp_net_users_pkey");
@@ -76,7 +95,9 @@ public partial class HalloDocContext : DbContext
 
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
 
-            entity.HasOne(d => d.AspNetUser).WithMany(p => p.Physicians).HasConstraintName("fk_asp_net_user");
+            entity.HasOne(d => d.AspNetUser).WithMany(p => p.PhysicianAspNetUsers).HasConstraintName("fk_asp_net_user");
+
+            entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.PhysicianModifiedByNavigations).HasConstraintName("fk_modified_by");
 
             entity.HasOne(d => d.Region).WithMany(p => p.Physicians).HasConstraintName("fk_region");
         });
@@ -123,6 +144,34 @@ public partial class HalloDocContext : DbContext
             entity.HasOne(d => d.Request).WithMany(p => p.RequestClients)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_request");
+        });
+
+        modelBuilder.Entity<RequestNote>(entity =>
+        {
+            entity.HasKey(e => e.RequestNotesId).HasName("request_notes_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.Request).WithMany(p => p.RequestNotes)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("request_notes_request_id_fkey");
+        });
+
+        modelBuilder.Entity<RequestStatusLog>(entity =>
+        {
+            entity.HasKey(e => e.RequestStatusLogId).HasName("request_status_log_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.Admin).WithMany(p => p.RequestStatusLogs).HasConstraintName("fk_admin");
+
+            entity.HasOne(d => d.Physician).WithMany(p => p.RequestStatusLogPhysicians).HasConstraintName("fk_physician");
+
+            entity.HasOne(d => d.Request).WithMany(p => p.RequestStatusLogs)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_request");
+
+            entity.HasOne(d => d.TransToPhysician).WithMany(p => p.RequestStatusLogTransToPhysicians).HasConstraintName("fk_trans_to_physician");
         });
 
         modelBuilder.Entity<RequestType>(entity =>

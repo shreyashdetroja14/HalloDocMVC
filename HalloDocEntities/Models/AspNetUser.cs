@@ -40,7 +40,16 @@ public partial class AspNetUser
     public DateTime? ModifiedDate { get; set; }
 
     [InverseProperty("AspNetUser")]
-    public virtual ICollection<Physician> Physicians { get; set; } = new List<Physician>();
+    public virtual ICollection<Admin> AdminAspNetUsers { get; set; } = new List<Admin>();
+
+    [InverseProperty("ModifiedByNavigation")]
+    public virtual ICollection<Admin> AdminModifiedByNavigations { get; set; } = new List<Admin>();
+
+    [InverseProperty("AspNetUser")]
+    public virtual ICollection<Physician> PhysicianAspNetUsers { get; set; } = new List<Physician>();
+
+    [InverseProperty("ModifiedByNavigation")]
+    public virtual ICollection<Physician> PhysicianModifiedByNavigations { get; set; } = new List<Physician>();
 
     [InverseProperty("AspNetUser")]
     public virtual ICollection<User> Users { get; set; } = new List<User>();
