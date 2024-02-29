@@ -10,7 +10,7 @@
     <link href="@Url.Content("~/css/requestform.css")" rel="stylesheet" type="text/css" />
 }
 
-@model HalloDocServices.ViewModels.ProfileViewModel
+@model HalloDocServices.ViewModels.AdminViewModels.ViewCaseViewModel
 
 
 <div class="main">
@@ -18,43 +18,60 @@
     <partial name="_NavbarLinks"></partial>
     <div class="p-4">
 
-        <div class="back pb-4 d-flex justify-content-end">
+        <div class="container back p-0 pb-4 d-flex justify-content-between">
+            <div class="d-flex align-items-center">
+                <h2>View Case</h2>
+                <span class="ms-2 px-3 py-1 bg-success text-white rounded-pill">
+                    @(Model.RequestType == 1 ? "Business" : "")
+                    @(Model.RequestType == 2 ? "Patient" : "")
+                    @(Model.RequestType == 3 ? "Family" : "")
+                    @(Model.RequestType == 4 ? "Concierge" : "")
+                </span>
+            </div>
             <a class="btn back-btn">
                 <img src="/images/backIcon.svg" alt="">
                 Back
             </a>
         </div>
-        <form asp-action="EditProfile" class="container bg-white p-4  request-form">
-            <input type="number" asp-for="UserId" class="form-control" id="UserId" hidden>
+        <form asp-action="ViewCase" class="container bg-white p-4  request-form">
+            <input type="number" asp-for="RequestId" hidden>
+            <input type="number" asp-for="RequestType" hidden>
             <div class="info mb-4">
                 <h2 class="mb-3">Patient Information</h2>
+                <div>
+                    <p class="text-secondary fs-6 m-0">Confirmation Number</p>
+                    <p class="h4 text-info mb-4">MD092723TETE0002</p>
+                </div>
                 <div class="row">
                     <div class="col-12">
                         <div class="form-floating mb-3">
-                            <textarea class="form-control" placeholder="Enter Symptoms" id="symptoms"
-                                      style="height: 100px"></textarea>
-                            <label>Patient Notes</label>
+                            <textarea asp-for="Symptoms" class="form-control" placeholder="Enter Symptoms" id="symptoms"
+                                      style="height: 100px" readonly></textarea>
+                            <label asp-for="Symptoms">Patient Notes</label>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
                             <input type="text" asp-for="FirstName" class="form-control" id="FirstName"
-                                   placeholder="First Name">
+                                   placeholder="First Name" readonly>
                             <label asp-for="FirstName">First Name</label>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
                             <input type="text" asp-for="LastName" class="form-control" id="LastName"
-                                   placeholder="Last Name">
+                                   placeholder="Last Name" readonly>
                             <label asp-for="LastName">Last Name</label>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
-                            <input type="date" asp-for="DOB" class="form-control" id="DOB" placeholder="DOB">
+                            <input type="date" asp-for="DOB" class="form-control" id="DOB" placeholder="DOB" readonly>
                             <label asp-for="DOB">Date Of Birth</label>
                         </div>
+                    </div>
+                    <div class="col-sm-6 pb-3">
+                        <input type="tel" asp-for="PhoneNumber" class="form-control w-100" id="PhoneNumber" readonly />
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
@@ -63,15 +80,11 @@
                             <label asp-for="Email">Email</label>
                         </div>
                     </div>
-                    <div class="col-sm-6 pb-3">
-                        <input type="tel" asp-for="PhoneNumber" class="form-control w-100" id="PhoneNumber" />
+                    <div class="col-sm-6">
+                        <button type="button" class="btn btn-outline-info py-3 px-4" id="editbtn">Edit</button>
+                        <span class="text-success">@ViewBag?.Success</span>
+                        <span class="text-danger">@ViewBag?.Failure</span>
                     </div>
-                </div>
-            </div>
-
-            @*<div class="contact-info mb-4">
-                <h2 class="mb-3">Contact Information</h2>
-                <div class="row">
                     
                 </div>
             </div>
@@ -81,40 +94,34 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
-                            <input type="text" asp-for="Street" class="form-control" id="Street"
-                                   placeholder="Street">
-                            <label asp-for="Street">Street</label>
+                            <input type="text" asp-for="Region" class="form-control" id="State"
+                                   placeholder="State" readonly>
+                            <label asp-for="Region">Region</label>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
-                            <input type="text" asp-for="City" class="form-control" id="City"
-                                   placeholder="City">
-                            <label asp-for="City">City</label>
+                            <input type="text" asp-for="BusinessNameOrAddress" class="form-control" id="Address"
+                                   placeholder="Address" readonly>
+                            <label asp-for="BusinessNameOrAddress">Business Name/ Address</label>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
-                            <input type="text" asp-for="State" class="form-control" id="State"
-                                   placeholder="State">
-                            <label asp-for="State">State</label>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" asp-for="ZipCode" class="form-control" id="ZipCode"
-                                   placeholder="Zipcode">
-                            <label asp-for="ZipCode">Zipcode</label>
+                            <input type="text" asp-for="Room" class="form-control" id="Room"
+                                   placeholder="Room" readonly>
+                            <label asp-for="Room">Room #</label>
                         </div>
                     </div>
                 </div>
-            </div>*@
+            </div>
 
             <div class="submit mb-4 d-flex justify-content-end">
-                <input type="submit" value="Submit" class="btn btn-info py-2 px-3 text-white d-none">
-                <input type="reset" value="Cancel" class="btn cancelbtn btn-outline-info py-2 px-3 ms-3 d-none">
+                <a class="btn btn-outline-info py-2 px-3">View Notes</a>
+                <input type="submit" value="Update" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
+                <input type="reset" value="Cancel" class="btn cancelbtn btn-danger py-2 px-3 ms-3 d-none">
 
-                <button type="button" class="btn btn-info text-white py-2 px-3" id="editbtn">Edit</button>
+                
             </div>
 
         </form>
@@ -136,31 +143,37 @@
         const editBtn = document.querySelector('#editbtn');
         const submitBtn = document.querySelector('input[type="submit"]');
         const cancelBtn = document.querySelector('input[type="reset"]');
-        const inputTags = document.querySelectorAll('input');
-        const emailInp = document.querySelector('input[type="email"]');
+        //const inputTags = document.querySelectorAll('input');
 
-        inputTags.forEach(input => {
-            input.readOnly = true;
-        })
+        const emailInp = document.querySelector('input[type="email"]');
+        const phoneInp = document.querySelector('input[type="tel"]');
+
+        //inputTags.forEach(input => {
+        //    input.readOnly = true;
+        //})
 
         editBtn.addEventListener('click', () => {
             editBtn.classList.add('d-none');
             submitBtn.classList.remove('d-none');
             cancelBtn.classList.remove('d-none');
-            inputTags.forEach(input => {
-                input.readOnly = false;
-            })
+            //inputTags.forEach(input => {
+            //    input.readOnly = false;
+            //})
 
-            emailInp.readOnly = true;
+            emailInp.readOnly = false;
+            phoneInp.readOnly = false;
         })
 
         cancelBtn.addEventListener('click', () => {
             submitBtn.classList.add('d-none');
             cancelBtn.classList.add('d-none');
             editBtn.classList.remove('d-none');
-            inputTags.forEach(input => {
-                input.readOnly = true;
-            })
+
+            emailInp.readOnly = true;
+            phoneInp.readOnly = true;
+            //inputTags.forEach(input => {
+            //    input.readOnly = true;
+            //})
         })
 
     </script>

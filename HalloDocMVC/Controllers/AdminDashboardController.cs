@@ -32,6 +32,36 @@ namespace HalloDocMVC.Controllers
             return PartialView("_RequestTable", viewModels);
         }
 
-        public IActionResult ViewCase() { return View(); }
+        public IActionResult ViewCase(int requestId) 
+        { 
+            ViewCaseViewModel CaseInfo = new ViewCaseViewModel();
+
+            CaseInfo =  _adminDashboardService.GetViewCaseViewModelData(requestId);
+
+
+            return View(CaseInfo); 
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ViewCase (ViewCaseViewModel CaseInfo)
+        {
+            bool isInfoUpdated = await _adminDashboardService.UpdateViewCaseInfo(CaseInfo);
+
+            if (isInfoUpdated) 
+            {
+                ViewBag.Success = "Case Updated";
+            }
+            else
+            {
+                ViewBag.Failure = "Unable to update details";
+            }
+            return View(CaseInfo);
+        }
+
+        public async Task<IActionResult> ViewNotes(int requestId)
+        {
+            return View();
+        }
     }
 }

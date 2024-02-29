@@ -18,9 +18,11 @@ namespace HalloDocRepository.Interface
 
         Task<RequestClient> CreateRequestClient(RequestClient requestClient);
 
+        Task<bool> UpdateRequestClient(RequestClient requestClient);
+
         Task<bool> UpdateRequestClients(List<RequestClient> requestClients);
 
-
+        Task<RequestClient> GetRequestClientByRequestId(int requestId);
 
         // Request 
 
@@ -40,6 +42,8 @@ namespace HalloDocRepository.Interface
         Task<Request> GetRequestByRequestId(int requestId);
 
         Task<List<Request>> GetRequestByRequestIdAsList(int requestId);
+
+        IQueryable<Request> GetIQueryableRequestByRequestId(int requestId);
 
         Task<List<Request>> GetRequestsByEmail(string email);
 

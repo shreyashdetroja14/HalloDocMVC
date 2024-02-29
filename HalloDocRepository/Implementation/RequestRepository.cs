@@ -124,6 +124,12 @@ namespace HalloDocRepository.Implementation
             return requestAsList;
         }
 
+        public IQueryable<Request> GetIQueryableRequestByRequestId(int requestId)
+        {
+            var request = _context.Requests.AsQueryable().Where(x => x.RequestId == requestId);
+            return request;
+        }
+
         public async Task<RequestWiseFile> GetRequestWiseFileByFileId(int fileId)
         {
             var requestwisefile = await _context.RequestWiseFiles.FindAsync(fileId);
@@ -136,6 +142,14 @@ namespace HalloDocRepository.Implementation
             requests = await _context.Requests.Where(m => m.Email == email).ToListAsync();
 
             return requests;
+        }
+
+        public async Task<bool> UpdateRequestClient(RequestClient requestClient)
+        {
+            _context.RequestClients.Update(requestClient);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<bool> UpdateRequestClients(List<RequestClient> requestClients)
@@ -186,6 +200,12 @@ namespace HalloDocRepository.Implementation
         {
             int count = await _context.Requests.Where(x => x.Status == 10).CountAsync();
             return count;
+        }
+
+        public async Task<RequestClient> GetRequestClientByRequestId(int requestId)
+        {
+            var requestClient = await _context.RequestClients.FirstOrDefaultAsync(x => x.RequestId == requestId);
+            return requestClient;
         }
     }
 }

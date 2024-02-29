@@ -216,7 +216,7 @@
                                 </li>
                             }
                             <li>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" asp-action="ViewNotes" asp-route-requestId="@request.RequestId">
                                     <i class="bi bi-card-list pe-3"></i>View Notes
                                 </a>
                             </li>
@@ -459,7 +459,7 @@
                             {
                                 <div class="col-6"><button class="btn btn-danger rounded-pill mb-2 w-75">Close Case</button></div>
                             }
-                            <div class="col-6"><button class="btn btn-success rounded-pill mb-2 w-75">View Notes</button></div>
+                            <div class="col-6"><a asp-action="ViewNotes" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">View Notes</a></div>
                             @if (status != 1)
                             {
                                 <div class="col-6"><button class="btn btn-success rounded-pill mb-2 w-75">View Uploads</button></div>
@@ -479,7 +479,7 @@
                                 <div class="col-6"><button class="btn btn-success rounded-pill mb-2 w-75">Clear Case</button></div>
                             }
                             <div class="col-6"><button class="btn btn-success rounded-pill mb-2 w-75">Email</button></div>
-                            <div class="col-6"><button class="btn bg-white border border-3 rounded-pill mb-2 w-75">View Case</button></div>
+                            <div class="col-6"><a asp-action="ViewCase" asp-route-requestId="@request.RequestId" class="btn bg-white border border-3 rounded-pill mb-2 w-75">View Case</a></div>
                         </div>
 
                         <div class="d-flex justify-content-end align-items-center">

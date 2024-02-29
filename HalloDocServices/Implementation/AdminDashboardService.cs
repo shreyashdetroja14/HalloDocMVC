@@ -5,6 +5,8 @@ using HalloDocServices.ViewModels.AdminViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -150,6 +152,72 @@ namespace HalloDocServices.Implementation
             }
 
             return viewModels;
+        }
+
+        public ViewCaseViewModel GetViewCaseViewModelData(int requestId)
+        {
+            ViewCaseViewModel CaseInfo = new ViewCaseViewModel();
+
+            var requestFetched = _requestRepository.GetIQueryableRequestByRequestId(requestId);
+
+            var request = requestFetched.Include(x => x.RequestClients).Include(x => x.RequestBusinesses).Include(x => x.RequestBusinesses).ThenInclude(x => x.Business).FirstOrDefault();
+
+            var requestClient = request?.RequestClients.FirstOrDefault();
+            var businessName = request?.RequestBusinesses.FirstOrDefault()?.Business.Name;
+            //var request = await _requestRepository.GetRequestByRequestId(requestId);
+            //var requestClient = await _requestRepository.GetRequestClientByRequestId(requestId);
+
+            CaseInfo.RequestId = request?.RequestId;
+            CaseInfo.RequestType = request?.RequestTypeId;
+            CaseInfo.ConfirmationNumber = request?.ConfirmationNumber;
+            
+            if(requestClient != null)
+            {
+                CaseInfo.Symptoms = requestClient?.Notes;
+                CaseInfo.FirstName = requestClient?.FirstName;
+                CaseInfo.LastName = requestClient?.LastName;
+
+                if (requestClient.IntDate.HasValue && requestClient.IntYear.HasValue && requestClient.StrMonth != null)
+                {
+                    DateTime monthDateTime = DateTime.ParseExact(requestClient.StrMonth, "MMMM", CultureInfo.InvariantCulture);
+                    int month = monthDateTime.Month;
+                    DateOnly date = new DateOnly((int)requestClient.IntYear, month, requestClient.IntDate.Value);
+                    CaseInfo.DOB = date.ToString("yyyy-MM-dd");
+                }
+                CaseInfo.Email = requestClient?.Email;
+                CaseInfo.PhoneNumber = requestClient?.PhoneNumber;
+                CaseInfo.Region = requestClient?.State;
+                if (businessName != null)
+                {
+                    CaseInfo.BusinessNameOrAddress = businessName;
+                }
+                else
+                {
+                    CaseInfo.BusinessNameOrAddress = requestClient?.Address;
+                }
+                CaseInfo.Room = requestClient?.Location;
+            }
+
+            return CaseInfo;
+        }
+
+        public async Task<bool> UpdateViewCaseInfo(ViewCaseViewModel CaseInfo)
+        {
+            var requestClient = await _requestRepository.GetRequestClientByRequestId(CaseInfo.RequestId ?? 0);
+            if(requestClient == null) 
+            {
+                return false;
+            }
+            else
+            {
+                requestClient.Email = CaseInfo.Email;
+                requestClient.PhoneNumber = CaseInfo.PhoneNumber;
+                requestClient.NotiMobile = CaseInfo.PhoneNumber;
+
+                await _requestRepository.UpdateRequestClient(requestClient);
+
+                return true;
+            }
         }
     }
 }

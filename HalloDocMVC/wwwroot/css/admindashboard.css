@@ -1,12 +1,8 @@
-﻿/*.new-req {
-    color: #0E15AE;
-    background-color: #b3b3ff;
+﻿@media screen and (max-width: 575px) {
+    html {
+        font-size: 12px;
+    }
 }
-
-.new-req-active {
-    color: #FFF;
-    background-color: #0E15AE;
-}*/
 
 .text-toclose {
     color: #3333cc;

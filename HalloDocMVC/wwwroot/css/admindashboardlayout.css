@@ -1,8 +1,4 @@
-﻿@media screen and (max-width: 575px) {
-    html{
-        font-size: 12px;
-    }
-}
+﻿
 
 .wrapper {
     min-height: 100vh;
@@ -30,6 +26,19 @@
     height: auto;
 }
 
+.back-btn {
+    color: #0dcaf0;
+    font-weight: bold;
+    font-size: large;
+    border: 1px solid #0dcaf0;
+}
+
+    .back-btn:hover {
+        color: #0dcaf0;
+        font-weight: bold;
+        font-size: large;
+        box-shadow: 0 0 3px #0dcaf0;
+    }
 
 .theme-btn:hover {
     background-color: transparent;
