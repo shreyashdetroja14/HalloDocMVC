@@ -33,11 +33,11 @@ namespace HalloDocServices.Implementation
 
         public async Task<List<DashboardRequestViewModel>> GetRequestList(int userId)
         {
-            var requestWiseFiles = await _requestRepository.GetAllRequestWiseFiles();
+            //var requestWiseFiles = await _requestRepository.GetAllRequestWiseFiles();
 
             var requestsFetched = await _requestRepository.GetRequestsWithFileCount(userId);
 
-            var physiciansFetched = await _physicianRepository.GetAllPhysicians();
+            //var physiciansFetched = await _physicianRepository.GetAllPhysicians();
 
             var result = requestsFetched.Select(x => new
             {

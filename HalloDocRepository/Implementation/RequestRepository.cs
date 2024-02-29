@@ -103,7 +103,7 @@ namespace HalloDocRepository.Implementation
 
         public async Task<List<Request>> GetRequestsWithFileCount(int userId)
         {
-            return await _context.Requests.Include(x => x.RequestWiseFiles).Include(x => x.Physician).Where(x => x.UserId == userId).ToListAsync();
+            return await _context.Requests.Include(x => x.RequestWiseFiles).Include(x => x.Physician).Where(x => x.UserId == userId).OrderByDescending(x => x.CreatedDate).ToListAsync();
         }
 
         public async Task<List<RequestWiseFile>> GetRequestWiseFilesByRequestId(int requestId)
