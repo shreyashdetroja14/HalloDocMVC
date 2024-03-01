@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HalloDocServices.ViewModels.AdminViewModels;
 using HalloDocServices.Interface;
+using HalloDocEntities.Models;
 
 namespace HalloDocMVC.Controllers
 {
@@ -76,12 +77,40 @@ namespace HalloDocMVC.Controllers
             }
             if(isNoteAdded)
             {
-                return RedirectToAction("ViewNotes", new { requestId });
+                /*return RedirectToAction("ViewNotes", new { requestId });*/
+                ViewNotesViewModel ViewNotes = new ViewNotesViewModel();
+                ViewNotes = await _adminDashboardService.GetViewNotesViewModelData(requestId);
+                return View(ViewNotes);
             }
             else
             {
                 return View(AdminNotesInput);
             }
+        }
+
+        public IActionResult CancelCase(int requestId)
+        {
+            CancelCaseViewModel CancelCase = new CancelCaseViewModel();
+
+            CancelCase.RequestId = requestId;
+            CancelCase.AdminId = 1;
+
+            CancelCase = _adminDashboardService.GetCancelCaseViewModelData(CancelCase);
+
+            return PartialView("_CancelCaseModal", CancelCase);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CancelCase(CancelCaseViewModel CancelCase)
+        {
+            bool isCaseCancelled = await _adminDashboardService.CancelCase(CancelCase);
+            if(isCaseCancelled)
+            {
+                
+            }
+
+            return RedirectToAction("Index");
+            //return View();
         }
     }
 }

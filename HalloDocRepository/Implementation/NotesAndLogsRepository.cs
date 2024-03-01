@@ -21,11 +21,12 @@ namespace HalloDocRepository.Implementation
 
         public async Task<RequestNote> AddRequestNote(RequestNote requestNote)
         {
-            _context.Add(requestNote);
+            _context.RequestNotes.Add(requestNote);
             await _context.SaveChangesAsync();
 
             return requestNote;
         }
+
 
         public async Task<RequestNote> GetNoteByRequestId(int requestId)
         {
@@ -44,6 +45,14 @@ namespace HalloDocRepository.Implementation
             _context.RequestNotes.Update(requestNote);
             await _context.SaveChangesAsync();
             
+            return true;
+        }
+
+        public async Task<bool> AddRequestStatusLog(RequestStatusLog requestStatusLog)
+        {
+            _context.Add(requestStatusLog);
+            await _context.SaveChangesAsync();
+
             return true;
         }
     }

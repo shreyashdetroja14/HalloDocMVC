@@ -187,6 +187,34 @@
 
 @section AddScript{
     <script>
+
+        //on body load, call partial view
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const requestStatus = 1;
+            await GetPartialViewData(requestStatus);
+            console.log("DOM is loaded and ready!");
+
+
+            const cancelCaseBtn = document.querySelectorAll('.cancel-case-btn');
+            cancelCaseBtn.forEach(item => {
+                item.addEventListener('click', async (event) => {
+                    const requestId = event.target.dataset.requestId;
+                    console.log(requestId);
+
+                    await GetCancelCaseModalData(requestId);
+
+                    const myModal = new bootstrap.Modal('#cancel-case-modal')
+                    myModal.show();
+                });
+            });
+            
+
+        });
+
+
+        // requests partial view data ajax call
+
         async function GetPartialViewData(requestStatus, requestType = null, searchPattern = null, searchRegion = null){
             try {
                 let url = `/AdminDashBoard/FetchRequests?requestStatus=${requestStatus}`;
@@ -212,13 +240,43 @@
                 const partialViewHtml = await response.text();
                 const partialViewContainer = document.getElementById('requests');
                 partialViewContainer.innerHTML = partialViewHtml;
+
+
+                
+            } catch (error) {
+                console.error('Error fetching partial view:', error);
+            }
+        }
+
+
+        // cancel case modal data ajax call
+
+        async function GetCancelCaseModalData(requestId) {
+
+            try {
+                let url = `/AdminDashBoard/CancelCase?requestId=${requestId}`;
+
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const cancelCaseModalHtml = await response.text();
+                const modalContainer = document.getElementById('modal-container');
+                modalContainer.innerHTML = cancelCaseModalHtml;
+
             } catch (error) {
                 console.error('Error fetching partial view:', error);
                 // Handle the error gracefully, e.g., display an error message to the user
             }
         }
+
+
+
+
+
         
-        //on body load, call partial view
 
         const urlparams = {
             requestStatus: 1,
@@ -227,14 +285,8 @@
             searchRegion: null,
         }
 
-        document.addEventListener("DOMContentLoaded",async () => {
-            const requestStatus = 1;
-            await GetPartialViewData(requestStatus);
-            console.log("DOM is loaded and ready!");
-        });
-
         //request status buttons
-
+        
         const newBtns = document.querySelectorAll('.new');
 
         newBtns.forEach(btn => {
@@ -376,6 +428,10 @@
             console.log(urlparams.searchRegion);
             await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         })
+
+
+        
         
     </script>
+
 }

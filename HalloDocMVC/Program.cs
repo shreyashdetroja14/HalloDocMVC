@@ -17,6 +17,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IPhysicianRepository, PhysicianRepository>();
 builder.Services.AddScoped<INotesAndLogsRepository, NotesAndLogsRepository>();
+builder.Services.AddScoped<ICommonRepository, CommonRepository>();
 
 
 builder.Services.AddScoped<ILoginService, LoginService>();

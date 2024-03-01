@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.WebPages.Html;
 
 namespace HalloDocServices.Implementation
 {
@@ -19,12 +20,15 @@ namespace HalloDocServices.Implementation
         private readonly IRequestRepository _requestRepository;
         private readonly IPhysicianRepository _physicianRepository;
         private readonly INotesAndLogsRepository _notesAndLogsRepository;
-        public AdminDashboardService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository)
+        private readonly ICommonRepository _commonRepository;
+
+        public AdminDashboardService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository)
         {
             _userRepository = userRepository;
             _requestRepository = requestRepository;
             _physicianRepository = physicianRepository;
             _notesAndLogsRepository = notesAndLogsRepository;
+            _commonRepository = commonRepository;
             _notesAndLogsRepository = notesAndLogsRepository;
          }
 
@@ -43,7 +47,7 @@ namespace HalloDocServices.Implementation
 
         public List<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern, int? searchRegion)
         {
-            List<RequestRowViewModel> viewModels = new List<RequestRowViewModel>();
+            List<RequestRowViewModel> requestRows = new List<RequestRowViewModel>();
             var requests = _requestRepository.GetAllIEnumerableRequests().AsQueryable();
 
             
@@ -143,7 +147,7 @@ namespace HalloDocServices.Implementation
                     }
                 }
 
-                viewModels.Add(new()
+                requestRows.Add(new()
                 {
                     DashboardRequestStatus = requestStatus,
                     RequestStatus = request.Status,
@@ -161,11 +165,12 @@ namespace HalloDocServices.Implementation
                     Address = requestClient?.Address,
                     Region = requestClient?.RegionId,
                     //Notes
-                    Notes = notes
-                });
+                    Notes = notes,
+
+                }) ;
             }
 
-            return viewModels;
+            return requestRows;
         }
 
         public ViewCaseViewModel GetViewCaseViewModelData(int requestId)
@@ -299,6 +304,58 @@ namespace HalloDocServices.Implementation
 
                 return true;
             }
+        }
+
+        public CancelCaseViewModel GetCancelCaseViewModelData(CancelCaseViewModel CancelCase)
+        {
+            CancelCase.CaseTags = new List<string>();
+            CancelCase.CaseTagIds = new List<int>();
+
+            var requestFetched = _requestRepository.GetIQueryableRequestByRequestId(CancelCase.RequestId);
+            var request = requestFetched.Include(x => x.RequestClients).ToList();
+
+
+            
+            var CaseTags = _commonRepository.GetAllCaseTags();
+
+
+            foreach(var tag in CaseTags)
+            {
+                if(tag == null) continue;
+                if(tag.Name != null)
+                {
+                    CancelCase.CaseTags.Add(tag.Name);
+                }
+                CancelCase.CaseTagIds.Add(tag.CaseTagId);
+            }
+
+            RequestClient? requestClient = request[0].RequestClients?.FirstOrDefault();
+            CancelCase.PatientFullName = requestClient?.FirstName + " " + requestClient?.LastName;
+
+            return CancelCase;
+        }
+
+        public async Task<bool> CancelCase(CancelCaseViewModel CancelCase)
+        {
+            var requestFetched = await _requestRepository.GetRequestByRequestId(CancelCase.RequestId);
+            if(requestFetched != null)
+            {
+                requestFetched.Status = 3;
+                requestFetched.CaseTag = CancelCase.CaseTagId.ToString();
+
+                await _requestRepository.UpdateRequest(requestFetched);
+
+                RequestStatusLog log = new RequestStatusLog();
+                log.RequestId = CancelCase.RequestId;
+                log.Status = requestFetched.Status;
+                log.AdminId = CancelCase.AdminId??1;
+                log.Notes = "Admin cancelled the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToShortTimeString() + ": " + CancelCase.AdminCancellationNote;
+                log.CreatedDate = DateTime.Now;
+
+                await _notesAndLogsRepository.AddRequestStatusLog(log);
+            }
+            
+            return true;
         }
     }
 }

@@ -9,12 +9,19 @@ namespace HalloDocRepository.Interface
 {
     public interface INotesAndLogsRepository
     {
-        Task<RequestNote> GetNoteByRequestId(int requestId);
+        // Request Notes
 
-        IQueryable<RequestStatusLog> GetStatusLogsByRequestId(int requestId);
+        Task<RequestNote> GetNoteByRequestId(int requestId);
 
         Task<RequestNote> AddRequestNote(RequestNote requestNote);
 
         Task<bool> UpdateRequestNote(RequestNote requestNote);
+
+
+        // Request Status Logs
+
+        IQueryable<RequestStatusLog> GetStatusLogsByRequestId(int requestId);
+
+        Task<bool> AddRequestStatusLog(RequestStatusLog requestStatusLog);
     }
 }

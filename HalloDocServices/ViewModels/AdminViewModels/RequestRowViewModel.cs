@@ -48,5 +48,6 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public List<string>? Notes { get; set; }
 
+
     }
 }

@@ -51,6 +51,13 @@ namespace HalloDocRepository.Implementation
             return true;
         }
 
+        public async Task<bool> UpdateRequest(Request request)
+        {
+            _context.Requests.Update(request);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<Request> CreateRequest(Request request)
         {
             _context.Add(request);
