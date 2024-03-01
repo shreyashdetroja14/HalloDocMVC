@@ -20,7 +20,11 @@ public partial class HalloDocContext : DbContext
 
     public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
 
+    public virtual DbSet<BlockRequest> BlockRequests { get; set; }
+
     public virtual DbSet<Business> Businesses { get; set; }
+
+    public virtual DbSet<CaseTag> CaseTags { get; set; }
 
     public virtual DbSet<Concierge> Concierges { get; set; }
 
@@ -69,6 +73,15 @@ public partial class HalloDocContext : DbContext
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
         });
 
+        modelBuilder.Entity<BlockRequest>(entity =>
+        {
+            entity.HasKey(e => e.BlockRequestId).HasName("block_requests_pkey");
+
+            entity.HasOne(d => d.Request).WithMany(p => p.BlockRequests)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_request");
+        });
+
         modelBuilder.Entity<Business>(entity =>
         {
             entity.HasKey(e => e.BusinessId).HasName("business_pkey");
@@ -76,6 +89,11 @@ public partial class HalloDocContext : DbContext
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
 
             entity.HasOne(d => d.Region).WithMany(p => p.Businesses).HasConstraintName("fk_region");
+        });
+
+        modelBuilder.Entity<CaseTag>(entity =>
+        {
+            entity.HasKey(e => e.CaseTagId).HasName("case_tag_pkey");
         });
 
         modelBuilder.Entity<Concierge>(entity =>

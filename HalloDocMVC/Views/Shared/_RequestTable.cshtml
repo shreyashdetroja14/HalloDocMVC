@@ -135,14 +135,21 @@
                             <p>Case transferred to DR. AGOLA by admin</p>
                             
                         </td>*@
-                        @if(request.Notes != null)
+                        @if(request.Notes != null )
                         {
-                            <td>
-                                @foreach (var note in request.Notes)
-                                {
-                                    <p>@note</p>
-                                }
-                            </td>
+                            @if (request.Notes?.Count() != 0)
+                            {
+                                <td>
+                                    @foreach (var note in request.Notes)
+                                    {
+                                        <p>@note</p>
+                                    }
+                                </td>
+                            }
+                            else
+                            {
+                                <td style="text-align: center">-</td>
+                            }
                         }
                         else
                         {
@@ -184,7 +191,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cancel-mobile-@request.RequestId">
                                         <i class="bi bi-x-circle pe-3"></i>Cancel Case
                                     </a>
                                 </li>
@@ -257,6 +264,39 @@
                             }
                         </ul>
                     </td>
+
+                    <div class="modal fade" data-bs-backdrop="static" id="cancel-mobile-@request.RequestId" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content rounded-3">
+                                <div class="modal-header fw-bold bg-info text-white">
+                                    <h1 class="modal-title fs-5 " id="modaltitle-@request.RequestId">Confirm Cancellation @request.RequestId</h1>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Patient Name: <span class="text-info fw-bold">@request.PatientFullName</span></p>
+                                    <form>
+                                        <div class="mb-3">
+                                            <select class="form-select" aria-label="Default select example">
+                                                <option selected>Open this select menu</option>
+                                                <option value="1">One</option>
+                                                <option value="2">Two</option>
+                                                <option value="3">Three</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            <textarea class="form-control" placeholder="Cancellation notes" id="textarea-@request.RequestId" style="height: 100px"></textarea>
+                                            <label for="textarea-@request.RequestId">Provide Additional Notes</label>
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                            <input type="submit" value="Confirm" class="btn btn-info text-white" />
+                                            <button type="button" class="btn btn-outline-info ms-3" data-bs-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </tr>
             }
             @*
@@ -447,7 +487,11 @@
                             @if(status == 1)
                             {
                                 <div class="col-6"><button class="btn btn-primary rounded-pill mb-2 w-75">Assign Case</button></div>
-                                <div class="col-6"><button class="btn btn-danger rounded-pill mb-2 w-75">Cancel Case</button></div>
+                                <div class="col-6">
+                                    <button class="btn btn-danger rounded-pill mb-2 w-75" data-bs-toggle="modal" data-bs-target="#cancel-@request.RequestId">
+                                        Cancel Case
+                                    </button>
+                                </div>
                                 <div class="col-6"><button class="btn btn-danger rounded-pill mb-2 w-75">Block Patient</button></div>
                             }
                             @if(status == 2)
@@ -481,6 +525,45 @@
                             <div class="col-6"><button class="btn btn-success rounded-pill mb-2 w-75">Email</button></div>
                             <div class="col-6"><a asp-action="ViewCase" asp-route-requestId="@request.RequestId" class="btn bg-white border border-3 rounded-pill mb-2 w-75">View Case</a></div>
                         </div>
+
+                        <div class="modal fade" data-bs-backdrop="static" id="cancel-@request.RequestId" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content rounded-3">
+                                    <div class="modal-header fw-bold bg-info text-white">
+                                        <h1 class="modal-title fs-5 " id="modaltitle-@request.RequestId">Confirm Cancellation @request.RequestId</h1>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Patient Name: <span class="text-info fw-bold">test test</span></p>
+                                        <form>
+                                            <div class="mb-3">
+                                                <select class="form-select" aria-label="Default select example">
+                                                    <option selected>Open this select menu</option>
+                                                    <option value="1">One</option>
+                                                    <option value="2">Two</option>
+                                                    <option value="3">Three</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-floating mb-3">
+                                                <textarea class="form-control" placeholder="Leave a comment here" id="textarea-@request.RequestId" style="height: 100px"></textarea>
+                                                <label for="textarea-@request.RequestId">Comments</label>
+                                            </div>
+                                            <div class="d-flex justify-content-end">
+                                                <input type="submit" value="Confirm" class="btn btn-info text-white" />
+                                                <button type="button" class="btn btn-outline-info ms-3" data-bs-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
 
                         <div class="d-flex justify-content-end align-items-center">
                             <span>Chat With: </span>

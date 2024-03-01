@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HalloDocServices.ViewModels.AdminViewModels;
 using HalloDocServices.Interface;
-using HalloDocEntities.Models;
 
 namespace HalloDocMVC.Controllers
 {
@@ -20,6 +19,7 @@ namespace HalloDocMVC.Controllers
             reqStatus = requestStatus?? 1;
             
             viewModel = await _adminDashboardService.GetViewModelData(reqStatus);
+
 
             return View(viewModel);
         }

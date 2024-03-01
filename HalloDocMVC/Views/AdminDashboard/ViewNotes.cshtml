@@ -23,9 +23,12 @@
                     <i class="bi bi-sign-turn-slight-right h3"></i>
                     <div class="ms-2">
                         <p class="fs-4 fw-bold">Transfer Notes</p>
-                        @foreach(var note in Model.TransferNotes)
+                        @if(Model.TransferNotes != null)
                         {
-                            <p class="m-0">@note</p>
+                            @foreach (var note in Model.TransferNotes)
+                            {
+                                <p class="m-0">@note</p>
+                            }
                         }
                         @* <p class="m-0">Admin transferred to DR. AGOLA on 27/09/2023 at 9:34:08AM: test assign</p>
                         <p class="m-0">Admin transferred to DR. AGOLA on 27/09/2023 at 9:34:08AM: test assign</p> *@

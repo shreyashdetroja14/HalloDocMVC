@@ -79,7 +79,7 @@ namespace HalloDocServices.Implementation
                     break;
             }
 
-            requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Where(x => myarray.Contains(x.Status));
+            requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Include(x => x.RequestStatusLogs).Where(x => myarray.Contains(x.Status));
 
             /*switch(requestStatus)
             {
@@ -133,6 +133,16 @@ namespace HalloDocServices.Implementation
                 int date = requestClient?.IntDate??0;
                 int year = requestClient?.IntYear ?? 0;
                 string month = requestClient?.StrMonth ?? "";
+
+                List<string> notes = new List<string>();
+                foreach(var log in request.RequestStatusLogs)
+                {
+                    if(log.Notes != null)
+                    {
+                        notes.Add(log.Notes);
+                    }
+                }
+
                 viewModels.Add(new()
                 {
                     DashboardRequestStatus = requestStatus,
@@ -149,8 +159,9 @@ namespace HalloDocServices.Implementation
                     PatientPhoneNumber = requestClient?.PhoneNumber,
                     SecondPhoneNumber = request.PhoneNumber,
                     Address = requestClient?.Address,
-                    Region = requestClient?.RegionId
+                    Region = requestClient?.RegionId,
                     //Notes
+                    Notes = notes
                 });
             }
 
