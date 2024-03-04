@@ -40,7 +40,14 @@
                     <i class="bi bi-sign-turn-slight-right h3"></i>
                     <div class="ms-2">
                         <p class="fs-4 fw-bold">Physician Notes</p>
-                        <p class="m-0">@Model.PhysicianNotes</p>
+                        @if(Model.PhysicianNotes != null)
+                        {
+                            <p class="m-0">@Model.PhysicianNotes</p>
+                        }
+                        else
+                        {
+                            <p class="m-0">-</p>
+                        }
                     </div>
                 </div>
             </div>
@@ -49,7 +56,14 @@
                     <i class="bi bi-sign-turn-slight-right h3"></i>
                     <div class="ms-2">
                         <p class="fs-4 fw-bold">Admin Notes</p>
-                        <p class="m-0">@Model.AdminNotes</p>
+                        @if(Model.AdminNotes != null)
+                        {
+                            <p class="m-0">@Model.AdminNotes</p>
+                        }
+                        else
+                        {
+                            <p class="m-0">-</p>
+                        }
                     </div>
                 </div>
             </div>
@@ -92,7 +106,8 @@
         </div>
         <div class="row">
             <div class="col-12 p-2">
-                <form asp-action="ViewNotes" asp-route-requestId="@Model.RequestId" class="bg-white shadow-sm p-3 rounded-3">
+                <form asp-action="ViewNotes"  class="bg-white shadow-sm p-3 rounded-3">
+                    <input type="number" asp-for="RequestId" hidden/>
                     <div class="form-floating mb-3">
                         <textarea asp-for="AdminNotesInput" class="form-control border-info" placeholder="admin notes" id="AdminNotesInput" style="height: 150px"></textarea>
                         <label asp-for="AdminNotesInput" class="text-info">Admin Notes</label>

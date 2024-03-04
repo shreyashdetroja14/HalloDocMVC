@@ -18,10 +18,16 @@ namespace HalloDocRepository.Implementation
             _context = context;
         }
 
-        public async Task<List<Physician>> GetAllPhysicians()
+        public  List<Physician> GetAllPhysicians()
         {
-            List<Physician> physicians = await _context.Physicians.ToListAsync();
+            List<Physician> physicians =  _context.Physicians.ToList();
             return physicians;
+        }
+
+        public Physician GetPhysicianByPhysicianId(int physicianId)
+        {
+            var physician = _context.Physicians.FirstOrDefault(x => x.PhysicianId == physicianId);
+            return physician;
         }
     }
 }

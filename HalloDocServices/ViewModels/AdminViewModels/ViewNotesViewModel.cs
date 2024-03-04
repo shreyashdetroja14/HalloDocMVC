@@ -8,6 +8,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 {
     public class ViewNotesViewModel
     {
+        public int? AdminId { get; set; }
 
         public int? RequestId {  get; set; }
 

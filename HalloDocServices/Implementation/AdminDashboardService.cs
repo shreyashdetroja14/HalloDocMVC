@@ -3,6 +3,7 @@ using HalloDocRepository.Interface;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels.AdminViewModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +11,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.WebPages.Html;
+
 
 namespace HalloDocServices.Implementation
 {
@@ -187,6 +188,7 @@ namespace HalloDocServices.Implementation
             //var requestClient = await _requestRepository.GetRequestClientByRequestId(requestId);
 
             CaseInfo.RequestId = request?.RequestId;
+            CaseInfo.Status = request?.Status;
             CaseInfo.RequestType = request?.RequestTypeId;
             CaseInfo.ConfirmationNumber = request?.ConfirmationNumber;
             
@@ -256,23 +258,25 @@ namespace HalloDocServices.Implementation
                 {
                     if (log.Status == 3)
                     {
+                        int index = log.Notes.LastIndexOf("-");
                         if (log.PhysicianId != null)
                         {
-                            ViewNotes.PhysicianCancellationNotes = log.Notes;
+                            ViewNotes.PhysicianCancellationNotes = log.Notes.Substring(index + 2);
                         }
                         else if (log.AdminId != null)
                         {
-                            ViewNotes.AdminCancellationNotes = log.Notes;
+                            //ViewNotes.AdminCancellationNotes = log.Notes;
+                            ViewNotes.AdminCancellationNotes = log.Notes.Substring(index + 2);
                         }
                     }
                     else if (log.Status == 7)
                     {
-                        ViewNotes.PatientCancellationNotes = log.Notes;
+                        int index = log.Notes.LastIndexOf(":");
+                        ViewNotes.PatientCancellationNotes = log.Notes.Substring(index + 2);
                     }
-                    else
-                    {
-                        transfernotes.Add(log.Notes);
-                    }
+                    
+                    transfernotes.Add(log.Notes);
+                    
                 }
             }
             ViewNotes.TransferNotes = transfernotes;
@@ -314,10 +318,7 @@ namespace HalloDocServices.Implementation
             var requestFetched = _requestRepository.GetIQueryableRequestByRequestId(CancelCase.RequestId);
             var request = requestFetched.Include(x => x.RequestClients).ToList();
 
-
-            
             var CaseTags = _commonRepository.GetAllCaseTags();
-
 
             foreach(var tag in CaseTags)
             {
@@ -349,13 +350,108 @@ namespace HalloDocServices.Implementation
                 log.RequestId = CancelCase.RequestId;
                 log.Status = requestFetched.Status;
                 log.AdminId = CancelCase.AdminId??1;
-                log.Notes = "Admin cancelled the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToShortTimeString() + ": " + CancelCase.AdminCancellationNote;
+                log.Notes = "Admin cancelled the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + CancelCase.AdminCancellationNote;
                 log.CreatedDate = DateTime.Now;
 
                 await _notesAndLogsRepository.AddRequestStatusLog(log);
             }
             
             return true;
+        }
+
+        public AssignCaseViewModel GetAssignCaseViewModelData(AssignCaseViewModel AssignCase)
+        {
+            var regions = _commonRepository.GetAllRegions();
+            var physicians = _physicianRepository.GetAllPhysicians();
+
+            if(AssignCase.RegionId != 0)
+            {
+                physicians = physicians.Where(x => x.RegionId == AssignCase.RegionId).ToList();
+            }
+
+            Dictionary<int, string> RegionList = new Dictionary<int, string>();
+            Dictionary<int, string> PhysicianList = new Dictionary<int, string>();
+
+            foreach (var region in regions)
+            {
+                RegionList.Add(region.RegionId, region.Name);
+            }
+
+            foreach(var physician in physicians)
+            {
+                PhysicianList.Add(physician.PhysicianId, physician.FirstName +  " " + physician.LastName);
+            }
+
+            AssignCase.RegionList = RegionList;
+            AssignCase.PhysicianList = PhysicianList;
+
+            return AssignCase;
+        }
+
+        public async Task<bool> AssignCase(AssignCaseViewModel AssignCase)
+        {
+            var requestFetched = await _requestRepository.GetRequestByRequestId(AssignCase.RequestId);
+            var physicianFetched = _physicianRepository.GetPhysicianByPhysicianId(AssignCase.PhysicianId ?? 0);
+
+            requestFetched.PhysicianId = AssignCase.PhysicianId;
+            requestFetched.Status = 2;
+
+            await _requestRepository.UpdateRequest(requestFetched);
+
+            RequestStatusLog log = new RequestStatusLog();
+            log.RequestId = AssignCase.RequestId;
+            log.Status = requestFetched.Status;
+            log.AdminId = AssignCase.AdminId ?? 1;
+            log.Notes = "Admin transferred the case to DR. " + physicianFetched.FirstName + " " + physicianFetched.LastName + "on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + AssignCase.Description;
+            log.CreatedDate = DateTime.Now;
+
+            await _notesAndLogsRepository.AddRequestStatusLog(log);
+
+            return true;
+        }
+
+        public async Task<BlockRequestViewModel> GetBlockRequestViewModelData(BlockRequestViewModel BlockRequest)
+        {
+            var requestClient = await _requestRepository.GetRequestClientByRequestId(BlockRequest.RequestId ?? 0);
+            BlockRequest.PatientFullName = requestClient.FirstName + " " + requestClient.LastName;
+
+            return BlockRequest;
+        }
+
+        public async Task<bool> BlockRequest(BlockRequestViewModel BlockRequest)
+        {
+            var requestFetched = await _requestRepository.GetRequestByRequestId(BlockRequest.RequestId ?? 0);
+            if (requestFetched == null)
+            {
+                return false;
+            }
+            requestFetched.Status = 11;
+            await _requestRepository.UpdateRequest(requestFetched);
+
+            var requestClientFetched = await _requestRepository.GetRequestClientByRequestId(requestFetched.RequestId);
+
+            BlockRequest blockRequest = new BlockRequest();
+            blockRequest.PhoneNumber = requestClientFetched.PhoneNumber;
+            blockRequest.Email = requestClientFetched.Email;
+            blockRequest.IsActive = true;
+            blockRequest.Reason = BlockRequest.Description;
+            blockRequest.RequestId = requestFetched.RequestId;
+            blockRequest.CreatedDate = DateTime.Now;
+
+            await _requestRepository.CreateBlockRequest(blockRequest);
+
+            RequestStatusLog log = new RequestStatusLog();
+            log.RequestId = requestFetched.RequestId;
+            log.Status = requestFetched.Status;
+            log.AdminId = BlockRequest.AdminId ?? 1;
+            log.Notes = "Admin blocked the case on "  + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + BlockRequest.Description;
+            log.CreatedDate = DateTime.Now;
+
+            await _notesAndLogsRepository.AddRequestStatusLog(log);
+
+            return true;
+
+
         }
     }
 }

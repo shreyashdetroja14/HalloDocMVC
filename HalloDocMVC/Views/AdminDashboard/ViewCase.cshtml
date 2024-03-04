@@ -80,12 +80,15 @@
                             <label asp-for="Email">Email</label>
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <button type="button" class="btn btn-outline-info py-3 px-4" id="editbtn">Edit</button>
-                        <span class="text-success">@ViewBag?.Success</span>
-                        <span class="text-danger">@ViewBag?.Failure</span>
-                    </div>
-                    
+                    @if(Model.Status != 1)
+                    {
+                        <div class="col-sm-6">
+                            <button type="button" class="btn btn-outline-info py-3 px-4" id="editbtn">Edit</button>
+                            <span class="text-success">@ViewBag?.Success</span>
+                            <span class="text-danger">@ViewBag?.Failure</span>
+                        </div>
+                    }
+
                 </div>
             </div>
 
@@ -117,6 +120,13 @@
             </div>
 
             <div class="submit mb-4 d-flex justify-content-end">
+                @if(Model.Status == 1)
+                {
+                    <button type="button" class="btn btn-info py-2 px-3 me-3 text-white assign-case-btn" data-request-id="@Model.RequestId">
+                        Assign Case
+                    </button>
+                }
+
                 <a class="btn btn-outline-info py-2 px-3">View Notes</a>
                 <input type="submit" value="Update" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
                 <input type="reset" value="Cancel" class="btn cancelbtn btn-danger py-2 px-3 ms-3 d-none">
@@ -127,6 +137,10 @@
         </form>
     </div>
 </div>
+
+<div id="modal-container">
+</div>
+
 
 
 
@@ -143,26 +157,20 @@
         const editBtn = document.querySelector('#editbtn');
         const submitBtn = document.querySelector('input[type="submit"]');
         const cancelBtn = document.querySelector('input[type="reset"]');
-        //const inputTags = document.querySelectorAll('input');
 
         const emailInp = document.querySelector('input[type="email"]');
         const phoneInp = document.querySelector('input[type="tel"]');
 
-        //inputTags.forEach(input => {
-        //    input.readOnly = true;
-        //})
+        if(editBtn !== null){
+            editBtn.addEventListener('click', () => {
+                editBtn.classList.add('d-none');
+                submitBtn.classList.remove('d-none');
+                cancelBtn.classList.remove('d-none');
 
-        editBtn.addEventListener('click', () => {
-            editBtn.classList.add('d-none');
-            submitBtn.classList.remove('d-none');
-            cancelBtn.classList.remove('d-none');
-            //inputTags.forEach(input => {
-            //    input.readOnly = false;
-            //})
-
-            emailInp.readOnly = false;
-            phoneInp.readOnly = false;
-        })
+                emailInp.readOnly = false;
+                phoneInp.readOnly = false;
+            });
+        }
 
         cancelBtn.addEventListener('click', () => {
             submitBtn.classList.add('d-none');
@@ -176,5 +184,52 @@
             //})
         })
 
+
+        async function GetAssignCaseModalData(requestId, regionId = 0) {
+
+            try {
+                let url = `/AdminDashBoard/AssignCase?requestId=${requestId}&regionId=${regionId}`;
+
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const assignCaseModalHtml = await response.text();
+                const modalContainer = document.getElementById('modal-container');
+                modalContainer.innerHTML = assignCaseModalHtml;
+
+                const myModal = new bootstrap.Modal('#assign-case-modal')
+                myModal.show();
+
+                const regionSelectList = document.querySelector('.region-select');
+                regionSelectList.addEventListener('change', async () => {
+                    const regionId = regionSelectList.value;
+                    console.log('region value:: ', regionId);
+
+                    myModal.hide();
+                    await GetAssignCaseModalData(requestId, regionId);
+
+                });
+
+            } catch (error) {
+                console.error('Error fetching partial view:', error);
+                // Handle the error gracefully, e.g., display an error message to the user
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const assignCaseBtn = document.querySelector('.assign-case-btn');
+
+            if(assignCaseBtn !== null){
+                assignCaseBtn.addEventListener('click', async (event) => {
+                    const requestId = event.target.dataset.requestId;
+                    console.log(requestId);
+
+                    await GetAssignCaseModalData(requestId);
+                });
+            }
+        })
     </script>
 }

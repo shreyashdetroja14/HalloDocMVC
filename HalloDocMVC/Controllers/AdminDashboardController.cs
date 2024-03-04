@@ -68,23 +68,23 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ViewNotes(int requestId, string? AdminNotesInput)
+        public async Task<IActionResult> ViewNotes(ViewNotesViewModel vnvm)
         {
             bool isNoteAdded = false;
-            if (AdminNotesInput != null)
+            if (vnvm.AdminNotesInput != null)
             {
-                isNoteAdded = await _adminDashboardService.AddAdminNote(requestId, AdminNotesInput);
+                isNoteAdded = await _adminDashboardService.AddAdminNote(vnvm.RequestId ?? 0, vnvm.AdminNotesInput);
             }
             if(isNoteAdded)
             {
                 /*return RedirectToAction("ViewNotes", new { requestId });*/
                 ViewNotesViewModel ViewNotes = new ViewNotesViewModel();
-                ViewNotes = await _adminDashboardService.GetViewNotesViewModelData(requestId);
+                ViewNotes = await _adminDashboardService.GetViewNotesViewModelData(vnvm.RequestId ?? 0);
                 return View(ViewNotes);
             }
             else
             {
-                return View(AdminNotesInput);
+                return View(vnvm.AdminNotesInput);
             }
         }
 
@@ -110,7 +110,50 @@ namespace HalloDocMVC.Controllers
             }
 
             return RedirectToAction("Index");
-            //return View();
+        }
+
+        public IActionResult AssignCase(int requestId, int regionId)
+        {
+            AssignCaseViewModel AssignCase = new AssignCaseViewModel();
+            AssignCase.RequestId = requestId;
+            AssignCase.RegionId = regionId;
+            AssignCase = _adminDashboardService.GetAssignCaseViewModelData(AssignCase);
+
+            return PartialView("_AssignCaseModal", AssignCase);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AssignCase(AssignCaseViewModel AssignCase)
+        {
+            bool isCaseAssigned = await _adminDashboardService.AssignCase(AssignCase);
+            if (isCaseAssigned)
+            {
+
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> BlockRequest(int requestId) 
+        {
+            BlockRequestViewModel BlockRequest = new BlockRequestViewModel(); 
+            BlockRequest.RequestId = requestId;
+            BlockRequest = await _adminDashboardService.GetBlockRequestViewModelData(BlockRequest);
+
+            return PartialView("_BlockRequestModal", BlockRequest);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BlockRequest(BlockRequestViewModel BlockRequest)
+        {
+            bool isReuqestBlocked = await _adminDashboardService.BlockRequest(BlockRequest);
+            if (isReuqestBlocked)
+            {
+
+            }
+
+            //return View("Index", "AdminDashboard");
+            return RedirectToAction("Index");
         }
     }
 }

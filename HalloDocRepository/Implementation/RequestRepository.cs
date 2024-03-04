@@ -214,5 +214,13 @@ namespace HalloDocRepository.Implementation
             var requestClient = await _context.RequestClients.FirstOrDefaultAsync(x => x.RequestId == requestId);
             return requestClient;
         }
+
+        public async Task<BlockRequest> CreateBlockRequest(BlockRequest blockRequest)
+        {
+            _context.Add(blockRequest);
+            await _context.SaveChangesAsync();
+
+            return blockRequest;
+        }
     }
 }

@@ -22,5 +22,11 @@ namespace HalloDocRepository.Implementation
             var caseTags = _context.CaseTags.ToList();
             return caseTags;
         }
+
+        public List<Region> GetAllRegions()
+        {
+            var regions = _context.Regions.ToList();
+            return regions;
+        }
     }
 }

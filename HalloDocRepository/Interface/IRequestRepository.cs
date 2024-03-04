@@ -64,6 +64,7 @@ namespace HalloDocRepository.Interface
 
         Task<int> GetClearedRequestCount();
 
+
         // Request Wise File
 
         Task<List<RequestWiseFile>> CreateRequestWiseFiles(List<RequestWiseFile> requestWiseFiles);
@@ -78,5 +79,10 @@ namespace HalloDocRepository.Interface
         // Request Business
 
         Task<RequestBusiness> CreateRequestBusiness(RequestBusiness requestBusiness);
+
+
+        // Block Requests
+
+        Task<BlockRequest> CreateBlockRequest(BlockRequest blockRequest);
     }
 }

@@ -10,6 +10,8 @@ namespace HalloDocServices.ViewModels.AdminViewModels
     {
         public int? RequestId { get; set; }
 
+        public int? Status { get; set; }
+
         public int? RequestType { get; set; }
 
         public string? ConfirmationNumber { get; set; }

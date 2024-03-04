@@ -67,10 +67,12 @@
             {
                 <tr class="@(request.RequestType == 1?"bg-business":"") @(request.RequestType == 2?"bg-patient":"") @(request.RequestType == 3?"bg-family":"") @(request.RequestType == 4?"bg-concierge":"") text-white fw-bold">
                     <td>
-                        <span>@request.PatientFullName</span>
-                        <button class="btn p-1 text-white">
-                            <img src="~/images/mailboxIcon.svg" />
-                        </button>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>@request.PatientFullName</span>
+                            <button class="btn p-1 text-white">
+                                <img src="~/images/mailboxIcon.svg" />
+                            </button>
+                        </div>
                     </td>
                     @if (status != 6)
                     {
@@ -139,7 +141,7 @@
                         {
                             @if (request.Notes?.Count() != 0)
                             {
-                                <td>
+                                <td style="min-width: 15rem">
                                     @foreach (var note in request.Notes)
                                     {
                                         <p>@note</p>
@@ -148,7 +150,7 @@
                             }
                             else
                             {
-                                <td style="text-align: center">-</td>
+                                <td>-</td>
                             }
                         }
                         else
@@ -171,98 +173,97 @@
                         </button>
                     </td>
                     <td>
-                        @*<button class="btn border text-white">
-                            Actions
-                        </button>*@
-                        <button class="btn border text-white dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            Actions
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item" asp-action="ViewCase" asp-route-requestId="@request.RequestId">
-                                    <i class="bi bi-journal-album pe-3"></i>View Case
-                                </a>
-                            </li>
-                            @if (status == 1)
-                            {
+                        <div class="dropdown">
+                            <button class="btn border text-white dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                Actions
+                            </button>
+                            <ul class="dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-clipboard-check pe-3"></i>Assign Case
+                                    <a class="dropdown-item" asp-action="ViewCase" asp-route-requestId="@request.RequestId">
+                                        <i class="bi bi-journal-album pe-3"></i>View Case
                                     </a>
                                 </li>
+                                @if (status == 1)
+                                {
+                                    <li>
+                                        <a class="dropdown-item assign-case-btn" style="cursor: pointer" data-request-id="@request.RequestId">
+                                            <i class="bi bi-clipboard-check pe-3" ></i>Assign Case
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item cancel-case-btn" style="cursor: pointer" data-request-id="@request.RequestId">
+                                            <i class="bi bi-x-circle pe-3"></i>Cancel Case
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item block-request-btn" style="cursor: pointer" data-request-id="@request.RequestId">
+                                            <i class="bi bi-ban pe-3"></i>Block Patient
+                                        </a>
+                                    </li>
+                                }
+                                @if (status == 2)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="bi bi-file-text pe-3"></i>Agreement
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" style="cursor: pointer" href="#">
+                                            <i class="bi bi-file-medical pe-3"></i>Transfer
+                                        </a>
+                                    </li>
+                                }
+                                @if (status == 5)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" style="cursor: pointer" href="#">
+                                            <i class="bi bi-x-circle pe-3"></i>Close Case
+                                        </a>
+                                    </li>
+                                }
                                 <li>
-                                    <a class="dropdown-item cancel-case-btn" data-request-id="@request.RequestId">
-                                        <i class="bi bi-x-circle pe-3"></i>Cancel Case
+                                    <a class="dropdown-item" asp-action="ViewNotes" asp-route-requestId="@request.RequestId">
+                                        <i class="bi bi-card-list pe-3"></i>View Notes
                                     </a>
                                 </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-ban pe-3"></i>Block Patient
-                                    </a>
-                                </li>
-                            }
-                            @if (status == 2)
-                            {
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-file-text pe-3"></i>Agreement
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-file-medical pe-3"></i>Transfer
-                                    </a>
-                                </li>
-                            }
-                            @if (status == 5)
-                            {
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-x-circle pe-3"></i>Close Case
-                                    </a>
-                                </li>
-                            }
-                            <li>
-                                <a class="dropdown-item" asp-action="ViewNotes" asp-route-requestId="@request.RequestId">
-                                    <i class="bi bi-card-list pe-3"></i>View Notes
-                                </a>
-                            </li>
-                            @if (status != 1)
-                            {
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-file-earmark-arrow-up pe-3"></i>View Uploads
-                                    </a>
-                                </li>
-                            }
-                            @if (status == 3 || status == 4 || status == 5)
-                            {
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-card-list pe-3"></i>Doctor Notes
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-file-medical pe-3"></i>Encounter
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-list-check pe-3"></i>Orders
-                                
-                                    </a>
-                                </li>
-                            }
-                            @if (status == 2 || status == 5)
-                            {
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-x-circle pe-3"></i>Clear Case
-                                    </a>
-                                </li>
-                            }
-                        </ul>
+                                @if (status != 1)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="bi bi-file-earmark-arrow-up pe-3"></i>View Uploads
+                                        </a>
+                                    </li>
+                                }
+                                @if (status == 3 || status == 4 || status == 5)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="bi bi-card-list pe-3"></i>Doctor Notes
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="bi bi-file-medical pe-3"></i>Encounter
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="bi bi-list-check pe-3"></i>Orders
+
+                                        </a>
+                                    </li>
+                                }
+                                @if (status == 2 || status == 5)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="bi bi-x-circle pe-3"></i>Clear Case
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     </td>
 
                 </tr>
@@ -421,13 +422,19 @@
                         <div class="row mb-3">
                             @if(status == 1)
                             {
-                                <div class="col-6"><button class="btn btn-primary rounded-pill mb-2 w-75">Assign Case</button></div>
                                 <div class="col-6">
-                                    <button class="btn btn-danger rounded-pill mb-2 w-75" data-bs-toggle="modal" data-bs-target="#cancel-@request.RequestId">
+                                    <button class="btn btn-primary rounded-pill mb-2 w-75 assign-case-btn" data-request-id="@request.RequestId">Assign Case</button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-danger rounded-pill mb-2 w-75 cancel-case-btn" data-request-id="@request.RequestId">
                                         Cancel Case
                                     </button>
                                 </div>
-                                <div class="col-6"><button class="btn btn-danger rounded-pill mb-2 w-75">Block Patient</button></div>
+                                <div class="col-6">
+                                    <button class="btn btn-danger rounded-pill mb-2 w-75 block-request-btn" data-request-id="@request.RequestId">
+                                        Block Patient
+                                    </button>
+                                </div>
                             }
                             @if(status == 2)
                             {
@@ -480,202 +487,6 @@
                 </div>
             </div>
         }
-
-
-        @*<div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button flex-column align-items-start" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo">
-                    <div class="w-100 d-flex justify-content-between">
-                        <p>Testing Test</p>
-                        <p>
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:16px; height:16px;"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="#00b33c"></path> </g></svg>
-                            Patient
-                        </p>
-                    </div>
-                    <div class="w-100 d-flex justify-content-between align-items-start">
-                        <div>
-                            <p>Maryland Maryland,</p>
-                            <p>Maryland 2121</p>
-                        </div>
-                        <a class="btn btn-outline-info rounded-pill">Map Location</a>
-                    </div>
-                    <div>
-                        <img src="~/images/clockIcon.svg" />
-                        <span>Request Date: </span>
-                        <span>Dec 5, 2023 08:52:20 AM</span>
-
-                    </div>
-                </button>
-            </h2>
-            <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
-                <div class="accordion-body">
-                    <div class="mb-2">
-                        <img src="~/images/calendarIcon.svg" />
-                        <span>Date of birth: </span>
-                        <span>June 28, 1999</span>
-                    </div>
-                    <div class="mb-2">
-                        <img src="~/images/mailboxIconBlue.svg" />
-                        <span>Email: </span>
-                        <span>shrey.detroja14@gmail.com</span>
-                    </div>
-                    <div class="mb-2">
-                        <img src="~/images/callIconBlue.svg" />
-                        <span>Patient: </span>
-                        <span>+91 95864 986863</span>
-                    </div>
-                    <div class="mb-3">
-                        <img src="~/images/usernameIconBlue.svg" />
-                        <span>Requestor: </span>
-                        <span>Patient Testing test</span>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-6"><button class="btn btn-primary rounded-pill mb-2 w-75">Assign Case</button></div>
-                        <div class="col-6"><button class="btn btn-danger rounded-pill mb-2 w-75">Cancel Case</button></div>
-                        <div class="col-6"><button class="btn btn-success rounded-pill mb-2 w-75">View Notes</button></div>
-                        <div class="col-6"><button class="btn btn-danger rounded-pill mb-2 w-75">Block Patient</button></div>
-                        <div class="col-6"><button class="btn btn-success rounded-pill mb-2 w-75">Email</button></div>
-                        <div class="col-6"><button class="btn bg-white border border-3 rounded-pill mb-2 w-75">View Case</button></div>
-                    </div>
-                </div>
-            </div>
-        </div>*@
     </div>
+
 </div>
-
-
-
-@*@foreach(var request in Model)
-        {
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button flex-column align-items-start" type="button" data-bs-toggle="collapse" data-bs-target="#item-@request.RequestId">
-                        <div class="w-100 d-flex justify-content-between">
-                            <p>@request.PatientFullName</p>
-                            <p>
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:16px; height:16px;">
-                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                    <g id="SVGRepo_iconCarrier">
-                                        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="@(request.RequestType == 1 ? "#ffb3cc" : "")
-                                @(request.RequestType == 2 ? "#00b33c" : "")
-                                @(request.RequestType == 3 ? "#ff9933" : "")
-                                @(request.RequestType == 4 ? "#66a3ff" : "")"></path>
-                                    </g>
-                                </svg>
-                                @(request.RequestType == 1 ? "Business" : "")
-                                @(request.RequestType == 2 ? "Patient" : "")
-                                @(request.RequestType == 3 ? "Family" : "")
-                                @(request.RequestType == 4 ? "Concierge" : "")
-                            </p>
-                        </div>
-                        <div class="w-100 d-flex justify-content-between align-items-start">
-                            <div>
-                                <p>@request.Address</p>
-                            </div>
-                            <a class="btn btn-outline-info rounded-pill">Map Location</a>
-                        </div>
-                        <div>
-                            <img src="~/images/clockIcon.svg" />
-                            <span>Request Date: </span>
-                            <span>@request.RequestedDate</span>
-                        </div>
-                    </button>
-                </h2>
-                <div id="item-@request.RequestId" class="accordion-collapse collapse">
-                    <div class="accordion-body">
-                        @if (status != 6)
-                        {
-                            <div class="mb-2">
-                                <img src="~/images/calendarIcon.svg" />
-                                <span>Date of birth: </span>
-                                <span>@request.DateOfBirth</span>
-                            </div>
-                        }
-                        <div class="mb-2">
-                            <img src="~/images/mailboxIconBlue.svg" />
-                            <span>Email: </span>
-                            <span>@request.PatientEmail</span>
-                        </div>
-                        @if (status != 5)
-                        {
-                            <div class="mb-2">
-                                <div>
-                                    <img src="~/images/callIconBlue.svg" />
-                                    <span>Patient: </span>
-                                    <span>@request.PatientPhoneNumber</span>
-                                </div>
-                                @if (request.SecondPhoneNumber != null)
-                                {
-                                    <div>
-                                        <img src="~/images/callIconBlue.svg" />
-                                        <span>
-                                            @(request.RequestType == 1 ? "Business: " : "")
-                                            @(request.RequestType == 2 ? "Patient: " : "")
-                                            @(request.RequestType == 3 ? "Family: " : "")
-                                            @(request.RequestType == 4 ? "Concierge: " : "")
-                                        </span>
-                                        <span>@request.SecondPhoneNumber</span>
-                                    </div>
-                                }
-                            </div>
-                        }
-                        
-                        <div class="mb-3">
-                            <img src="~/images/usernameIconBlue.svg" />
-                            <span>Requestor: </span>
-                            <span>@request.RequestorName</span>
-                        </div>
-                        @if (status != 4 && status != 6)
-                        {
-                            <div class="mb-2">
-                                <img src="~/images/calendarIcon.svg" />
-                                <span>Transfer Notes: </span>
-                                <span>Case transferred to DR. AGOLA by admin</span>
-                            </div>
-                        }
-                        @if (status != 1)
-                        {
-                            <div class="mb-2">
-                                <img src="~/images/calendarIcon.svg" />
-                                <span>Date of Service: </span>
-                                <span>June 23, 2023 4:58PM</span>
-                            </div>
-                        }
-                        @if (status != 1)
-                        {
-                            <div class="mb-2">
-                                <img src="~/images/doctorIcon.svg" />
-                                <span>Physician: </span>
-                                <span>
-                                    @request.PhysicianName
-                                </span>
-                            </div>
-                        }
-                        @if (status == 5)
-                        {
-                            <div class="mb-2">
-                                <img src="~/images/mailboxIconBlue.svg" />
-                                <span>Region: </span>
-                                <span>
-                                    @(request.Region == 1 ? "Gujarat" : "")
-                                    @(request.Region == 2 ? "Maharashtra" : "")
-                                    @(request.Region == 3 ? "Madhya Pradesh" : "")
-                                    @(request.Region == 4 ? "Uttar Pradesh" : "")
-                                    @(request.Region == 5 ? "Rajasthan" : "")
-                                </span>
-                            </div>
-                        }
-                        <div class="row mb-2">
-                            <div class="col-6"><button class="btn btn-primary rounded-pill mb-2 w-75">Assign Case</button></div>
-                            <div class="col-6"><button class="btn btn-danger rounded-pill mb-2 w-75">Cancel Case</button></div>
-                            <div class="col-6"><button class="btn btn-success rounded-pill mb-2 w-75">View Notes</button></div>
-                            <div class="col-6"><button class="btn btn-danger rounded-pill mb-2 w-75">Block Patient</button></div>
-                            <div class="col-6"><button class="btn btn-success rounded-pill mb-2 w-75">Email</button></div>
-                            <div class="col-6"><button class="btn bg-white border border-3 rounded-pill mb-2 w-75">View Case</button></div>
-                        </div>
-                        <div>
-                    </div>
-                </div>
-            </div>
-        }*@

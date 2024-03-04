@@ -24,5 +24,13 @@ namespace HalloDocServices.Interface
         CancelCaseViewModel GetCancelCaseViewModelData(CancelCaseViewModel CancelCase);
 
         Task<bool> CancelCase(CancelCaseViewModel CancelCase);
+
+        AssignCaseViewModel GetAssignCaseViewModelData(AssignCaseViewModel AssignCase);
+
+        Task<bool> AssignCase(AssignCaseViewModel AssignCase);
+
+        Task<BlockRequestViewModel> GetBlockRequestViewModelData(BlockRequestViewModel BlockRequest);
+
+        Task<bool> BlockRequest(BlockRequestViewModel BlockRequest);
     }
 }

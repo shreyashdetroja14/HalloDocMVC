@@ -9,6 +9,8 @@ namespace HalloDocRepository.Interface
 {
     public interface IPhysicianRepository
     {
-        Task<List<Physician>> GetAllPhysicians();
+        List<Physician> GetAllPhysicians();
+
+        Physician GetPhysicianByPhysicianId(int physicianId);
     }
 }
