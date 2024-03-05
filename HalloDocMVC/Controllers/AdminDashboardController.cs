@@ -112,11 +112,12 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult AssignCase(int requestId, int regionId)
+        public IActionResult AssignCase(int requestId, bool? isTransferRequest, int regionId)
         {
             AssignCaseViewModel AssignCase = new AssignCaseViewModel();
             AssignCase.RequestId = requestId;
             AssignCase.RegionId = regionId;
+            AssignCase.IsTransferRequest = isTransferRequest;
             AssignCase = _adminDashboardService.GetAssignCaseViewModelData(AssignCase);
 
             return PartialView("_AssignCaseModal", AssignCase);
@@ -130,6 +131,14 @@ namespace HalloDocMVC.Controllers
             {
 
             }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TransferRequest(AssignCaseViewModel TransferRequest)
+        {
+            bool isRequestTransferred = await _adminDashboardService.TransferRequest(TransferRequest);
 
             return RedirectToAction("Index");
         }
@@ -155,5 +164,7 @@ namespace HalloDocMVC.Controllers
             //return View("Index", "AdminDashboard");
             return RedirectToAction("Index");
         }
+
+        
     }
 }

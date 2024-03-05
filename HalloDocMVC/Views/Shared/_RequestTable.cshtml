@@ -186,7 +186,7 @@
                                 @if (status == 1)
                                 {
                                     <li>
-                                        <a class="dropdown-item assign-case-btn" style="cursor: pointer" data-request-id="@request.RequestId">
+                                        <a class="dropdown-item assign-case-btn" style="cursor: pointer" data-request-id="@request.RequestId" data-is-transfer-request="false">
                                             <i class="bi bi-clipboard-check pe-3" ></i>Assign Case
                                         </a>
                                     </li>
@@ -209,7 +209,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" style="cursor: pointer" href="#">
+                                        <a class="dropdown-item assign-case-btn" style="cursor: pointer" data-request-id="@request.RequestId" data-is-transfer-request="true">
                                             <i class="bi bi-file-medical pe-3"></i>Transfer
                                         </a>
                                     </li>
@@ -423,7 +423,7 @@
                             @if(status == 1)
                             {
                                 <div class="col-6">
-                                    <button class="btn btn-primary rounded-pill mb-2 w-75 assign-case-btn" data-request-id="@request.RequestId">Assign Case</button>
+                                    <button class="btn btn-primary rounded-pill mb-2 w-75 assign-case-btn" data-request-id="@request.RequestId" data-is-transfer-request="false">Assign Case</button>
                                 </div>
                                 <div class="col-6">
                                     <button class="btn btn-danger rounded-pill mb-2 w-75 cancel-case-btn" data-request-id="@request.RequestId">
@@ -439,7 +439,11 @@
                             @if(status == 2)
                             {
                                 <div class="col-6"><button class="btn btn-warning rounded-pill mb-2 w-75">Agreement</button></div>
-                                <div class="col-6"><button class="btn btn-info rounded-pill mb-2 w-75">Transfer</button></div>
+                                <div class="col-6">
+                                    <button class="btn btn-info rounded-pill mb-2 w-75 assign-case-btn" data-request-id="@request.RequestId" data-is-transfer-request="true">
+                                        Transfer
+                                    </button>
+                                </div>
                             }
                             @if (status == 5)
                             {
@@ -481,7 +485,6 @@
                                 <img src="~/images/doctorIcon.svg" />
                                 Provider
                             </button>
-                            
                         </div>
                     </div>
                 </div>

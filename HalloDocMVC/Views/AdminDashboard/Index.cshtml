@@ -256,10 +256,10 @@
             }
         }
 
-        async function GetAssignCaseModalData(requestId, regionId = 0) {
+        async function GetAssignCaseModalData(requestId, isTransferRequest = null, regionId = 0) {
 
             try {
-                let url = `/AdminDashBoard/AssignCase?requestId=${requestId}&regionId=${regionId}`;
+                let url = `/AdminDashBoard/AssignCase?requestId=${requestId}&isTransferRequest=${isTransferRequest}&regionId=${regionId}`;
 
                 const response = await fetch(url);
 
@@ -278,9 +278,11 @@
                 regionSelectList.addEventListener('change', async () => {
                     const regionId = regionSelectList.value;
                     console.log('region value:: ',regionId);
+                    console.log('request id:: ', requestId);
+                    console.log('transfer req:: ', isTransferRequest);
 
                     myModal.hide();
-                    await GetAssignCaseModalData(requestId, regionId);
+                    await GetAssignCaseModalData(requestId, isTransferRequest, regionId);
 
                 });
 
@@ -488,9 +490,11 @@
                 assignCaseBtn.forEach(item => {
                     item.addEventListener('click', async (event) => {
                         const requestId = event.target.dataset.requestId;
+                        const isTransferRequest = event.target.dataset.isTransferRequest;
                         console.log(requestId);
+                        console.log(isTransferRequest);
 
-                        await GetAssignCaseModalData(requestId);
+                        await GetAssignCaseModalData(requestId, isTransferRequest);
                     })
                 })
             }

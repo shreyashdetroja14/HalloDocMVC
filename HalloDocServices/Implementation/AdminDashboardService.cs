@@ -402,7 +402,29 @@ namespace HalloDocServices.Implementation
             log.RequestId = AssignCase.RequestId;
             log.Status = requestFetched.Status;
             log.AdminId = AssignCase.AdminId ?? 1;
-            log.Notes = "Admin transferred the case to DR. " + physicianFetched.FirstName + " " + physicianFetched.LastName + "on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + AssignCase.Description;
+            log.Notes = "Admin assigned the case to DR. " + physicianFetched.FirstName + " " + physicianFetched.LastName + "on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + AssignCase.Description;
+            log.CreatedDate = DateTime.Now;
+
+            await _notesAndLogsRepository.AddRequestStatusLog(log);
+
+            return true;
+        }
+
+        public async Task<bool> TransferRequest(AssignCaseViewModel TransferRequest)
+        {
+            var requestFetched = await _requestRepository.GetRequestByRequestId(TransferRequest.RequestId);
+            var physicianFetched = _physicianRepository.GetPhysicianByPhysicianId(TransferRequest.PhysicianId ?? 0);
+
+            requestFetched.PhysicianId = TransferRequest.PhysicianId;
+            requestFetched.Status = 2;
+
+            await _requestRepository.UpdateRequest(requestFetched);
+
+            RequestStatusLog log = new RequestStatusLog();
+            log.RequestId = TransferRequest.RequestId;
+            log.Status = requestFetched.Status;
+            log.AdminId = TransferRequest.AdminId ?? 1;
+            log.Notes = "Admin transferred the case to DR. " + physicianFetched.FirstName + " " + physicianFetched.LastName + "on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + TransferRequest.Description;
             log.CreatedDate = DateTime.Now;
 
             await _notesAndLogsRepository.AddRequestStatusLog(log);
@@ -453,5 +475,7 @@ namespace HalloDocServices.Implementation
 
 
         }
+
+        
     }
 }

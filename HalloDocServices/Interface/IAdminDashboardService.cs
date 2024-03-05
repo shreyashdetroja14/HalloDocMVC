@@ -29,8 +29,11 @@ namespace HalloDocServices.Interface
 
         Task<bool> AssignCase(AssignCaseViewModel AssignCase);
 
+        Task<bool> TransferRequest(AssignCaseViewModel TransferRequest);
+
         Task<BlockRequestViewModel> GetBlockRequestViewModelData(BlockRequestViewModel BlockRequest);
 
         Task<bool> BlockRequest(BlockRequestViewModel BlockRequest);
+
     }
 }

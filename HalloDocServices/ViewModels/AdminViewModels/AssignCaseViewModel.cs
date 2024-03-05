@@ -12,6 +12,8 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public int RequestId { get; set; }
 
+        public bool? IsTransferRequest { get; set; }
+
         public Dictionary<int, string>? RegionList { get; set; }
 
         public Dictionary<int, string>? PhysicianList { get; set; }
