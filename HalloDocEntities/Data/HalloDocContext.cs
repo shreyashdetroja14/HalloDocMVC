@@ -203,6 +203,10 @@ public partial class HalloDocContext : DbContext
 
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
 
+            entity.HasOne(d => d.Admin).WithMany(p => p.RequestWiseFiles).HasConstraintName("fk_admin");
+
+            entity.HasOne(d => d.Physician).WithMany(p => p.RequestWiseFiles).HasConstraintName("fk_physician");
+
             entity.HasOne(d => d.Request).WithMany(p => p.RequestWiseFiles)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_request");

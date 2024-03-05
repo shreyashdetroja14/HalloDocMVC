@@ -2,15 +2,20 @@
 using HalloDocServices.ViewModels.AdminViewModels;
 using HalloDocServices.Interface;
 using HalloDocEntities.Models;
+using HalloDocServices.Implementation;
+using HalloDocServices.ViewModels;
 
 namespace HalloDocMVC.Controllers
 {
     public class AdminDashboardController : Controller
     {
         private readonly IAdminDashboardService _adminDashboardService;
-        public AdminDashboardController(IAdminDashboardService adminDashboardService)
+        private readonly IPatientService _patientService;
+
+        public AdminDashboardController(IAdminDashboardService adminDashboardService, IPatientService patientService)
         {
             _adminDashboardService = adminDashboardService;
+            _patientService = patientService;
         }
 
         public async Task<IActionResult> Index(int? requestStatus)
@@ -165,6 +170,38 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
-        
+        public async Task<IActionResult> ViewUploads(int requestId)
+        {
+            ViewDocumentsViewModel ViewUploads = new ViewDocumentsViewModel();
+            ViewUploads.RequestId = requestId;
+            ViewUploads = await _adminDashboardService.GetViewUploadsViewModelData(ViewUploads);
+
+            return View(ViewUploads);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadRequestFile(IEnumerable<IFormFile>? MultipleFiles, int requestId)
+        {
+
+            if (MultipleFiles != null && MultipleFiles?.Count() != 0)
+            {
+                await _adminDashboardService.UploadFiles(MultipleFiles, requestId);
+            }
+            return RedirectToAction("ViewUploads", new { requestId });
+        }
+
+        public async Task<IActionResult> DownloadFile(int id)
+        {
+            var downloadedFile = await _adminDashboardService.DownloadFile(id);
+
+            if (downloadedFile != null) 
+            { 
+                
+            }
+
+            return File(downloadedFile.Data, "application/octet-stream", downloadedFile.Filename);
+
+        }
     }
 }

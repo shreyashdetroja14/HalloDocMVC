@@ -69,18 +69,7 @@
     background-color: #66a3ff;
 }
 
-.accordion-button, .accordion-body {
-    background-color: #e7f1ff;
-    color: #000;
-}
 
-    .accordion-button::after, .accordion-button:not(.collapsed)::after {
-        background: none;
-    }
-
-    .accordion-button:not(.collapsed){
-        color: black;
-    }
 
 /*table{
     text-align: center;

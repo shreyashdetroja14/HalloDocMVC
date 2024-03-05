@@ -1,0 +1,177 @@
+﻿
+@{
+    ViewData["Title"] = "View Uploads";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+@model HalloDocServices.ViewModels.ViewDocumentsViewModel
+
+<div class="main">
+
+    <partial name="_NavbarLinks"></partial>
+
+    <div class="container p-4">
+        <div class="heading d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h2 mb-3">Documents</h1>
+            <a asp-area="" asp-controller="Patient" asp-action="Dashboard" class="btn back-btn">
+                <img src="~/images/backIcon.svg" alt="">
+                Back
+            </a>
+        </div>
+        <div class="filesSection bg-white rounded-3 shadow">
+            <div class="uploadSection p-3">
+                <p class="m-0">Patient Name</p>
+                <h2 class="h4 mb-3 d-flex flex-column flex-sm-row"><span>Testing Test</span> <span class="fw-light">(Conformation Number)</span></h2>
+                <p class="mb-4">
+                    Check here to review and add files that you or the Client/Member has attached to the Request.
+                </p>
+
+                <form asp-action="UploadRequestFile" asp-route-requestId="@Model.RequestId" class="mb-4" enctype="multipart/form-data">
+                    <div class="input-group mb-3">
+                        <input type="file" asp-for="MultipleFiles" multiple
+                               class="form-control px-3 py-2 file-upload d-none" id="MultipleFiles">
+
+                        <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
+                               for="MultipleFiles">
+                            <span class="px-3 py-2" id="filename">Select File</span>
+                            <button type="submit" class="btn btn-info p-3 text-white fw-bold rounded-0">
+                                <img src="~/images/uploadIcon.svg" class="me-2" alt="">Upload
+                            </button>
+                        </label>
+                    </div>
+                </form>
+
+                @if (ViewBag.Message != null)
+                {
+                    <span class="text-danger">@ViewBag.Message</span>
+                }
+
+                <div>
+                    <div class="heading d-flex justify-content-between align-items-center">
+                        <h4>Documents</h4>
+                        <div>
+                            <a asp-action="DownloadAllFiles" asp-route-id="@Model.RequestId" class="btn btn-outline-info p-2 d-none d-md-inline ms-2">
+                                Download All
+                            </a>
+                            <a asp-action="DownloadAllFiles" asp-route-id="@Model.FileInfo?.FirstOrDefault()?.FileId" class="btn btn-outline-info p-2 d-md-none">
+                                <i class="bi bi-cloud-arrow-down"></i>
+                            </a>
+
+                            <a class="btn btn-outline-info p-2 d-none d-md-inline ms-2">
+                                Delete All
+                            </a>
+                            <a class="btn btn-outline-info p-2 d-md-none">
+                                <i class="bi bi-trash"></i>
+                            </a>
+
+                            <a class="btn btn-outline-info p-2 d-none d-md-inline ms-2">
+                                Send Mail
+                            </a>
+                            <a class="btn btn-outline-info p-2 d-md-none">
+                                <i class="bi bi-envelope"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="requestfiles-md d-none d-md-block">
+                <table class="table">
+                    <thead style="background-color: #FAF9F6;">
+                        <tr class="requestfilesheader">
+                            <th scope="col" class="p-3">
+                                <input type="checkbox" name="" id="selectAll">
+                            </th>
+                            <th scope="col" class="py-3">Documents</th>
+                            @*<th scope="col" class="py-3">Uploader</th>*@
+                            <th scope="col" class="py-3">Upload Date</th>
+                            <th scope="col" class="py-3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @if (Model.FileInfo != null)
+                        {
+                            @foreach (var item in Model.FileInfo)
+                            {
+                                <tr class="bg-white">
+                                    <td class="p-3">
+                                        <input type="checkbox" name="" id="">
+                                    </td>
+                                    <td class="py-3">@(item.FileName.Substring(0, item.FileName.IndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</td>
+                                    @*<td class="py-3">@item.Uploader</td>*@
+                                    <td class="py-3">@item.UploadDate</td>
+                                    <td class="py-3">
+                                        <a asp-action="DownloadFile" asp-route-id="@item.FileId" class="btn btn-outline-info">
+                                            <i class="bi bi-cloud-arrow-down"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="requestfiles d-md-none">
+                <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
+
+                    @if (Model.FileInfo != null)
+                    {
+                        @foreach (var item in Model.FileInfo)
+                        {
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed d-flex" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#flush-collapse-@item.FileId">
+
+                                        <i class="bi bi-clock text-info"></i>
+                                        <span class="px-2">@(item.FileName.Substring(0, item.FileName.IndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</span>
+                                    </button>
+                                </h2>
+                                <div id="flush-collapse-@item.FileId" class="accordion-collapse collapse">
+                                    <div class="accordion-body">
+                                        <div class="mb-2">
+                                            <input type="checkbox" name="" id="">
+                                            <span>@(item.FileName.Substring(0, item.FileName.IndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</span>
+                                        </div>
+                                        @*<div class="mb-2">
+                                            <span>@item.Uploader</span>
+                                        </div>*@
+                                        <div class="mb-2">
+                                            <span>@item.UploadDate</span>
+                                        </div>
+                                        <div>
+                                            <a asp-action="DownloadFile" asp-route-id="@item.FileId" class="btn btn-outline-info">
+                                                <i class="bi bi-cloud-arrow-down"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section AddScript{
+    <script>
+        const actualBtn = document.querySelector('#MultipleFiles');
+
+        const fileChosen = document.querySelector('#filename');
+
+
+        actualBtn.addEventListener('change', function () {
+            fileChosen.textContent = '';
+            for (var i = 0; i < this.files.length; i++) {
+                fileChosen.textContent += this.files[i].name + ', ';
+            }
+            fileChosen.textContent = fileChosen.textContent.slice(0, fileChosen.textContent.length - 2);
+
+        })
+    </script>
+}

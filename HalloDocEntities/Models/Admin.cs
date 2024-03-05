@@ -89,4 +89,7 @@ public partial class Admin
 
     [InverseProperty("Admin")]
     public virtual ICollection<RequestStatusLog> RequestStatusLogs { get; set; } = new List<RequestStatusLog>();
+
+    [InverseProperty("Admin")]
+    public virtual ICollection<RequestWiseFile> RequestWiseFiles { get; set; } = new List<RequestWiseFile>();
 }

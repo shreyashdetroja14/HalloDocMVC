@@ -1,7 +1,9 @@
 ﻿using HalloDocEntities.Models;
 using HalloDocRepository.Interface;
 using HalloDocServices.Interface;
+using HalloDocServices.ViewModels;
 using HalloDocServices.ViewModels.AdminViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
@@ -11,6 +13,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace HalloDocServices.Implementation
@@ -476,6 +479,89 @@ namespace HalloDocServices.Implementation
 
         }
 
+        public async Task<ViewDocumentsViewModel> GetViewUploadsViewModelData(ViewDocumentsViewModel ViewUploads)
+        {
+            var requestFetched = _requestRepository.GetIQueryableRequestByRequestId(ViewUploads.RequestId);
+
+            requestFetched = requestFetched.Include(x => x.RequestWiseFiles);
+
+            var data = requestFetched.FirstOrDefault()?.RequestWiseFiles;
+            var requestwisefiles = data.AsQueryable().Include(x => x.Admin).Include(x => x.Physician).ToList();
+
+            var request = requestFetched.FirstOrDefault();
+
+            List<RequestFileViewModel> requestfilelist = new List<RequestFileViewModel>();
+            foreach (var file in requestwisefiles)
+            {
+                requestfilelist.Add(new RequestFileViewModel
+                {
+                    FileId = file.RequestWiseFileId,
+                    FileName = Path.GetFileName(file.FileName),
+                    Uploader = (file.AdminId != null ? file.Admin?.FirstName : (file.PhysicianId != null ? file.Physician?.FirstName : request?.FirstName)),
+                    UploadDate = DateOnly.FromDateTime(file.CreatedDate),
+                    FilePath = file.FileName
+                }) ;
+            }
+
+            ViewUploads.FileInfo = requestfilelist;
+
+            return ViewUploads;
+        }
+
+        public async Task UploadFiles(IEnumerable<IFormFile> MultipleFiles, int requestId)
+        {
+            List<string> files = new List<string>();
+            foreach (var UploadFile in MultipleFiles)
+            {
+                string FilePath = "wwwroot\\Upload\\" + requestId;
+                string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                string newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}-{DateTime.Now.ToString("yyyyMMddhhmmss")}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
+
+                string fileNameWithPath = Path.Combine(path, newfilename);
+                files.Add(FilePath.Replace("wwwroot\\Upload\\", "/Upload/") + "/" + newfilename);
+
+                using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                {
+                    UploadFile.CopyTo(stream);
+                }
+            }
+            List<RequestWiseFile> requestWiseFiles = new List<RequestWiseFile>();
+            foreach (string file in files)
+            {
+                var reqwisefileNew = new RequestWiseFile();
+                reqwisefileNew.RequestId = requestId;
+                reqwisefileNew.FileName = file;
+                reqwisefileNew.AdminId = 1;
+                reqwisefileNew.CreatedDate = DateTime.Now;
+
+                requestWiseFiles.Add(reqwisefileNew);
+            }
+            await _requestRepository.CreateRequestWiseFiles(requestWiseFiles);
+        }
         
+
+        public async Task<DownloadedFile> DownloadFile(int fileId)
+        {
+            var requestFileData = await _requestRepository.GetRequestWiseFileByFileId(fileId);
+
+            string FilePath = "wwwroot\\" + requestFileData?.FileName;
+            var path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+            var bytes = System.IO.File.ReadAllBytes(path);
+            var newfilename = Path.GetFileName(path);
+
+            DownloadedFile dload = new DownloadedFile() 
+            { 
+                Data = bytes,
+                Filename = newfilename
+            };
+
+            return dload;
+        }
     }
 }

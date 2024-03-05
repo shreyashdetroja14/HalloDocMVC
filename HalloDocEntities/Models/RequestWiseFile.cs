@@ -51,6 +51,14 @@ public partial class RequestWiseFile
     [Column("is_patient_records")]
     public bool? IsPatientRecords { get; set; }
 
+    [ForeignKey("AdminId")]
+    [InverseProperty("RequestWiseFiles")]
+    public virtual Admin? Admin { get; set; }
+
+    [ForeignKey("PhysicianId")]
+    [InverseProperty("RequestWiseFiles")]
+    public virtual Physician? Physician { get; set; }
+
     [ForeignKey("RequestId")]
     [InverseProperty("RequestWiseFiles")]
     public virtual Request Request { get; set; } = null!;

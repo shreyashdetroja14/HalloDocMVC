@@ -230,7 +230,7 @@
                                 @if (status != 1)
                                 {
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" asp-action="ViewUploads" asp-route-requestId="@request.RequestId">
                                             <i class="bi bi-file-earmark-arrow-up pe-3"></i>View Uploads
                                         </a>
                                     </li>
@@ -452,7 +452,7 @@
                             <div class="col-6"><a asp-action="ViewNotes" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">View Notes</a></div>
                             @if (status != 1)
                             {
-                                <div class="col-6"><button class="btn btn-success rounded-pill mb-2 w-75">View Uploads</button></div>
+                                <div class="col-6"><a asp-action="ViewUploads" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">View Uploads</a></div>
                             }
                             @if (status == 3 || status == 4 || status == 5)
                             {

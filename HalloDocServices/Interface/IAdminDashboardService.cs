@@ -1,4 +1,6 @@
-﻿using HalloDocServices.ViewModels.AdminViewModels;
+﻿using HalloDocServices.ViewModels;
+using HalloDocServices.ViewModels.AdminViewModels;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,5 +37,10 @@ namespace HalloDocServices.Interface
 
         Task<bool> BlockRequest(BlockRequestViewModel BlockRequest);
 
+        Task<ViewDocumentsViewModel> GetViewUploadsViewModelData(ViewDocumentsViewModel ViewUploads);
+
+        Task UploadFiles(IEnumerable<IFormFile> MultipleFiles, int requestId);
+
+        Task<DownloadedFile> DownloadFile(int fileId);
     }
 }
