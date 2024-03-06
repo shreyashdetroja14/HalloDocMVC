@@ -30,19 +30,25 @@ namespace HalloDocServices.Implementation
             _requestRepository = requestRepository;
 
         }
-        public async Task<string> CheckLogin(LoginViewModel LoginInfo)
+        public async Task<AspNetUser> CheckLogin(LoginViewModel LoginInfo)
         {
-            string id = "";
+            //string id = "";
 
-            var aspnetuserFetched = await _userRepository.GetAspNetUserByEmail(LoginInfo.Email);
+            //var aspnetuserFetched = await _userRepository.GetAspNetUserByEmail(LoginInfo.Email);
+            var aspnetuserIQ = _userRepository.GetIQueryableAspNetUserByEmail(LoginInfo.Email);
+            var aspnetuserFetched = aspnetuserIQ.FirstOrDefault();
+
             if (aspnetuserFetched != null)
             {
                 if (BCrypt.Net.BCrypt.Verify(LoginInfo.Password, aspnetuserFetched.PasswordHash))
                 {
-                    id = aspnetuserFetched.Id;
+                    //id = aspnetuserFetched.Id;
+                    
+
+                    return aspnetuserFetched;
                 }
             }
-            return id;
+            return new AspNetUser();
         }
 
         public async Task<string> CreateAccount(CreateAccountViewModel Credentials)

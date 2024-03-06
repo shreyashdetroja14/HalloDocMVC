@@ -3,16 +3,19 @@ using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using HalloDocServices.Interface;
 using System.Text;
+using HalloDocMVC.Auth;
 
 namespace HalloDocMVC.Controllers
 {
     public class LoginController : Controller
     {
         private readonly ILoginService _loginService;
+        private readonly IJwtService _jwtService;
 
-        public LoginController(ILoginService loginService)
+        public LoginController(ILoginService loginService, IJwtService jwtService)
         {
             _loginService = loginService;
+            _jwtService = jwtService;
         }
 
         public static string? decrypt(string emailToken)
@@ -29,8 +32,11 @@ namespace HalloDocMVC.Controllers
             }
         }
 
+        [CustomAuthorize("")]
         public IActionResult Index()
         {
+            var cookie = Request.Cookies["jwt"];
+
             return View();
         }
 
@@ -44,15 +50,18 @@ namespace HalloDocMVC.Controllers
                 return View("Index");
             }
 
-            string aspnetuserId = await _loginService.CheckLogin(LoginInfo);
+            var aspnetuser = await _loginService.CheckLogin(LoginInfo);
 
-            if (aspnetuserId.Equals(""))
+            if (aspnetuser == null)
             {
                 ViewBag.Message = "Invalid Email or Password";
                 return View("Index");
             }
 
-            return RedirectToAction("Dashboard", "Patient", new { id = aspnetuserId });
+            var jwtToken = _jwtService.GenerateJwtToken(aspnetuser);
+            Response.Cookies.Append("jwt", jwtToken);
+
+            return RedirectToAction("Dashboard", "Patient", new { id = aspnetuser.Id });
 
         }
 
@@ -167,6 +176,12 @@ namespace HalloDocMVC.Controllers
             }
 
             return View("~/Views/Login/Index.cshtml");
+        }
+
+        public IActionResult Logout ()
+        {
+            Response.Cookies.Delete("jwt");
+            return View("Index");
         }
     }
 }

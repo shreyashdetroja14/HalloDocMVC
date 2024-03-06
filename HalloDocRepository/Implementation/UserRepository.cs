@@ -24,6 +24,12 @@ namespace HalloDocRepository.Implementation
             return aspnetuserFetched;
         }
 
+        public IQueryable<AspNetUser> GetIQueryableAspNetUserByEmail(string email)
+        {
+            var aspnetuserFetched = _context.AspNetUsers.AsQueryable().Include(x => x.Users).Include(x => x.AspNetUserRoles).ThenInclude(x => x.Role).Where(m => m.Email == email);
+            return aspnetuserFetched;
+        }
+
         public async Task<AspNetUser> CreateAspNetUser(AspNetUser aspnetuser)
         {
             _context.AspNetUsers.Add(aspnetuser);

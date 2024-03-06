@@ -21,7 +21,7 @@ namespace HalloDocMVC.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult AccessDenied()
         {
             return View();
         }

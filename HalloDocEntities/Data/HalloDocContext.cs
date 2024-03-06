@@ -18,7 +18,11 @@ public partial class HalloDocContext : DbContext
 
     public virtual DbSet<Admin> Admins { get; set; }
 
+    public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
+
     public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+
+    public virtual DbSet<AspNetUserRole> AspNetUserRoles { get; set; }
 
     public virtual DbSet<BlockRequest> BlockRequests { get; set; }
 
@@ -66,11 +70,29 @@ public partial class HalloDocContext : DbContext
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.AdminModifiedByNavigations).HasConstraintName("fk_modified_by");
         });
 
+        modelBuilder.Entity<AspNetRole>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("asp_net_roles_pkey");
+        });
+
         modelBuilder.Entity<AspNetUser>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("asp_net_users_pkey");
 
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+        });
+
+        modelBuilder.Entity<AspNetUserRole>(entity =>
+        {
+            entity.HasKey(e => e.AspNetUserRoleId).HasName("asp_net_user_roles_pkey");
+
+            entity.HasOne(d => d.AspNetUser).WithMany(p => p.AspNetUserRoles)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_asp_net_user");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.AspNetUserRoles)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_asp_net_role");
         });
 
         modelBuilder.Entity<BlockRequest>(entity =>

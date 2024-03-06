@@ -1,6 +1,4 @@
-﻿
-
-
+﻿using HalloDocMVC.Auth;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +6,8 @@ using System.IO.Compression;
 
 namespace HalloDocMVC.Controllers
 {
+
+    [CustomAuthorize("patient")]
     public class PatientController : Controller
     {
         private readonly IPatientService _patientService;
@@ -30,7 +30,7 @@ namespace HalloDocMVC.Controllers
             
         }
 
-
+        
         public async Task<IActionResult> Dashboard(string id)
         {
             int userId = await _patientService.CheckUser(id);

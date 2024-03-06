@@ -487,21 +487,24 @@ namespace HalloDocServices.Implementation
             requestFetched = requestFetched.Include(x => x.RequestWiseFiles);
 
             var data = requestFetched.FirstOrDefault()?.RequestWiseFiles;
-            var requestwisefiles = data.AsQueryable().Include(x => x.Admin).Include(x => x.Physician).ToList();
+            var requestwisefiles = data?.AsQueryable().Include(x => x.Admin).Include(x => x.Physician).ToList();
 
             var request = requestFetched.FirstOrDefault();
 
             List<RequestFileViewModel> requestfilelist = new List<RequestFileViewModel>();
-            foreach (var file in requestwisefiles)
+            if(requestwisefiles != null)
             {
-                requestfilelist.Add(new RequestFileViewModel
+                foreach (var file in requestwisefiles)
                 {
-                    FileId = file.RequestWiseFileId,
-                    FileName = Path.GetFileName(file.FileName),
-                    Uploader = (file.AdminId != null ? file.Admin?.FirstName : (file.PhysicianId != null ? file.Physician?.FirstName : request?.FirstName)),
-                    UploadDate = DateOnly.FromDateTime(file.CreatedDate),
-                    FilePath = file.FileName
-                }) ;
+                    requestfilelist.Add(new RequestFileViewModel
+                    {
+                        FileId = file.RequestWiseFileId,
+                        FileName = Path.GetFileName(file.FileName),
+                        Uploader = (file.AdminId != null ? file.Admin?.FirstName : (file.PhysicianId != null ? file.Physician?.FirstName : request?.FirstName)),
+                        UploadDate = DateOnly.FromDateTime(file.CreatedDate),
+                        FilePath = file.FileName
+                    });
+                }
             }
 
             ViewUploads.FileInfo = requestfilelist;

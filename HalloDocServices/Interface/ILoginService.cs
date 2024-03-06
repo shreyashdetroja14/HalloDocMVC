@@ -1,4 +1,5 @@
-﻿using HalloDocServices.ViewModels;
+﻿using HalloDocEntities.Models;
+using HalloDocServices.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace HalloDocServices.Interface
 {
     public interface ILoginService
     {
-        Task<string> CheckLogin(LoginViewModel LoginInfo);
+        Task<AspNetUser> CheckLogin(LoginViewModel LoginInfo);
 
         Task<string> CreateAccount(CreateAccountViewModel Credentials);
 
