@@ -5,9 +5,11 @@ using HalloDocEntities.Models;
 using HalloDocServices.Implementation;
 using HalloDocServices.ViewModels;
 using System.IO.Compression;
+using HalloDocMVC.Auth;
 
 namespace HalloDocMVC.Controllers
 {
+    [CustomAuthorize("admin")]
     public class AdminDashboardController : Controller
     {
         private readonly IAdminDashboardService _adminDashboardService;

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using HalloDocServices.Interface;
 using System.Text;
 using HalloDocMVC.Auth;
+using System.Drawing;
+using HalloDocEntities.Models;
 
 namespace HalloDocMVC.Controllers
 {
@@ -32,11 +34,9 @@ namespace HalloDocMVC.Controllers
             }
         }
 
-        [CustomAuthorize("")]
+        //[CustomAuthorize("")]
         public IActionResult Index()
         {
-            var cookie = Request.Cookies["jwt"];
-
             return View();
         }
 
@@ -52,7 +52,7 @@ namespace HalloDocMVC.Controllers
 
             var aspnetuser = await _loginService.CheckLogin(LoginInfo);
 
-            if (aspnetuser == null)
+            if (aspnetuser.Id == null)
             {
                 ViewBag.Message = "Invalid Email or Password";
                 return View("Index");
@@ -61,7 +61,20 @@ namespace HalloDocMVC.Controllers
             var jwtToken = _jwtService.GenerateJwtToken(aspnetuser);
             Response.Cookies.Append("jwt", jwtToken);
 
-            return RedirectToAction("Dashboard", "Patient", new { id = aspnetuser.Id });
+            string role = aspnetuser.AspNetUserRoles.FirstOrDefault()?.Role.Name??"";
+
+            if (role == "admin")
+            {
+                return RedirectToAction("Index", "AdminDashboard");
+            } 
+            else if(role == "patient")
+            {
+                return RedirectToAction("Dashboard", "Patient", new { id = aspnetuser.Id });
+            }
+            else
+            {
+                return View("Index");
+            }
 
         }
 
@@ -181,7 +194,8 @@ namespace HalloDocMVC.Controllers
         public IActionResult Logout ()
         {
             Response.Cookies.Delete("jwt");
-            return View("Index");
+            //return View("Index");
+            return RedirectToAction("Index");
         }
     }
 }

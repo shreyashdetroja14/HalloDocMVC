@@ -29,7 +29,13 @@ namespace HalloDocMVC.Auth
             var request = context.HttpContext.Request;
             var token = request.Cookies["jwt"];
 
-            if(token == null || !jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            if(token == null)
+            {
+                context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Login", action = "Index" }));
+                return;
+            }
+
+            if( !jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
             {
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Login", action = "Logout" }));
                 return;
