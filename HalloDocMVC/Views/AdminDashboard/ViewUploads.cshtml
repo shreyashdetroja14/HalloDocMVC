@@ -50,10 +50,10 @@
                     <div class="heading d-flex justify-content-between align-items-center">
                         <h4>Documents</h4>
                         <div>
-                            <a asp-action="DownloadAllFiles" asp-route-id="@Model.RequestId" class="btn btn-outline-info p-2 d-none d-md-inline ms-2">
+                            <a class="btn btn-outline-info p-2 d-none d-md-inline ms-2 download-all-btn">
                                 Download All
                             </a>
-                            <a asp-action="DownloadAllFiles" asp-route-id="@Model.FileInfo?.FirstOrDefault()?.FileId" class="btn btn-outline-info p-2 d-md-none">
+                            <a class="btn btn-outline-info p-2 d-md-none download-all-btn">
                                 <i class="bi bi-cloud-arrow-down"></i>
                             </a>
 
@@ -79,7 +79,7 @@
                     <thead style="background-color: #FAF9F6;">
                         <tr class="requestfilesheader">
                             <th scope="col" class="p-3">
-                                <input type="checkbox" name="" id="selectAll">
+                                <input type="checkbox" name="" id="selectAll" value="@Model.RequestId">
                             </th>
                             <th scope="col" class="py-3">Documents</th>
                             @*<th scope="col" class="py-3">Uploader</th>*@
@@ -95,7 +95,7 @@
                             {
                                 <tr class="bg-white">
                                     <td class="p-3">
-                                        <input type="checkbox" name="" id="">
+                                        <input type="checkbox" name="selectFile" id="" value="@item.FileName">
                                     </td>
                                     <td class="py-3">@(item.FileName.Substring(0, item.FileName.IndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</td>
                                     @*<td class="py-3">@item.Uploader</td>*@
@@ -173,5 +173,63 @@
             fileChosen.textContent = fileChosen.textContent.slice(0, fileChosen.textContent.length - 2);
 
         })
+    </script>
+
+    <script>
+        const selectAllCheckbox = document.querySelector('#selectAll');
+        const checkBoxes = document.querySelectorAll('input[name="selectFile"]')
+        const downloadAllBtn = document.querySelectorAll('.download-all-btn');
+
+        downloadAllBtn.forEach(item => {
+            item.addEventListener('click', async () => {
+                console.log('btn clicked');
+                const selectedCheckboxes = document.querySelectorAll('input[name="selectFile"]:checked');
+                //console.log(selectedCheckboxes);
+                const selectedValues = [];
+
+                if (selectedCheckboxes.length === 0) {
+                    console.log('No checkboxes are selected');
+                    return;
+                } 
+
+                for (const checkbox of selectedCheckboxes) {
+                    selectedValues.push(checkbox.value);
+                }
+
+                console.log(selectedValues);
+                console.log(JSON.stringify({ selectedValues }));
+
+                try {
+                    const requestId = @Model.RequestId;
+                    console.log(requestId);
+                    const response = await fetch('/AdminDashboard/DownloadMultipleFiles', { 
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ selectedValues })
+                    });
+
+                    if (response.ok) {
+                        console.log('Files downloaded successfully');
+                    } else {
+                        console.error('Error downloading files:', await response.text());
+                    }
+
+                } catch (error) {
+                    console.log('Error: ', error);
+                }
+            });
+        });
+
+        selectAllCheckbox.addEventListener('change', () => {
+            for (const checkbox of checkBoxes) {
+                checkbox.checked = selectAllCheckbox.checked;
+            }
+            console.log('select all')
+        })
+
+        //console.log(checkBoxes);
+        //console.log(selectAllCheckbox.value);
     </script>
 }

@@ -203,5 +203,13 @@ namespace HalloDocMVC.Controllers
             return File(downloadedFile.Data, "application/octet-stream", downloadedFile.Filename);
 
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DownloadMultipleFiles([FromBody] List<string> selectedValues)
+        {
+            Console.WriteLine($"Selected Values: {selectedValues}");
+            //Console.WriteLine($"Request ID: {requestId}");
+            return View();
+        }
     }
 }
