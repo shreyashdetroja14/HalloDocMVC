@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -555,13 +556,39 @@ namespace HalloDocServices.Implementation
             var bytes = System.IO.File.ReadAllBytes(path);
             var newfilename = Path.GetFileName(path);
 
-            DownloadedFile dload = new DownloadedFile() 
+            DownloadedFile dloadFileData = new DownloadedFile() 
             { 
+                RequestId = requestFileData?.RequestId ?? 0,
+                FileId = fileId,
                 Data = bytes,
                 Filename = newfilename
             };
 
-            return dload;
+            return dloadFileData;
+        }
+
+        public byte[] GetFilesAsZip(List<string> files, int requestId)
+        {
+            //var filesRow = await _patientService.GetRequestFiles(id);
+            MemoryStream ms = new MemoryStream();
+            using (ZipArchive zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
+            {
+                files.ForEach(file =>
+                {
+                    string FilePath = "wwwroot\\Upload\\" + requestId + "\\" + file;
+                    string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+
+                    ZipArchiveEntry zipEntry = zip.CreateEntry(file);
+                    using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+                    using (Stream zipEntryStream = zipEntry.Open())
+                    {
+                        fs.CopyTo(zipEntryStream);
+                    }
+                });
+            }
+                
+
+            return ms.ToArray();
         }
     }
 }

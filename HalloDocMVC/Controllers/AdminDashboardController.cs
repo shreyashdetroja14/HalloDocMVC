@@ -4,6 +4,7 @@ using HalloDocServices.Interface;
 using HalloDocEntities.Models;
 using HalloDocServices.Implementation;
 using HalloDocServices.ViewModels;
+using System.IO.Compression;
 
 namespace HalloDocMVC.Controllers
 {
@@ -191,25 +192,57 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("ViewUploads", new { requestId });
         }
 
-        public async Task<IActionResult> DownloadFile(int id)
+        public async Task<IActionResult> DownloadFile(int fileId)
         {
-            var downloadedFile = await _adminDashboardService.DownloadFile(id);
+            var downloadedFile = await _adminDashboardService.DownloadFile(fileId);
 
             if (downloadedFile != null) 
             { 
-                
+                return File(downloadedFile.Data, "application/octet-stream", downloadedFile.Filename);
+            }
+            else
+            {
+                return RedirectToAction("ViewUploads", new { requestId = downloadedFile?.RequestId});
             }
 
-            return File(downloadedFile.Data, "application/octet-stream", downloadedFile.Filename);
 
         }
 
         [HttpPost]
-        public async Task<IActionResult> DownloadMultipleFiles([FromBody] List<string> selectedValues)
+        public IActionResult DownloadMultipleFiles([FromBody] DownloadRequest requestData)
         {
-            Console.WriteLine($"Selected Values: {selectedValues}");
-            //Console.WriteLine($"Request ID: {requestId}");
-            return View();
+
+            List<string> selectedValues = requestData.SelectedValues;
+            int requestId = requestData.RequestId;
+
+            MemoryStream ms = new MemoryStream();
+            using (ZipArchive zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
+            {
+                selectedValues.ForEach(file =>
+                {
+                    string FilePath = "wwwroot\\Upload\\" + requestId + "\\" + file;
+                    string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+
+                    ZipArchiveEntry zipEntry = zip.CreateEntry(file);
+                    using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+                    using (Stream zipEntryStream = zipEntry.Open())
+                    {
+                        fs.CopyTo(zipEntryStream);
+                    }
+                });
+            }
+
+            return File(ms.ToArray(), "application/zip", "download.zip", true);
+
+
+            /*var zipdata = _adminDashboardService.GetFilesAsZip(selectedValues, requestId);
+
+            if (zipdata != null)
+            {
+                return File(zipdata, "application/zip", "download.zip");
+            }
+
+            return RedirectToAction("ViewUploads", new { requestId });*/
         }
     }
 }

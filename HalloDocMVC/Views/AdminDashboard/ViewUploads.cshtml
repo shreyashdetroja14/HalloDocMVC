@@ -50,17 +50,17 @@
                     <div class="heading d-flex justify-content-between align-items-center">
                         <h4>Documents</h4>
                         <div>
-                            <a class="btn btn-outline-info p-2 d-none d-md-inline ms-2 download-all-btn">
+                            <button class="btn btn-outline-info p-2 d-none d-md-inline ms-2 download-all-btn">
                                 Download All
-                            </a>
+                            </button>
                             <a class="btn btn-outline-info p-2 d-md-none download-all-btn">
                                 <i class="bi bi-cloud-arrow-down"></i>
                             </a>
 
-                            <a class="btn btn-outline-info p-2 d-none d-md-inline ms-2">
+                            <a class="btn btn-outline-info p-2 d-none d-md-inline ms-2 delete-all-btn">
                                 Delete All
                             </a>
-                            <a class="btn btn-outline-info p-2 d-md-none">
+                            <a class="btn btn-outline-info p-2 d-md-none delete-all-btn">
                                 <i class="bi bi-trash"></i>
                             </a>
 
@@ -101,7 +101,7 @@
                                     @*<td class="py-3">@item.Uploader</td>*@
                                     <td class="py-3">@item.UploadDate</td>
                                     <td class="py-3">
-                                        <a asp-action="DownloadFile" asp-route-id="@item.FileId" class="btn btn-outline-info">
+                                        <a asp-action="DownloadFile" asp-route-fileId="@item.FileId" class="btn btn-outline-info">
                                             <i class="bi bi-cloud-arrow-down"></i>
                                         </a>
                                     </td>
@@ -202,12 +202,12 @@
                 try {
                     const requestId = @Model.RequestId;
                     console.log(requestId);
-                    const response = await fetch('/AdminDashboard/DownloadMultipleFiles', { 
+                    const response = await fetch('/AdminDashboard/DownloadMultipleFiles', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ selectedValues })
+                        body: JSON.stringify({ selectedValues , requestId })
                     });
 
                     if (response.ok) {
@@ -219,6 +219,53 @@
                 } catch (error) {
                     console.log('Error: ', error);
                 }
+            });
+        });
+
+        const deleteAllBtn = document.querySelectorAll('.delete-all-btn');
+
+        deleteAllBtn.forEach(item => {
+            item.addEventListener('click', async () => {
+                console.log('delete btn clicked');
+                const selectedCheckboxes = document.querySelectorAll('input[name="selectFile"]:checked');
+                //console.log(selectedCheckboxes);
+                const selectedValues = [];
+
+                if (selectedCheckboxes.length === 0) {
+                    console.log('No checkboxes are selected');
+                    return;
+                }
+
+                for (const checkbox of selectedCheckboxes) {
+                    selectedValues.push(checkbox.value);
+                }
+
+                console.log(selectedValues);
+
+                const requestId = @Model.RequestId;
+                console.log(requestId);
+
+                console.log(JSON.stringify({ selectedValues, requestId }));
+
+                //try {
+                //    
+                //    const response = await fetch('/AdminDashboard/DownloadMultipleFiles', {
+                //        method: 'POST',
+                //        headers: {
+                //            'Content-Type': 'application/json'
+                //        },
+                //        body: JSON.stringify({ selectedValues, requestId })
+                //    });
+
+                //    if (response.ok) {
+                //        console.log('Files downloaded successfully');
+                //    } else {
+                //        console.error('Error downloading files:', await response.text());
+                //    }
+
+                //} catch (error) {
+                //    console.log('Error: ', error);
+                //}
             });
         });
 

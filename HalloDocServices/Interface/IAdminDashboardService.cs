@@ -42,5 +42,7 @@ namespace HalloDocServices.Interface
         Task UploadFiles(IEnumerable<IFormFile> MultipleFiles, int requestId);
 
         Task<DownloadedFile> DownloadFile(int fileId);
+
+        byte[] GetFilesAsZip(List<string> files, int requestId);
     }
 }

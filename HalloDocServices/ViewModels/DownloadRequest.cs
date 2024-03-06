@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 
 namespace HalloDocServices.ViewModels
 {
-    public class DownloadedFile
+    public class DownloadRequest
     {
+        public List<string> SelectedValues { get; set; } = new List<string>();
         public int RequestId { get; set; }
-
-        public int FileId { get; set; }
-
-        public byte[] Data { get; set; } = new byte[0];
-
-        public string Filename { get; set; } = null!;
     }
+
 }
