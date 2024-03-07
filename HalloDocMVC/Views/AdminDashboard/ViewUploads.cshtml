@@ -46,30 +46,55 @@
                     <span class="text-danger">@ViewBag.Message</span>
                 }
 
-                <div>
-                    <div class="heading d-flex justify-content-between align-items-center">
-                        <h4>Documents</h4>
-                        <div>
-                            <button class="btn btn-outline-info p-2 d-none d-md-inline ms-2 download-all-btn">
-                                Download All
-                            </button>
-                            <a class="btn btn-outline-info p-2 d-md-none download-all-btn">
-                                <i class="bi bi-cloud-arrow-down"></i>
-                            </a>
+                <div class="heading d-flex justify-content-between align-items-center">
+                    <h4>
+                        <input type="checkbox" name="" id="selectAllMobile" class="d-md-none" value="@Model.RequestId">
+                        Documents
+                    </h4>
+                    <div>
+                        <button class="btn btn-outline-info p-2 d-none d-md-inline ms-2 download-all-btn">
+                            Download All
+                        </button>
+                        <button class="btn btn-outline-info p-2 d-md-none download-all-btn">
+                            <i class="bi bi-cloud-arrow-down"></i>
+                        </button>
 
-                            <a class="btn btn-outline-info p-2 d-none d-md-inline ms-2 delete-all-btn">
-                                Delete All
-                            </a>
-                            <a class="btn btn-outline-info p-2 d-md-none delete-all-btn">
-                                <i class="bi bi-trash"></i>
-                            </a>
+                        <button class="btn btn-outline-info p-2 d-none d-md-inline ms-2 delete-all-btn">
+                            Delete All
+                        </button>
+                        <button class="btn btn-outline-info p-2 d-md-none delete-all-btn">
+                            <i class="bi bi-trash"></i>
+                        </button>
 
-                            <a class="btn btn-outline-info p-2 d-none d-md-inline ms-2">
-                                Send Mail
-                            </a>
-                            <a class="btn btn-outline-info p-2 d-md-none">
-                                <i class="bi bi-envelope"></i>
-                            </a>
+                        <button class="btn btn-outline-info p-2 d-none d-md-inline ms-2" data-bs-toggle="modal" data-bs-target="#mailModal">
+                            Send Mail
+                        </button>
+                        <button class="btn btn-outline-info p-2 d-md-none">
+                            <i class="bi bi-envelope"></i>
+                        </button>
+
+                        <div class="modal fade" id="mailModal" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Send Mail</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="mailform">
+                                            <div class="form-floating mb-3">
+                                                <input type="email" class="form-control" id="recipient-email" required>
+                                                <label for="recipient-email" class="col-form-label">Recipient:</label>
+                                            </div>
+                                            <div class="d-flex justify-content-end">
+                                                <input type="submit" value="Send Mail" class="btn btn-primary">
+                                                <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -95,7 +120,7 @@
                             {
                                 <tr class="bg-white">
                                     <td class="p-3">
-                                        <input type="checkbox" name="selectFile" id="" value="@item.FileName">
+                                        <input type="checkbox" name="selectFile" id="" class="selectFile" value="@item.FileId">
                                     </td>
                                     <td class="py-3">@(item.FileName.Substring(0, item.FileName.IndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</td>
                                     @*<td class="py-3">@item.Uploader</td>*@
@@ -103,6 +128,9 @@
                                     <td class="py-3">
                                         <a asp-action="DownloadFile" asp-route-fileId="@item.FileId" class="btn btn-outline-info">
                                             <i class="bi bi-cloud-arrow-down"></i>
+                                        </a>
+                                        <a asp-action="DeleteFile" asp-route-fileId="@item.FileId" class="btn btn-outline-info">
+                                            <i class="bi bi-trash"></i>
                                         </a>
                                     </td>
                                 </tr>
@@ -131,7 +159,7 @@
                                 <div id="flush-collapse-@item.FileId" class="accordion-collapse collapse">
                                     <div class="accordion-body">
                                         <div class="mb-2">
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" name="selectFile" id="" class="selectFileMobile" value="@item.FileId">
                                             <span>@(item.FileName.Substring(0, item.FileName.IndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</span>
                                         </div>
                                         @*<div class="mb-2">
@@ -141,8 +169,11 @@
                                             <span>@item.UploadDate</span>
                                         </div>
                                         <div>
-                                            <a asp-action="DownloadFile" asp-route-id="@item.FileId" class="btn btn-outline-info">
+                                            <a asp-action="DownloadFile" asp-route-fileId="@item.FileId" class="btn btn-outline-info">
                                                 <i class="bi bi-cloud-arrow-down"></i>
+                                            </a>
+                                            <a asp-action="DeleteFile" asp-route-fileId="@item.FileId" class="btn btn-outline-info">
+                                                <i class="bi bi-trash"></i>
                                             </a>
                                         </div>
                                     </div>
@@ -176,28 +207,51 @@
     </script>
 
     <script>
+        //SELECT ALL CHECKBOXES
         const selectAllCheckbox = document.querySelector('#selectAll');
-        const checkBoxes = document.querySelectorAll('input[name="selectFile"]')
+        const selectAllCheckboxMobile = document.querySelector('#selectAllMobile');
+
+        //ALL CHECKBOXES FOR FILES
+        const checkBoxes = document.querySelectorAll('input[name="selectFile"].selectFile')
+        const checkBoxesMobile = document.querySelectorAll('input[name="selectFile"].selectFileMobile')
+        console.log(checkBoxes);
+        console.log(checkBoxesMobile);
+
+        //DOWNLOAD BUTTONS
         const downloadAllBtn = document.querySelectorAll('.download-all-btn');
 
         downloadAllBtn.forEach(item => {
             item.addEventListener('click', async () => {
-                console.log('btn clicked');
-                const selectedCheckboxes = document.querySelectorAll('input[name="selectFile"]:checked');
-                //console.log(selectedCheckboxes);
+                console.log('download btn clicked');
+
+                //SELECTED CHECKBOXES 
+                const selectedCheckboxes = document.querySelectorAll('input[name="selectFile"].selectFile:checked');
+                const selectedCheckboxesMobile = document.querySelectorAll('input[name="selectFile"].selectFileMobile:checked');
+
+                console.log(selectedCheckboxes);
+                console.log(selectedCheckboxesMobile);
+
+                //SELECTED FILE IDS
                 const selectedValues = [];
 
+                //FILL BASED ON SCREENSIZE. FIRST CHECK DESKTOP SCREEN VALUES. THEN MOBILE.
                 if (selectedCheckboxes.length === 0) {
-                    console.log('No checkboxes are selected');
-                    return;
-                } 
-
-                for (const checkbox of selectedCheckboxes) {
-                    selectedValues.push(checkbox.value);
+                    if(selectedCheckboxesMobile.length === 0){
+                        console.log('No checkboxes are selected');
+                        return;
+                    } else{
+                        for (const checkbox of selectedCheckboxesMobile) {
+                            selectedValues.push(parseInt(checkbox.value));
+                        }
+                    }
+                } else{
+                    for (const checkbox of selectedCheckboxes) {
+                        selectedValues.push(parseInt(checkbox.value));
+                    }
                 }
-
                 console.log(selectedValues);
 
+                // REQUEST ID 
                 const requestId = @Model.RequestId;
                 console.log(requestId);
 
@@ -232,7 +286,6 @@
                         a.remove();
                         window.URL.revokeObjectURL(url);
 
-
                         console.log('Files downloaded successfully');
 
                     } else {
@@ -245,58 +298,172 @@
             });
         });
 
+        // DELETE BUTTONS
         const deleteAllBtn = document.querySelectorAll('.delete-all-btn');
 
         deleteAllBtn.forEach(item => {
             item.addEventListener('click', async () => {
                 console.log('delete btn clicked');
-                const selectedCheckboxes = document.querySelectorAll('input[name="selectFile"]:checked');
-                //console.log(selectedCheckboxes);
+                //SELECTED CHECKBOXES
+                const selectedCheckboxes = document.querySelectorAll('input[name="selectFile"].selectFile:checked');
+                const selectedCheckboxesMobile = document.querySelectorAll('input[name="selectFile"].selectFileMobile:checked');
+
+                console.log(selectedCheckboxes);
+                console.log(selectedCheckboxesMobile);
+
+                //SELECTED FILE IDS
                 const selectedValues = [];
 
+                //FILL BASED ON SCREENSIZE. FIRST CHECK DESKTOP SCREEN VALUES. THEN MOBILE.
                 if (selectedCheckboxes.length === 0) {
-                    console.log('No checkboxes are selected');
-                    return;
+                    if (selectedCheckboxesMobile.length === 0) {
+                        console.log('No checkboxes are selected');
+                        return;
+                    } else {
+                        for (const checkbox of selectedCheckboxesMobile) {
+                            selectedValues.push(parseInt(checkbox.value));
+                        }
+                    }
+                } else {
+                    for (const checkbox of selectedCheckboxes) {
+                        selectedValues.push(parseInt(checkbox.value));
+                    }
                 }
-
-                for (const checkbox of selectedCheckboxes) {
-                    selectedValues.push(checkbox.value);
-                }
-
                 console.log(selectedValues);
 
+                // REQUEST ID
                 const requestId = @Model.RequestId;
                 console.log(requestId);
 
                 console.log(JSON.stringify({ selectedValues, requestId }));
 
-                //try {
-                //    
-                //    const response = await fetch('/AdminDashboard/DownloadMultipleFiles', {
-                //        method: 'POST',
-                //        headers: {
-                //            'Content-Type': 'application/json'
-                //        },
-                //        body: JSON.stringify({ selectedValues, requestId })
-                //    });
+                try {
 
-                //    if (response.ok) {
-                //        console.log('Files downloaded successfully');
-                //    } else {
-                //        console.error('Error downloading files:', await response.text());
-                //    }
+                    const response = await fetch('/AdminDashboard/DeleteMultipleFiles', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ selectedValues, requestId })
+                    });
 
-                //} catch (error) {
-                //    console.log('Error: ', error);
-                //}
+
+                    if (!response.ok) {
+                        throw Error("unable to delete");
+                        //console.log('Files downloaded successfully');
+
+                    } 
+                    console.log(response);
+
+                    const newUrl = response.url || "";
+
+                    if (newUrl) {
+                        console.log('Loading new URL:', newUrl);
+                        window.location.href = newUrl;
+                    } else {
+                        console.warn('No URL found in response');
+                    }
+
+                    console.log('deleted successfully');
+
+                } catch (error) {
+                    console.log('Error: ', error);
+                }
             });
         });
 
+
+        //SEND MAIL
+        const mailForm = document.querySelector('#mailform');
+        mailForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const emailValue = document.querySelector('#recipient-email').value;
+
+            console.log(emailValue);
+
+            //SELECTED CHECKBOXES
+            const selectedCheckboxes = document.querySelectorAll('input[name="selectFile"].selectFile:checked');
+            const selectedCheckboxesMobile = document.querySelectorAll('input[name="selectFile"].selectFileMobile:checked');
+
+            console.log(selectedCheckboxes);
+            console.log(selectedCheckboxesMobile);
+
+            //SELECTED FILE IDS
+            const selectedValues = [];
+
+            //FILL BASED ON SCREENSIZE. FIRST CHECK DESKTOP SCREEN VALUES. THEN MOBILE.
+            if (selectedCheckboxes.length === 0) {
+                if (selectedCheckboxesMobile.length === 0) {
+                    console.log('No checkboxes are selected');
+                    return;
+                } else {
+                    for (const checkbox of selectedCheckboxesMobile) {
+                        selectedValues.push(parseInt(checkbox.value));
+                    }
+                }
+            } else {
+                for (const checkbox of selectedCheckboxes) {
+                    selectedValues.push(parseInt(checkbox.value));
+                }
+            }
+            console.log(selectedValues);
+
+            // REQUEST ID
+            const requestId = @Model.RequestId;
+            console.log(requestId);
+
+            console.log(JSON.stringify({ selectedValues, requestId, emailValue }));
+
+            try {
+
+                const response = await fetch('/AdminDashboard/SendFilesViaEmail', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ selectedValues, requestId, emailValue })
+                });
+
+
+                if (!response.ok) {
+                    throw Error("unable to send mail");
+                    //console.log('Files downloaded successfully');
+
+                }
+                console.log(response);
+
+                const newUrl = response.url || "";
+
+                if (newUrl) {
+                    console.log('Loading new URL:', newUrl);
+                    window.location.href = newUrl;
+                } else {
+                    console.warn('No URL found in response');
+                }
+
+                console.log('mail sent successfully');
+
+            } catch (error) {
+                console.log('Error: ', error);
+            }
+        })
+
+
+        //SELECT ALL 
         selectAllCheckbox.addEventListener('change', () => {
             for (const checkbox of checkBoxes) {
                 checkbox.checked = selectAllCheckbox.checked;
             }
             console.log('select all')
+        })
+
+        //SELECT ALL MOBILE
+        selectAllCheckboxMobile.addEventListener('change', () => {
+            for (const checkbox of checkBoxesMobile) {
+                checkbox.checked = selectAllCheckboxMobile.checked;
+            }
+            console.log('select all mobile')
         })
 
         //console.log(checkBoxes);

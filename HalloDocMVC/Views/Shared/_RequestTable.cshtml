@@ -51,14 +51,14 @@
                 {
                     <th scope="col">Notes</th>
                 }
-                @if(status == 1)
+                @*@if(status == 1)
                 {
                     <th scope="col" style="min-width: 7rem">Chat With</th>
                 }
                 else
                 {
                     <th scope="col" style="min-width: 15rem">Chat With</th>
-                }
+                }*@
                 <th scope="col" style="min-width: 7rem">Actions</th>
             </tr>
         </thead>
@@ -141,7 +141,7 @@
                         {
                             @if (request.Notes?.Count() != 0)
                             {
-                                <td style="min-width: 15rem">
+                                <td style="min-width: 10rem">
                                     @foreach (var note in request.Notes)
                                     {
                                         <p>@note</p>
@@ -159,7 +159,7 @@
                         }
                     }
                     
-                    <td>
+                    @*<td>
                         @if (status != 1)
                         {
                             <button class="btn px-1 border text-white">
@@ -171,7 +171,7 @@
                             <img src="~/images/doctorIconWhite.svg" />
                             Provider
                         </button>
-                    </td>
+                    </td>*@
                     <td>
                         <div class="dropdown">
                             <button class="btn border text-white dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -472,7 +472,7 @@
                             <div class="col-6"><a asp-action="ViewCase" asp-route-requestId="@request.RequestId" class="btn bg-white border border-3 rounded-pill mb-2 w-75">View Case</a></div>
                         </div>
 
-                        <div class="d-flex justify-content-end align-items-center">
+                        @*<div class="d-flex justify-content-end align-items-center">
                             <span>Chat With: </span>
                             @if (status != 1)
                             {
@@ -485,7 +485,7 @@
                                 <img src="~/images/doctorIcon.svg" />
                                 Provider
                             </button>
-                        </div>
+                        </div>*@
                     </div>
                 </div>
             </div>

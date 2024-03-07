@@ -487,7 +487,7 @@ namespace HalloDocServices.Implementation
             requestFetched = requestFetched.Include(x => x.RequestWiseFiles);
 
             var data = requestFetched.FirstOrDefault()?.RequestWiseFiles;
-            var requestwisefiles = data?.AsQueryable().Include(x => x.Admin).Include(x => x.Physician).ToList();
+            var requestwisefiles = data?.AsQueryable().Include(x => x.Admin).Include(x => x.Physician).Where(x => x.IsDeleted == false || x.IsDeleted == null).ToList();
 
             var request = requestFetched.FirstOrDefault();
 
@@ -570,18 +570,20 @@ namespace HalloDocServices.Implementation
             return dloadFileData;
         }
 
-        public byte[] GetFilesAsZip(List<string> files, int requestId)
+        public byte[] GetFilesAsZip(List<int> fileIds, int requestId)
         {
             //var filesRow = await _patientService.GetRequestFiles(id);
+            var files = _requestRepository.GetRequestWiseFilesByFileIds(fileIds);
+
             MemoryStream ms = new MemoryStream();
             using (ZipArchive zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
             {
                 files.ForEach(file =>
                 {
-                    string FilePath = "wwwroot\\Upload\\" + requestId + "\\" + file;
+                    string FilePath = "wwwroot\\" + file.FileName;
                     string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
 
-                    ZipArchiveEntry zipEntry = zip.CreateEntry(file);
+                    ZipArchiveEntry zipEntry = zip.CreateEntry(Path.GetFileName(file.FileName));
                     using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
                     using (Stream zipEntryStream = zipEntry.Open())
                     {
@@ -590,8 +592,30 @@ namespace HalloDocServices.Implementation
                 });
             }
                 
-
             return ms.ToArray();
+        }
+
+        public async Task<RequestWiseFile> DeleteFile(int fileId)
+        {
+            var requestFileData = await _requestRepository.GetRequestWiseFileByFileId(fileId);
+
+            requestFileData.IsDeleted = true;
+
+            await _requestRepository.UpdateRequestWiseFile(requestFileData);
+
+            return requestFileData;
+        }
+
+        public async Task DeleteSelectedFiles(List<int> fileIds, int requestId)
+        {
+            var files = _requestRepository.GetRequestWiseFilesByFileIds(fileIds);
+
+            foreach(var file in files)
+            {
+                file.IsDeleted = true;
+            }
+
+            await _requestRepository.UpdateRequestWiseFiles(files);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using HalloDocServices.ViewModels;
+﻿using HalloDocEntities.Models;
+using HalloDocServices.ViewModels;
 using HalloDocServices.ViewModels.AdminViewModels;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -43,6 +44,10 @@ namespace HalloDocServices.Interface
 
         Task<DownloadedFile> DownloadFile(int fileId);
 
-        byte[] GetFilesAsZip(List<string> files, int requestId);
+        byte[] GetFilesAsZip(List<int> fileIds, int requestId);
+
+        Task<RequestWiseFile> DeleteFile(int fileId);
+
+        Task DeleteSelectedFiles(List<int> fileIds, int requestId);
     }
 }

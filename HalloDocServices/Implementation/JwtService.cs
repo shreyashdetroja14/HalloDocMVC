@@ -32,9 +32,9 @@ namespace HalloDocServices.Implementation
                 new Claim("lastName", aspNetUser.Users.FirstOrDefault(x => x.AspNetUserId == aspNetUser.Id)?.LastName??"")
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? ""));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.UtcNow.AddMinutes(20);
+            var expires = DateTime.UtcNow.AddMinutes(10);
 
             var token = new JwtSecurityToken(
                 _configuration["Jwt:Issuer"],

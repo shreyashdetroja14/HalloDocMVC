@@ -222,5 +222,25 @@ namespace HalloDocRepository.Implementation
 
             return blockRequest;
         }
+
+        public List<RequestWiseFile> GetRequestWiseFilesByFileIds(List<int> fileIds)
+        {
+            var requestwisefiles = _context.RequestWiseFiles.Where(x => fileIds.Contains(x.RequestWiseFileId)).ToList();
+            return requestwisefiles;
+        }
+
+        public async Task<RequestWiseFile> UpdateRequestWiseFile(RequestWiseFile requestWiseFile)
+        {
+            _context.Update(requestWiseFile);
+            await _context.SaveChangesAsync();
+
+            return requestWiseFile;
+        }
+
+        public async Task UpdateRequestWiseFiles(List<RequestWiseFile> requestWiseFiles)
+        {
+            _context.UpdateRange(requestWiseFiles);
+            await _context.SaveChangesAsync();
+        }
     }
 }

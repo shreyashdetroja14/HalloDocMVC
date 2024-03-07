@@ -6,6 +6,10 @@ using System.Text;
 using HalloDocMVC.Auth;
 using System.Drawing;
 using HalloDocEntities.Models;
+using HalloDocServices.Implementation;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace HalloDocMVC.Controllers
 {
@@ -37,6 +41,24 @@ namespace HalloDocMVC.Controllers
         //[CustomAuthorize("")]
         public IActionResult Index()
         {
+            string token = Request.Cookies["jwt"] ?? "";
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                var roleclaim = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role);
+                
+                if (roleclaim?.Value == "admin")
+                {
+                    return RedirectToAction("Index", "AdminDashboard");
+                }
+                else if (roleclaim?.Value == "patient")
+                {
+                    
+                    return RedirectToAction("Dashboard", "Patient");
+                }
+
+                return RedirectToAction("Index");
+            }
+
             return View();
         }
 

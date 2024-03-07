@@ -8,8 +8,10 @@ namespace HalloDocServices.ViewModels
 {
     public class DownloadRequest
     {
-        public List<string> SelectedValues { get; set; } = new List<string>();
+        public List<int> SelectedValues { get; set; } = new List<int>();
         public int RequestId { get; set; }
+
+        public string? EmailValue { get; set; }
     }
 
 }

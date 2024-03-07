@@ -6,6 +6,9 @@ using HalloDocServices.Implementation;
 using HalloDocServices.ViewModels;
 using System.IO.Compression;
 using HalloDocMVC.Auth;
+using NuGet.Common;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HalloDocMVC.Controllers
 {
@@ -14,11 +17,13 @@ namespace HalloDocMVC.Controllers
     {
         private readonly IAdminDashboardService _adminDashboardService;
         private readonly IPatientService _patientService;
+        private readonly IJwtService _jwtService;
 
-        public AdminDashboardController(IAdminDashboardService adminDashboardService, IPatientService patientService)
+        public AdminDashboardController(IAdminDashboardService adminDashboardService, IPatientService patientService, IJwtService jwtService)
         {
             _adminDashboardService = adminDashboardService;
             _patientService = patientService;
+            _jwtService = jwtService;
         }
 
         public async Task<IActionResult> Index(int? requestStatus)
@@ -33,8 +38,15 @@ namespace HalloDocMVC.Controllers
             return View(viewModel);
         }
 
+        [AllowAnonymous]
         public IActionResult FetchRequests(int requestStatus, int? requestType, string? searchPattern, int? searchRegion)
         {
+            string token = Request.Cookies["jwt"]??"";
+            if(!_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                return StatusCode(401, "Unauthorized");
+            }
+
             List<RequestRowViewModel> viewModels = new List<RequestRowViewModel>();
             viewModels = _adminDashboardService.GetViewModelData(requestStatus, requestType, searchPattern, searchRegion);
 
@@ -206,45 +218,50 @@ namespace HalloDocMVC.Controllers
             {
                 return RedirectToAction("ViewUploads", new { requestId = downloadedFile?.RequestId});
             }
-
-
         }
 
         [HttpPost]
         public IActionResult DownloadMultipleFiles([FromBody] DownloadRequest requestData)
         {
 
-            List<string> selectedValues = requestData.SelectedValues;
+            List<int> selectedValues = requestData.SelectedValues;
             int requestId = requestData.RequestId;
 
-            MemoryStream ms = new MemoryStream();
-            using (ZipArchive zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
-            {
-                selectedValues.ForEach(file =>
-                {
-                    string FilePath = "wwwroot\\Upload\\" + requestId + "\\" + file;
-                    string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
-
-                    ZipArchiveEntry zipEntry = zip.CreateEntry(file);
-                    using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
-                    using (Stream zipEntryStream = zipEntry.Open())
-                    {
-                        fs.CopyTo(zipEntryStream);
-                    }
-                });
-            }
-
-            return File(ms.ToArray(), "application/zip", "download.zip", true);
-
-
-            /*var zipdata = _adminDashboardService.GetFilesAsZip(selectedValues, requestId);
+            var zipdata = _adminDashboardService.GetFilesAsZip(selectedValues, requestId);
 
             if (zipdata != null)
             {
                 return File(zipdata, "application/zip", "download.zip");
             }
 
-            return RedirectToAction("ViewUploads", new { requestId });*/
+            return RedirectToAction("ViewUploads", new { requestId });
+        }
+
+        public async Task<IActionResult> DeleteFile(int fileId)
+        {
+            var deletedFile = await _adminDashboardService.DeleteFile(fileId);
+
+            return RedirectToAction("ViewUploads", new { requestId = deletedFile?.RequestId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteMultipleFiles([FromBody] DownloadRequest requestData)
+        {
+            List<int> selectedValues = requestData.SelectedValues;
+            int requestId = requestData.RequestId;
+
+            await _adminDashboardService.DeleteSelectedFiles(selectedValues, requestId);
+
+            return RedirectToAction("ViewUploads", new { requestId });
+        }
+
+        public async Task<IActionResult> SendFilesViaEmail([FromBody] DownloadRequest requestData)
+        {
+            //var deletedFile = await _adminDashboardService.DeleteFile(fileId);
+
+            return RedirectToAction("ViewUploads", new { requestId = requestData?.RequestId });
+
+
         }
     }
 }

@@ -1,7 +1,10 @@
 ﻿using HalloDocMVC.Auth;
+using HalloDocServices.Implementation;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Common;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO.Compression;
 
 namespace HalloDocMVC.Controllers
@@ -11,10 +14,12 @@ namespace HalloDocMVC.Controllers
     public class PatientController : Controller
     {
         private readonly IPatientService _patientService;
+        private readonly IJwtService _jwtService;
 
-        public PatientController( IPatientService patientService)
+        public PatientController( IPatientService patientService, IJwtService jwtService)
         {
             _patientService = patientService;
+            _jwtService = jwtService;
         }
 
         public async Task<IActionResult> GoToDashboard(int UserId)
@@ -27,12 +32,18 @@ namespace HalloDocMVC.Controllers
                 return NotFound();
             }
             return RedirectToAction("Dashboard", new { id = aspnetuserId });
-            
         }
 
-        
+
         public async Task<IActionResult> Dashboard(string id)
         {
+            string token = Request.Cookies["jwt"] ?? "";
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                var aspnetuseridclaim = jwtToken.Claims.FirstOrDefault(x => x.Type == "aspnetuserId");
+                id = aspnetuseridclaim?.Value ?? "";
+            }
+
             int userId = await _patientService.CheckUser(id);
             if (userId == 0)
             {
@@ -41,59 +52,6 @@ namespace HalloDocMVC.Controllers
 
             List<DashboardRequestViewModel> requestlist = await _patientService.GetRequestList(userId);
 
-            /*var filecountgrouped = (from rwf in _context.RequestWiseFiles
-                                    group rwf by rwf.RequestId into gp
-                                    select new
-                                    {
-                                        RequestId = gp.Key,
-                                        Cnt = gp.Count()
-                                    }).ToList();
-
-            var filecountgrouped = _context.RequestWiseFiles
-                                    .GroupBy(rwf => rwf.RequestId)
-                                    .Select(gp => new
-                                    {
-                                        RequestId = gp.Key,
-                                        Cnt = gp.Count()
-                                    })
-                                    .ToList();
-
-
-
-            var data = from requests in _context.Requests.ToList()
-                       join count in filecountgrouped
-                       on requests.RequestId equals count.RequestId into joined
-                       from j in joined.DefaultIfEmpty()
-                       where requests.UserId == userFetched?.UserId
-                       orderby requests.CreatedDate descending
-                       select new
-                       {
-                           RequestId = requests.RequestId,
-                           CreatedDate = requests.CreatedDate,
-                           Status = requests.Status,
-                           FileCount = j?.Cnt ?? 0,
-                           PhysicianId = requests.PhysicianId ?? 0,
-                       };
-
-            List<DashboardRequestViewModel> requestlist = new List<DashboardRequestViewModel>();
-            foreach (var r in data)
-            {
-                *//*Debug.Print(($@"""{r.RequestId}"" ""{r.CreatedDate}"" ""{r.FileCount}"" "));*//*
-                requestlist.Add(new DashboardRequestViewModel
-                {
-                    RequestId = r.RequestId,
-                    CreateDate = DateOnly.FromDateTime(r.CreatedDate),
-                    Status = r.Status,
-                    Count = r.FileCount,
-                    PhysicianId = r.PhysicianId
-                });
-
-
-            }*/
-
-            //Pass user id to layout
-            //ViewBag.Fullname = userFetched?.FirstName + " " + userFetched?.LastName;
-            //ViewBag.UserId = userFetched?.UserId;
             ViewBag.UserId = userId;
 
             return View(requestlist);

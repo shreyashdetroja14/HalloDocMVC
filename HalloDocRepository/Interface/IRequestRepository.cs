@@ -75,6 +75,12 @@ namespace HalloDocRepository.Interface
 
         Task<RequestWiseFile> GetRequestWiseFileByFileId(int fileId);
 
+        List<RequestWiseFile> GetRequestWiseFilesByFileIds(List<int> fileIds);
+
+        Task<RequestWiseFile> UpdateRequestWiseFile(RequestWiseFile requestWiseFile);
+
+        Task UpdateRequestWiseFiles(List<RequestWiseFile> requestWiseFiles);
+
 
         // Request Business
 
