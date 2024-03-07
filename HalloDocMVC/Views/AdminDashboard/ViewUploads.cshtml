@@ -197,11 +197,14 @@
                 }
 
                 console.log(selectedValues);
-                console.log(JSON.stringify({ selectedValues }));
+
+                const requestId = @Model.RequestId;
+                console.log(requestId);
+
+                console.log(JSON.stringify({ selectedValues , requestId }));
 
                 try {
-                    const requestId = @Model.RequestId;
-                    console.log(requestId);
+                    
                     const response = await fetch('/AdminDashboard/DownloadMultipleFiles', {
                         method: 'POST',
                         headers: {
@@ -210,8 +213,28 @@
                         body: JSON.stringify({ selectedValues , requestId })
                     });
 
+                    
+
                     if (response.ok) {
+                        console.log(response);
+
+                        //download file logic
+
+                        const data = await response.blob();
+                        console.log(data);
+
+                        const a = document.createElement('a');
+                        const url = window.URL.createObjectURL(data);
+                        a.href = url;
+                        a.download = `request-${requestId}.zip`;
+                        document.body.append(a);
+                        a.click();
+                        a.remove();
+                        window.URL.revokeObjectURL(url);
+
+
                         console.log('Files downloaded successfully');
+
                     } else {
                         console.error('Error downloading files:', await response.text());
                     }
