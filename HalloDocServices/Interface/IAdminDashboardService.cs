@@ -51,5 +51,13 @@ namespace HalloDocServices.Interface
         Task<bool> DeleteSelectedFiles(List<int> fileIds, int requestId);
 
         Task<bool> SendMailWithAttachments(DownloadRequest requestData);
+
+        string GetProfessionListOptions();
+
+        string GetVendorListOptions(int professionId);
+
+        OrdersViewModel GetVendorDetails(int vendorId);
+
+        Task<bool> SendOrder(OrdersViewModel Order);
     }
 }

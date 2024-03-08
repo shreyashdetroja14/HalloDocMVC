@@ -9,8 +9,31 @@ namespace HalloDocRepository.Interface
 {
     public interface ICommonRepository
     {
+
+        // Case Tags
+
         List<CaseTag> GetAllCaseTags();
 
+
+        // Region
+
         List<Region> GetAllRegions();
+
+
+        // Health Profession Type
+
+        List<HealthProfessionType> GetAllHealthProfessionTypes();
+
+
+        // Health Professionals
+
+        List<HealthProfessional> GetAllHealthProfessionals();
+
+        HealthProfessional GetVendorById(int vendorId);
+
+
+        // Order Details
+
+        Task<OrderDetail> CreateOrder(OrderDetail order);
     }
 }

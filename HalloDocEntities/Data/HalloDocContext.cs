@@ -32,6 +32,12 @@ public partial class HalloDocContext : DbContext
 
     public virtual DbSet<Concierge> Concierges { get; set; }
 
+    public virtual DbSet<HealthProfessionType> HealthProfessionTypes { get; set; }
+
+    public virtual DbSet<HealthProfessional> HealthProfessionals { get; set; }
+
+    public virtual DbSet<OrderDetail> OrderDetails { get; set; }
+
     public virtual DbSet<Physician> Physicians { get; set; }
 
     public virtual DbSet<Region> Regions { get; set; }
@@ -127,6 +133,37 @@ public partial class HalloDocContext : DbContext
             entity.HasOne(d => d.Region).WithMany(p => p.Concierges)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_region");
+        });
+
+        modelBuilder.Entity<HealthProfessionType>(entity =>
+        {
+            entity.HasKey(e => e.HealthProfessionId).HasName("health_profession_type_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+        });
+
+        modelBuilder.Entity<HealthProfessional>(entity =>
+        {
+            entity.HasKey(e => e.VendorId).HasName("health_professionals_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.Profession).WithMany(p => p.HealthProfessionals).HasConstraintName("fk_health_profession_type");
+
+            entity.HasOne(d => d.Region).WithMany(p => p.HealthProfessionals).HasConstraintName("fk_region");
+        });
+
+        modelBuilder.Entity<OrderDetail>(entity =>
+        {
+            entity.HasKey(e => e.OrderId).HasName("order_details_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.OrderDetails).HasConstraintName("fk_created_by");
+
+            entity.HasOne(d => d.Request).WithMany(p => p.OrderDetails).HasConstraintName("fk_request");
+
+            entity.HasOne(d => d.Vendor).WithMany(p => p.OrderDetails).HasConstraintName("fk_vendor");
         });
 
         modelBuilder.Entity<Physician>(entity =>

@@ -248,7 +248,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" asp-action="Orders" asp-route-requestId="@request.RequestId">
                                             <i class="bi bi-list-check pe-3"></i>Orders
 
                                         </a>
@@ -457,7 +457,11 @@
                             @if (status == 3 || status == 4 || status == 5)
                             {
                                 <div class="col-6"><button class="btn btn-secondary rounded-pill mb-2 w-75">Doctor Notes</button></div>
-                                <div class="col-6"><button class="btn btn-warning rounded-pill mb-2 w-75">Orders</button></div>
+                                <div class="col-6">
+                                    <a asp-action="Orders" asp-route-requestId="@request.RequestId" class="btn btn-warning rounded-pill mb-2 w-75">
+                                        Orders
+                                    </a>
+                                </div>
                                 <div class="col-6"><button class="btn btn-success rounded-pill mb-2 w-75">Encounter</button></div>
                             }
                             @*@if (status == 3 || status == 4)

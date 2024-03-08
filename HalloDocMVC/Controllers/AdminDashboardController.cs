@@ -265,8 +265,45 @@ namespace HalloDocMVC.Controllers
             }
 
             return RedirectToAction("ViewUploads", new { requestId = requestData?.RequestId });
+        }
 
+        public IActionResult Orders(int requestId)
+        {
+            OrdersViewModel OrderPageDetails = new OrdersViewModel();
+            OrderPageDetails.RequestId = requestId;
+            return View(OrderPageDetails);
+        }
 
+        public IActionResult GetProfessionList(int requestId)
+        {
+            string professionlist = _adminDashboardService.GetProfessionListOptions();
+
+            return Content(professionlist, "text/html");
+        }
+
+        public IActionResult GetVendorList(int professionId)
+        {
+            string vendorlist = _adminDashboardService.GetVendorListOptions(professionId);
+
+            return Content(vendorlist, "text/html");
+        }
+
+        public IActionResult GetVendorDetails(int vendorId)
+        {
+            OrdersViewModel VendorDetails = _adminDashboardService.GetVendorDetails(vendorId);
+            return Json(VendorDetails);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendOrder(OrdersViewModel Order)
+        {
+            bool isOrderSent = await _adminDashboardService.SendOrder(Order);
+            if (isOrderSent)
+            {
+
+            }
+
+            return RedirectToAction("Orders", new {requestId = Order.RequestId});
         }
     }
 }

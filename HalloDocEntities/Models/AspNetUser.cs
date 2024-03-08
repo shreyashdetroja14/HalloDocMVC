@@ -48,6 +48,9 @@ public partial class AspNetUser
     [InverseProperty("AspNetUser")]
     public virtual ICollection<AspNetUserRole> AspNetUserRoles { get; set; } = new List<AspNetUserRole>();
 
+    [InverseProperty("CreatedByNavigation")]
+    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+
     [InverseProperty("AspNetUser")]
     public virtual ICollection<Physician> PhysicianAspNetUsers { get; set; } = new List<Physician>();
 

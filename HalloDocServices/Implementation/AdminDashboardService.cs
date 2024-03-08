@@ -676,5 +676,70 @@ namespace HalloDocServices.Implementation
 
             return true;
         }
+
+        public string GetProfessionListOptions()
+        {
+            var healthProfessionTypes = _commonRepository.GetAllHealthProfessionTypes();
+
+            string options = "<option value=\"0\" selected>Select Profession</option>";
+
+            foreach (var profession in healthProfessionTypes)
+            {
+                string option = $"<option value=\"{profession.HealthProfessionId}\">{profession.ProfessionName}</option>";
+                options = options + option;
+            }
+
+            return options;
+        }
+
+        public string GetVendorListOptions(int professionId)
+        {
+            var healthProfessionals = _commonRepository.GetAllHealthProfessionals();
+            healthProfessionals = healthProfessionals.Where(x => x.ProfessionId == professionId).ToList();
+
+            string options = "<option value=\"0\">Select Business</option>";
+
+            foreach (var professional in healthProfessionals)
+            {
+                string option = $"<option value=\"{professional.VendorId}\">{professional.VendorName}</option>";
+                options = options + option;
+            }
+
+            return options;
+        }
+
+        public OrdersViewModel GetVendorDetails(int vendorId)
+        {
+            var vendor = _commonRepository.GetVendorById(vendorId);
+            OrdersViewModel VendorDetails = new OrdersViewModel();
+            
+            VendorDetails.VendorId = vendor.VendorId;
+            VendorDetails.BusinessContact = vendor.BusinessContact;
+            VendorDetails.Email = vendor.Email;
+            VendorDetails.FaxNumber = vendor.FaxNumber;
+
+            return VendorDetails;
+
+        }
+
+        public async Task<bool> SendOrder(OrdersViewModel Order)
+        {
+            OrderDetail order = new OrderDetail()
+            {
+                VendorId = Order.VendorId,
+                Email = Order.Email,
+                RequestId = Order.RequestId,
+                FaxNumber = Order.FaxNumber,
+                BusinessContact = Order.BusinessContact,
+                Prescription = Order.OrderDetails,
+                NoOfRefill = Order.NumberOfRefills,
+                CreatedBy = "74502e9b-b4b3-49ab-b883-d00dbfd57ad2",
+                CreatedDate = DateTime.Now
+            };
+
+            await _commonRepository.CreateOrder(order);
+
+            return true;
+        }
     }
 }
