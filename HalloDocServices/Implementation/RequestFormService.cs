@@ -20,13 +20,30 @@ namespace HalloDocServices.Implementation
     {
         private readonly IUserRepository _userRepository;
         private readonly IRequestRepository _requestRepository;
-        public RequestFormService(IUserRepository userRepository, IRequestRepository requestRepository) 
+        private readonly ICommonRepository _commonRepository;
+
+        public RequestFormService(IUserRepository userRepository, IRequestRepository requestRepository, ICommonRepository commonRepository) 
         { 
             _userRepository = userRepository;
             _requestRepository = requestRepository;
+            _commonRepository = commonRepository;
         }
 
         #region LocalMethods
+
+        public int GetRegionIdByState(string State)
+        {
+            var regions = _commonRepository.GetAllRegions();
+
+            foreach (var region in regions)
+            {
+                if (region.Name.Equals(State,StringComparison.OrdinalIgnoreCase))
+                {
+                    return region.RegionId;
+                }
+            }
+            return 0;
+        }
 
         public AspNetUser CreateAspnetuser(PatientRequestViewModel prvm)
         {
@@ -56,6 +73,8 @@ namespace HalloDocServices.Implementation
             userNew.City = prvm.City;
             userNew.State = prvm.State;
             userNew.ZipCode = prvm.ZipCode;
+
+            userNew.RegionId = GetRegionIdByState(prvm.State??"");
 
             if (prvm.DOB != null)
             {
@@ -97,6 +116,9 @@ namespace HalloDocServices.Implementation
             requestClientNew.City = PatientInfo.City;
             requestClientNew.State = PatientInfo.State;
             requestClientNew.ZipCode = PatientInfo.ZipCode;
+
+            requestClientNew.RegionId = GetRegionIdByState(requestClientNew.State??"");
+
             return requestClientNew;
         }
 

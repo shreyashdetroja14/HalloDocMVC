@@ -28,5 +28,7 @@ namespace HalloDocRepository.Implementation
             var regions = _context.Regions.ToList();
             return regions;
         }
+
+
     }
 }

@@ -107,5 +107,13 @@ namespace HalloDocRepository.Implementation
 
             return user;
         }
+
+        public async Task<AspNetUserRole> CreateAspNetUserRole(AspNetUserRole aspnetuserrole)
+        {
+            _context.Add(aspnetuserrole);
+            await _context.SaveChangesAsync();
+
+            return aspnetuserrole;
+        }
     }
 }

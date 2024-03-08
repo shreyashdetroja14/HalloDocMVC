@@ -22,6 +22,11 @@ namespace HalloDocRepository.Interface
         Task<bool> UpdateAspNetUser(AspNetUser aspnetuser);
 
 
+        // AspNetUserRoles
+
+        Task<AspNetUserRole> CreateAspNetUserRole(AspNetUserRole aspnetuserrole);
+
+
         // User
 
         Task<User> CreateUser(User user);

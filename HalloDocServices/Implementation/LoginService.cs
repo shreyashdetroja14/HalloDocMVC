@@ -93,6 +93,12 @@ namespace HalloDocServices.Implementation
 
                 await _userRepository.CreateAspNetUser(aspnetuserNew);
 
+                var aspnetuserRoleNew = new AspNetUserRole();
+                aspnetuserRoleNew.AspNetUserId = aspnetuserNew.Id;
+                aspnetuserRoleNew.RoleId = "c5169b0d-e9f6-4c6f-8f98-a7b8d4a95158";
+
+                await _userRepository.CreateAspNetUserRole(aspnetuserRoleNew);
+
                 userNew.AspNetUserId = aspnetuserNew.Id;
                 userNew.Email = aspnetuserNew.Email;
                 userNew.FirstName = requestClientFetched.FirstName;
@@ -102,6 +108,7 @@ namespace HalloDocServices.Implementation
                 userNew.City = requestClientFetched?.City;
                 userNew.State = requestClientFetched?.State;
                 userNew.ZipCode = requestClientFetched?.ZipCode;
+                userNew.RegionId = requestClientFetched?.RegionId;
                 userNew.StrMonth = requestClientFetched?.StrMonth;
                 userNew.IntDate = requestClientFetched?.IntDate;
                 userNew.IntYear = requestClientFetched?.IntYear;
