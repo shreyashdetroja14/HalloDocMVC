@@ -48,6 +48,8 @@ namespace HalloDocServices.Interface
 
         Task<RequestWiseFile> DeleteFile(int fileId);
 
-        Task DeleteSelectedFiles(List<int> fileIds, int requestId);
+        Task<bool> DeleteSelectedFiles(List<int> fileIds, int requestId);
+
+        Task<bool> SendMailWithAttachments(DownloadRequest requestData);
     }
 }

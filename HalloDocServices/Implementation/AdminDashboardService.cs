@@ -12,6 +12,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -606,7 +608,7 @@ namespace HalloDocServices.Implementation
             return requestFileData;
         }
 
-        public async Task DeleteSelectedFiles(List<int> fileIds, int requestId)
+        public async Task<bool> DeleteSelectedFiles(List<int> fileIds, int requestId)
         {
             var files = _requestRepository.GetRequestWiseFilesByFileIds(fileIds);
 
@@ -616,6 +618,63 @@ namespace HalloDocServices.Implementation
             }
 
             await _requestRepository.UpdateRequestWiseFiles(files);
+
+            return true;
+        }
+
+        public async Task<bool> SendMailWithAttachments(DownloadRequest requestData)
+        {
+            var files = _requestRepository.GetRequestWiseFilesByFileIds(requestData.SelectedValues);
+
+            var mail = "tatva.dotnet.shreyashdetroja@outlook.com";
+            var password = "Dotnet_tatvasoft@14"; 
+
+            var client = new SmtpClient("smtp.office365.com")
+            {
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(mail, password)
+            };
+
+            string subject = "Case Files for Request: " + requestData.RequestId + " from HalloDoc@Admin";
+
+            string message = "Find the case files for Request: " + requestData.RequestId + " in the attachments below.";
+
+            string receiver = requestData.EmailValue ?? "";
+
+            string senderDisplayName = "HalloDoc Admin";
+            string receiverDisplayName = requestData.EmailValue ?? "";
+
+            MailAddress senderMailAddress = new MailAddress(mail, senderDisplayName);
+            MailAddress receiverMailAddress = new MailAddress(receiver, receiverDisplayName);
+
+            using (var mailMessage = new MailMessage(senderMailAddress, receiverMailAddress))
+            {
+                mailMessage.Subject = subject;
+                mailMessage.Body = message;
+
+                // Validate file path and existence
+                foreach(var file in files)
+                {
+                    string FilePath = "wwwroot\\" + file.FileName;
+                    string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+
+                    if (!System.IO.File.Exists(path))
+                    {
+                        throw new ArgumentException("Invalid file path: " + path);
+                    }
+
+                    // Attach the file
+                    var attachment = new Attachment(path);
+                    mailMessage.Attachments.Add(attachment);
+                }
+
+                await client.SendMailAsync(mailMessage);
+            }
+
+            return true;
         }
     }
 }

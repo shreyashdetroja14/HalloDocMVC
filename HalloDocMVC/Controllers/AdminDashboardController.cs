@@ -258,6 +258,11 @@ namespace HalloDocMVC.Controllers
         public async Task<IActionResult> SendFilesViaEmail([FromBody] DownloadRequest requestData)
         {
             //var deletedFile = await _adminDashboardService.DeleteFile(fileId);
+            bool isMailSent = await _adminDashboardService.SendMailWithAttachments(requestData);
+            if (isMailSent)
+            {
+
+            }
 
             return RedirectToAction("ViewUploads", new { requestId = requestData?.RequestId });
 
