@@ -131,8 +131,9 @@ namespace HalloDocMVC.Controllers
         {
             
             CreateAccountViewModel Credentials = new CreateAccountViewModel();
-            string? email = decrypt(emailtoken);
-            if(email == null)
+            //string? email = decrypt(emailtoken);
+            string email = emailtoken ?? "";
+            if(email == "")
             {
                 return NotFound();
             }

@@ -34,6 +34,7 @@ namespace HalloDocServices.Implementation
         public int GetRegionIdByState(string State)
         {
             var regions = _commonRepository.GetAllRegions();
+            //var regionId = regions.FirstOrDefault(x => x.Name.Equals(State, StringComparison.OrdinalIgnoreCase));
 
             foreach (var region in regions)
             {
@@ -117,7 +118,11 @@ namespace HalloDocServices.Implementation
             requestClientNew.State = PatientInfo.State;
             requestClientNew.ZipCode = PatientInfo.ZipCode;
 
-            requestClientNew.RegionId = GetRegionIdByState(requestClientNew.State??"");
+            int regionid = GetRegionIdByState(requestClientNew.State ?? "");
+            if(regionid != 0)
+            {
+                requestClientNew.RegionId = regionid;
+            }
 
             return requestClientNew;
         }
@@ -181,8 +186,8 @@ namespace HalloDocServices.Implementation
 
             //var aspnetuserFetched = await _userRepository.GetAspNetUserByEmail(receiver);
 
-            string? encryptedEmail = encrypt(receiver);
-            string mailbody = message + "?emailtoken=" + encryptedEmail;
+            //string? encryptedEmail = encrypt(receiver);
+            string mailbody = message + "?emailtoken=" + receiver;
 
             var client = new SmtpClient("smtp.office365.com")
             {
@@ -345,6 +350,12 @@ namespace HalloDocServices.Implementation
             requestNew.CreatedUserId = requestorUser?.UserId;
 
             requestNew = await _requestRepository.CreateRequest(requestNew);
+
+            //add concierge location in patient info
+            crvm.PatientInfo.Street = crvm.ConciergeStreet;
+            crvm.PatientInfo.City = crvm.ConciergeCity;
+            crvm.PatientInfo.State = crvm.ConciergeState;
+            crvm.PatientInfo.ZipCode = crvm.ConciergeZipCode;
 
             var requestClientNew = CreateRequestClient(crvm.PatientInfo, requestNew);
 

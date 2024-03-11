@@ -1,0 +1,23 @@
+﻿@model HalloDocServices.ViewModels.AdminViewModels.ClearCaseViewModel
+
+<div class="modal fade" data-bs-backdrop="static" id="clear-case-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3">
+            <div class="modal-body text-center p-5">
+                <img src="~/images/exclamationIcon.svg" alt="">
+                <h3 class="my-4">Confirmation to Clear Case</h3>
+                <p class="text-secondary">
+                    Are you sure you want to clear this request? Once you clear the request, you won't be able to see it.
+                </p>
+                <div class=" d-flex justify-content-center">
+                    <form asp-action="ClearCase">
+                        <input type="number" asp-for="RequestId" hidden/>
+                        <input type="submit" value="Clear" class="btn btn-info text-white px-3 py-2" />
+                        <button type="button" class="btn btn-outline-info px-3 py-2 ms-3" data-bs-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>

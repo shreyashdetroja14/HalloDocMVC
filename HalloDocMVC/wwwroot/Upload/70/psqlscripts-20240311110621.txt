@@ -1,0 +1,174 @@
+CREATE TABLE aspnetusers (
+	"Id" VARCHAR(128) PRIMARY KEY,
+	UserName VARCHAR(256) NOT NULL,
+	PasswordHash VARCHAR NULL,
+	Email VARCHAR(256) NULL,
+	PhoneNumber VARCHAR(20) NULL,
+	IP VARCHAR(20) NULL,
+	CreatedDate TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP,
+	ModifiedDate TIMESTAMP NULL
+);
+
+CREATE TABLE asp_net_users (
+	id VARCHAR(128) PRIMARY KEY,
+	user_name VARCHAR(256) NOT NULL,
+	password_hash VARCHAR NULL,
+	email VARCHAR(256) NULL,
+	phone_number VARCHAR(20) NULL,
+	ip VARCHAR(20) NULL,
+	created_date TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP,
+	modified_date TIMESTAMP NULL
+);
+
+CREATE TABLE "AspNetUsers" (
+	"Id" VARCHAR(128) PRIMARY KEY,
+	"UserName" VARCHAR(256) NOT NULL,
+	"PasswordHash" VARCHAR NULL,
+	"Email" VARCHAR(256) NULL,
+	"PhoneNumber" VARCHAR(20) NULL,
+	"IP" VARCHAR(20) NULL,
+	"CreatedDate" TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP,
+	"ModifiedDate" TIMESTAMP NULL
+);
+
+ALTER TABLE aspnetusers 
+ALTER COLUMN createddate SET DEFAULT LOCALTIMESTAMP;
+
+ALTER TABLE aspnetusers 
+RENAME COLUMN "id" TO "Id";
+
+ALTER TABLE aspnetusers
+ALTER COLUMN id TYPE VARCHAR(128) 
+USING id::VARCHAR(128);
+
+INSERT INTO aspnetusers ( UserName, PasswordHash, Email, PhoneNumber, IP)
+VALUES ( 'sd2', 'pass', 'sd@sd.com', '9876543210', '127.0.0.1')
+
+SELECT * FROM asp_net_users;
+SELECT * FROM "AspNetUsers";
+
+-- TRUNCATE TABLE aspnetusers;
+-- DROP TABLE "AspNetUsers";
+-- DROP TABLE aspnetusers;
+
+
+
+
+
+CREATE TABLE "user" (
+	user_id SERIAL PRIMARY KEY,
+	asp_net_user_id VARCHAR(128),
+	first_name VARCHAR(100) NOT NULL,
+	last_name VARCHAR(100) NULL,
+	email VARCHAR(50) NOT NULL,
+	mobile VARCHAR(20) NULL,
+	is_mobile BOOLEAN NULL,
+	street VARCHAR(100) NULL,
+	city VARCHAR(100) NULL,
+	state VARCHAR(100) NULL,
+	region_id INT NULL,
+	zip_code VARCHAR(10) NULL,
+	str_month VARCHAR(20) NULL,
+	int_year INT NULL,
+	int_date INT NULL,
+	created_by VARCHAR(128) NOT NULL,
+	created_date TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP,
+	modified_by VARCHAR(128),
+	modified_date TIMESTAMP NULL,
+	status INT NULL,
+	is_deleted BOOLEAN NULL,
+	ip VARCHAR(20) NULL,
+	is_request_with_email BOOLEAN NULL
+);
+
+ALTER TABLE "user" 
+ADD CONSTRAINT fk_asp_net_user FOREIGN KEY (asp_net_user_id) 
+REFERENCES "asp_net_users"(id);
+
+ALTER TABLE "user" 
+ADD CONSTRAINT fk_region FOREIGN KEY (region_id) 
+REFERENCES region(region_id);
+
+-- DROP TABLE "user";
+
+SELECT * FROM "User";
+
+
+
+
+CREATE TABLE request_type (
+	request_type_id SERIAL PRIMARY KEY,
+	"name" VARCHAR(50)
+);
+
+INSERT INTO request_type ("name")
+VALUES  ('Business'),
+		('Patient'),
+		('Family'),
+		('Concierge');
+		
+SELECT * FROM request_type;
+
+-- DROP TABLE "RequestType";
+
+
+
+
+CREATE TABLE region (
+	region_id SERIAL PRIMARY KEY,
+	"name" VARCHAR(50) NOT NULL,
+	abbreviation VARCHAR(50)
+);
+
+INSERT INTO region ("name", abbreviation)
+VALUES  ('Western India', 'West'),
+		('Southern India', 'South'),
+		('Madhya Pradesh', 'MP'),
+		('Uttar Pradesh', 'UP'),
+		('Delhi', 'DL');
+
+UPDATE "Region" SET "Abbreviation" = 'DL' WHERE "RegionId" = 5;
+
+SELECT * FROM region;
+
+-- DROP TABLE "Region";
+
+
+
+
+
+CREATE TABLE request (
+	request_id SERIAL PRIMARY KEY,
+	request_type_id INT NOT NULL,
+	user_id INT NULL,
+	first_name VARCHAR(100) NULL,
+	last_name VARCHAR(100) NULL,
+	phone_number VARCHAR(23) NULL,
+	email VARCHAR(50) NULL,
+	status SMALLINT NOT NULL,
+	physician_id INT NULL,
+	confirmation_number VARCHAR(20) NOT NULL,
+	created_date TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP,
+	is_deleted BOOLEAN NULL,
+	modified_date TIMESTAMP NULL,
+	declined_by VARCHAR(250),
+	is_urgent_email_sent BOOLEAN NOT NULL,
+	last_wellness_date TIMESTAMP NULL,
+	is_mobile BOOLEAN NULL,
+	call_type SMALLINT NULL,
+	is_completed_by_physician BOOLEAN NULL,
+	last_reservation_date TIMESTAMP NULL,
+	accepted_date TIMESTAMP,
+	relation_name VARCHAR(100) NULL,
+	case_number VARCHAR(50) NULL,
+	ip VARCHAR(20),
+	case_tag VARCHAR(50),
+	case_tag_physician VARCHAR(50) NULL,
+	patient_account_id VARCHAR(128) NULL,
+	created_user_id INT NULL	
+);
+
+
+
+
+

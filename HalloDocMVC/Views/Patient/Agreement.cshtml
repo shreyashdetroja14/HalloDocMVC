@@ -1,0 +1,96 @@
+﻿
+@{
+    Layout = null;
+}
+
+@model HalloDocServices.ViewModels.AgreementViewModel
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Service Agreement</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HalloDocMVC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/patientlayout.css" />
+
+    <style>
+        body{
+            min-height: 100%;
+            background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container px-3">
+
+        @if(ViewBag.AcceptedMessage != null)
+        {
+            <h3 class="text-center text-success">@ViewBag.AcceptedMessage</h3>
+        }
+        else if (ViewBag.CancelMessage != null)
+        {
+            <h3 class="text-center text-danger">@ViewBag.CancelMessage</h3>
+        }
+
+        @if (Model.IsAgreementFilled == true)
+        {
+            <h3 class="text-center text-warning">You have already filled the agreement form.</h3>
+        }
+        else
+        {
+            <p class="fs-5 mb-4">
+                To provide best medical services, we cannot determine the cost right away. If you agree to our service, so we will provide care and follow-up until all care is completed. So with these points, if you like us to provide care to you click on 'Agree' and we'll get started immediately. If you don not agree simply click 'Cancel'.
+            </p>
+            <div class="d-flex justify-content-center">
+                <form asp-action="AcceptAgreement">
+                    <input type="number" asp-for="RequestId" hidden />
+                    <input type="submit" value="Agree" class="btn btn-success px-3">
+                </form>
+                <button class="btn btn-outline-danger ms-4 px-3" data-bs-toggle="modal" data-bs-target="#patient-cancel-modal">Cancel</button>
+            </div>
+
+            <div class="modal fade" data-bs-backdrop="static" id="patient-cancel-modal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content rounded-3">
+                        <div class="modal-header fw-bold bg-info text-white">
+                            <h1 class="modal-title fs-5 " id="modaltitle">Confirm Cancellation </h1>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Test Test</p>
+                            <form asp-action="CancelAgreement">
+                                <input type="number" asp-for="RequestId" hidden />
+                                <div class="form-floating mb-3">
+                                    <textarea asp-for="CancellationReason" class="form-control" placeholder="Reason to block" id="" style="height: 150px"></textarea>
+                                    <label>Please provide a brief explanation for your cancellation.</label>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <input type="submit" value="Confirm" class="btn btn-info text-white" />
+                                    <button type="button" class="btn btn-outline-info ms-3" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

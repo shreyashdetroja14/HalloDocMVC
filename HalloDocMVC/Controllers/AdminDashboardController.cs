@@ -305,5 +305,43 @@ namespace HalloDocMVC.Controllers
 
             return RedirectToAction("Orders", new {requestId = Order.RequestId});
         }
+
+        public IActionResult ClearCase(int requestId)
+        {
+            ClearCaseViewModel ClearCase = new ClearCaseViewModel();
+            ClearCase.RequestId = requestId;
+            return PartialView("_ClearCaseModal", ClearCase);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ClearCase(ClearCaseViewModel ClearCase)
+        {
+            bool isCaseCleared = await _adminDashboardService.ClearCase(ClearCase);
+            if(isCaseCleared)
+            {
+
+            }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> SendAgreement(int requestId)
+        {
+            SendAgreementViewModel SendAgreementInfo = new SendAgreementViewModel();
+            SendAgreementInfo.RequestId = requestId;
+            SendAgreementInfo = await _adminDashboardService.GetSendAgreementViewModelData(SendAgreementInfo);
+
+            return PartialView("_SendAgreementModal", SendAgreementInfo);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendAgreement(SendAgreementViewModel SendAgreementInfo)
+        {
+            bool isAgreementSent = await _adminDashboardService.SendAgreementViaMail(SendAgreementInfo);
+            if (isAgreementSent)
+            {
+
+            }
+            return RedirectToAction("Index");
+        }
     }
 }

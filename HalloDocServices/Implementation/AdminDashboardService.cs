@@ -5,18 +5,10 @@ using HalloDocServices.ViewModels;
 using HalloDocServices.ViewModels.AdminViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.IO.Compression;
-using System.Linq;
 using System.Net.Mail;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace HalloDocServices.Implementation
@@ -190,8 +182,6 @@ namespace HalloDocServices.Implementation
 
             var requestClient = request?.RequestClients.FirstOrDefault();
             var businessName = request?.RequestBusinesses.FirstOrDefault()?.Business.Name;
-            //var request = await _requestRepository.GetRequestByRequestId(requestId);
-            //var requestClient = await _requestRepository.GetRequestClientByRequestId(requestId);
 
             CaseInfo.RequestId = request?.RequestId;
             CaseInfo.Status = request?.Status;
@@ -277,7 +267,7 @@ namespace HalloDocServices.Implementation
                     }
                     else if (log.Status == 7)
                     {
-                        int index = log.Notes.LastIndexOf(":");
+                        int index = log.Notes.LastIndexOf("-");
                         ViewNotes.PatientCancellationNotes = log.Notes.Substring(index + 2);
                     }
                     
@@ -441,7 +431,10 @@ namespace HalloDocServices.Implementation
         public async Task<BlockRequestViewModel> GetBlockRequestViewModelData(BlockRequestViewModel BlockRequest)
         {
             var requestClient = await _requestRepository.GetRequestClientByRequestId(BlockRequest.RequestId ?? 0);
-            BlockRequest.PatientFullName = requestClient.FirstName + " " + requestClient.LastName;
+            if(requestClient != null)
+            {
+                BlockRequest.PatientFullName = requestClient.FirstName + " " + requestClient.LastName;
+            }
 
             return BlockRequest;
         }
@@ -459,8 +452,11 @@ namespace HalloDocServices.Implementation
             var requestClientFetched = await _requestRepository.GetRequestClientByRequestId(requestFetched.RequestId);
 
             BlockRequest blockRequest = new BlockRequest();
-            blockRequest.PhoneNumber = requestClientFetched.PhoneNumber;
-            blockRequest.Email = requestClientFetched.Email;
+            if(requestClientFetched != null)
+            {
+                blockRequest.PhoneNumber = requestClientFetched.PhoneNumber;
+                blockRequest.Email = requestClientFetched.Email;
+            }
             blockRequest.IsActive = true;
             blockRequest.Reason = BlockRequest.Description;
             blockRequest.RequestId = requestFetched.RequestId;
@@ -740,6 +736,81 @@ namespace HalloDocServices.Implementation
             await _commonRepository.CreateOrder(order);
 
             return true;
+        }
+
+        public async Task<bool> ClearCase(ClearCaseViewModel ClearCase)
+        {
+            var requestFetched = await _requestRepository.GetRequestByRequestId(ClearCase.RequestId);
+            if (requestFetched != null)
+            {
+                requestFetched.Status = 10;
+
+                await _requestRepository.UpdateRequest(requestFetched);
+
+                RequestStatusLog log = new RequestStatusLog();
+                log.RequestId = requestFetched.RequestId;
+                log.Status = requestFetched.Status;
+                log.AdminId = ClearCase.AdminId ?? 1;
+                log.Notes = "Admin cleared the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+                log.CreatedDate = DateTime.Now;
+
+                await _notesAndLogsRepository.AddRequestStatusLog(log);
+            }
+
+            return true;
+        }
+
+        public async Task<bool> SendAgreementViaMail(SendAgreementViewModel SendAgreementInfo)
+        {
+
+            var mail = "tatva.dotnet.shreyashdetroja@outlook.com";
+            var password = "Dotnet_tatvasoft@14";
+
+            var client = new SmtpClient("smtp.office365.com")
+            {
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(mail, password)
+            };
+
+            string subject = "Service Agreement from HalloDoc@Admin";
+
+            string url = "http://localhost:5059/Patient/Agreement?requestId=" + SendAgreementInfo.RequestId;
+            string message = "Click on the link to view the service agreement: " + url ;
+
+            string receiver = SendAgreementInfo.Email ?? "";
+
+            string senderDisplayName = "HalloDoc Admin";
+            string receiverDisplayName = "";
+
+            MailAddress senderMailAddress = new MailAddress(mail, senderDisplayName);
+            MailAddress receiverMailAddress = new MailAddress(receiver, receiverDisplayName);
+
+            using (var mailMessage = new MailMessage(senderMailAddress, receiverMailAddress))
+            {
+                mailMessage.Subject = subject;
+                mailMessage.Body = message;
+
+                await client.SendMailAsync(mailMessage);
+            }
+
+            return true;
+        }
+
+        public async Task<SendAgreementViewModel> GetSendAgreementViewModelData(SendAgreementViewModel SendAgreementInfo)
+        {
+            var requestClientFetched = await _requestRepository.GetRequestClientByRequestId(SendAgreementInfo.RequestId);
+            var requestFetched = await _requestRepository.GetRequestByRequestId(SendAgreementInfo.RequestId);
+            if(requestClientFetched  != null && requestFetched != null)
+            {
+                SendAgreementInfo.RequestType = requestFetched.RequestTypeId;
+                SendAgreementInfo.Email = requestClientFetched.Email;
+                SendAgreementInfo.PhoneNumber = requestClientFetched.PhoneNumber;
+            }
+
+            return SendAgreementInfo;
         }
     }
 }

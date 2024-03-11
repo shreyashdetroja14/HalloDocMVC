@@ -15,13 +15,15 @@ namespace HalloDocServices.Implementation
         private readonly IRequestRepository _requestRepository;
         private readonly IPhysicianRepository _physicianRepository;
         private readonly ICommonRepository _commonRepository;
+        private readonly INotesAndLogsRepository _notesAndLogsRepository;
 
-        public PatientService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, ICommonRepository commonRepository)
+        public PatientService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, ICommonRepository commonRepository, INotesAndLogsRepository notesAndLogsRepository)
         {
             _userRepository = userRepository;
             _requestRepository = requestRepository;
             _physicianRepository = physicianRepository;
             _commonRepository = commonRepository;
+            _notesAndLogsRepository = notesAndLogsRepository;
         }
 
         public async Task<int> CheckUser(string id)
@@ -480,6 +482,70 @@ namespace HalloDocServices.Implementation
                 }
 
             }
+        }
+
+        public async Task<bool> AcceptAgreement(AgreementViewModel AgreementInfo)
+        {
+            var requestFetched = await _requestRepository.GetRequestByRequestId(AgreementInfo.RequestId);
+            if (requestFetched != null)
+            {
+                requestFetched.Status = 4;
+
+                await _requestRepository.UpdateRequest(requestFetched);
+
+                RequestStatusLog log = new RequestStatusLog();
+                log.RequestId = requestFetched.RequestId;
+                log.Status = requestFetched.Status;
+                log.Notes = "Patient accepted the agreement on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+                log.CreatedDate = DateTime.Now;
+
+                await _notesAndLogsRepository.AddRequestStatusLog(log);
+            }
+
+            return true;
+        }
+
+        public async Task<bool> CancelAgreement(AgreementViewModel CancelAgreementInfo)
+        {
+            var requestFetched = await _requestRepository.GetRequestByRequestId(CancelAgreementInfo.RequestId);
+            if (requestFetched != null)
+            {
+                requestFetched.Status = 7;
+
+                await _requestRepository.UpdateRequest(requestFetched);
+
+                RequestStatusLog log = new RequestStatusLog();
+                log.RequestId = requestFetched.RequestId;
+                log.Status = requestFetched.Status;
+                log.Notes = "Patient cancelled the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + CancelAgreementInfo.CancellationReason;
+                log.CreatedDate = DateTime.Now;
+
+                await _notesAndLogsRepository.AddRequestStatusLog(log);
+            }
+
+            return true;
+        }
+
+        public async Task<AgreementViewModel> GetAgreementViewModelData(AgreementViewModel AgreementInfo)
+        {
+            var requestFetched = await _requestRepository.GetRequestByRequestId(AgreementInfo.RequestId);
+            if (requestFetched != null)
+            {
+                if(requestFetched.Status == 7 || requestFetched.Status == 4)
+                {
+                    AgreementInfo.IsAgreementFilled = true;
+                    return AgreementInfo;
+                }
+
+                AgreementInfo.RequestStatus = requestFetched.Status;
+                var requestClientFetched = await _requestRepository.GetRequestClientByRequestId(AgreementInfo.RequestId);
+                if (requestClientFetched != null)
+                {
+                    AgreementInfo.PatientFullName = requestClientFetched.FirstName + " " + requestClientFetched.LastName;
+                }
+            }
+
+            return AgreementInfo;
         }
     }
 

@@ -1,7 +1,9 @@
-﻿using HalloDocMVC.Auth;
+﻿using HalloDocEntities.Models;
+using HalloDocMVC.Auth;
 using HalloDocServices.Implementation;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Common;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,7 +12,7 @@ using System.IO.Compression;
 namespace HalloDocMVC.Controllers
 {
 
-    [CustomAuthorize("patient")]
+    
     public class PatientController : Controller
     {
         private readonly IPatientService _patientService;
@@ -34,7 +36,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Dashboard", new { id = aspnetuserId });
         }
 
-
+        [CustomAuthorize("patient")]
         public async Task<IActionResult> Dashboard(string id)
         {
             string token = Request.Cookies["jwt"] ?? "";
@@ -57,6 +59,7 @@ namespace HalloDocMVC.Controllers
             return View(requestlist);
         }
 
+        [CustomAuthorize("patient")]
         public async Task<IActionResult> ViewDocuments(int requestid)
         {
             List<RequestFileViewModel> requestfilelist = await _patientService.GetRequestFiles(requestid);
@@ -74,6 +77,7 @@ namespace HalloDocMVC.Controllers
             return View(vrvm);
         }
 
+        [CustomAuthorize("patient")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UploadRequestFile(IEnumerable<IFormFile>? MultipleFiles, int requestid)
@@ -86,6 +90,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("ViewDocuments", new { requestid });
         }
 
+        [CustomAuthorize("patient")]
         public async Task<IActionResult> DownloadFile(int id)
         {
             var requestFileData = await _patientService.RequestFileData(id);
@@ -99,6 +104,7 @@ namespace HalloDocMVC.Controllers
 
         }
 
+        [CustomAuthorize("patient")]
         public async Task<IActionResult> DownloadAllFiles(int id)
         {
             var filesRow = await _patientService.GetRequestFiles(id);
@@ -119,6 +125,7 @@ namespace HalloDocMVC.Controllers
             return File(ms.ToArray(), "application/zip", "download.zip");
         }
 
+        [CustomAuthorize("patient")]
         public async Task<IActionResult> Profile(int UserId)
         {
             var profileDetails = await _patientService.GetProfileDetails(UserId);
@@ -127,6 +134,7 @@ namespace HalloDocMVC.Controllers
             return View(profileDetails);
         }
 
+        [CustomAuthorize("patient")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProfile(ProfileViewModel ProfileDetails)
@@ -141,6 +149,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("GoToDashboard", new { UserId = ProfileDetails.UserId });
         }
 
+        [CustomAuthorize("patient")]
         public async Task<IActionResult> PatientRequest(int UserId)
         {
             PatientRequestViewModel PatientInfo = new PatientRequestViewModel();
@@ -158,8 +167,8 @@ namespace HalloDocMVC.Controllers
             return View(frvm);
         }
 
-        
 
+        [CustomAuthorize("patient")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PatientRequest(FamilyRequestViewModel frvm)
@@ -175,6 +184,7 @@ namespace HalloDocMVC.Controllers
 
         }
 
+        [CustomAuthorize("patient")]
         public IActionResult FamilyRequest(int UserId)
         {
             ViewBag.UserId = UserId;
@@ -183,6 +193,7 @@ namespace HalloDocMVC.Controllers
             return View("~/Views/Patient/PatientRequest.cshtml");
         }
 
+        [CustomAuthorize("patient")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> FamilyRequest(FamilyRequestViewModel frvm, int UserId)
@@ -195,6 +206,38 @@ namespace HalloDocMVC.Controllers
             await _patientService.CreateFamilyRequest(frvm, UserId);
 
             return RedirectToAction("GoToDashboard", new { UserId });
+        }
+
+        public async Task<IActionResult> Agreement(int requestId)
+        {
+            AgreementViewModel AgreementInfo = new AgreementViewModel();
+            AgreementInfo.RequestId = requestId;
+            AgreementInfo = await _patientService.GetAgreementViewModelData(AgreementInfo);
+            return View(AgreementInfo);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AcceptAgreement(AgreementViewModel AgreementInfo)
+        {
+            bool isAgreementAccepted = await _patientService.AcceptAgreement(AgreementInfo);
+            if(isAgreementAccepted)
+            {
+                ViewBag.AcceptedMessage = "Agreement Accepted Successfully. You can close this window.";
+            }
+
+            return View("Agreement", AgreementInfo);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CancelAgreement(AgreementViewModel CancelAgreementInfo)
+        {
+            bool isAgreementCancelled = await _patientService.CancelAgreement(CancelAgreementInfo);
+            if (isAgreementCancelled)
+            {
+                ViewBag.CancelMessage = "Agreement Cancelled Successfully. You can close this window.";
+            }
+
+            return View("Agreement", CancelAgreementInfo);
         }
     }
 }

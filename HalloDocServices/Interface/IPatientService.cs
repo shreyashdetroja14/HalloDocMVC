@@ -34,5 +34,11 @@ namespace HalloDocServices.Interface
         Task<int> CreatePatientRequest(FamilyRequestViewModel frvm);
 
         Task CreateFamilyRequest(FamilyRequestViewModel frvm, int userId);
+
+        Task<AgreementViewModel> GetAgreementViewModelData(AgreementViewModel AgreementInfo);
+
+        Task<bool> AcceptAgreement(AgreementViewModel AgreementInfo);
+
+        Task<bool> CancelAgreement(AgreementViewModel CancelAgreementInfo);
     }
 }

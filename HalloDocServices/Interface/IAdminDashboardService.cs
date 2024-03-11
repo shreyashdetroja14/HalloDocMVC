@@ -59,5 +59,11 @@ namespace HalloDocServices.Interface
         OrdersViewModel GetVendorDetails(int vendorId);
 
         Task<bool> SendOrder(OrdersViewModel Order);
+
+        Task<bool> ClearCase(ClearCaseViewModel ClearCase);
+
+        Task<SendAgreementViewModel> GetSendAgreementViewModelData(SendAgreementViewModel SendAgreementInfo);
+
+        Task<bool> SendAgreementViaMail(SendAgreementViewModel SendAgreementInfo);
     }
 }
