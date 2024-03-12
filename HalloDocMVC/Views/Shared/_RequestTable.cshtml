@@ -120,7 +120,7 @@
                                 </button>
                                 <p>(Patient)</p>
                             }
-                            @if(request.SecondPhoneNumber != null)
+                            @if(request.SecondPhoneNumber != null && request.RequestType != 2)
                             {
                                 <button class="btn border text-white">
                                     <img src="~/images/callIcon.svg" />

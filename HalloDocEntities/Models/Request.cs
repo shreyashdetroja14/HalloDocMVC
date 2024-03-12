@@ -106,6 +106,9 @@ public partial class Request
     [Column("created_user_id")]
     public int? CreatedUserId { get; set; }
 
+    [Column("is_agreement_sent")]
+    public bool? IsAgreementSent { get; set; }
+
     [InverseProperty("Request")]
     public virtual ICollection<BlockRequest> BlockRequests { get; set; } = new List<BlockRequest>();
 

@@ -24,6 +24,19 @@ namespace HalloDocMVC.Controllers
             _jwtService = jwtService;
         }
 
+        #region Encode_Decode
+        public string Encode(string encodeMe)
+        {
+            byte[] encoded = System.Text.Encoding.UTF8.GetBytes(encodeMe);
+            return Convert.ToBase64String(encoded);
+        }
+        public string Decode(string decodeMe)
+        {
+            byte[] encoded = Convert.FromBase64String(decodeMe);
+            return System.Text.Encoding.UTF8.GetString(encoded);
+        }
+        #endregion
+
         public async Task<IActionResult> GoToDashboard(int UserId)
         {
             //var userFetched = await _context.Users.FindAsync(UserId);
@@ -208,10 +221,21 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("GoToDashboard", new { UserId });
         }
 
-        public async Task<IActionResult> Agreement(int requestId)
+        public async Task<IActionResult> Agreement(string requestId)
         {
+            int decryptedRequestId;
+            try
+            {
+                decryptedRequestId = int.Parse(Decode(requestId));
+            }
+            catch(Exception ex)
+            {
+                string error = ex.Message;
+                return NotFound();
+            }
+
             AgreementViewModel AgreementInfo = new AgreementViewModel();
-            AgreementInfo.RequestId = requestId;
+            AgreementInfo.RequestId = decryptedRequestId;
             AgreementInfo = await _patientService.GetAgreementViewModelData(AgreementInfo);
             return View(AgreementInfo);
         }

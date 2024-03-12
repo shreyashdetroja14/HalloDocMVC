@@ -24,8 +24,15 @@
                         <label for="PhoneNumber">Phone Number</label>
                     </div>
 
+                    @if(Model.IsAgreementSent == true)
+                    {
+                        <div class="mb-3">
+                            <p class="text-warning fs-5">The agreement has already been sent for this request.</p>
+                        </div>
+                    }
+
                     <div class=" d-flex justify-content-end">
-                        <input type="submit" value="Send" class="btn btn-info text-white px-3 py-2" />
+                        <input type="submit" value="Send" class="btn btn-info text-white px-3 py-2 @(Model.IsAgreementSent == true ? "d-none" : "")" />
                         <button type="button" class="btn btn-outline-info px-3 py-2 ms-3" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </form>

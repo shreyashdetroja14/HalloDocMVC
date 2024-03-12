@@ -44,6 +44,19 @@ namespace HalloDocServices.Implementation
             return viewModel;
         }
 
+        #region Encode_Decode
+        public string Encode(string encodeMe)
+        {
+            byte[] encoded = System.Text.Encoding.UTF8.GetBytes(encodeMe);
+            return Convert.ToBase64String(encoded);
+        }
+        public string Decode(string decodeMe)
+        {
+            byte[] encoded = Convert.FromBase64String(decodeMe);
+            return System.Text.Encoding.UTF8.GetString(encoded);
+        }
+        #endregion
+
         public List<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern, int? searchRegion)
         {
             List<RequestRowViewModel> requestRows = new List<RequestRowViewModel>();
@@ -777,7 +790,8 @@ namespace HalloDocServices.Implementation
 
             string subject = "Service Agreement from HalloDoc@Admin";
 
-            string url = "http://localhost:5059/Patient/Agreement?requestId=" + SendAgreementInfo.RequestId;
+            string EncryptedRequestId = Encode(SendAgreementInfo.RequestId.ToString());
+            string url = "http://localhost:5059/Patient/Agreement?requestId=" + EncryptedRequestId;
             string message = "Click on the link to view the service agreement: " + url ;
 
             string receiver = SendAgreementInfo.Email ?? "";
@@ -796,6 +810,13 @@ namespace HalloDocServices.Implementation
                 await client.SendMailAsync(mailMessage);
             }
 
+            var requestFetched = await _requestRepository.GetRequestByRequestId(SendAgreementInfo.RequestId);
+            if(requestFetched != null)
+            {
+                requestFetched.IsAgreementSent = true;
+                await _requestRepository.UpdateRequest(requestFetched);
+            }
+
             return true;
         }
 
@@ -808,6 +829,7 @@ namespace HalloDocServices.Implementation
                 SendAgreementInfo.RequestType = requestFetched.RequestTypeId;
                 SendAgreementInfo.Email = requestClientFetched.Email;
                 SendAgreementInfo.PhoneNumber = requestClientFetched.PhoneNumber;
+                SendAgreementInfo.IsAgreementSent = requestFetched.IsAgreementSent;
             }
 
             return SendAgreementInfo;
