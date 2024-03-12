@@ -864,5 +864,60 @@ namespace HalloDocServices.Implementation
 
             return true;
         }
+
+        public EncounterFormViewModel GetEncounterFormViewModelData(EncounterFormViewModel EncounterFormDetails)
+        {
+            var encounterFormFetched = _commonRepository.GetEncounterFormByRequestId(EncounterFormDetails.RequestId);
+            if(encounterFormFetched?.RequestId != null)
+            {
+                EncounterFormDetails.EncounterFormId = encounterFormFetched.EncounterFormId;
+                EncounterFormDetails.RequestId = encounterFormFetched.RequestId;
+                EncounterFormDetails.FirstName = encounterFormFetched.FirstName;
+                EncounterFormDetails.LastName = encounterFormFetched.LastName;
+                EncounterFormDetails.Location = encounterFormFetched.Location;
+
+                if (encounterFormFetched.IntDate.HasValue && encounterFormFetched.IntYear.HasValue && encounterFormFetched.StrMonth != null)
+                {
+                    DateTime monthDateTime = DateTime.ParseExact(encounterFormFetched.StrMonth, "MMMM", CultureInfo.InvariantCulture);
+                    int month = monthDateTime.Month;
+                    DateOnly date = new DateOnly((int)encounterFormFetched.IntYear, month, encounterFormFetched.IntDate.Value);
+                    EncounterFormDetails.DOB = date.ToString("yyyy-MM-dd");
+                }
+
+                EncounterFormDetails.ServiceDate = encounterFormFetched.ServiceDate.ToString();
+                EncounterFormDetails.PhoneNumber = encounterFormFetched.PhoneNumber;
+                EncounterFormDetails.Email = encounterFormFetched.Email ?? "";
+                EncounterFormDetails.PresentIllnessHistory = encounterFormFetched.PresentIllnessHistory;
+                EncounterFormDetails.MedicalHistory = encounterFormFetched.MedicalHistory;
+                EncounterFormDetails.Medications = encounterFormFetched.Medications;
+                EncounterFormDetails.Allergies = encounterFormFetched.Allergies;
+                EncounterFormDetails.Temperature = encounterFormFetched.Temperature;
+                EncounterFormDetails.HeartRate = encounterFormFetched.HeartRate;
+                EncounterFormDetails.RespirationRate = encounterFormFetched.RespirationRate;
+                EncounterFormDetails.BloodPressureSystolic = encounterFormFetched.BloodPressureSystolic;
+                EncounterFormDetails.BloodPressureDiastolic = encounterFormFetched.BloodPressureDiastolic;
+                EncounterFormDetails.OxygenLevel = encounterFormFetched.OxygenLevel;
+                EncounterFormDetails.Pain = encounterFormFetched.Pain;
+                EncounterFormDetails.Heent = encounterFormFetched.Heent;
+                EncounterFormDetails.Cardiovascular = encounterFormFetched.Cardiovascular;
+                EncounterFormDetails.Chest = encounterFormFetched.Chest;
+                EncounterFormDetails.Abdomen = encounterFormFetched.Abdomen;
+                EncounterFormDetails.Extremities = encounterFormFetched.Extremities;
+                EncounterFormDetails.Skin = encounterFormFetched.Skin;
+                EncounterFormDetails.Neuro = encounterFormFetched.Neuro;
+                EncounterFormDetails.Other = encounterFormFetched.Other;
+                EncounterFormDetails.Diagnosis = encounterFormFetched.Diagnosis;
+                EncounterFormDetails.TreatmentPlan = encounterFormFetched.TreatmentPlan;
+                EncounterFormDetails.MedicationsDispensed = encounterFormFetched.MedicationsDispensed;
+                EncounterFormDetails.Procedures = encounterFormFetched.Procedures;
+                EncounterFormDetails.FollowUp = encounterFormFetched.FollowUp;
+                EncounterFormDetails.CreatedDate = encounterFormFetched.CreatedDate;
+                EncounterFormDetails.ModifiedDate = encounterFormFetched.ModifiedDate;
+                EncounterFormDetails.IsFinalized = encounterFormFetched.IsFinalized;
+                EncounterFormDetails.FinalizedDate = encounterFormFetched.FinalizedDate;
+
+            }
+            return EncounterFormDetails;
+        }
     }
 }

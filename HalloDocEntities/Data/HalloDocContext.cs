@@ -32,6 +32,8 @@ public partial class HalloDocContext : DbContext
 
     public virtual DbSet<Concierge> Concierges { get; set; }
 
+    public virtual DbSet<EncounterForm> EncounterForms { get; set; }
+
     public virtual DbSet<HealthProfessionType> HealthProfessionTypes { get; set; }
 
     public virtual DbSet<HealthProfessional> HealthProfessionals { get; set; }
@@ -133,6 +135,17 @@ public partial class HalloDocContext : DbContext
             entity.HasOne(d => d.Region).WithMany(p => p.Concierges)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_region");
+        });
+
+        modelBuilder.Entity<EncounterForm>(entity =>
+        {
+            entity.HasKey(e => e.EncounterFormId).HasName("encounter_form_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.Request).WithMany(p => p.EncounterForms)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_request");
         });
 
         modelBuilder.Entity<HealthProfessionType>(entity =>

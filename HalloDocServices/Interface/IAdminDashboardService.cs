@@ -67,5 +67,7 @@ namespace HalloDocServices.Interface
         Task<bool> SendAgreementViaMail(SendAgreementViewModel SendAgreementInfo);
 
         Task<bool> CloseCase(int requestId, int adminId);
+
+        EncounterFormViewModel GetEncounterFormViewModelData(EncounterFormViewModel EncounterFormDetails);
     }
 }

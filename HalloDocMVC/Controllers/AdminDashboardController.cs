@@ -386,5 +386,15 @@ namespace HalloDocMVC.Controllers
 
             return RedirectToAction("Index");
         }
+
+        public IActionResult EncounterForm(int requestId)
+        {
+            EncounterFormViewModel EncounterFormDetails = new EncounterFormViewModel();
+            EncounterFormDetails.RequestId = requestId;
+
+            EncounterFormDetails = _adminDashboardService.GetEncounterFormViewModelData(EncounterFormDetails); 
+
+            return View(EncounterFormDetails);
+        }
     }
 }

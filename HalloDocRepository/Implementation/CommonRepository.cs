@@ -58,5 +58,15 @@ namespace HalloDocRepository.Implementation
 
             return order;
         }
+
+        public EncounterForm GetEncounterFormByRequestId(int requestId)
+        {
+            var EncounterForm = _context.EncounterForms.FirstOrDefault(x => x.RequestId == requestId);
+            /*if(EncounterForm == null)
+            {
+                return new EncounterForm();
+            }*/
+            return EncounterForm;
+        }
     }
 }

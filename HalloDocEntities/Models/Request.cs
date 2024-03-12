@@ -113,6 +113,9 @@ public partial class Request
     public virtual ICollection<BlockRequest> BlockRequests { get; set; } = new List<BlockRequest>();
 
     [InverseProperty("Request")]
+    public virtual ICollection<EncounterForm> EncounterForms { get; set; } = new List<EncounterForm>();
+
+    [InverseProperty("Request")]
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
     [ForeignKey("PhysicianId")]

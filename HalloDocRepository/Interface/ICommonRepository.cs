@@ -35,5 +35,10 @@ namespace HalloDocRepository.Interface
         // Order Details
 
         Task<OrderDetail> CreateOrder(OrderDetail order);
+
+
+        // Encounter Form
+
+        EncounterForm GetEncounterFormByRequestId(int requestId);
     }
 }
