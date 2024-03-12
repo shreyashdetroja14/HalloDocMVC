@@ -8,7 +8,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 {
     public class ViewCaseViewModel
     {
-        public int? RequestId { get; set; }
+        public int RequestId { get; set; }
 
         public int? Status { get; set; }
 

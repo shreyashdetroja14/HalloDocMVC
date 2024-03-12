@@ -30,7 +30,7 @@ namespace HalloDocServices.Implementation
             _requestRepository = requestRepository;
 
         }
-        public async Task<AspNetUser> CheckLogin(LoginViewModel LoginInfo)
+        public AspNetUser CheckLogin(LoginViewModel LoginInfo)
         {
             //string id = "";
 

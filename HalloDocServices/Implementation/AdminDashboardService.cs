@@ -185,47 +185,50 @@ namespace HalloDocServices.Implementation
             return requestRows;
         }
 
-        public ViewCaseViewModel GetViewCaseViewModelData(int requestId)
+        public ViewCaseViewModel GetViewCaseViewModelData(ViewCaseViewModel CaseInfo)
         {
-            ViewCaseViewModel CaseInfo = new ViewCaseViewModel();
+             
 
-            var requestFetched = _requestRepository.GetIQueryableRequestByRequestId(requestId);
+            var requestFetched = _requestRepository.GetIQueryableRequestByRequestId(CaseInfo.RequestId);
 
             var request = requestFetched.Include(x => x.RequestClients).Include(x => x.RequestBusinesses).Include(x => x.RequestBusinesses).ThenInclude(x => x.Business).FirstOrDefault();
 
-            var requestClient = request?.RequestClients.FirstOrDefault();
-            var businessName = request?.RequestBusinesses.FirstOrDefault()?.Business.Name;
-
-            CaseInfo.RequestId = request?.RequestId;
-            CaseInfo.Status = request?.Status;
-            CaseInfo.RequestType = request?.RequestTypeId;
-            CaseInfo.ConfirmationNumber = request?.ConfirmationNumber;
-            
-            if(requestClient != null)
+            if(request  != null)
             {
-                CaseInfo.Symptoms = requestClient?.Notes;
-                CaseInfo.FirstName = requestClient?.FirstName;
-                CaseInfo.LastName = requestClient?.LastName;
+                var requestClient = request?.RequestClients.FirstOrDefault();
+                var businessName = request?.RequestBusinesses.FirstOrDefault()?.Business.Name;
 
-                if (requestClient.IntDate.HasValue && requestClient.IntYear.HasValue && requestClient.StrMonth != null)
+                CaseInfo.RequestId = request?.RequestId ?? 0;
+                CaseInfo.Status = request?.Status;
+                CaseInfo.RequestType = request?.RequestTypeId;
+                CaseInfo.ConfirmationNumber = request?.ConfirmationNumber;
+
+                if (requestClient != null)
                 {
-                    DateTime monthDateTime = DateTime.ParseExact(requestClient.StrMonth, "MMMM", CultureInfo.InvariantCulture);
-                    int month = monthDateTime.Month;
-                    DateOnly date = new DateOnly((int)requestClient.IntYear, month, requestClient.IntDate.Value);
-                    CaseInfo.DOB = date.ToString("yyyy-MM-dd");
+                    CaseInfo.Symptoms = requestClient?.Notes;
+                    CaseInfo.FirstName = requestClient?.FirstName;
+                    CaseInfo.LastName = requestClient?.LastName;
+
+                    if (requestClient?.IntDate.HasValue ?? false && requestClient.IntYear.HasValue && requestClient.StrMonth != null)
+                    {
+                        DateTime monthDateTime = DateTime.ParseExact(requestClient.StrMonth??"", "MMMM", CultureInfo.InvariantCulture);
+                        int month = monthDateTime.Month;
+                        DateOnly date = new DateOnly((int)(requestClient.IntYear ?? 0), month, requestClient.IntDate.Value);
+                        CaseInfo.DOB = date.ToString("yyyy-MM-dd");
+                    }
+                    CaseInfo.Email = requestClient?.Email;
+                    CaseInfo.PhoneNumber = requestClient?.PhoneNumber;
+                    CaseInfo.Region = requestClient?.State;
+                    if (businessName != null)
+                    {
+                        CaseInfo.BusinessNameOrAddress = businessName;
+                    }
+                    else
+                    {
+                        CaseInfo.BusinessNameOrAddress = requestClient?.Address;
+                    }
+                    CaseInfo.Room = requestClient?.Location;
                 }
-                CaseInfo.Email = requestClient?.Email;
-                CaseInfo.PhoneNumber = requestClient?.PhoneNumber;
-                CaseInfo.Region = requestClient?.State;
-                if (businessName != null)
-                {
-                    CaseInfo.BusinessNameOrAddress = businessName;
-                }
-                else
-                {
-                    CaseInfo.BusinessNameOrAddress = requestClient?.Address;
-                }
-                CaseInfo.Room = requestClient?.Location;
             }
 
             return CaseInfo;
@@ -233,7 +236,7 @@ namespace HalloDocServices.Implementation
 
         public async Task<bool> UpdateViewCaseInfo(ViewCaseViewModel CaseInfo)
         {
-            var requestClient = await _requestRepository.GetRequestClientByRequestId(CaseInfo.RequestId ?? 0);
+            var requestClient = await _requestRepository.GetRequestClientByRequestId(CaseInfo.RequestId);
             if(requestClient == null) 
             {
                 return false;
@@ -491,16 +494,21 @@ namespace HalloDocServices.Implementation
 
         }
 
-        public async Task<ViewDocumentsViewModel> GetViewUploadsViewModelData(ViewDocumentsViewModel ViewUploads)
+        public ViewDocumentsViewModel GetViewUploadsViewModelData(ViewDocumentsViewModel ViewUploads)
         {
             var requestFetched = _requestRepository.GetIQueryableRequestByRequestId(ViewUploads.RequestId);
 
-            requestFetched = requestFetched.Include(x => x.RequestWiseFiles);
+            requestFetched = requestFetched.Include(x => x.RequestWiseFiles).Include(x => x.RequestClients);
 
             var data = requestFetched.FirstOrDefault()?.RequestWiseFiles;
             var requestwisefiles = data?.AsQueryable().Include(x => x.Admin).Include(x => x.Physician).Where(x => x.IsDeleted == false || x.IsDeleted == null).ToList();
 
+            var requestClient = requestFetched.FirstOrDefault()?.RequestClients.FirstOrDefault();
+
             var request = requestFetched.FirstOrDefault();
+
+            ViewUploads.RequestClientId = requestClient?.RequestClientId;
+            ViewUploads.PatientFullName = requestClient?.FirstName + " " + requestClient?.LastName;
 
             List<RequestFileViewModel> requestfilelist = new List<RequestFileViewModel>();
             if(requestwisefiles != null)
@@ -833,6 +841,28 @@ namespace HalloDocServices.Implementation
             }
 
             return SendAgreementInfo;
+        }
+
+        public async Task<bool> CloseCase(int requestId, int adminId)
+        {
+            var requestFetched = await _requestRepository.GetRequestByRequestId(requestId);
+            if(requestFetched != null)
+            {
+                requestFetched.Status = 9;
+
+                await _requestRepository.UpdateRequest(requestFetched);
+
+                RequestStatusLog log = new RequestStatusLog();
+                log.RequestId = requestFetched.RequestId;
+                log.Status = requestFetched.Status;
+                log.AdminId = adminId;
+                log.Notes = "Admin closed the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+                log.CreatedDate = DateTime.Now;
+
+                await _notesAndLogsRepository.AddRequestStatusLog(log);
+            }
+
+            return true;
         }
     }
 }

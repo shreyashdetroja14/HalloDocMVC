@@ -64,7 +64,7 @@ namespace HalloDocMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CheckLogin(LoginViewModel LoginInfo)
+        public IActionResult CheckLogin(LoginViewModel LoginInfo)
         {
             if (!ModelState.IsValid)
             {
@@ -72,7 +72,7 @@ namespace HalloDocMVC.Controllers
                 return View("Index");
             }
 
-            var aspnetuser = await _loginService.CheckLogin(LoginInfo);
+            var aspnetuser = _loginService.CheckLogin(LoginInfo);
 
             if (aspnetuser.Id == null)
             {

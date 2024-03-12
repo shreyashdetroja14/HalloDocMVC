@@ -121,7 +121,7 @@
                                     <td class="p-3">
                                         <input type="checkbox" name="selectFile" id="" class="selectFile" value="@item.FileId">
                                     </td>
-                                    <td class="py-3">@(item.FileName.Substring(0, item.FileName.IndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</td>
+                                    <td class="py-3">@(item.FileName.Substring(0, item.FileName.LastIndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</td>
                                     @*<td class="py-3">@item.Uploader</td>*@
                                     <td class="py-3">@item.UploadDate</td>
                                     <td class="py-3">

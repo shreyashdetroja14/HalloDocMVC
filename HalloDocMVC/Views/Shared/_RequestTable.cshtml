@@ -217,7 +217,7 @@
                                 @if (status == 5)
                                 {
                                     <li>
-                                        <a class="dropdown-item" style="cursor: pointer" href="#">
+                                        <a class="dropdown-item" asp-action="CloseCase" asp-route-requestId="@request.RequestId">
                                             <i class="bi bi-x-circle pe-3"></i>Close Case
                                         </a>
                                     </li>
@@ -451,9 +451,17 @@
                             }
                             @if (status == 5)
                             {
-                                <div class="col-6"><button class="btn btn-danger rounded-pill mb-2 w-75">Close Case</button></div>
+                                <div class="col-6">
+                                    <a asp-action="CloseCase" asp-route-requestId="@request.RequestId" class="btn btn-danger rounded-pill mb-2 w-75">
+                                        Close Case
+                                    </a>
+                                </div>
                             }
-                            <div class="col-6"><a asp-action="ViewNotes" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">View Notes</a></div>
+                            <div class="col-6">
+                                <a asp-action="ViewNotes" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">
+                                    View Notes
+                                </a>
+                            </div>
                             @if (status != 1)
                             {
                                 <div class="col-6"><a asp-action="ViewUploads" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">View Uploads</a></div>

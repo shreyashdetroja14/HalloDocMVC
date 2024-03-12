@@ -16,7 +16,7 @@ namespace HalloDocServices.Interface
 
         List<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern, int? searchRegion);
 
-        ViewCaseViewModel GetViewCaseViewModelData(int requestId);
+        ViewCaseViewModel GetViewCaseViewModelData(ViewCaseViewModel CaseInfo);
 
         Task<bool> UpdateViewCaseInfo(ViewCaseViewModel CaseInfo);
 
@@ -38,7 +38,7 @@ namespace HalloDocServices.Interface
 
         Task<bool> BlockRequest(BlockRequestViewModel BlockRequest);
 
-        Task<ViewDocumentsViewModel> GetViewUploadsViewModelData(ViewDocumentsViewModel ViewUploads);
+        ViewDocumentsViewModel GetViewUploadsViewModelData(ViewDocumentsViewModel ViewUploads);
 
         Task UploadFiles(IEnumerable<IFormFile> MultipleFiles, int requestId);
 
@@ -65,5 +65,7 @@ namespace HalloDocServices.Interface
         Task<SendAgreementViewModel> GetSendAgreementViewModelData(SendAgreementViewModel SendAgreementInfo);
 
         Task<bool> SendAgreementViaMail(SendAgreementViewModel SendAgreementInfo);
+
+        Task<bool> CloseCase(int requestId, int adminId);
     }
 }

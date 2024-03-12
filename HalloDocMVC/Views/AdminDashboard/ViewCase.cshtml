@@ -16,9 +16,9 @@
 <div class="main">
     
     <partial name="_NavbarLinks"></partial>
-    <div class="p-4">
+    <div class="container p-4">
 
-        <div class="container back p-0 pb-4 d-flex justify-content-between">
+        <div class=" back p-0 pb-4 d-flex justify-content-between">
             <div class="d-flex align-items-center">
                 <h2>View Case</h2>
                 <span class="ms-2 px-3 py-1 bg-success text-white rounded-pill">
@@ -33,7 +33,7 @@
                 Back
             </a>
         </div>
-        <form asp-action="ViewCase" class="container bg-white p-4  request-form">
+        <form asp-action="ViewCase" class="bg-white p-4  request-form">
             <input type="number" asp-for="RequestId" hidden>
             <input type="number" asp-for="RequestType" hidden>
             <div class="info mb-4">

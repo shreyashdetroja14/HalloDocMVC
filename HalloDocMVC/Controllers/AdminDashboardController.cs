@@ -9,6 +9,7 @@ using HalloDocMVC.Auth;
 using NuGet.Common;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
+using System.Dynamic;
 
 namespace HalloDocMVC.Controllers
 {
@@ -56,8 +57,9 @@ namespace HalloDocMVC.Controllers
         public IActionResult ViewCase(int requestId) 
         { 
             ViewCaseViewModel CaseInfo = new ViewCaseViewModel();
+            CaseInfo.RequestId = requestId;
 
-            CaseInfo =  _adminDashboardService.GetViewCaseViewModelData(requestId);
+            CaseInfo =  _adminDashboardService.GetViewCaseViewModelData(CaseInfo);
 
 
             return View(CaseInfo); 
@@ -185,11 +187,11 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> ViewUploads(int requestId)
+        public IActionResult ViewUploads(int requestId)
         {
             ViewDocumentsViewModel ViewUploads = new ViewDocumentsViewModel();
             ViewUploads.RequestId = requestId;
-            ViewUploads = await _adminDashboardService.GetViewUploadsViewModelData(ViewUploads);
+            ViewUploads = _adminDashboardService.GetViewUploadsViewModelData(ViewUploads);
 
             return View(ViewUploads);
         }
@@ -341,6 +343,47 @@ namespace HalloDocMVC.Controllers
             {
 
             }
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult CloseCase(int requestId)
+        {
+            CloseCaseViewModel CloseCaseInfo = new CloseCaseViewModel();
+
+            CloseCaseInfo.ViewUploads.RequestId = requestId;
+            CloseCaseInfo.ViewUploads = _adminDashboardService.GetViewUploadsViewModelData(CloseCaseInfo.ViewUploads);
+
+            CloseCaseInfo.ViewCase.RequestId = requestId;
+            CloseCaseInfo.ViewCase = _adminDashboardService.GetViewCaseViewModelData(CloseCaseInfo.ViewCase);
+
+            return View(CloseCaseInfo);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCloseCase(ViewCaseViewModel ViewCase)
+        {
+            bool isInfoUpdated = await _adminDashboardService.UpdateViewCaseInfo(ViewCase);
+
+            if (isInfoUpdated)
+            {
+                ViewBag.Success = "Case Updated";
+            }
+            else
+            {
+                ViewBag.Failure = "Unable to update details";
+            }
+            return RedirectToAction("CloseCase", new {requestId =  ViewCase.RequestId});
+        }
+
+        public async Task<IActionResult> Close(int requestId)
+        {
+            int adminId = 1;
+            bool isCaseClosed = await _adminDashboardService.CloseCase(requestId, adminId);
+            if (isCaseClosed)
+            {
+
+            }
+
             return RedirectToAction("Index");
         }
     }

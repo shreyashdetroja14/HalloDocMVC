@@ -1,0 +1,210 @@
+﻿
+@{
+    ViewData["Title"] = "Close Case";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+@section AddStyles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <link href="@Url.Content("~/css/requestform.css")" rel="stylesheet" type="text/css" />
+}
+
+@model HalloDocServices.ViewModels.AdminViewModels.CloseCaseViewModel
+
+<div class="main">
+
+    <partial name="_NavbarLinks"></partial>
+
+    <div class="container p-4">
+        <div class="heading d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h2 mb-3">Close Case</h1>
+            <a class="btn back-btn">
+                <img src="~/images/backIcon.svg" alt="">
+                Back
+            </a>
+        </div>
+        <div class="filesSection bg-white rounded-3 shadow">
+            <div class="headingSection p-3">
+                <p class="m-0">Patient Name</p>
+                <h2 class="h4 mb-4 d-flex flex-column flex-sm-row">
+                    <span class="text-info">@Model.ViewUploads.PatientFullName</span> 
+                    <span class="fw-light">(Conformation Number)</span>
+                </h2>
+                <h4>Documents</h4>
+            </div>
+            <div class="requestfiles-md d-none d-md-block">
+                <table class="table">
+                    <thead style="background-color: #FAF9F6;">
+                        <tr class="requestfilesheader">
+                            <th scope="col" class="py-3"></th>
+                            <th scope="col" class="py-3"></th>
+                            <th scope="col" class="py-3">Upload Date</th>
+                            <th scope="col" class="py-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.ViewUploads?.FileInfo != null)
+                        {
+                            @foreach (var item in Model.ViewUploads.FileInfo)
+                            {
+                                <tr class="bg-white">
+                                    <td class="py-3  text-center"><i class="bi bi-file-earmark-fill text-info fs-5"></i></td>
+                                    <td class="py-3">@(item.FileName.Substring(0, item.FileName.LastIndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</td>
+                                    <td class="py-3">@item.UploadDate</td>
+                                    <td class="py-3">
+                                        <a href="@item.FilePath" class="btn btn-outline-info" download>
+                                            <i class="bi bi-cloud-arrow-down"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="requestfiles d-md-none">
+                <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
+
+                    @if (Model.ViewUploads?.FileInfo != null)
+                    {
+                        @foreach (var item in Model.ViewUploads.FileInfo)
+                        {
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed d-flex" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#flush-collapse-@item.FileId">
+
+                                        <i class="bi bi-file-earmark-fill text-info fs-5"></i>
+                                        <span class="px-2">@(item.FileName.Substring(0, item.FileName.IndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</span>
+                                    </button>
+                                </h2>
+                                <div id="flush-collapse-@item.FileId" class="accordion-collapse collapse">
+                                    <div class="accordion-body">
+                                        <div class="mb-2">
+                                            <span>@(item.FileName.Substring(0, item.FileName.IndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</span>
+                                        </div>
+                                        <div class="mb-2">
+                                            <span>@item.UploadDate</span>
+                                        </div>
+                                        <div>
+                                            <a href="@item.FilePath" download class="btn btn-outline-info">
+                                                <i class="bi bi-cloud-arrow-down"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <form asp-action="UpdateCloseCase" class="bg-white p-4  request-form rounded-0 shadow-none">
+                <input type="number" asp-for="ViewCase.RequestId" hidden>
+                <input type="number" asp-for="ViewCase.RequestType" hidden>
+                <div class="info mb-4">
+                    <h4 class="mb-3">Patient Information</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="ViewCase.FirstName" class="form-control" id="FirstName"
+                                       placeholder="First Name" readonly>
+                                <label asp-for="ViewCase.FirstName">First Name</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="ViewCase.LastName" class="form-control" id="LastName"
+                                       placeholder="Last Name" readonly>
+                                <label asp-for="ViewCase.LastName">Last Name</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="date" asp-for="ViewCase.DOB" class="form-control" id="DOB" placeholder="DOB" readonly>
+                                <label asp-for="ViewCase.DOB">Date Of Birth</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 pb-3">
+                            <input type="tel" asp-for="ViewCase.PhoneNumber" class="form-control w-100" id="PhoneNumber" readonly />
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="email" asp-for="ViewCase.Email" class="form-control" id="Email"
+                                       placeholder="abc@xyz.pqr" autocomplete="off" readonly>
+                                <label asp-for="ViewCase.Email">Email</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-success">@ViewBag?.Success</span>
+                            <span class="text-danger">@ViewBag?.Failure</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="submit mb-4 d-flex justify-content-end">
+                    <button type="button" class="btn btn-outline-info py-2 px-3 ms-3" id="editbtn">Edit</button>
+                    <a asp-action="Close" asp-route-requestId="@Model.ViewCase.RequestId" id="close-case" class="btn btn-info text-white py-2 px-3 ms-3" >Close Case</a>
+                    <input type="submit" value="Save" id="save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
+                    <input type="reset" value="Cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+
+
+@section AddScript{
+    <script>
+        const phoneInputField = document.querySelector("#PhoneNumber");
+        const phoneInput = window.intlTelInput(phoneInputField, {
+            preferredCountries: ["us", "in", "au", "de"],
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+    </script>
+    <script>
+        const editBtn = document.querySelector('#editbtn');
+        const saveBtn = document.querySelector('#save');
+        const closeCaseBtn = document.querySelector('#close-case');
+        const cancelBtn = document.querySelector('input[type="reset"]');
+
+        const emailInp = document.querySelector('input[type="email"]');
+        const phoneInp = document.querySelector('input[type="tel"]');
+
+        if (editBtn !== null) {
+            editBtn.addEventListener('click', () => {
+                editBtn.classList.add('d-none');
+                closeCaseBtn.classList.add('d-none');
+                saveBtn.classList.remove('d-none');
+                cancelBtn.classList.remove('d-none');
+
+                emailInp.readOnly = false;
+                phoneInp.readOnly = false;
+            });
+        }
+
+        cancelBtn.addEventListener('click', () => {
+            saveBtn.classList.add('d-none');
+            cancelBtn.classList.add('d-none');
+            editBtn.classList.remove('d-none');
+            closeCaseBtn.classList.remove('d-none');
+
+            emailInp.readOnly = true;
+            phoneInp.readOnly = true;
+            //inputTags.forEach(input => {
+            //    input.readOnly = true;
+            //})
+        })
+
+
+        
+    </script>
+}
+
