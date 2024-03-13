@@ -40,5 +40,7 @@ namespace HalloDocRepository.Interface
         // Encounter Form
 
         EncounterForm GetEncounterFormByRequestId(int requestId);
+
+        Task<bool> UpdateEncounterForm(EncounterForm encounterForm);
     }
 }

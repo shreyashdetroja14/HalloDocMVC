@@ -396,5 +396,17 @@ namespace HalloDocMVC.Controllers
 
             return View(EncounterFormDetails);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> EncounterForm(EncounterFormViewModel EncounterFormDetails)
+        {
+            bool isEncounterFormUpdated = await _adminDashboardService.UpdateEncounterForm(EncounterFormDetails);
+            if (isEncounterFormUpdated) 
+            {
+
+            }
+
+            return View(EncounterFormDetails);
+        }
     }
 }

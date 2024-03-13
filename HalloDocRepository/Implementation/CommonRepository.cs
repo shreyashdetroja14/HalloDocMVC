@@ -68,5 +68,13 @@ namespace HalloDocRepository.Implementation
             }*/
             return EncounterForm;
         }
+
+        public async Task<bool> UpdateEncounterForm(EncounterForm encounterForm)
+        {
+            _context.Update(encounterForm);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

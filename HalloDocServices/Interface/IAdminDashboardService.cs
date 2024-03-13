@@ -69,5 +69,7 @@ namespace HalloDocServices.Interface
         Task<bool> CloseCase(int requestId, int adminId);
 
         EncounterFormViewModel GetEncounterFormViewModelData(EncounterFormViewModel EncounterFormDetails);
+
+        Task<bool> UpdateEncounterForm(EncounterFormViewModel EncounterFormDetails);
     }
 }

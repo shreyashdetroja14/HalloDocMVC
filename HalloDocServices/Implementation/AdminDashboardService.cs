@@ -97,44 +97,14 @@ namespace HalloDocServices.Implementation
 
             requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Include(x => x.RequestStatusLogs).Where(x => myarray.Contains(x.Status));
 
-            /*switch(requestStatus)
-            {
-                case 1: 
-                    requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Where(x => x.Status == 1);
-                    break;
-
-                case 2:
-                    requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Where(x => x.Status == 2);
-                    break;
-
-                case 3:
-                    requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Where(x => x.Status == 4 || x.Status == 5);
-                    break;
-
-                case 4:
-                    requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Where(x => x.Status == 6);
-                    break;
-
-                case 5:
-                    requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Where(x => x.Status == 3 || x.Status == 7 || x.Status == 8);
-                    break;
-
-                case 6:
-                    requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Where(x => x.Status == 9);
-                    break;
-            }*/
 
             if (requestType != null)
             {
                 requests = requests.Where(x => x.RequestTypeId == requestType);
             }
 
-            
-
             if(searchPattern != null)
             {
-                /*x.RequestClients.FirstOrDefault() != null ? (x.RequestClients.FirstOrDefault().FirstName != null ? x.RequestClients.FirstOrDefault().FirstName : "") : ""*/
-                //requests = requests.Where(x => x.FirstName.Contains(searchPattern));
                 requests = requests.Where(x => EF.Functions.Like(x.RequestClients.FirstOrDefault().FirstName, "%" + searchPattern + "%"));
             }
 
@@ -918,6 +888,65 @@ namespace HalloDocServices.Implementation
 
             }
             return EncounterFormDetails;
+        }
+
+        public async Task<bool> UpdateEncounterForm(EncounterFormViewModel EncounterFormDetails)
+        {
+            var encounterFormToUpdate = _commonRepository.GetEncounterFormByRequestId(EncounterFormDetails.RequestId);
+
+            if (encounterFormToUpdate != null)
+            {
+                encounterFormToUpdate.FirstName = EncounterFormDetails.FirstName;
+                encounterFormToUpdate.LastName = EncounterFormDetails.LastName;
+                encounterFormToUpdate.Location = EncounterFormDetails.Location;
+
+                if (EncounterFormDetails.DOB != null)
+                {
+                    DateTime dateTime = DateTime.ParseExact(EncounterFormDetails.DOB, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    encounterFormToUpdate.IntYear = dateTime.Year;
+                    encounterFormToUpdate.StrMonth = dateTime.ToString("MMMM");
+                    encounterFormToUpdate.IntDate = dateTime.Day;
+                }
+
+                if(EncounterFormDetails.ServiceDate != null)
+                {
+                    encounterFormToUpdate.ServiceDate = DateTime.ParseExact(EncounterFormDetails.ServiceDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                }
+
+                encounterFormToUpdate.PhoneNumber = EncounterFormDetails.PhoneNumber;
+                encounterFormToUpdate.Email = EncounterFormDetails.Email;   
+                encounterFormToUpdate.PresentIllnessHistory = EncounterFormDetails.PresentIllnessHistory;
+                encounterFormToUpdate.MedicalHistory = EncounterFormDetails.MedicalHistory;
+                encounterFormToUpdate.Medications = EncounterFormDetails.Medications;
+                encounterFormToUpdate.Allergies = EncounterFormDetails.Allergies;
+                encounterFormToUpdate.Temperature = EncounterFormDetails.Temperature;
+                encounterFormToUpdate.HeartRate = EncounterFormDetails.HeartRate;
+                encounterFormToUpdate.RespirationRate = EncounterFormDetails.RespirationRate;
+                encounterFormToUpdate.BloodPressureSystolic = EncounterFormDetails.BloodPressureSystolic;
+                encounterFormToUpdate.BloodPressureDiastolic = EncounterFormDetails.BloodPressureDiastolic;
+                encounterFormToUpdate.OxygenLevel = EncounterFormDetails.OxygenLevel;
+                encounterFormToUpdate.Pain = EncounterFormDetails.Pain;
+                encounterFormToUpdate.Heent = EncounterFormDetails.Heent;
+                encounterFormToUpdate.Cardiovascular = EncounterFormDetails.Cardiovascular;
+                encounterFormToUpdate.Chest = EncounterFormDetails.Chest;
+                encounterFormToUpdate.Abdomen = EncounterFormDetails.Abdomen;
+                encounterFormToUpdate.Extremities = EncounterFormDetails.Extremities;
+                encounterFormToUpdate.Skin = EncounterFormDetails.Skin;
+                encounterFormToUpdate.Neuro = EncounterFormDetails.Neuro;
+                encounterFormToUpdate.Other = EncounterFormDetails.Other;
+                encounterFormToUpdate.Diagnosis = EncounterFormDetails.Diagnosis;
+                encounterFormToUpdate.TreatmentPlan = EncounterFormDetails.TreatmentPlan;
+                encounterFormToUpdate.MedicationsDispensed = EncounterFormDetails.MedicationsDispensed;
+                encounterFormToUpdate.Procedures = EncounterFormDetails.Procedures;
+                encounterFormToUpdate.FollowUp = EncounterFormDetails.FollowUp;
+                
+                await _commonRepository.UpdateEncounterForm(encounterFormToUpdate);
+
+                return true;
+            }
+
+            return false;
+
         }
     }
 }
