@@ -188,6 +188,16 @@
 @section AddScript{
     <script>
 
+        //window.addEventListener("pageshow", function (event) {
+        //    var historyTraversal = event.persisted ||
+        //        (typeof window.performance != "undefined" &&
+        //            window.performance.navigation.type === 2);
+        //    if (historyTraversal) {
+        //        // Handle page restore.
+        //        window.location.reload();
+        //    }
+        //});
+
         //on body load, call partial view
 
         document.addEventListener("DOMContentLoaded", async () => {
@@ -196,43 +206,85 @@
             console.log("DOM is loaded and ready!");
         });
 
+        // validate cookie
+        async function ValidateCookie(){
+            try{
+                //cookie validate url
+                const validationurl = "/Login/ValidateCookie";
+
+                
+                const validateResponse = await fetch(validationurl);
+                
+                console.log(validateResponse);
+                console.log(validateResponse.statusText, validateResponse.status);
+                if (!validateResponse.ok) {
+                    console.log('invalid cookiee');
+
+                    
+
+                    if (validateResponse.status === 401) {
+                        console.log('Unauthorized access, redirecting to login');
+                        window.location.reload();
+                        
+                    } else {
+                        throw new Error(`Something else! `);
+                    }
+
+                    return false;
+                }
+
+                return true;
+            }
+            catch(error){
+                console.error('HTTP VALIDATION error: ', error);
+                return false;
+            }
+        }
+
+
 
         // requests partial view data ajax call
 
         async function GetPartialViewData(requestStatus, requestType = null, searchPattern = null, searchRegion = null){
             try {
-                let url = `/AdminDashBoard/FetchRequests?requestStatus=${requestStatus}`;
+                
+                const isCookieValid = await ValidateCookie();
+                console.log(isCookieValid);
 
-                if (requestType) {
-                    url += `&requestType=${requestType}`;
-                }
+                if(isCookieValid){
 
-                if (searchPattern) {
-                    url += `&searchPattern=${encodeURIComponent(searchPattern)}`; // Encode for URL safety
-                }
+                    let url = `/AdminDashBoard/FetchRequests?requestStatus=${requestStatus}`;
 
-                if (searchRegion) {
-                    url += `&searchRegion=${encodeURIComponent(searchRegion)}`; // Encode for URL safety
-                }
-
-                const response = await fetch(url);
-
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        console.error('Unauthorized access, redirecting to login');
-                        window.location.href = '/login'; // Redirect to login page
-                    } else {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                    if (requestType) {
+                        url += `&requestType=${requestType}`;
                     }
+
+                    if (searchPattern) {
+                        url += `&searchPattern=${encodeURIComponent(searchPattern)}`; 
+                    }
+
+                    if (searchRegion) {
+                        url += `&searchRegion=${encodeURIComponent(searchRegion)}`; 
+                    }
+
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                        
+                    }
+                    
+                    console.log(response);
+                    console.log('response is ok');
+
+                    const partialViewHtml = await response.text();
+                    console.log(partialViewHtml);
+
+                    const partialViewContainer = document.getElementById('requests');
+                    partialViewContainer.innerHTML = partialViewHtml;
+
+                    addEventListnersForPartial();
                 }
-
-                console.log('response is ok');
-
-                const partialViewHtml = await response.text();
-                const partialViewContainer = document.getElementById('requests');
-                partialViewContainer.innerHTML = partialViewHtml;
-
-                addEventListnersForPartial();
                 
             } catch (error) {
                 console.error('Error fetching partial view:', error);
@@ -245,121 +297,139 @@
         async function GetCancelCaseModalData(requestId) {
 
             try {
-                let url = `/AdminDashBoard/CancelCase?requestId=${requestId}`;
 
-                const response = await fetch(url);
+                const isCookieValid = await ValidateCookie();
+                if(isCookieValid){
+                    
+                    let url = `/AdminDashBoard/CancelCase?requestId=${requestId}`;
+                    const response = await fetch(url);
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const cancelCaseModalHtml = await response.text();
+                    const modalContainer = document.getElementById('modal-container');
+                    modalContainer.innerHTML = cancelCaseModalHtml;
                 }
-
-                const cancelCaseModalHtml = await response.text();
-                const modalContainer = document.getElementById('modal-container');
-                modalContainer.innerHTML = cancelCaseModalHtml;
-
-            } catch (error) {
+            } 
+            catch (error) {
                 console.error('Error fetching partial view:', error);
-                // Handle the error gracefully, e.g., display an error message to the user
             }
         }
 
         async function GetAssignCaseModalData(requestId, isTransferRequest = null, regionId = 0) {
 
             try {
-                let url = `/AdminDashBoard/AssignCase?requestId=${requestId}&isTransferRequest=${isTransferRequest}&regionId=${regionId}`;
 
-                const response = await fetch(url);
+                const isCookieValid = await ValidateCookie();
+                if (isCookieValid) {
+                    
+                    let url = `/AdminDashBoard/AssignCase?requestId=${requestId}&isTransferRequest=${isTransferRequest}&regionId=${regionId}`;
+                    const response = await fetch(url);
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const assignCaseModalHtml = await response.text();
+                    const modalContainer = document.getElementById('modal-container');
+                    modalContainer.innerHTML = assignCaseModalHtml;
+
+                    const myModal = new bootstrap.Modal('#assign-case-modal')
+                    myModal.show();
+
+                    const regionSelectList = document.querySelector('.region-select');
+                    regionSelectList.addEventListener('change', async () => {
+                        const regionId = regionSelectList.value;
+                        console.log('region value:: ', regionId);
+                        console.log('request id:: ', requestId);
+                        console.log('transfer req:: ', isTransferRequest);
+
+                        myModal.hide();
+                        await GetAssignCaseModalData(requestId, isTransferRequest, regionId);
+                    });
                 }
+                
 
-                const assignCaseModalHtml = await response.text();
-                const modalContainer = document.getElementById('modal-container');
-                modalContainer.innerHTML = assignCaseModalHtml;
-
-                const myModal = new bootstrap.Modal('#assign-case-modal')
-                myModal.show();
-
-                const regionSelectList = document.querySelector('.region-select');
-                regionSelectList.addEventListener('change', async () => {
-                    const regionId = regionSelectList.value;
-                    console.log('region value:: ',regionId);
-                    console.log('request id:: ', requestId);
-                    console.log('transfer req:: ', isTransferRequest);
-
-                    myModal.hide();
-                    await GetAssignCaseModalData(requestId, isTransferRequest, regionId);
-
-                });
-
-            } catch (error) {
+            } 
+            catch (error) {
                 console.error('Error fetching partial view:', error);
-                // Handle the error gracefully, e.g., display an error message to the user
             }
         }
 
         async function GetBlockRequestModalData(requestId) {
 
             try {
-                let url = `/AdminDashBoard/BlockRequest?requestId=${requestId}`;
 
-                const response = await fetch(url);
+                const isCookieValid = await ValidateCookie();
+                if (isCookieValid) {
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    let url = `/AdminDashBoard/BlockRequest?requestId=${requestId}`;
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const blockRequestModalHtml = await response.text();
+                    const modalContainer = document.getElementById('modal-container');
+                    modalContainer.innerHTML = blockRequestModalHtml;
                 }
 
-                const blockRequestModalHtml = await response.text();
-                const modalContainer = document.getElementById('modal-container');
-                modalContainer.innerHTML = blockRequestModalHtml;
-
-            } catch (error) {
+            } 
+            catch (error) {
                 console.error('Error fetching partial view:', error);
-                // Handle the error gracefully, e.g., display an error message to the user
             }
         }
 
         async function GetClearCaseModalData(requestId) {
 
             try {
-                let url = `/AdminDashBoard/ClearCase?requestId=${requestId}`;
 
-                const response = await fetch(url);
+                const isCookieValid = await ValidateCookie();
+                if (isCookieValid) {
+                    let url = `/AdminDashBoard/ClearCase?requestId=${requestId}`;
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const clearCaseModalHtml = await response.text();
+                    const modalContainer = document.getElementById('modal-container');
+                    modalContainer.innerHTML = clearCaseModalHtml;
                 }
-
-                const clearCaseModalHtml = await response.text();
-                const modalContainer = document.getElementById('modal-container');
-                modalContainer.innerHTML = clearCaseModalHtml;
-
-            } catch (error) {
+            } 
+            catch (error) {
                 console.error('Error fetching partial view:', error);
-                // Handle the error gracefully, e.g., display an error message to the user
             }
         }
 
         async function GetSendAgreementModalData(requestId) {
 
-            console.log('method called');
             try {
-                let url = `/AdminDashBoard/SendAgreement?requestId=${requestId}`;
 
-                const response = await fetch(url);
+                const isCookieValid = await ValidateCookie();
+                if (isCookieValid) {
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    let url = `/AdminDashBoard/SendAgreement?requestId=${requestId}`;
+
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const sendAgreementModalHtml = await response.text();
+                    const modalContainer = document.getElementById('modal-container');
+                    modalContainer.innerHTML = sendAgreementModalHtml;
+
                 }
-
-                const sendAgreementModalHtml = await response.text();
-                const modalContainer = document.getElementById('modal-container');
-                modalContainer.innerHTML = sendAgreementModalHtml;
-
-            } catch (error) {
+            } 
+            catch (error) {
                 console.error('Error fetching partial view:', error);
-                // Handle the error gracefully, e.g., display an error message to the user
             }
         }
 
@@ -518,6 +588,7 @@
 
 
         function addEventListnersForPartial(){
+
             const cancelCaseBtn = document.querySelectorAll('.cancel-case-btn');
             const assignCaseBtn = document.querySelectorAll('.assign-case-btn');
             const blockRequestBtn = document.querySelectorAll('.block-request-btn');

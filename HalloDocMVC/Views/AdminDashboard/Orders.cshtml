@@ -97,94 +97,141 @@
         const professionList = document.querySelector('#profession-list');
         const vendorList = document.querySelector('#vendor-list');
 
+        async function ValidateCookie() {
+            try {
+                //cookie validate url
+                const validationurl = "/Login/ValidateCookie";
+
+                const validateResponse = await fetch(validationurl);
+                console.log(validateResponse);
+                console.log(validateResponse.statusText, validateResponse.status);
+                if (!validateResponse.ok) {
+                    console.log('invalid cookiee');
+
+                    //throw new Error(`Cookie invalid! `);
+
+                    if (validateResponse.status === 401) {
+                        console.log('Unauthorized access, redirecting to login');
+                        window.location.reload();
+                        //window.location.href = '/Login';
+                    } else {
+                        throw new Error(`Something else! `);
+                    }
+
+                    return false;
+                }
+
+                return true;
+            }
+            catch (error) {
+                console.error('HTTP VALIDATION error: ', error);
+                return false;
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', async () => {
             console.log(professionList);
 
             const requestId = @Model.RequestId;
 
-            let url = `/AdminDashBoard/GetProfessionList?requestId=${requestId}`;
-            try{
-                const response = await fetch(url);
+            const isCookieValid = await ValidateCookie();
+            console.log(isCookieValid);
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+            if (isCookieValid) {
+                let url = `/AdminDashBoard/GetProfessionList?requestId=${requestId}`;
+                try {
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    console.log(response);
+
+                    const data = await response.text();
+
+                    console.log(data);
+
+                    professionList.innerHTML = data;
+
+                    professionList.addEventListener('change', async () => {
+                        console.log(vendorList);
+
+                        const professionId = parseInt(professionList.value);
+                        console.log(professionId);
+                        console.log(typeof professionId)
+
+                        try {
+                            const isCookieValid = await ValidateCookie();
+                            console.log(isCookieValid);
+
+                            if (isCookieValid) {
+                                let url = `/AdminDashBoard/GetVendorList?professionId=${professionId}`;
+                                const response = await fetch(url);
+
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+
+                                console.log(response);
+
+                                const data = await response.text();
+
+                                console.log(data);
+
+                                vendorList.innerHTML = data;
+
+                                document.getElementById('BusinessContact').value = '';
+                                document.getElementById('Email').value = '';
+                                document.getElementById('FaxNumber').value = '';
+                            }
+                        }
+                        catch (error) {
+                            console.error('Error fetching partial view:', error);
+                            // Handle the error gracefully, e.g., display an error message to the user
+                        }
+                    });
+
+
+                    vendorList.addEventListener('change', async () => {
+                        const vendorId = parseInt(vendorList.value);
+                        console.log(vendorId);
+
+                        try {
+
+                            const isCookieValid = await ValidateCookie();
+                            console.log(isCookieValid);
+
+                            if (isCookieValid) {
+                                let url = `/AdminDashBoard/GetVendorDetails?vendorId=${vendorId}`;
+                                const response = await fetch(url);
+
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+
+                                console.log(response);
+
+                                const data = await response.json();
+
+                                console.log(data);
+
+                                document.getElementById('BusinessContact').value = data.businessContact;
+                                document.getElementById('Email').value = data.email;
+                                document.getElementById('FaxNumber').value = data.faxNumber;
+                            }
+                            
+                        }
+                        catch (error) {
+                            console.error('Error fetching partial view:', error);
+                            // Handle the error gracefully, e.g., display an error message to the user
+                        }
+                    });
                 }
-
-                console.log(response);
-
-                const data = await response.text();
-
-                console.log(data);
-                
-                professionList.innerHTML= data;
-
-
-                professionList.addEventListener('change', async () => {
-                    console.log(vendorList);
-
-                    const professionId = parseInt(professionList.value);
-                    console.log(professionId);
-                    console.log(typeof professionId)
-
-                    let url = `/AdminDashBoard/GetVendorList?professionId=${professionId}`;
-                    try {
-                        const response = await fetch(url);
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-
-                        console.log(response);
-
-                        const data = await response.text();
-
-                        console.log(data);
-
-                        vendorList.innerHTML = data;
-
-                        document.getElementById('BusinessContact').value = '';
-                        document.getElementById('Email').value = '';
-                        document.getElementById('FaxNumber').value = '';
-                    }
-                    catch (error) {
-                        console.error('Error fetching partial view:', error);
-                        // Handle the error gracefully, e.g., display an error message to the user
-                    }
-                });
-
-
-                vendorList.addEventListener('change', async () => {
-                    const vendorId = parseInt(vendorList.value);
-                    console.log(vendorId);
-
-                    let url = `/AdminDashBoard/GetVendorDetails?vendorId=${vendorId}`;
-                    try {
-                        const response = await fetch(url);
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-
-                        console.log(response);
-
-                        const data = await response.json();
-
-                        console.log(data);
-
-                        document.getElementById('BusinessContact').value = data.businessContact;
-                        document.getElementById('Email').value = data.email;
-                        document.getElementById('FaxNumber').value = data.faxNumber;
-                    }
-                    catch (error) {
-                        console.error('Error fetching partial view:', error);
-                        // Handle the error gracefully, e.g., display an error message to the user
-                    }
-                })
-            }
-            catch (error) {
-                console.error('Error fetching partial view:', error);
-                // Handle the error gracefully, e.g., display an error message to the user
+                catch (error) {
+                    console.error('Error fetching partial view:', error);
+                    // Handle the error gracefully, e.g., display an error message to the user
+                }
             }
         });
 

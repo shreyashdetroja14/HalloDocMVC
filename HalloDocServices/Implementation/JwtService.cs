@@ -34,7 +34,7 @@ namespace HalloDocServices.Implementation
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? ""));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.UtcNow.AddMinutes(10);
+            var expires = DateTime.UtcNow.AddSeconds(15);
 
             var token = new JwtSecurityToken(
                 _configuration["Jwt:Issuer"],

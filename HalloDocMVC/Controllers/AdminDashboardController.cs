@@ -39,15 +39,8 @@ namespace HalloDocMVC.Controllers
             return View(viewModel);
         }
 
-        [AllowAnonymous]
         public IActionResult FetchRequests(int requestStatus, int? requestType, string? searchPattern, int? searchRegion)
         {
-            string token = Request.Cookies["jwt"]??"";
-            if(!_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
-            {
-                return StatusCode(401, "Unauthorized");
-            }
-
             List<RequestRowViewModel> viewModels = new List<RequestRowViewModel>();
             viewModels = _adminDashboardService.GetViewModelData(requestStatus, requestType, searchPattern, searchRegion);
 

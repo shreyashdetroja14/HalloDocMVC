@@ -3,13 +3,8 @@ using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using HalloDocServices.Interface;
 using System.Text;
-using HalloDocMVC.Auth;
-using System.Drawing;
-using HalloDocEntities.Models;
-using HalloDocServices.Implementation;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace HalloDocMVC.Controllers
 {
@@ -220,8 +215,16 @@ namespace HalloDocMVC.Controllers
             //return View("Index");
             return RedirectToAction("Index");
         }
+
+        public IActionResult ValidateCookie() 
+        {
+            string token = Request.Cookies["jwt"] ?? "";
+            if (!_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                return StatusCode(401, "Unauthorized");
+            }
+            return StatusCode(200, "Cookie is valid");
+        }
     }
 }
 
-// $2a$10$2M/4FLCkMI6T5m1yEXg5LOFKro/jJfmGjsihcIe7jpzrWQSYF4sEm
-// $2a$10$Jr4XT9Izy0HfbvJ9Z7HXnOzAPC0OxZpiFL9vkQiDpARg6H7KIChiK
