@@ -201,7 +201,16 @@
         //on body load, call partial view
 
         document.addEventListener("DOMContentLoaded", async () => {
-            const requestStatus = 1;
+            let requestStatus = 1;
+            if(localStorage.status){
+                requestStatus = localStorage.status;
+            }
+            else
+            {
+                localStorage.status = requestStatus;
+            }
+            console.log(requestStatus);
+
             await GetPartialViewData(requestStatus);
             console.log("DOM is loaded and ready!");
         });
@@ -278,7 +287,7 @@
                     console.log('response is ok');
 
                     const partialViewHtml = await response.text();
-                    console.log(partialViewHtml);
+                    //console.log(partialViewHtml);
 
                     const partialViewContainer = document.getElementById('requests');
                     partialViewContainer.innerHTML = partialViewHtml;
@@ -446,6 +455,7 @@
 
         newBtns.forEach(btn => {
             btn.addEventListener('click',async () => {
+                localStorage.status = 1;
                 urlparams.requestStatus = 1;
                 console.log(urlparams.requestStatus);
                 await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
@@ -457,6 +467,7 @@
 
         pendingBtns.forEach(btn => {
             btn.addEventListener('click', async () => {
+                localStorage.status = 2;
                 urlparams.requestStatus = 2;
                 console.log(urlparams.requestStatus);
                 await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
@@ -467,6 +478,7 @@
 
         activeeBtns.forEach(btn => {
             btn.addEventListener('click', async () => {
+                localStorage.status = 3;
                 urlparams.requestStatus = 3;
                 console.log(urlparams.requestStatus);
                 await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
@@ -477,6 +489,7 @@
 
         concludeBtns.forEach(btn => {
             btn.addEventListener('click', async () => {
+                localStorage.status = 4;
                 urlparams.requestStatus = 4;
                 console.log(urlparams.requestStatus);
                 await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
@@ -487,6 +500,7 @@
 
         toCloseBtns.forEach(btn => {
             btn.addEventListener('click', async () => {
+                localStorage.status = 5;
                 urlparams.requestStatus = 5;
                 console.log(urlparams.requestStatus);
                 await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
@@ -497,6 +511,7 @@
 
         unpaidBtns.forEach(btn => {
             btn.addEventListener('click', async () => {
+                localStorage.status = 6;
                 urlparams.requestStatus = 6;
                 console.log(urlparams.requestStatus);
                 await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
