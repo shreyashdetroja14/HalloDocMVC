@@ -15,7 +15,11 @@ namespace HalloDocRepository.Interface
 
         IQueryable<AspNetUser> GetIQueryableAspNetUserByEmail(string email);
 
-        Task<AspNetUser> GetAspNetUserById(string id);
+        Task<AspNetUser> GetAspNetUserByIdAsync(string id);
+
+        AspNetUser GetAspNetUserById(string id);
+
+        IQueryable<AspNetUser> GetIQueryableAspNetUserById(string id);
 
         Task<AspNetUser> CreateAspNetUser(AspNetUser aspnetuser);
 

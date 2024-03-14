@@ -79,6 +79,9 @@ public partial class Admin
     [Column("role_id")]
     public int? RoleId { get; set; }
 
+    [InverseProperty("Admin")]
+    public virtual ICollection<AdminRegion> AdminRegions { get; set; } = new List<AdminRegion>();
+
     [ForeignKey("AspNetUserId")]
     [InverseProperty("AdminAspNetUsers")]
     public virtual AspNetUser AspNetUser { get; set; } = null!;
@@ -87,9 +90,17 @@ public partial class Admin
     [InverseProperty("AdminModifiedByNavigations")]
     public virtual AspNetUser? ModifiedByNavigation { get; set; }
 
+    [ForeignKey("RegionId")]
+    [InverseProperty("Admins")]
+    public virtual Region? Region { get; set; }
+
     [InverseProperty("Admin")]
     public virtual ICollection<RequestStatusLog> RequestStatusLogs { get; set; } = new List<RequestStatusLog>();
 
     [InverseProperty("Admin")]
     public virtual ICollection<RequestWiseFile> RequestWiseFiles { get; set; } = new List<RequestWiseFile>();
+
+    [ForeignKey("RoleId")]
+    [InverseProperty("Admins")]
+    public virtual Role? Role { get; set; }
 }

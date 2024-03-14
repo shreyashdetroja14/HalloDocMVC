@@ -28,7 +28,6 @@ namespace HalloDocServices.Implementation
             _physicianRepository = physicianRepository;
             _notesAndLogsRepository = notesAndLogsRepository;
             _commonRepository = commonRepository;
-            _notesAndLogsRepository = notesAndLogsRepository;
          }
 
         public async Task<AdminDashboardViewModel> GetViewModelData(int requestStatus)

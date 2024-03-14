@@ -18,6 +18,8 @@ public partial class HalloDocContext : DbContext
 
     public virtual DbSet<Admin> Admins { get; set; }
 
+    public virtual DbSet<AdminRegion> AdminRegions { get; set; }
+
     public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
 
     public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
@@ -58,6 +60,8 @@ public partial class HalloDocContext : DbContext
 
     public virtual DbSet<RequestWiseFile> RequestWiseFiles { get; set; }
 
+    public virtual DbSet<Role> Roles { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -76,6 +80,23 @@ public partial class HalloDocContext : DbContext
                 .HasConstraintName("fk_asp_net_user");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.AdminModifiedByNavigations).HasConstraintName("fk_modified_by");
+
+            entity.HasOne(d => d.Region).WithMany(p => p.Admins).HasConstraintName("fk_region");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Admins).HasConstraintName("fk_role");
+        });
+
+        modelBuilder.Entity<AdminRegion>(entity =>
+        {
+            entity.HasKey(e => e.AdminRegionId).HasName("admin_region_pkey");
+
+            entity.HasOne(d => d.Admin).WithMany(p => p.AdminRegions)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_admin");
+
+            entity.HasOne(d => d.Region).WithMany(p => p.AdminRegions)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_region");
         });
 
         modelBuilder.Entity<AspNetRole>(entity =>
@@ -282,6 +303,13 @@ public partial class HalloDocContext : DbContext
             entity.HasOne(d => d.Request).WithMany(p => p.RequestWiseFiles)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_request");
+        });
+
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(e => e.RoleId).HasName("role_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
         });
 
         modelBuilder.Entity<User>(entity =>

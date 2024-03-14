@@ -1,0 +1,18 @@
+﻿<script>
+    const url = window.location.href.toLowerCase();
+    console.log(url);
+
+    if (url.includes('dashboard')) {
+        const profileTabs = document.querySelectorAll('.dashboard');
+        profileTabs.forEach(tab => {
+            tab.classList.add('active');
+        });
+    }
+
+    if(url.includes('profile')){
+        const profileTabs = document.querySelectorAll('.myprofile');
+        profileTabs.forEach(tab => {
+            tab.classList.add('active');
+        });
+    }
+</script>

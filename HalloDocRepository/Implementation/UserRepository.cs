@@ -54,9 +54,21 @@ namespace HalloDocRepository.Implementation
             return true;
         }
 
-        public async Task<AspNetUser> GetAspNetUserById(string id)
+        public async Task<AspNetUser> GetAspNetUserByIdAsync(string id)
         {
             var aspnetuser = await _context.AspNetUsers.FindAsync(id);
+            return aspnetuser;
+        }
+
+        public AspNetUser GetAspNetUserById(string id)
+        {
+            var aspnetuser = _context.AspNetUsers.Find(id);
+            return aspnetuser ?? new AspNetUser();
+        }
+
+        public IQueryable<AspNetUser> GetIQueryableAspNetUserById(string id)
+        {
+            var aspnetuser = _context.AspNetUsers.AsQueryable().Where(x => x.Id == id);
             return aspnetuser;
         }
 

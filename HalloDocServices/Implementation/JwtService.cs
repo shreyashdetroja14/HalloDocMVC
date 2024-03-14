@@ -28,8 +28,9 @@ namespace HalloDocServices.Implementation
                 new Claim(ClaimTypes.Email, aspNetUser.Email??""),
                 new Claim(ClaimTypes.Role, aspNetUser.AspNetUserRoles.FirstOrDefault()?.Role.Name??""),
                 new Claim("aspnetuserId", aspNetUser.Id),
-                new Claim("firstName", aspNetUser.Users.FirstOrDefault(x => x.AspNetUserId == aspNetUser.Id)?.FirstName??""),
-                new Claim("lastName", aspNetUser.Users.FirstOrDefault(x => x.AspNetUserId == aspNetUser.Id)?.LastName??"")
+                new Claim("username", aspNetUser.UserName)
+                /*new Claim("firstName", aspNetUser.Users.FirstOrDefault(x => x.AspNetUserId == aspNetUser.Id)?.FirstName??""),
+                new Claim("lastName", aspNetUser.Users.FirstOrDefault(x => x.AspNetUserId == aspNetUser.Id)?.LastName??"")*/
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? ""));

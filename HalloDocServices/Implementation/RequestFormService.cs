@@ -205,7 +205,7 @@ namespace HalloDocServices.Implementation
 
         public async Task<bool> ValidateToken(string token)
         {
-            var aspuserFetched = await _userRepository.GetAspNetUserById(token);
+            var aspuserFetched = await _userRepository.GetAspNetUserByIdAsync(token);
             if (aspuserFetched == null)
             {
                 return false;

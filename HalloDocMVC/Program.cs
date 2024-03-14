@@ -25,6 +25,7 @@ builder.Services.AddScoped<IRequestFormService, RequestFormService>();
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 
 var app = builder.Build();
