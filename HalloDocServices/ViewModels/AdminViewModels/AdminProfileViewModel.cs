@@ -37,7 +37,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public string? City { get; set;}
 
-        public string? State { get; set; }
+        public int? RegionId { get; set; }
 
         public List<SelectListItem> StateList { get; set; } = new List<SelectListItem>();
 

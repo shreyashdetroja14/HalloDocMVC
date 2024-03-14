@@ -58,5 +58,11 @@ namespace HalloDocMVC.Controllers
                 return View();
             }
         }
+
+        [HttpPost]
+        public IActionResult EditBilling(AdminProfileViewModel AdminProfileDetails)
+        {
+            return View(AdminProfileDetails);
+        }
     }
 }

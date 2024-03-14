@@ -1,6 +1,8 @@
-﻿using HalloDocRepository.Interface;
+﻿using HalloDocEntities.Models;
+using HalloDocRepository.Interface;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels.AdminViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -28,7 +30,7 @@ namespace HalloDocServices.Implementation
         {
             AdminProfileViewModel AdminProfileDetails = new AdminProfileViewModel();
             var aspnetuserIQueryable = _userRepository.GetIQueryableAspNetUserById(aspnetuserId);
-            var aspnetuserFetched = aspnetuserIQueryable.Include(x => x.AdminAspNetUsers).ThenInclude(x => x.Role).Include(x => x.AdminAspNetUsers).ThenInclude(x => x.Region).Include(x => x.AdminAspNetUsers).ThenInclude(x => x.AdminRegions).FirstOrDefault();
+            var aspnetuserFetched = aspnetuserIQueryable.Include(x => x.AdminAspNetUsers).ThenInclude(x => x.Role).Include(x => x.AdminAspNetUsers).ThenInclude(x => x.AdminRegions).FirstOrDefault();
 
             if (aspnetuserFetched != null)
             {
@@ -49,9 +51,30 @@ namespace HalloDocServices.Implementation
                 AdminProfileDetails.Address1 = adminFetched?.Address1;
                 AdminProfileDetails.Address2 = adminFetched?.Address2;
                 AdminProfileDetails.City = adminFetched?.City;
-                AdminProfileDetails.State = adminFetched?.Region?.Name;
+                AdminProfileDetails.RegionId = adminFetched?.RegionId;
                 AdminProfileDetails.ZipCode = adminFetched?.ZipCode;
                 AdminProfileDetails.SecondPhoneNumber = adminFetched?.AltPhone;
+
+                var regions = _commonRepository.GetAllRegions();
+
+                foreach(var region in regions)
+                {
+                    if(region.RegionId == adminFetched?.RegionId)
+                    {
+                        AdminProfileDetails.StateList.Add(new SelectListItem()
+                        {
+                            Text = region.Name,
+                            Value = region.RegionId.ToString(),
+                            Selected = true
+                        });
+                        continue;
+                    }
+                    AdminProfileDetails.StateList.Add(new SelectListItem()
+                    {
+                        Text = region.Name,
+                        Value = region.RegionId.ToString()
+                    });
+                }
                 
             }
 
