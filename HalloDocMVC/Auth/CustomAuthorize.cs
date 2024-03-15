@@ -15,6 +15,12 @@ namespace HalloDocMVC.Auth
         {
             _role = role;
         }
+        /*private readonly IList<string> _role;
+
+        public CustomAuthorize(params string[] role)
+        {
+            _role = role;
+        }*/
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {

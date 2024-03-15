@@ -40,6 +40,7 @@ namespace HalloDocServices.Implementation
 
             if (aspnetuserFetched != null)
             {
+                var hash = BCrypt.Net.BCrypt.HashPassword(LoginInfo.Password);
                 if (BCrypt.Net.BCrypt.Verify(LoginInfo.Password, aspnetuserFetched.PasswordHash))
                 {
                     //id = aspnetuserFetched.Id;

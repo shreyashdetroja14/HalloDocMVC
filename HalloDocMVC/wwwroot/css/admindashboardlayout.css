@@ -67,3 +67,12 @@
     .accordion-button:not(.collapsed) {
         color: black;
     }
+
+.form-control {
+    transition: border-color .1s ease-in-out;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border: 2px solid #0dcaf0;
+}

@@ -21,15 +21,17 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public string? RoleName { get; set; }
 
-        public string? FirstName { get; set; }
+        public string FirstName { get; set; } = null!;
 
         public string? LastName { get; set;}
 
-        public string? Email { get; set; }
+        public string Email { get; set; } = null!;
         
         public string? ConfirmEmail { get; set; }
 
         public string? PhoneNumber { get; set; }
+
+        public List<int> AdminRegions { get; set; } = new List<int>();
 
         public string? Address1 { get; set; }
 

@@ -60,9 +60,67 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditBilling(AdminProfileViewModel AdminProfileDetails)
+        public async Task<IActionResult> ResetPassword(AdminProfileViewModel AdminProfileDetails)
         {
-            return View(AdminProfileDetails);
+            if(AdminProfileDetails.Password == null)
+            {
+                TempData["ErrorMessage"] = "Unable to reset password";
+                return RedirectToAction("Index");
+            }
+
+            bool isPasswordReset = await _profileService.ResetPassword(AdminProfileDetails);
+            if(isPasswordReset)
+            {
+                TempData["SuccessMessage"] = "Password has been reset successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to reset password";
+
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditAdminInfo(AdminProfileViewModel AdminProfileDetails)
+        {
+            if(!AdminProfileDetails.Email.Equals(AdminProfileDetails.ConfirmEmail))
+            {
+                TempData["ErrorMessage"] = "Email and Confirm Email must be equal";
+                return RedirectToAction("Index");
+
+            }
+
+            bool isAdminInfoUpdated = await _profileService.UpdateAdminInfo(AdminProfileDetails);
+            if (isAdminInfoUpdated)
+            {
+                TempData["SuccessMessage"] = "Admin Info Updated Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable To Update Info";
+
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditBilling(AdminProfileViewModel AdminProfileDetails)
+        {
+            bool isBillingInfoUpdated = await _profileService.UpdateBillingInfo(AdminProfileDetails);
+            if (isBillingInfoUpdated)
+            {
+                TempData["SuccessMessage"] = "Mailing & Billing Info Updated Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable To Update Info";
+
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

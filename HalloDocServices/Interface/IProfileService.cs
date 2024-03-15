@@ -10,5 +10,11 @@ namespace HalloDocServices.Interface
     public interface IProfileService
     {
         AdminProfileViewModel GetAdminProfileViewModelData(string aspnetuserId);
+
+        Task<bool> ResetPassword(AdminProfileViewModel AdminProfileDetails);
+
+        Task<bool> UpdateBillingInfo(AdminProfileViewModel AdminProfileDetails);
+
+        Task<bool> UpdateAdminInfo(AdminProfileViewModel AdminProfileDetails);
     }
 }
