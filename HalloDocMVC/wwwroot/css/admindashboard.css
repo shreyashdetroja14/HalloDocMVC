@@ -1,6 +1,6 @@
 ﻿@media screen and (max-width: 575px) {
     html {
-        font-size: 12px;
+        font-size: 13px;
     }
 }
 
@@ -17,6 +17,7 @@
 .status-btn {
     border-radius: 10px;
     transition: all .15s ease-in-out;
+    cursor: pointer;
 }
 
     .status-btn.active-tab {
