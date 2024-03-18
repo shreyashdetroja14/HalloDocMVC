@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
 }
@@ -7,88 +6,112 @@
 @section AddStyles{
 
     <link href="@Url.Content("~/css/admindashboard.css")" rel="stylesheet" type="text/css" />
-    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 }
 
 @model HalloDocServices.ViewModels.AdminViewModels.AdminDashboardViewModel
 
 <div class="main">
 
-    <partial name="_NavbarLinks" ></partial>
+    <partial name="_NavbarLinks"></partial>
 
-    <div class="container-fluid p-4">
-        
-            <div class="row request-status-tabs mb-3">
-                <div class="col-12 col-lg-6">
-                    <div class="row">
-                        <div class="col-4 py-3 px-2">
-                            <div class="bg-info py-4">
-                                <div class="fw-bold">
-                                    NEW
-                                </div>
-                                <div class="fs-4 fw-bold">
-                                    1234
-                                </div>
+    <div class="container-fluid p-4 mt-4">
+
+        <div class="row request-status-tabs mb-3">
+            <div class="col-12 col-lg-6">
+                <div class="row">
+                    <div class="col-4 px-2 pb-3">
+                        <div class="new-btn status-btn px-3 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                            <div class="d-flex">
+                                <i class="material-symbols-outlined d-none d-md-inline me-2">
+                                    new_releases
+                                </i>
+                                <span>NEW</span>
+                            </div>
+                            <div class="fs-4">
+                                @Model.NewRequestCount
                             </div>
                         </div>
-                        <div class="col-4 py-3 px-2">
-                            <div class="bg-info py-4">
-                                <div class="fw-bold">
-                                    NEW
-                                </div>
-                                <div class="fs-4 fw-bold">
-                                    1234
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-4 py-3 px-2">
-                            <div class="bg-info py-4">
-                                <div class="fw-bold">
-                                    NEW
-                                </div>
-                                <div class="fs-4 fw-bold">
-                                    1234
-                                </div>
-                            </div>
-                        </div>
+                        <div class="triangle mx-auto d-none d-lg-block"></div>
                     </div>
-                </div>
-                <div class="col-12 col-lg-6">
-                    <div class="row">
-                        <div class="col-4 py-3 px-2">
-                            <div class="bg-info py-4">
-                                <div class="fw-bold">
-                                    NEW
-                                </div>
-                                <div class="fs-4 fw-bold">
-                                    1234
-                                </div>
+                    <div class="col-4 px-2 pb-3">
+                        <div class="pending-btn status-btn px-3 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                            <div class="d-flex">
+                                <i class="material-symbols-outlined d-none d-md-inline me-2">
+                                    pending_actions
+                                </i>
+                                <span>PENDING</span>
+                            </div>
+                            <div class="fs-4">
+                                @Model.PendingRequestCount
                             </div>
                         </div>
-                        <div class="col-4 py-3 px-2">
-                            <div class="bg-info py-4">
-                                <div class="fw-bold">
-                                    NEW
-                                </div>
-                                <div class="fs-4 fw-bold">
-                                    1234
-                                </div>
+                        <div class="triangle mx-auto d-none d-lg-block"></div>
+                    </div>
+                    <div class="col-4 px-2 pb-3">
+                        <div class="active-btn status-btn px-3 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                            <div class="d-flex">
+                                <i class="material-symbols-outlined d-none d-md-inline me-2">
+                                    task_alt
+                                </i>
+                                <span>ACTIVE</span>
+                            </div>
+                            <div class="fs-4">
+                                @Model.ActiveRequestCount
                             </div>
                         </div>
-                        <div class="col-4 py-3 px-2">
-                            <div class="bg-info py-4">
-                                <div class="fw-bold">
-                                    NEW
-                                </div>
-                                <div class="fs-4 fw-bold">
-                                    1234
-                                </div>
-                            </div>
-                        </div>
+                        <div class="triangle mx-auto d-none d-lg-block"></div>
                     </div>
                 </div>
             </div>
-        
+            <div class="col-12 col-lg-6">
+                <div class="row">
+                    <div class="col-4 px-2 pb-3">
+                        <div class="conclude-btn status-btn px-3 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                            <div class="d-flex">
+                                <i class="material-symbols-outlined d-none d-md-inline me-2">
+                                    av_timer
+                                </i>
+                                <span>CONCLUDE</span>
+                            </div>
+                            <div class="fs-4">
+                                @Model.ConcludeRequestCount
+                            </div>
+                        </div>
+                        <div class="triangle mx-auto d-none d-lg-block"></div>
+                    </div>
+                    <div class="col-4 px-2 pb-3">
+                        <div class="to-close-btn status-btn px-3 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                            <div class="d-flex">
+                                <i class="material-symbols-outlined d-none d-md-inline me-2">
+                                    person_remove
+                                </i>
+                                <span>TO CLOSE</span>
+                            </div>
+                            <div class="fs-4">
+                                @Model.ToCloseRequestCount
+                            </div>
+                        </div>
+                        <div class="triangle mx-auto d-none d-lg-block"></div>
+                    </div>
+                    <div class="col-4 px-2 pb-3">
+                        <div class="unpaid-btn status-btn px-3 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                            <div class="d-flex">
+                                <i class="material-symbols-outlined d-none d-md-inline me-2">
+                                    monetization_on
+                                </i>
+                                <span>UNPAID</span>
+                            </div>
+                            <div class="fs-4">
+                                @Model.UnpaidRequestCount
+                            </div>
+                        </div>
+                        <div class="triangle mx-auto d-none d-lg-block"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="utility-bar d-flex justify-content-between mb-3">
             <p class="h4">Patients <span>(New)</span></p>
@@ -132,27 +155,26 @@
                 </div>
 
                 <div class="request-type-buttons d-flex justify-content-end">
-                    <button class="all-btn btn border px-3">All</button>
-                    <button class="patient-btn btn d-flex flex-column align-items-center flex-sm-row">
+                    <button class="type-btn all-btn btn border px-3">All</button>
+                    <button class="type-btn patient-btn btn d-flex flex-column align-items-center flex-sm-row">
                         <i class="bi bi-circle-fill me-1" style="color: #00b33c"></i>
                         <span>Patient</span>
                     </button>
-                    <button class="family-btn btn d-flex flex-column align-items-center flex-sm-row">
+                    <button class="type-btn family-btn btn d-flex flex-column align-items-center flex-sm-row">
                         <i class="bi bi-circle-fill me-1" style="color: #ff9933"></i>
                         <span>Family</span>
-                     </button>
-                    <button class="business-btn btn d-flex flex-column align-items-center flex-sm-row">
+                    </button>
+                    <button class="type-btn business-btn btn d-flex flex-column align-items-center flex-sm-row">
                         <i class="bi bi-circle-fill me-1" style="color: #ffb3cc"></i>
                         <span>Business</span>
                     </button>
-                    <button class="concierge-btn btn d-flex flex-column align-items-center flex-sm-row">
+                    <button class="type-btn concierge-btn btn d-flex flex-column align-items-center flex-sm-row">
                         <i class="bi bi-circle-fill me-1" style="color: #66a3ff"></i>
                         <span>Concierge</span>
                     </button>
                 </div>
             </div>
             <div class="requests" id="requests">
-                
             </div>
         </div>
     </div>
@@ -162,10 +184,10 @@
 
 
 @section AddScript
-{
+    {
     <script>
 
-        //window.addEventListener("pageshow", function (event) {
+        /*window.addEventListener("pageshow", function (event) {
         //    var historyTraversal = event.persisted ||
         //        (typeof window.performance != "undefined" &&
         //            window.performance.navigation.type === 2);
@@ -173,45 +195,58 @@
         //        // Handle page restore.
         //        window.location.reload();
         //    }
-        //});
+        //});*/
 
-        //on body load, call partial view
+
+        //status buttons
+
+        const newBtn = document.querySelector('.new-btn');
+        const pendingBtn = document.querySelector('.pending-btn');
+        const activeBtn = document.querySelector('.active-btn');
+        const concludeBtn = document.querySelector('.conclude-btn');
+        const toCloseBtn = document.querySelector('.to-close-btn');
+        const unpaidBtn = document.querySelector('.unpaid-btn');
+
+        const triangles = document.querySelectorAll('.triangle');
+
+
+        //on document ready, call partial view
 
         document.addEventListener("DOMContentLoaded", async () => {
             let requestStatus = 1;
-            if(localStorage.status){
+            if (localStorage.status) {
                 requestStatus = localStorage.status;
             }
-            else
-            {
+            else {
                 localStorage.status = requestStatus;
             }
             console.log(requestStatus);
 
+            addActiveTabClass(localStorage.status);
             await GetPartialViewData(requestStatus);
             console.log("DOM is loaded and ready!");
         });
 
         // validate cookie
-        async function ValidateCookie(){
-            try{
+        async function ValidateCookie() {
+            try {
                 //cookie validate url
                 const validationurl = "/Login/ValidateCookie";
 
-                
+
                 const validateResponse = await fetch(validationurl);
-                
+
                 console.log(validateResponse);
                 console.log(validateResponse.statusText, validateResponse.status);
                 if (!validateResponse.ok) {
                     console.log('invalid cookiee');
 
-                    
+
 
                     if (validateResponse.status === 401) {
                         console.log('Unauthorized access, redirecting to login');
                         window.location.reload();
-                        
+
                     } else {
                         throw new Error(`Something else! `);
                     }
@@ -221,7 +256,7 @@
 
                 return true;
             }
-            catch(error){
+            catch (error) {
                 console.error('HTTP VALIDATION error: ', error);
                 return false;
             }
@@ -231,13 +266,13 @@
 
         // requests partial view data ajax call
 
-        async function GetPartialViewData(requestStatus, requestType = null, searchPattern = null, searchRegion = null){
+        async function GetPartialViewData(requestStatus, requestType = null, searchPattern = null, searchRegion = null) {
             try {
-                
+
                 const isCookieValid = await ValidateCookie();
                 console.log(isCookieValid);
 
-                if(isCookieValid){
+                if (isCookieValid) {
 
                     let url = `/AdminDashBoard/FetchRequests?requestStatus=${requestStatus}`;
 
@@ -246,20 +281,20 @@
                     }
 
                     if (searchPattern) {
-                        url += `&searchPattern=${encodeURIComponent(searchPattern)}`; 
+                        url += `&searchPattern=${encodeURIComponent(searchPattern)}`;
                     }
 
                     if (searchRegion) {
-                        url += `&searchRegion=${encodeURIComponent(searchRegion)}`; 
+                        url += `&searchRegion=${encodeURIComponent(searchRegion)}`;
                     }
 
                     const response = await fetch(url);
 
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
-                        
+
                     }
-                    
+
                     console.log(response);
                     console.log('response is ok');
 
@@ -271,7 +306,7 @@
 
                     addEventListnersForPartial();
                 }
-                
+
             } catch (error) {
                 console.error('Error fetching partial view:', error);
             }
@@ -285,8 +320,8 @@
             try {
 
                 const isCookieValid = await ValidateCookie();
-                if(isCookieValid){
-                    
+                if (isCookieValid) {
+
                     let url = `/AdminDashBoard/CancelCase?requestId=${requestId}`;
                     const response = await fetch(url);
 
@@ -298,11 +333,14 @@
                     const modalContainer = document.getElementById('modal-container');
                     modalContainer.innerHTML = cancelCaseModalHtml;
                 }
-            } 
+            }
             catch (error) {
                 console.error('Error fetching partial view:', error);
             }
         }
+
+
+        //assign case modal data ajax call
 
         async function GetAssignCaseModalData(requestId, isTransferRequest = null, regionId = 0) {
 
@@ -310,7 +348,7 @@
 
                 const isCookieValid = await ValidateCookie();
                 if (isCookieValid) {
-                    
+
                     let url = `/AdminDashBoard/AssignCase?requestId=${requestId}&isTransferRequest=${isTransferRequest}&regionId=${regionId}`;
                     const response = await fetch(url);
 
@@ -336,13 +374,16 @@
                         await GetAssignCaseModalData(requestId, isTransferRequest, regionId);
                     });
                 }
-                
 
-            } 
+
+            }
             catch (error) {
                 console.error('Error fetching partial view:', error);
             }
         }
+
+
+        // block request modal data ajax call
 
         async function GetBlockRequestModalData(requestId) {
 
@@ -363,11 +404,14 @@
                     modalContainer.innerHTML = blockRequestModalHtml;
                 }
 
-            } 
+            }
             catch (error) {
                 console.error('Error fetching partial view:', error);
             }
         }
+
+
+        // block case modal data ajax call
 
         async function GetClearCaseModalData(requestId) {
 
@@ -387,11 +431,14 @@
                     const modalContainer = document.getElementById('modal-container');
                     modalContainer.innerHTML = clearCaseModalHtml;
                 }
-            } 
+            }
             catch (error) {
                 console.error('Error fetching partial view:', error);
             }
         }
+
+
+        //send agreement modal data ajax call
 
         async function GetSendAgreementModalData(requestId) {
 
@@ -413,141 +460,215 @@
                     modalContainer.innerHTML = sendAgreementModalHtml;
 
                 }
-            } 
+            }
             catch (error) {
                 console.error('Error fetching partial view:', error);
             }
         }
 
+
+        //url parameters for filters
+
         const urlparams = {
-            requestStatus: 1,
+            requestStatus: localStorage.status,
             requestType: null,
             searchPattern: null,
             searchRegion: null,
         }
 
-        //request status buttons
-        
-        const newBtns = document.querySelectorAll('.new');
 
-        newBtns.forEach(btn => {
-            btn.addEventListener('click',async () => {
-                localStorage.status = 1;
-                urlparams.requestStatus = 1;
-                console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
+        //active button
 
+        function removeActiveTabClass() {
+            const statusBtns = document.querySelectorAll('.status-btn');
+            statusBtns.forEach(btn => {
+                btn.classList.remove('active-tab');
             });
+
+            triangles.forEach(triangle => {
+                triangle.classList.remove('visible');
+            })
+        }
+
+        function addActiveTabClass() {
+            let button = null;
+            let triangle = null;
+            if (urlparams.requestStatus == 1){
+                button = newBtn;
+                triangle = triangles[0];
+            }
+            else if (urlparams.requestStatus == 2) {
+                button = pendingBtn;
+                triangle = triangles[1];
+            }
+            else if (urlparams.requestStatus == 3) {
+                button = activeBtn;
+                triangle = triangles[2];
+            }
+            else if (urlparams.requestStatus == 4) {
+                button = concludeBtn;
+                triangle = triangles[3];
+            }
+            else if (urlparams.requestStatus == 5) {
+                button = toCloseBtn;
+                triangle = triangles[4];
+            }
+            else if (urlparams.requestStatus == 6) {
+                button = unpaidBtn;
+                triangle = triangles[5];
+            }
+
+            button.classList.add('active-tab');
+            triangle.classList.add('visible');
+        }
+
+
+        //request status buttons event listeners
+
+        newBtn.addEventListener('click', async () => {
+            localStorage.status = 1;
+            urlparams.requestStatus = 1;
+            console.log(urlparams.requestStatus);
+
+            removeActiveTabClass();
+            addActiveTabClass();
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
+
         });
 
-        const pendingBtns = document.querySelectorAll('.pending');
 
-        pendingBtns.forEach(btn => {
-            btn.addEventListener('click', async () => {
-                localStorage.status = 2;
-                urlparams.requestStatus = 2;
-                console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
-            });
+        pendingBtn.addEventListener('click', async () => {
+            localStorage.status = 2;
+            urlparams.requestStatus = 2;
+            console.log(urlparams.requestStatus);
+
+            removeActiveTabClass();
+            addActiveTabClass();
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
-        const activeeBtns = document.querySelectorAll('.activee');
 
-        activeeBtns.forEach(btn => {
-            btn.addEventListener('click', async () => {
-                localStorage.status = 3;
-                urlparams.requestStatus = 3;
-                console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
-            });
+        activeBtn.addEventListener('click', async () => {
+            localStorage.status = 3;
+            urlparams.requestStatus = 3;
+            console.log(urlparams.requestStatus);
+
+            removeActiveTabClass();
+            addActiveTabClass();
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
-        const concludeBtns = document.querySelectorAll('.conclude');
 
-        concludeBtns.forEach(btn => {
-            btn.addEventListener('click', async () => {
-                localStorage.status = 4;
-                urlparams.requestStatus = 4;
-                console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
-            });
+        concludeBtn.addEventListener('click', async () => {
+            localStorage.status = 4;
+            urlparams.requestStatus = 4;
+            console.log(urlparams.requestStatus);
+
+            removeActiveTabClass();
+            addActiveTabClass();
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
-        const toCloseBtns = document.querySelectorAll('.to-close');
 
-        toCloseBtns.forEach(btn => {
-            btn.addEventListener('click', async () => {
-                localStorage.status = 5;
-                urlparams.requestStatus = 5;
-                console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
-            });
+        toCloseBtn.addEventListener('click', async () => {
+            localStorage.status = 5;
+            urlparams.requestStatus = 5;
+            console.log(urlparams.requestStatus);
+
+            removeActiveTabClass();
+            addActiveTabClass();
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
-        const unpaidBtns = document.querySelectorAll('.unpaid');
 
-        unpaidBtns.forEach(btn => {
-            btn.addEventListener('click', async () => {
-                localStorage.status = 6;
-                urlparams.requestStatus = 6;
-                console.log(urlparams.requestStatus);
-                await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
-            });
+        unpaidBtn.addEventListener('click', async () => {
+            localStorage.status = 6;
+            urlparams.requestStatus = 6;
+            console.log(urlparams.requestStatus);
+
+            removeActiveTabClass();
+            addActiveTabClass();
+            await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
 
         // request type buttons
 
         const allBtn = document.querySelector('.all-btn');
+        const patientBtn = document.querySelector('.patient-btn');
+        const familyBtn = document.querySelector('.family-btn');
+        const businessBtn = document.querySelector('.business-btn');
+        const conciergeBtn = document.querySelector('.concierge-btn');
+
+        const typeBtns = document.querySelectorAll('.type-btn');
+
+        function removeTypeBtnBorders(){
+            typeBtns.forEach(btn => {
+                btn.classList.remove('border');
+            })
+        }
+
         allBtn.addEventListener('click', async () => {
             urlparams.requestType = null;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
+
+            removeTypeBtnBorders()
+            allBtn.classList.add('border');
             await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
-        const patientBtn = document.querySelector('.patient-btn');
         patientBtn.addEventListener('click', async () => {
             urlparams.requestType = 2;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
+
+            removeTypeBtnBorders()
+            patientBtn.classList.add('border');
             await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
-        const familyBtn = document.querySelector('.family-btn');
         familyBtn.addEventListener('click', async () => {
             urlparams.requestType = 3;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
+
+            removeTypeBtnBorders()
+            familyBtn.classList.add('border');
             await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
-        const businessBtn = document.querySelector('.business-btn');
         businessBtn.addEventListener('click', async () => {
             urlparams.requestType = 1;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
+
+            removeTypeBtnBorders()
+            businessBtn.classList.add('border');
             await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
-        const conciergeBtn = document.querySelector('.concierge-btn');
         conciergeBtn.addEventListener('click', async () => {
             urlparams.requestType = 4;
             console.log(urlparams.requestStatus);
             console.log(urlparams.requestType);
+
+            removeTypeBtnBorders()
+            conciergeBtn.classList.add('border');
             await GetPartialViewData(urlparams.requestStatus, urlparams.requestType, urlparams.searchPattern, urlparams.searchRegion);
         });
 
 
         //searchbar
+
         const searchbar = document.querySelector('.searchbar');
         searchbar.addEventListener('keyup', async () => {
             const searchPattern = searchbar.value;
             console.log(searchPattern);
 
-            if(searchPattern !== ""){
+            if (searchPattern !== "") {
                 urlparams.searchPattern = searchPattern;
-            }else{
+            } else {
                 urlparams.searchPattern = null;
 
             }
@@ -559,15 +680,16 @@
 
 
         //selectlist
+
         const selectList = document.querySelector('.selectlist');
 
         selectList.addEventListener('change', async () => {
             const regionValue = selectList.value;
             console.log(regionValue);
 
-            if(regionValue == 0){
+            if (regionValue == 0) {
                 urlparams.searchRegion = null;
-            }else{
+            } else {
                 urlparams.searchRegion = regionValue;
             }
             console.log(urlparams.requestStatus);
@@ -578,8 +700,9 @@
         })
 
 
+        // event listeners for dropdown action modals
 
-        function addEventListnersForPartial(){
+        function addEventListnersForPartial() {
 
             const cancelCaseBtn = document.querySelectorAll('.cancel-case-btn');
             const assignCaseBtn = document.querySelectorAll('.assign-case-btn');
@@ -601,7 +724,7 @@
                 });
             }
 
-            if(assignCaseBtn !== null){
+            if (assignCaseBtn !== null) {
                 assignCaseBtn.forEach(item => {
                     item.addEventListener('click', async (event) => {
                         const requestId = event.target.dataset.requestId;
@@ -628,7 +751,7 @@
                 });
             }
 
-            if(clearCaseBtn !== null){
+            if (clearCaseBtn !== null) {
                 clearCaseBtn.forEach(item => {
                     item.addEventListener('click', async (event) => {
                         const requestId = event.target.dataset.requestId;
@@ -656,7 +779,7 @@
                 });
             }
         }
-        
+
     </script>
 
 }

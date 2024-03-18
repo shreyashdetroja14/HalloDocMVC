@@ -4,9 +4,143 @@
     }
 }
 
-.text-toclose {
+/*.text-toclose {
     color: #3333cc;
+}*/
+
+.triangle {
+    height: 0;
+    width: 0;
+    transform: scale(1.05);
 }
+
+.status-btn {
+    border-radius: 10px;
+    transition: all .15s ease-in-out;
+}
+
+    .status-btn.active-tab {
+        transform: scale(1.05);
+    }
+
+@media screen and (max-width: 991px) {
+    .status-btn {
+        border-radius: 0;
+    }
+}
+
+.new-btn {
+    color: #0d6efd;
+    background-color: #0d6efd40;
+    border: 1px solid #0d6efd;
+}
+
+    .new-btn:hover, .new-btn.active-tab {
+        color: white;
+        background-color: #0d6efd;
+    }
+
+    .new-btn + .triangle.visible {
+        border-left: 25px solid transparent;
+        border-right: 25px solid transparent;
+        border-top: 25px solid #0d6efd;
+        background-color: transparent !important;
+        
+    }
+
+.pending-btn {
+    color: #0dcaf0;
+    background-color: #0dcaf025;
+    border: 1px solid #0dcaf0;
+}
+
+    .pending-btn:hover, .pending-btn.active-tab {
+        color: white;
+        background-color: #0dcaf0;
+    }
+
+    .pending-btn + .triangle.visible {
+        border-left: 25px solid transparent;
+        border-right: 25px solid transparent;
+        border-top: 25px solid #0dcaf0;
+        background-color: transparent !important;
+    }
+
+
+.active-btn {
+    color: #198754;
+    background-color: #19875440;
+    border: 1px solid #198754;
+}
+
+    .active-btn:hover, .active-btn.active-tab {
+        color: white;
+        background-color: #198754;
+    }
+
+    .active-btn + .triangle.visible {
+        border-left: 25px solid transparent;
+        border-right: 25px solid transparent;
+        border-top: 25px solid #198754;
+        background-color: transparent !important;
+    }
+
+.conclude-btn {
+    color: #d63384;
+    background-color: #d6338440;
+    border: 1px solid #d63384;
+}
+
+    .conclude-btn:hover, .conclude-btn.active-tab {
+        color: white;
+        background-color: #d63384;
+    }
+
+    .conclude-btn + .triangle.visible {
+        border-left: 25px solid transparent;
+        border-right: 25px solid transparent;
+        border-top: 25px solid #d63384;
+        background-color: transparent !important;
+    }
+
+.to-close-btn {
+    color: #6610f2;
+    background-color: #6610f240;
+    border: 1px solid #6610f2;
+}
+
+    .to-close-btn:hover, .to-close-btn.active-tab {
+        color: white;
+        background-color: #6610f2;
+    }
+
+    .to-close-btn + .triangle.visible {
+        border-left: 25px solid transparent;
+        border-right: 25px solid transparent;
+        border-top: 25px solid #6610f2;
+        background-color: transparent !important;
+    }
+
+.unpaid-btn {
+    /*color: #6f42c1;
+    background-color: #6f42c140;*/
+    color: #dc3545;
+    background-color: #dc354540;
+    border: 1px solid #dc3545;
+}
+
+    .unpaid-btn:hover, .unpaid-btn.active-tab {
+        color: white;
+        /*background-color: #6f42c1;*/
+        background-color: #dc3545;
+    }
+
+    .unpaid-btn + .triangle.visible {
+        border-left: 25px solid transparent;
+        border-right: 25px solid transparent;
+        border-top: 25px solid #dc3545;
+        background-color: transparent !important;
+    }
 
 .bg-toclose {
     background-color: #d6d6f5;
@@ -24,59 +158,51 @@
     background-color: #e6ccff;
 }
 
-.bg-unpaid-active {
-    background-color: #6600cc;
-}
-
-.newicon, .pendingicon, .activeicon, .concludeicon, .tocloseicon, .unpaidicon {
-    width: 30px;
-    height: 24px;
-}
-
-.tocloseicon {
-    color: #3333cc;
-}
-
-.unpaidicon {
-    color: #6600cc;
-}
-
-.activeicon{
-    color: #fff;
-}
-
-/*.searchbar{
-    width: 15%;
-}*/
-
-/*th, td{
-    white-space: nowrap;
-}*/
 
 .bg-patient {
-    background-color: #00b33c;
+    /*background-color: #00b33c;*/
+    /*color: #198754;*/
+    background-color: #19875440;
+    
 }
 
 .bg-family {
-    background-color: #ff9933;
+    /*background-color: #ff9933;*/
+    background-color: #fd7e1440;
+    
 }
 
 .bg-business {
-    background-color: #ffb3cc;
+    /*background-color: #ffb3cc;*/
+    background-color: #d6338440;
+    
 }
 
 .bg-concierge {
-    background-color: #66a3ff;
+    /*background-color: #66a3ff;*/
+    background-color: #0d6efd40;
 }
 
 
+.type-btn {
+    transition: all .2s ease-in-out;
+}
+
+.type-btn:focus{
+    box-shadow:none;
+}
+
+.type-btn:hover, .type-btn.border {
+    box-shadow: 0px 0px 3px gray;
+}
 
 /*table{
     text-align: center;
 }*/
 
-tr{
+tr {
     vertical-align: middle;
+    font-weight: 500;
 }
 
 tr p{

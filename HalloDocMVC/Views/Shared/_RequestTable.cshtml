@@ -65,12 +65,14 @@
         <tbody>
             @foreach(var request in Model)
             {
-                <tr class="@(request.RequestType == 1?"bg-business":"") @(request.RequestType == 2?"bg-patient":"") @(request.RequestType == 3?"bg-family":"") @(request.RequestType == 4?"bg-concierge":"") text-white fw-bold">
+                <tr class="@(request.RequestType == 1?"bg-business":"") @(request.RequestType == 2?"bg-patient":"") @(request.RequestType == 3?"bg-family":"") @(request.RequestType == 4?"bg-concierge":"") ">
                     <td>
                         <div class="d-flex justify-content-between align-items-center">
                             <span>@request.PatientFullName</span>
-                            <button class="btn p-1 text-white">
-                                <img src="~/images/mailboxIcon.svg" />
+                            <button class="btn p-1">
+                                <i class="material-symbols-outlined">
+                                    mail
+                                </i>
                             </button>
                         </div>
                     </td>
@@ -114,16 +116,21 @@
                             
                             @if (request.PatientPhoneNumber != null)
                             {
-                                <button class="btn border text-white">
-                                    <img src="~/images/callIcon.svg" />
+                                <button class="btn border border-dark d-flex align-items-center">
+                                    @*<img src="~/images/callIcon.svg" />*@
+                                    <i class="material-symbols-outlined fs-6 me-2">
+                                        call
+                                    </i>
                                     @request.PatientPhoneNumber
                                 </button>
                                 <p>(Patient)</p>
                             }
                             @if(request.SecondPhoneNumber != null && request.RequestType != 2)
                             {
-                                <button class="btn border text-white">
-                                    <img src="~/images/callIcon.svg" />
+                                <button class="btn border border-dark d-flex align-items-center">
+                                    <i class="material-symbols-outlined fs-6 me-2">
+                                        call
+                                    </i>
                                     @request.SecondPhoneNumber
                                 </button>
                                 <p>(Family)</p>
@@ -174,7 +181,7 @@
                     </td>*@
                     <td>
                         <div class="dropdown">
-                            <button class="btn border text-white dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <button class="btn border border-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                 Actions
                             </button>
                             <ul class="dropdown-menu">
