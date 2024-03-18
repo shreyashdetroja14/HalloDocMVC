@@ -39,12 +39,14 @@ namespace HalloDocMVC.Controllers
             return View(viewModel);
         }
 
-        public IActionResult FetchRequests(int requestStatus, int? requestType, string? searchPattern, int? searchRegion)
+        public IActionResult FetchRequests(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int pageNumber = 1)
         {
-            List<RequestRowViewModel> viewModels = new List<RequestRowViewModel>();
-            viewModels = _adminDashboardService.GetViewModelData(requestStatus, requestType, searchPattern, searchRegion);
+            PaginatedListViewModel PaginatedList = new PaginatedListViewModel();
 
-            return PartialView("_RequestTable", viewModels);
+            PaginatedList = _adminDashboardService.GetViewModelData(requestStatus, requestType, searchPattern, searchRegion, pageNumber);
+
+            ViewBag.PagerData = PaginatedList.PagerData;
+            return PartialView("_RequestTable", PaginatedList.RequestRows);
         }
 
         public IActionResult ViewCase(int requestId) 

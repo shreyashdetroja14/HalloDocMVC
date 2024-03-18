@@ -56,12 +56,9 @@ namespace HalloDocServices.Implementation
         }
         #endregion
 
-        public List<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern, int? searchRegion)
+        public PaginatedListViewModel GetViewModelData(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int pageNumber)
         {
-            List<RequestRowViewModel> requestRows = new List<RequestRowViewModel>();
             var requests = _requestRepository.GetAllIEnumerableRequests().AsQueryable();
-
-            
 
             int[] myarray = new int[3];
             switch (requestStatus)
@@ -112,7 +109,22 @@ namespace HalloDocServices.Implementation
                 requests = requests.Where(x => x.RequestClients.FirstOrDefault().RegionId == searchRegion);
             }
 
-            foreach(var request in requests)
+            int requestCount = requests.Count();
+            int pageSize = 5;
+            if (pageNumber <= 0)
+            {
+                pageNumber = 1;
+            }
+
+            PagerViewModel PagerData = new PagerViewModel(requestCount, pageNumber, pageSize);
+
+            int requestToSkip = (pageNumber - 1) * pageSize;
+
+            requests = requests.Skip(requestToSkip).Take(pageSize);
+
+            List<RequestRowViewModel> requestRows = new List<RequestRowViewModel>();
+
+            foreach (var request in requests)
             {
                 RequestClient? requestClient = request.RequestClients.FirstOrDefault();
                 int date = requestClient?.IntDate??0;
@@ -139,19 +151,22 @@ namespace HalloDocServices.Implementation
                     DateOfBirth = month + " " + date + "," + year,
                     RequestorName = request.FirstName + " " + request.LastName,
                     PhysicianName = request.Physician?.FirstName + " " + request.Physician?.LastName,
-                    //DateOfService
+                    DateOfService = request.AcceptedDate.ToString(),
                     RequestedDate = request.CreatedDate.ToLongDateString(),
                     PatientPhoneNumber = requestClient?.PhoneNumber,
                     SecondPhoneNumber = request.PhoneNumber,
                     Address = requestClient?.Address,
                     Region = requestClient?.RegionId,
-                    //Notes
                     Notes = notes,
 
                 }) ;
             }
 
-            return requestRows;
+            PaginatedListViewModel PaginatedData = new PaginatedListViewModel();
+            PaginatedData.PagerData = PagerData;
+            PaginatedData.RequestRows = requestRows;
+
+            return PaginatedData;
         }
 
         public ViewCaseViewModel GetViewCaseViewModelData(ViewCaseViewModel CaseInfo)

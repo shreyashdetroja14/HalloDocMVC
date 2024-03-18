@@ -1,15 +1,26 @@
-﻿
+﻿@using HalloDocServices.ViewModels.AdminViewModels
+
 @*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 
 @model List<HalloDocServices.ViewModels.AdminViewModels.RequestRowViewModel>
 
+
 @{
     var status = Model.FirstOrDefault()?.DashboardRequestStatus;
     if(status == null)
     {
         status = 1;
+    }
+
+    var Pager = new PagerViewModel();
+    int pageNumber = 0;
+
+    if(ViewBag.PagerData != null)
+    {
+        Pager = ViewBag.PagerData;
+        pageNumber = Pager.CurrentPage;
     }
 }
 
@@ -286,7 +297,7 @@
 
 
 
-<div class="requests-mobile d-md-none">
+<div class="requests-mobile d-md-none mb-3">
     <div class="accordion" id="accordionPanelsStayOpenExample">
         @foreach(var request in Model)
         {
@@ -519,4 +530,41 @@
         }
     </div>
 
+</div>
+
+<div>
+    @if(Pager.TotalPages > 0)
+    {
+        <ul class="pagination justify-content-end">
+
+            @if (Pager.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link page-number page-first" data-page-number="1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link page-number page-previous" data-page-number="@(Pager.CurrentPage - 1)">Previous</a>
+                </li>
+            }
+
+            @for (var pg = Pager.StartPage; pg <= Pager.EndPage; pg++)
+            {
+                <li class="page-item @(pg == Pager.CurrentPage ? "active" : "")">
+                    <a class="page-link page-number" data-page-number="@pg">@pg</a>
+                </li>
+            }
+
+            @if(Pager.CurrentPage < Pager.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link page-number page-next" data-page-number="@(Pager.CurrentPage + 1)">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link page-number page-last" data-page-number="@Pager.TotalPages">Last</a>
+                </li>
+            }
+
+            
+        </ul>
+    }
 </div>

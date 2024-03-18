@@ -32,6 +32,7 @@ const urlparams = {
     requestType: null,
     searchPattern: null,
     searchRegion: null,
+    pageNumber: 1
 }
 
 
@@ -62,6 +63,7 @@ async function ValidateCookie() {
         const validateResponse = await fetch(validationurl);
 
         //console.log(validateResponse);
+        console.log('***************************************');
         console.log('Cookie response: ', validateResponse.statusText, validateResponse.status);
         if (!validateResponse.ok) {
             console.log('invalid cookiee');
@@ -113,6 +115,8 @@ async function GetPartialViewData(urlparams) {
             if (urlparams.searchRegion) {
                 url += `&searchRegion=${encodeURIComponent(urlparams.searchRegion)}`;
             }
+
+            url += `&pageNumber=${encodeURIComponent(urlparams.pageNumber)}`;
 
             console.log('url: ', url);
 
@@ -352,6 +356,7 @@ function addActiveTabClass() {
 newBtn.addEventListener('click', async () => {
     localStorage.status = 1;
     urlparams.requestStatus = 1;
+    urlparams.pageNumber = 1;
 
     removeActiveTabClass();
     addActiveTabClass();
@@ -363,6 +368,7 @@ newBtn.addEventListener('click', async () => {
 pendingBtn.addEventListener('click', async () => {
     localStorage.status = 2;
     urlparams.requestStatus = 2;
+    urlparams.pageNumber = 1;
 
     removeActiveTabClass();
     addActiveTabClass();
@@ -373,6 +379,7 @@ pendingBtn.addEventListener('click', async () => {
 activeBtn.addEventListener('click', async () => {
     localStorage.status = 3;
     urlparams.requestStatus = 3;
+    urlparams.pageNumber = 1;
 
     removeActiveTabClass();
     addActiveTabClass();
@@ -383,6 +390,7 @@ activeBtn.addEventListener('click', async () => {
 concludeBtn.addEventListener('click', async () => {
     localStorage.status = 4;
     urlparams.requestStatus = 4;
+    urlparams.pageNumber = 1;
 
     removeActiveTabClass();
     addActiveTabClass();
@@ -393,6 +401,7 @@ concludeBtn.addEventListener('click', async () => {
 toCloseBtn.addEventListener('click', async () => {
     localStorage.status = 5;
     urlparams.requestStatus = 5;
+    urlparams.pageNumber = 1;
 
     removeActiveTabClass();
     addActiveTabClass();
@@ -403,6 +412,7 @@ toCloseBtn.addEventListener('click', async () => {
 unpaidBtn.addEventListener('click', async () => {
     localStorage.status = 6;
     urlparams.requestStatus = 6;
+    urlparams.pageNumber = 1;
 
     removeActiveTabClass();
     addActiveTabClass();
@@ -510,6 +520,19 @@ function addEventListnersForPartial() {
     const blockRequestBtn = document.querySelectorAll('.block-request-btn');
     const clearCaseBtn = document.querySelectorAll('.clear-case-btn');
     const sendAgreementBtn = document.querySelectorAll('.send-agreement-btn');
+    const pageNumberLinks = document.querySelectorAll('.page-number');
+    //const nextPageLink = document.querySelector('page-next');
+
+
+    pageNumberLinks.forEach(link => {
+        link.addEventListener('click', async (event) => {
+            const pageNumber = event.target.dataset.pageNumber;
+            console.log('page number: ', pageNumber);
+            urlparams.pageNumber = pageNumber;
+
+            await GetPartialViewData(urlparams);
+        });
+    });
 
     if (cancelCaseBtn !== null) {
         cancelCaseBtn.forEach(item => {
