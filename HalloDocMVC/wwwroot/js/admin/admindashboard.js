@@ -438,6 +438,7 @@ function removeTypeBtnBorders() {
 
 allBtn.addEventListener('click', async () => {
     urlparams.requestType = null;
+    urlparams.pageNumber = 1;
 
     removeTypeBtnBorders()
     allBtn.classList.add('border');
@@ -446,6 +447,7 @@ allBtn.addEventListener('click', async () => {
 
 patientBtn.addEventListener('click', async () => {
     urlparams.requestType = 2;
+    urlparams.pageNumber = 1;
 
     removeTypeBtnBorders()
     patientBtn.classList.add('border');
@@ -454,6 +456,7 @@ patientBtn.addEventListener('click', async () => {
 
 familyBtn.addEventListener('click', async () => {
     urlparams.requestType = 3;
+    urlparams.pageNumber = 1;
 
     removeTypeBtnBorders()
     familyBtn.classList.add('border');
@@ -462,6 +465,7 @@ familyBtn.addEventListener('click', async () => {
 
 businessBtn.addEventListener('click', async () => {
     urlparams.requestType = 1;
+    urlparams.pageNumber = 1;
 
     removeTypeBtnBorders()
     businessBtn.classList.add('border');
@@ -470,6 +474,7 @@ businessBtn.addEventListener('click', async () => {
 
 conciergeBtn.addEventListener('click', async () => {
     urlparams.requestType = 4;
+    urlparams.pageNumber = 1;
 
     removeTypeBtnBorders()
     conciergeBtn.classList.add('border');
@@ -489,6 +494,7 @@ searchbar.addEventListener('keyup', async () => {
         urlparams.searchPattern = null;
 
     }
+    urlparams.pageNumber = 1;
 
     await GetPartialViewData(urlparams);
 })
@@ -506,6 +512,7 @@ selectList.addEventListener('change', async () => {
     } else {
         urlparams.searchRegion = regionValue;
     }
+    urlparams.pageNumber = 1;
 
     await GetPartialViewData(urlparams);
 })
