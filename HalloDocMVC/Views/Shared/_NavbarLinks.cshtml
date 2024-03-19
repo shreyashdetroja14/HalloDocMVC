@@ -4,7 +4,7 @@
 *@
 
 
-<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" style="font-size: 16px">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Welcome Admin</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -22,11 +22,11 @@
             </li>
 
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="providers nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
                     Providers
                 </a>
                 <ul class="dropdown-menu w-100">
-                    <li><a class="dropdown-item" href="#">Provider</a></li>
+                    <li><a class="dropdown-item" asp-action="Index" asp-controller="Providers">Provider</a></li>
                     <li><a class="dropdown-item" href="#">Scheduling</a></li>
                     <li><a class="dropdown-item" href="#">Invoicing</a></li>
                     @*<li>
@@ -65,11 +65,11 @@
         <a asp-action="Index" asp-controller="Profile" class="myprofile nav-link">My Profile</a>
     </li>
     <li class="nav-item dropdown" role="presentation">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <a class="providers nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Providers
         </a>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Provider</a></li>
+            <li><a class="dropdown-item" asp-action="Index" asp-controller="Providers">Provider</a></li>
             <li><a class="dropdown-item" href="#">Scheduling</a></li>
             <li><a class="dropdown-item" href="#">Invoicing</a></li>
             @*<li>

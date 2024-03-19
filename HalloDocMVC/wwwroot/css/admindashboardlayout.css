@@ -61,7 +61,7 @@
 }
 
     .accordion-button::after, .accordion-button:not(.collapsed)::after {
-        background: none;
+        display: none;
     }
 
     .accordion-button:not(.collapsed) {
@@ -75,4 +75,9 @@
 .form-control:focus {
     box-shadow: none;
     border: 2px solid #0dcaf0;
+}
+
+.form-check-input:checked {
+    background-color: #0dcaf0;
+    border-color: #0dcaf0;
 }

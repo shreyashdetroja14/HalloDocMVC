@@ -11,15 +11,11 @@ namespace HalloDocMVC.Controllers
     [CustomAuthorize("admin")]
     public class ProfileController : Controller
     {
-        private readonly IAdminDashboardService _adminDashboardService;
-        private readonly IPatientService _patientService;
         private readonly IJwtService _jwtService;
         private readonly IProfileService _profileService;
 
-        public ProfileController(IAdminDashboardService adminDashboardService, IPatientService patientService, IJwtService jwtService, IProfileService profileService)
+        public ProfileController(IJwtService jwtService, IProfileService profileService)
         {
-            _adminDashboardService = adminDashboardService;
-            _patientService = patientService;
             _jwtService = jwtService;
             _profileService = profileService;
         }
