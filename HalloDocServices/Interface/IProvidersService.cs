@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HalloDocServices.ViewModels.AdminViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,8 @@ namespace HalloDocServices.Interface
 {
     public interface IProvidersService
     {
+        ProvidersViewModel GetProvidersViewModel(ProvidersViewModel Providers);
+
+        List<ProviderRowViewModel> GetProvidersList(int regionId);
     }
 }

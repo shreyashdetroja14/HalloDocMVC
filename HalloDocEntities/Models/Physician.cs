@@ -132,6 +132,9 @@ public partial class Physician
     [StringLength(50)]
     public string? SyncEmailAddress { get; set; }
 
+    [Column("is_notification_stopped")]
+    public bool? IsNotificationStopped { get; set; }
+
     [ForeignKey("AspNetUserId")]
     [InverseProperty("PhysicianAspNetUsers")]
     public virtual AspNetUser? AspNetUser { get; set; }
@@ -155,4 +158,8 @@ public partial class Physician
 
     [InverseProperty("Physician")]
     public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
+
+    [ForeignKey("RoleId")]
+    [InverseProperty("Physicians")]
+    public virtual Role? Role { get; set; }
 }

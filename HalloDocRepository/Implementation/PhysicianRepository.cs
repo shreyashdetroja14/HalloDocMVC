@@ -24,6 +24,12 @@ namespace HalloDocRepository.Implementation
             return physicians;
         }
 
+        public IQueryable<Physician> GetIQueryablePhysicians()
+        {
+            var physicians = _context.Physicians.AsQueryable();
+            return physicians;
+        }
+
         public Physician GetPhysicianByPhysicianId(int physicianId)
         {
             var physician = _context.Physicians.FirstOrDefault(x => x.PhysicianId == physicianId);

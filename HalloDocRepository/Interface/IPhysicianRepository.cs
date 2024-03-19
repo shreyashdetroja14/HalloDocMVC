@@ -12,5 +12,7 @@ namespace HalloDocRepository.Interface
         List<Physician> GetAllPhysicians();
 
         Physician GetPhysicianByPhysicianId(int physicianId);
+
+        IQueryable<Physician> GetIQueryablePhysicians();
     }
 }

@@ -42,5 +42,12 @@ namespace HalloDocRepository.Interface
         EncounterForm GetEncounterFormByRequestId(int requestId);
 
         Task<bool> UpdateEncounterForm(EncounterForm encounterForm);
+
+
+        #region ROLE
+
+        Role GetRoleById(int roleId);
+
+        #endregion
     }
 }
