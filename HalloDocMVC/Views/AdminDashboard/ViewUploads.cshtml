@@ -186,6 +186,23 @@
 
 
 @section AddScript{
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+
+            toastr.success("@TempData["SuccessMessage"]");
+            
+        </script>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+
+            toastr.error("@TempData["ErrorMessage"]");
+
+        </script>
+    }
     <script>
         const actualBtn = document.querySelector('#MultipleFiles');
 
@@ -429,14 +446,18 @@
                 }
                 console.log(response);
 
-                const newUrl = response.url || "";
+                const url = await response.text();
 
-                if (newUrl) {
-                    console.log('Loading new URL:', newUrl);
-                    window.location.href = newUrl;
-                } else {
-                    console.warn('No URL found in response');
-                }
+                window.location.href = url;
+
+                //const newUrl = response.url || "";
+
+                //if (newUrl) {
+                //    console.log('Loading new URL:', newUrl);
+                //    window.location.href = newUrl;
+                //} else {
+                //    console.warn('No URL found in response');
+                //}
 
                 console.log('mail sent successfully');
 

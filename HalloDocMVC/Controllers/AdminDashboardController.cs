@@ -258,10 +258,17 @@ namespace HalloDocMVC.Controllers
             bool isMailSent = await _adminDashboardService.SendMailWithAttachments(requestData);
             if (isMailSent)
             {
-
+                TempData["SuccessMessage"] = "Mail Sent Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Send Mail. Try Again.";
             }
 
-            return RedirectToAction("ViewUploads", new { requestId = requestData?.RequestId });
+            string url = "/AdminDashboard/ViewUploads?requestId=" + requestData.RequestId.ToString();
+            return Content("");
+
+            //return RedirectToAction("ViewUploads", new { requestId = requestData?.RequestId });
         }
 
         public IActionResult Orders(int requestId)

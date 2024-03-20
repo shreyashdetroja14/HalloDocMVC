@@ -43,10 +43,10 @@
                         <span class="fw-bold d-none d-md-inline">
                             Admin
                         </span>
-                        <a asp-action="Logout" asp-controller="Login" class="btn btn-outline-info ms-2 d-none d-md-inline">Logout</a>
-                        <button class="btn btn-outline-info p-2 d-md-none">
+                        <a asp-action="Logout" asp-controller="Login" class="logout btn btn-outline-info ms-2 d-none d-md-inline">Logout</a>
+                        <a asp-action="Logout" asp-controller="Login" class="logout btn btn-outline-info p-2 d-md-none">
                             <img src="~/images/logoutIcon.svg" alt="">
-                        </button>
+                        </a>
                         <button class="theme-btn btn btn-outline-info ms-2 ">
                             <img src="~/images/themeIcon.svg" alt="">
                         </button>
@@ -66,7 +66,6 @@
 
     </div>
 
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -76,10 +75,10 @@
 
     <script>
             toastr.options = {
-                "closeButton": true,
+                "closeButton": false,
                 "debug": false,
                 "newestOnTop": false,
-                "progressBar": false,
+                "progressBar": true,
                 "positionClass": "toast-bottom-right",
                 "preventDuplicates": false,
                 "onclick": null,

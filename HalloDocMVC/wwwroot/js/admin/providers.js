@@ -93,6 +93,20 @@ async function GetContactProviderModal(providerId) {
             const modalContainer = document.getElementById('modal-container');
             modalContainer.innerHTML = contactProviderModalHtml;
 
+
+            const radioBtns = document.querySelectorAll('input[type=radio]');
+            radioBtns.forEach(radio => {
+                radio.addEventListener('click', () => {
+                    const subjectInput = document.querySelector('#SubjectField');
+                    if (radio.value == "email") {
+                        subjectInput.classList.remove('d-none');
+                    }
+                    else {
+                        subjectInput.classList.add('d-none');
+                    }
+                })
+            })
+
         }
     }
     catch (error) {

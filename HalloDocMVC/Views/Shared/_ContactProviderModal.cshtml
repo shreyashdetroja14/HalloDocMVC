@@ -8,26 +8,32 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <p>Provider Name: @Model.ProviderName</p>
                 <p class="mb-3">Choose communication type to send message</p>
                 <form asp-action="ContactProvider">
                     <input type="number" asp-for="ProviderId" hidden />
+                    <input type="email" asp-for="ProviderEmail" hidden />
                     <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="CommunicationType" value="sms" id="flexRadioDefault1">
-                        <label class="form-check-label" for="flexRadioDefault1">
+                        <input class="form-check-input" type="radio" name="CommunicationType" value="sms" id="sms">
+                        <label class="form-check-label" for="sms">
                             SMS
                         </label>
                     </div>
                     <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="CommunicationType" value="email" id="flexRadioDefault2" checked>
-                        <label class="form-check-label" for="flexRadioDefault2">
+                        <input class="form-check-input" type="radio" name="CommunicationType" value="email" id="email" checked>
+                        <label class="form-check-label" for="email">
                             Email
                         </label>
                     </div>
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="radio" name="CommunicationType" value="both" id="flexRadioDefault1">
-                        <label class="form-check-label" for="flexRadioDefault1">
+                        <input class="form-check-input" type="radio" name="CommunicationType" value="both" id="both">
+                        <label class="form-check-label" for="both">
                             Both
                         </label>
+                    </div>
+                    <div class="form-floating mb-3" id="SubjectField">
+                        <input type="text" asp-for="Subject" class="form-control" id="Subject" placeholder="Subject">
+                        <label asp-for="Subject">Subject</label>
                     </div>
                     <div class="form-floating mb-3">
                         <textarea class="form-control" asp-for="Message" placeholder="Message" id="Message" style="height: 150px"></textarea>

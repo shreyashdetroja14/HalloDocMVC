@@ -10,7 +10,13 @@ namespace HalloDocServices.ViewModels.AdminViewModels
     {
         public int ProviderId { get; set; }
 
+        public string? ProviderName { get; set; }
+
+        public string? ProviderEmail { get; set; }
+
         public string? CommunicationType { get; set; }
+
+        public string? Subject { get; set; }
 
         public string? Message { get; set; }
     }

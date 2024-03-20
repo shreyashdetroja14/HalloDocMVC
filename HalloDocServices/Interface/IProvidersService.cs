@@ -12,5 +12,7 @@ namespace HalloDocServices.Interface
         ProvidersViewModel GetProvidersViewModel(ProvidersViewModel Providers);
 
         List<ProviderRowViewModel> GetProvidersList(int regionId);
+
+        ContactProviderViewModel GetContactProvider(ContactProviderViewModel ContactProvider);
     }
 }

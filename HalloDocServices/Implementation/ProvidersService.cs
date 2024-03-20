@@ -15,8 +15,8 @@ namespace HalloDocServices.Implementation
     public enum Status
     {
         Active = 1,
-        Inactive,
-        Pending
+        Inactive = 2,
+        Pending = 3
     }
 
     public class ProvidersService : IProvidersService
@@ -80,12 +80,23 @@ namespace HalloDocServices.Implementation
                     //On call status
                     OnCallStatus = "unavailable",
                     //Status
-                    Status = ((Status)(provider.Status ?? 0)).ToString(),
+                    Status = provider.Status != null ? ((Status)provider.Status).ToString() : null,
                 });
             }
 
             return Providers;
         }
 
+        public ContactProviderViewModel GetContactProvider(ContactProviderViewModel ContactProvider)
+        {
+            var provider = _physicianRepository.GetPhysicianByPhysicianId(ContactProvider.ProviderId);
+            if (provider != null)
+            {
+                ContactProvider.ProviderName = provider.FirstName + " " + provider.LastName;
+                ContactProvider.ProviderEmail = provider.Email;
+            }
+
+            return ContactProvider;
+        }
     }
 }

@@ -28,6 +28,7 @@ builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IProvidersService, ProvidersService>();
+builder.Services.AddScoped<IMailService, MailService>();
 
 
 var app = builder.Build();

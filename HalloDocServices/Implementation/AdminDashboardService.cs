@@ -15,20 +15,20 @@ namespace HalloDocServices.Implementation
 {
     public class AdminDashboardService : IAdminDashboardService
     {
-        private readonly IUserRepository _userRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly IPhysicianRepository _physicianRepository;
         private readonly INotesAndLogsRepository _notesAndLogsRepository;
         private readonly ICommonRepository _commonRepository;
+        private readonly IMailService _mailService;
 
-        public AdminDashboardService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository)
+        public AdminDashboardService(IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IMailService mailService)
         {
-            _userRepository = userRepository;
             _requestRepository = requestRepository;
             _physicianRepository = physicianRepository;
             _notesAndLogsRepository = notesAndLogsRepository;
             _commonRepository = commonRepository;
-         }
+            _mailService = mailService;
+        }
 
         public async Task<AdminDashboardViewModel> GetViewModelData(int requestStatus)
         {
@@ -626,9 +626,22 @@ namespace HalloDocServices.Implementation
         public async Task<bool> SendMailWithAttachments(DownloadRequest requestData)
         {
             var files = _requestRepository.GetRequestWiseFilesByFileIds(requestData.SelectedValues);
+            var fileNames = files.Select(x => x.FileName).ToList();
 
-            var mail = "tatva.dotnet.shreyashdetroja@outlook.com";
-            var password = "Dotnet_tatvasoft@14"; 
+            string subject = "Case Files for Request: " + requestData.RequestId + " from HalloDoc@Admin";
+
+            string body = "Find the case files for Request: " + requestData.RequestId + " in the attachments below.";
+
+            List<string> receivers = new List<string>
+                {
+                    requestData.EmailValue ?? ""
+                };
+
+            bool isMailSent = await _mailService.SendMail(receivers, subject, body, false, fileNames);
+            return isMailSent;
+
+            /*var mail = "tatva.dotnet.shreyashdetroja@outlook.com";
+            var password = "Dotnet_tatvasoft@14";
 
             var client = new SmtpClient("smtp.office365.com")
             {
@@ -675,7 +688,7 @@ namespace HalloDocServices.Implementation
                 await client.SendMailAsync(mailMessage);
             }
 
-            return true;
+            return true;*/
         }
 
         public string GetProfessionListOptions()
