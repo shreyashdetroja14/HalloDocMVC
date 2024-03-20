@@ -1,0 +1,382 @@
+﻿
+@{
+    ViewData["Title"] = "Edit Provider";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+@section AddStyles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <link href="@Url.Content("~/css/requestform.css")" rel="stylesheet" type="text/css" />
+}
+
+@model HalloDocServices.ViewModels.AdminViewModels.EditProviderViewModel
+
+<div class="main">
+
+    <partial name="_NavbarLinks"></partial>
+
+    <div class="container p-4">
+        <div class=" back p-0 pb-4 d-flex justify-content-between">
+            <h2>Profile</h2>
+            <a class="btn back-btn">
+                <img src="/images/backIcon.svg" alt="">
+                Back
+            </a>
+        </div>
+
+        <form asp-action="ResetPassword" class="bg-white p-4 request-form rounded-0 shadow-none">
+            <input type="number" asp-for="AdminId" hidden>
+            <div class="info mb-4">
+                <h4 class="mb-3">Account Information</h4>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="Username" class="form-control" id="Username"
+                                   placeholder="Username" readonly>
+                            <label asp-for="Username">Username</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="password" asp-for="Password" class="form-control" id="Password"
+                                   placeholder="Password">
+                            <label asp-for="Password">Password</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="Status" class="form-control" id="Status" placeholder="Status" readonly>
+                            <label asp-for="Status">Status</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class=" mb-3">
+                            <select asp-for="RoleId" id="role-list" class="form-select p-3" disabled>
+                                <option value="@Model.RoleId">@Model.RoleName</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit d-flex justify-content-end">
+                <input type="submit" value="Reset Password" id="reset-pass" class="btn btn-outline-info py-2 px-3 ms-3" />
+            </div>
+
+        </form>
+
+        <form asp-action="EditPhysicianInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
+            <input type="number" asp-for="AdminId" hidden>
+            <div class="info mb-4">
+                <h4 class="mb-3">Physician Information</h4>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="FirstName" class="form-control physician-info" id="FirstName"
+                                   placeholder="FirstName" readonly>
+                            <label asp-for="FirstName">First Name</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="LastName" class="form-control physician-info" id="LastName"
+                                   placeholder="LastName" readonly>
+                            <label asp-for="LastName">Last Name</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="email" asp-for="Email" class="form-control physician-info" id="Email" placeholder="Email" readonly>
+                            <label asp-for="Email">Email</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="email" asp-for="ConfirmEmail" class="form-control physician-info" id="ConfirmEmail" placeholder="ConfirmEmail" readonly>
+                            <label asp-for="ConfirmEmail">ConfirmEmail</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 pb-3">
+                        <input type="tel" asp-for="PhoneNumber" class="form-control w-100 physician-info" id="PhoneNumber" readonly />
+                    </div>
+                    <div class="col-sm-6 pb-3">
+                        @foreach (var state in Model.StateList)
+                        {
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       value="@state.Value"
+                                       id="region-@state.Value"
+                                       name="AdminRegions"
+                                       checked="@(Model.AdminRegions.Contains(int.Parse(state.Value)) ? "true" : false)">
+                                <label class="form-check-label" for="region-@state.Value">
+                                    @state.Text
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit d-flex justify-content-end">
+                <button type="button" class="btn btn-outline-info py-2 px-3 ms-3" id="physician-info-editbtn">Edit</button>
+                <input type="submit" value="Save" id="physician-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
+                <input type="reset" value="Cancel" id="physician-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
+            </div>
+
+        </form>
+
+        <form asp-action="EditBilling" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
+            <input type="number" asp-for="AdminId" hidden>
+            <div class="info mb-4">
+                <h4 class="mb-3">Mailing & Billing Information</h4>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="Address1" class="form-control billing-info" id="Address1"
+                                   placeholder="Address1" readonly>
+                            <label asp-for="Address1">Address 1</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="Address2" class="form-control billing-info" id="Address2"
+                                   placeholder="Address2" readonly>
+                            <label asp-for="Address2">Address 2</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="City" class="form-control billing-info" id="City" placeholder="City" readonly>
+                            <label asp-for="City">City</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class=" mb-3">
+                            <select asp-for="RegionId" id="region-list" class="form-select p-3" asp-items="@Model.StateList" disabled>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="ZipCode" class="form-control billing-info" id="ZipCode" placeholder="ZipCode" readonly>
+                            <label asp-for="ZipCode">ZipCode</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 pb-3">
+                        <input type="tel" asp-for="SecondPhoneNumber" class="form-control w-100 billing-info" id="SecondPhoneNumber" readonly />
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit d-flex justify-content-end">
+                <button type="button" id="billing-info-editbtn" class="btn btn-outline-info py-2 px-3 ms-3">Edit</button>
+                <input type="submit" value="Save" id="billing-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
+                <input type="reset" value="Cancel" id="billing-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
+            </div>
+
+        </form>
+
+        <form asp-action="EditProfile" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
+            <input type="number" asp-for="AdminId" hidden>
+            <div class="info mb-4">
+                <h4 class="mb-3">Provider Profile</h4>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="BusinessName" class="form-control billing-info" id="BusinessName"
+                                   placeholder="BusinessName" readonly>
+                            <label asp-for="BusinessName">Business Name</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="BusinessWebsite" class="form-control billing-info" id="BusinessWebsite"
+                                   placeholder="BusinessWebsite" readonly>
+                            <label asp-for="BusinessWebsite">Business Website</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="input-group mb-3">
+                            <input type="file" asp-for="Photo" class="form-control px-3 py-2 file-upload" id="Photo">
+
+                            <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
+                                   asp-for="Photo">
+                                <span class="px-3 py-2" id="photoSpan">Select File</span>
+                                <div class="btn btn-info p-3 text-white fw-bold rounded-0">
+                                    <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="input-group mb-3">
+                            <input type="file" asp-for="Signature" class="form-control px-3 py-2 file-upload" id="Signature">
+
+                            <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
+                                   asp-for="Signature">
+                                <span class="px-3 py-2" id="signatureSpan">Select File</span>
+                                <div class="btn btn-info p-3 text-white fw-bold rounded-0">
+                                    <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating mb-3">
+                            <textarea asp-for="AdminNotes" class="form-control" placeholder="Enter Symptoms" id="AdminNotes"
+                                      style="height: 150px"></textarea>
+                            <label asp-for="AdminNotes">Admin Notes</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="ZipCode" class="form-control billing-info" id="ZipCode" placeholder="ZipCode" readonly>
+                            <label asp-for="ZipCode">ZipCode</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit d-flex justify-content-end">
+                <button type="button" id="billing-info-editbtn" class="btn btn-outline-info py-2 px-3 ms-3">Edit</button>
+                <input type="submit" value="Save" id="billing-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
+                <input type="reset" value="Cancel" id="billing-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+@section AddScript {
+
+    <partial name="_ToastMessageScriptsPartial" />
+
+    <script>
+
+        const phoneInputField = document.querySelector("#PhoneNumber");
+        const phoneInput = window.intlTelInput(phoneInputField, {
+            preferredCountries: ["us", "in", "au", "de"],
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+        const phoneInputField2 = document.querySelector("#SecondPhoneNumber");
+        const phoneInput2 = window.intlTelInput(phoneInputField2, {
+            preferredCountries: ["us", "in", "au", "de"],
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+    </script>
+    <script>
+
+        const physicianInfoEditBtn = document.querySelector('#physician-info-editbtn');
+        const physicianInfoSubmitBtn = document.querySelector('#physician-info-save');
+        const physicianInfoCancelBtn = document.querySelector('#physician-info-cancel');
+        const physicianInfoInputTags = document.querySelectorAll('.physician-info');
+        const regionList = document.querySelector('#region-list');
+
+
+        physicianInfoEditBtn.addEventListener('click', () => {
+
+            physicianInfoEditBtn.classList.add('d-none');
+
+            physicianInfoSubmitBtn.classList.remove('d-none');
+            physicianInfoSubmitBtn.classList.remove('d-none');
+
+            physicianInfoInputTags.forEach(input => {
+                input.readOnly = false;
+            });
+
+
+        });
+
+        physicianInfoCancelBtn.addEventListener('click', () => {
+
+            physicianInfoSubmitBtn.classList.add('d-none');
+            physicianInfoCancelBtn.classList.add('d-none');
+
+            physicianInfoCancelBtn.classList.remove('d-none');
+
+            physicianInfoInputTags.forEach(input => {
+                input.readOnly = true;
+            });
+
+
+        });
+
+
+        const billingInfoEditBtn = document.querySelector('#billing-info-editbtn');
+        const billingInfoSubmitBtn = document.querySelector('#billing-info-save');
+        const billingInfoCancelBtn = document.querySelector('#billing-info-cancel');
+        const billingInfoInputTags = document.querySelectorAll('.billing-info');
+
+
+        billingInfoEditBtn.addEventListener('click', () => {
+
+            billingInfoEditBtn.classList.add('d-none');
+
+            billingInfoSubmitBtn.classList.remove('d-none');
+            billingInfoCancelBtn.classList.remove('d-none');
+
+            billingInfoInputTags.forEach(input => {
+                input.readOnly = false;
+            });
+
+            regionList.disabled = false;
+        });
+
+        billingInfoCancelBtn.addEventListener('click', () => {
+
+            billingInfoSubmitBtn.classList.add('d-none');
+            billingInfoCancelBtn.classList.add('d-none');
+
+            billingInfoEditBtn.classList.remove('d-none');
+
+            billingInfoInputTags.forEach(input => {
+                input.readOnly = true;
+            });
+
+            regionList.disabled = true;
+        });
+
+    </script>
+
+    <script>
+        const actualPhotoBtn = document.querySelector('#Photo');
+
+        const photoChosen = document.querySelector('#photoSpan');
+
+
+        actualPhotoBtn.addEventListener('change', function () {
+            photoChosen.textContent = '';
+            for (var i = 0; i < this.files.length; i++) {
+                photoChosen.textContent += this.files[i].name + ', ';
+            }
+            photoChosen.textContent = photoChosen.textContent.slice(0, photoChosen.textContent.length - 2);
+
+        });
+
+
+        const actualSignatureBtn = document.querySelector('#Signature');
+
+        const signatureChosen = document.querySelector('#signatureSpan');
+
+
+        actualSignatureBtn.addEventListener('change', function () {
+            signatureChosen.textContent = '';
+            for (var i = 0; i < this.files.length; i++) {
+                signatureChosen.textContent += this.files[i].name + ', ';
+            }
+            signatureChosen.textContent = photoChosen.textContent.slice(0, photoChosen.textContent.length - 2);
+
+        });
+    </script>
+}
+

@@ -132,8 +132,8 @@ public partial class Physician
     [StringLength(50)]
     public string? SyncEmailAddress { get; set; }
 
-    [Column("is_notification_stopped")]
-    public bool? IsNotificationStopped { get; set; }
+    [Column("is_notifications_stopped")]
+    public bool? IsNotificationsStopped { get; set; }
 
     [ForeignKey("AspNetUserId")]
     [InverseProperty("PhysicianAspNetUsers")]

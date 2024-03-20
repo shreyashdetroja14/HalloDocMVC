@@ -100,11 +100,11 @@ namespace HalloDocMVC.Controllers
             bool isNotiStatusUpdated = await _providersService.UpdateNotiStatus(StopNotificationIds);
             if (isNotiStatusUpdated)
             {
-                TempData["SuccessMessage"] = "Mail Sent Successfully";
+                TempData["SuccessMessage"] = "Notification Status Updated Successfully";
             }
             else
             {
-                TempData["ErrorMessage"] = "Failed To Send Mail. Try Again.";
+                TempData["ErrorMessage"] = "Failed To Update Notification Status.";
             }
 
             return RedirectToAction("Index");

@@ -18,9 +18,11 @@ namespace HalloDocRepository.Implementation
             _context = context;
         }
 
-        public  List<Physician> GetAllPhysicians()
+        #region GET
+
+        public List<Physician> GetAllPhysicians()
         {
-            List<Physician> physicians =  _context.Physicians.ToList();
+            List<Physician> physicians = _context.Physicians.ToList();
             return physicians;
         }
 
@@ -35,5 +37,20 @@ namespace HalloDocRepository.Implementation
             var physician = _context.Physicians.FirstOrDefault(x => x.PhysicianId == physicianId);
             return physician;
         }
+
+        #endregion
+
+        #region UPDATE
+
+        public async Task<List<Physician>> Update(List<Physician> physicians)
+        {
+            _context.UpdateRange(physicians);
+            await _context.SaveChangesAsync();
+
+            return physicians;
+        }
+
+
+        #endregion
     }
 }

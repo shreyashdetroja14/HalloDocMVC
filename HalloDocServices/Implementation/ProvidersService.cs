@@ -61,7 +61,7 @@ namespace HalloDocServices.Implementation
         public List<ProviderRowViewModel> GetProvidersList(int regionId)
         {
             var providersFetched = _physicianRepository.GetIQueryablePhysicians();
-            providersFetched = providersFetched.Include(x => x.Role);
+            //providersFetched = providersFetched.Include(x => x.Role);
 
             if(regionId != 0)
             {
@@ -76,7 +76,7 @@ namespace HalloDocServices.Implementation
                 {
                     ProviderId = provider.PhysicianId,
                     ProviderName = provider.FirstName + " " + provider.LastName,
-                    IsNotificationStopped = provider.IsNotificationStopped,
+                    IsNotificationStopped = provider.IsNotificationsStopped,
                     Role = provider.Role?.Name,
                     //On call status
                     OnCallStatus = "unavailable",
@@ -100,13 +100,25 @@ namespace HalloDocServices.Implementation
             return ContactProvider;
         }
 
-        public Task<bool> UpdateNotiStatus(List<int> StopNotificationIds)
+        public async Task<bool> UpdateNotiStatus(List<int> StopNotificationIds)
         {
             var providers = _physicianRepository.GetAllPhysicians();
 
-            var providerNotiToRemove = providers.Where(x => !StopNotificationIds.Contains(x.PhysicianId)).ToList();
-            var providerNotiToAdd = StopNotificationIds.Except(providers.Select(x => x.PhysicianId)).ToList();
+           foreach (var provider in providers)
+            {
+                provider.IsNotificationsStopped = true;
+            }
 
+            providers = providers.Where(x => !StopNotificationIds.Contains(x.PhysicianId)).ToList();
+
+            foreach(var provider in providers)
+            {
+                provider.IsNotificationsStopped = false;
+            }
+
+            await _physicianRepository.Update(providers);
+
+            return true;
         }
     }
 }
