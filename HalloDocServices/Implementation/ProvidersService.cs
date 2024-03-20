@@ -1,4 +1,5 @@
 ﻿using HalloDocEntities.Models;
+using HalloDocRepository.Implementation;
 using HalloDocRepository.Interface;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels.AdminViewModels;
@@ -97,6 +98,15 @@ namespace HalloDocServices.Implementation
             }
 
             return ContactProvider;
+        }
+
+        public Task<bool> UpdateNotiStatus(List<int> StopNotificationIds)
+        {
+            var providers = _physicianRepository.GetAllPhysicians();
+
+            var providerNotiToRemove = providers.Where(x => !StopNotificationIds.Contains(x.PhysicianId)).ToList();
+            var providerNotiToAdd = StopNotificationIds.Except(providers.Select(x => x.PhysicianId)).ToList();
+
         }
     }
 }

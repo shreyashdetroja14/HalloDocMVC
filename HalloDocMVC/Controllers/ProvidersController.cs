@@ -72,12 +72,11 @@ namespace HalloDocMVC.Controllers
                 {
                     ContactProvider.ProviderEmail ?? ""
                 };
-
                 string subject = ContactProvider.Subject ?? "";
-
                 string body = ContactProvider.Message ?? "";
 
                 bool isMailSent = await _mailService.SendMail(receivers, subject, body, false, new List<string>());
+
                 if(isMailSent)
                 {
                     TempData["SuccessMessage"] = "Mail Sent Successfully";
@@ -92,6 +91,22 @@ namespace HalloDocMVC.Controllers
                 TempData["SuccessMessage"] = "Communication Successfull";
 
             }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> StopNotifications(List<int> StopNotificationIds)
+        {
+            bool isNotiStatusUpdated = await _providersService.UpdateNotiStatus(StopNotificationIds);
+            if (isNotiStatusUpdated)
+            {
+                TempData["SuccessMessage"] = "Mail Sent Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Send Mail. Try Again.";
+            }
+
             return RedirectToAction("Index");
         }
     }

@@ -67,6 +67,8 @@ async function GetProvidersListPartial(regionId = 0) {
             partialViewContainer.innerHTML = partialViewHtml;
 
             addEventListnersForPartial();
+
+
         }
 
     } catch (error) {
@@ -124,6 +126,12 @@ selectList.addEventListener('change', async () => {
 
 function addEventListnersForPartial() {
     const contactProviderBtn = document.querySelectorAll('.contact-provider-btn');
+
+    const checkboxes = document.querySelectorAll('.StopNotificationIds');
+    const checkboxesMobile = document.querySelectorAll('.StopNotificationIdsMobile');
+    const saveBtn = document.querySelector('#submit-form');
+    const saveBtnMobile = document.querySelector('#submit-form-mobile');
+
     if (contactProviderBtn != null) {
         contactProviderBtn.forEach(item => {
             item.addEventListener('click', async (event) => {
@@ -135,4 +143,58 @@ function addEventListnersForPartial() {
             })
         })
     }
+
+    const initialcheckboxstate = [];
+
+    checkboxes.forEach(box => {
+        initialcheckboxstate.push(box.checked);
+    })
+    console.log('initialcheckboxstate', initialcheckboxstate.toString());
+
+    const initialcheckboxstatemobile = [];
+
+    checkboxesMobile.forEach(box => {
+        initialcheckboxstatemobile.push(box.checked);
+    })
+    console.log('initialcheckboxstatemobile', initialcheckboxstatemobile.toString());
+
+    if (checkboxes != null) {
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const currentcheckboxesstate = [];
+                checkboxes.forEach(box => {
+                    currentcheckboxesstate.push(box.checked);
+                });
+                console.log('currentcheckboxesstate', currentcheckboxesstate.toString());
+                if (currentcheckboxesstate.toString() === initialcheckboxstate.toString()) {
+                    saveBtn.classList.remove('d-md-inline');
+                }
+                else {
+                    saveBtn.classList.add('d-md-inline');
+
+                }
+            });
+        });
+    }
+
+    if (checkboxesMobile != null) {
+        checkboxesMobile.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const currentcheckboxesstatemobile = [];
+                checkboxesMobile.forEach(box => {
+                    currentcheckboxesstatemobile.push(box.checked);
+                });
+                console.log('currentcheckboxesstatemobile', currentcheckboxesstatemobile.toString());
+                if (currentcheckboxesstatemobile.toString() === initialcheckboxstatemobile.toString()) {
+                    saveBtnMobile.classList.add('d-none');
+                }
+                else {
+                    saveBtnMobile.classList.remove('d-none');
+
+                }
+            });
+        });
+    }
+
+
 }

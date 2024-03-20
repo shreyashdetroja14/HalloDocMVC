@@ -1,48 +1,64 @@
 ﻿@model List<HalloDocServices.ViewModels.AdminViewModels.ProviderRowViewModel>
 
 <div class="providerslist-desktop table-responsive-lg d-none d-md-block">
-    <table class="table mb-0">
-        <thead style="background-color: #FAF9F6;">
-            <tr class="providerslistheader">
-                <th scope="col" class="py-3 text-center" style="max-width: 7rem; min-width: 6rem;">Stop Notification</th>
-                <th scope="col" class="py-3">Provider Name</th>
-                <th scope="col" class="py-3">Role</th>
-                <th scope="col" class="py-3">On Call Status</th>
-                <th scope="col" class="py-3">Status</th>
-                <th scope="col" class="py-3 text-center" style="min-width:12rem">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach(var provider in Model)
-            {
-                <tr>
-                    <td class="p-3 text-center">
-                        <input type="checkbox" name="" id="" class="form-check-input" value="">
-                    </td>
-                    <td class="py-3">
-                        @provider.ProviderName
-                    </td>
-                    <td class="py-3">
-                        @provider.Role
-                    </td>
-                    <td class="py-3">
-                        @provider.OnCallStatus
-                    </td>
-                    <td class="py-3">
-                        @provider.Status
-                    </td>
-                    <td class="py-3 text-center">
-                        <a class="btn btn-outline-info contact-provider-btn" data-provider-id="@provider.ProviderId">
-                            Contact
-                        </a>
-                        <a class="btn btn-outline-info">
-                            Edit
-                        </a>
-                    </td>
+    <form asp-action="StopNotifications">
+        
+        <table class="table mb-0">
+            <thead style="background-color: #FAF9F6;">
+                <tr class="providerslistheader">
+                    <th scope="col" class="py-3 text-center" style="max-width: 7rem; min-width: 6rem;">Stop Notification</th>
+                    <th scope="col" class="py-3">Provider Name</th>
+                    <th scope="col" class="py-3">Role</th>
+                    <th scope="col" class="py-3">On Call Status</th>
+                    <th scope="col" class="py-3">Status</th>
+                    <th scope="col" class="py-3 text-center" style="min-width:12rem">Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="text-end"><input type="submit" id="submit-form" class="btn btn-outline-info d-none" /></td>
+                </tr>
+                @foreach (var provider in Model)
+                {
+                    <tr>
+                        <td class="p-3 text-center">
+                            <input type="checkbox"
+                                   name="StopNotificationIds"
+                                   id="checkbox-dsk-@provider.ProviderId"
+                                   class="form-check-input StopNotificationIds"
+                                   value="@provider.ProviderId"
+                                   checked="@provider.IsNotificationStopped">
+                        </td>
+                        <td class="py-3">
+                            @provider.ProviderName
+                        </td>
+                        <td class="py-3">
+                            @provider.Role
+                        </td>
+                        <td class="py-3">
+                            @provider.OnCallStatus
+                        </td>
+                        <td class="py-3">
+                            @provider.Status
+                        </td>
+                        <td class="py-3 text-center">
+                            <a class="btn btn-outline-info contact-provider-btn" data-provider-id="@provider.ProviderId">
+                                Contact
+                            </a>
+                            <a class="btn btn-outline-info">
+                                Edit
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
 </div>
 
 <div id="modal-container">
@@ -50,51 +66,61 @@
 </div>
 
 <div class="providerslist-mobile d-md-none">
-    <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
-        @foreach(var provider in Model)
-        {
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed d-flex flex-column align-items-start" type="button"
-                            data-bs-toggle="collapse" data-bs-target="#provider-@provider.ProviderId">
+    <form asp-action="StopNotifications">
+        <div class="mb-3 text-end pe-3">
+            <input type="submit" id="submit-form-mobile" class="btn btn-outline-info d-md-none d-none" />
+        </div>
+        <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
+            @foreach (var provider in Model)
+            {
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed d-flex flex-column align-items-start" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#provider-@provider.ProviderId">
 
-                        <div class="mb-3">
-                            <input type="checkbox" name="" id="checkbox-@provider.ProviderId" class="form-check-input" value="@provider.ProviderId">
-                            <span>@provider.ProviderName</span>
-                        </div>
-                        <div>
-                            <span>On Call Status: </span>
-                            <span class="fw-bold">@provider.OnCallStatus</span>
-                        </div>
-                    </button>
-                </h2>
-                <div id="provider-@provider.ProviderId" class="accordion-collapse collapse">
-                    <div class="accordion-body">
-                        <div class="mb-2 d-flex align-items-center">
-                            <span class="material-symbols-outlined text-info me-1">
-                                person_3
-                            </span>
-                            <span class="me-2">Role: </span>
-                            <span>@provider.Role</span>
-                        </div>
-                        <div class="mb-2 d-flex align-items-center">
-                            <span class="material-symbols-outlined text-info me-1">
-                                check_circle
-                            </span>
-                            <span class="me-2">Status: </span>
-                            <span>@provider.Status</span>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <a class="btn btn-outline-info ms-2 contact-provider-btn" data-provider-id="@provider.ProviderId">
-                                Contact
-                            </a>
-                            <a class="btn btn-outline-info ms-2">
-                                Edit
-                            </a>
+                            <div class="mb-3">
+                                <input type="checkbox"
+                                       name="StopNotificationIds"
+                                       id="checkbox-mbl-@provider.ProviderId"
+                                       class="form-check-input StopNotificationIdsMobile"
+                                       value="@provider.ProviderId"
+                                       checked="@provider.IsNotificationStopped">
+                                <span>@provider.ProviderName</span>
+                            </div>
+                            <div>
+                                <span>On Call Status: </span>
+                                <span class="fw-bold">@provider.OnCallStatus</span>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="provider-@provider.ProviderId" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <div class="mb-2 d-flex align-items-center">
+                                <span class="material-symbols-outlined text-info me-1">
+                                    person_3
+                                </span>
+                                <span class="me-2">Role: </span>
+                                <span>@provider.Role</span>
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <span class="material-symbols-outlined text-info me-1">
+                                    check_circle
+                                </span>
+                                <span class="me-2">Status: </span>
+                                <span>@provider.Status</span>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <a class="btn btn-outline-info ms-2 contact-provider-btn" data-provider-id="@provider.ProviderId">
+                                    Contact
+                                </a>
+                                <a class="btn btn-outline-info ms-2">
+                                    Edit
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
+            }
+        </div>
+    </form>
 </div>

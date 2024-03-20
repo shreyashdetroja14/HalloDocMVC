@@ -14,5 +14,7 @@ namespace HalloDocServices.Interface
         List<ProviderRowViewModel> GetProvidersList(int regionId);
 
         ContactProviderViewModel GetContactProvider(ContactProviderViewModel ContactProvider);
+
+        Task<bool> UpdateNotiStatus(List<int> StopNotificationIds);
     }
 }
