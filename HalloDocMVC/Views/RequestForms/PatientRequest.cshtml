@@ -27,6 +27,7 @@
                         <textarea asp-for="Symptoms" class="form-control" placeholder="Enter Symptoms" id="symptoms"
                                   style="height: 100px"></textarea>
                         <label asp-for="Symptoms">Enter Brief Details of Symptoms</label>
+                        <span asp-validation-for="Symptoms"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -34,6 +35,7 @@
                         <input type="text" asp-for="FirstName" class="form-control" id="firstname"
                                placeholder="First Name">
                         <label asp-for="FirstName">First Name</label>
+                        <span asp-validation-for="FirstName"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -41,12 +43,14 @@
                         <input type="text" asp-for="LastName" class="form-control" id="lastname"
                                placeholder="Last Name">
                         <label asp-for="LastName">Last Name</label>
+                        <span asp-validation-for="LastName"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
                         <input type="date" asp-for="DOB" class="form-control" id="dob" placeholder="DOB">
                         <label asp-for="DOB">Date Of Birth</label>
+                        <span asp-validation-for="DOB"></span>
                     </div>
                 </div>
             </div>
@@ -60,6 +64,7 @@
                         <input type="email" asp-for="Email" class="form-control" id="email"
                                placeholder="abc@xyz.pqr">
                         <label asp-for="Email">Email</label>
+                        <span asp-validation-for="Email"></span>
                     </div>
                 </div>
                 <div class="col-sm-6 pb-3">
@@ -74,6 +79,7 @@
                             pattern="[0-9]{10}">
                     </div> -->
                     <input type="tel" asp-for="PhoneNumber" class="form-control w-100" id="phone" />
+
                 </div>
                 <div class="col-sm-6 d-none" id="passfield">
                     <div class="form-floating mb-3">
