@@ -14,13 +14,17 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public int AdminId { get; set; }
 
-        public string? Username { get; set; }
+        public string Username { get; set; } = null!;
 
         public string? Password { get; set; }
 
         public int? Status { get; set; }
 
+        public List<SelectListItem> StatusList { get; set; } = new List<SelectListItem>();
+
         public int? RoleId { get; set; }
+
+        public List<SelectListItem> RoleList { get; set; } = new List<SelectListItem>();
 
         public string? RoleName { get; set; }
 
@@ -30,11 +34,15 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public string Email { get; set; } = null!;
 
-        public string? ConfirmEmail { get; set; }
-
         public string? PhoneNumber { get; set; }
 
-        public List<int> AdminRegions { get; set; } = new List<int>();
+        public string? MedicalLicense { get; set; }
+
+        public string? NPINumber { get; set; }
+
+        public string? SyncEmail { get; set; }
+
+        public List<int> ProviderRegions { get; set; } = new List<int>();
 
         public string? Address1 { get; set; }
 
@@ -50,13 +58,15 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public string? SecondPhoneNumber { get; set; }
 
-        public string? BusinessName { get; set; }
+        public string BusinessName { get; set; } = null!;
 
-        public string? BusinessWebsite { get; set;}
+        public string BusinessWebsite { get; set; } = null!;
 
         public IFormFile? Photo { get; set; }
 
         public IFormFile? Signature { get; set; }
+
+        public string? SignaturePath { get; set; }
 
         public string? AdminNotes { get; set; }
 

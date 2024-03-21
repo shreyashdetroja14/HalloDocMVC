@@ -85,6 +85,12 @@ namespace HalloDocRepository.Implementation
             return role ?? new Role();
         }
 
+        public List<Role> GetAllRoles()
+        {
+            var roles = _context.Roles.ToList();
+            return roles;
+        }
+
         #endregion
     }
 }

@@ -31,6 +31,12 @@ namespace HalloDocRepository.Implementation
             var physicians = _context.Physicians.AsQueryable();
             return physicians;
         }
+        
+        public IQueryable<Physician> GetIQueryablePhysicians(int physicianId)
+        {
+            var physician = _context.Physicians.AsQueryable().Where(x => x.PhysicianId == physicianId);
+            return physician;
+        }
 
         public Physician GetPhysicianByPhysicianId(int physicianId)
         {
@@ -50,6 +56,65 @@ namespace HalloDocRepository.Implementation
             return physicians;
         }
 
+        public async Task<Physician> Update(Physician physician)
+        {
+            _context.Update(physician);
+            await _context.SaveChangesAsync();
+
+            return physician;
+        }
+
+
+        #endregion
+
+
+        #region PHYSICIAN REGION
+
+        #region GET
+
+        public List<PhysicianRegion> GetRegionsByPhysicianId(int physicianId)
+        {
+            var physicianRegions = _context.PhysicianRegions.Where(x => x.PhysicianId == physicianId).ToList();
+            return physicianRegions;
+        }
+
+
+
+        #endregion
+
+        #region UPDATE
+
+        #endregion
+
+        #region ADD
+
+        public async Task<List<int>> AddPhysicianRegionsAsync(List<int> regionsToAdd, int physicianId)
+        {
+            foreach (var regionId in regionsToAdd)
+            {
+                _context.PhysicianRegions.Add(new PhysicianRegion { PhysicianId = physicianId, RegionId = regionId });
+            }
+
+            await _context.SaveChangesAsync();
+
+            return regionsToAdd;
+        }
+
+
+
+        #endregion
+
+        #region REMOVE
+
+        public async Task<List<PhysicianRegion>> RemovePhysicianRegionsAsync(List<PhysicianRegion> regionsToRemove)
+        {
+            _context.PhysicianRegions.RemoveRange(regionsToRemove);
+            await _context.SaveChangesAsync();
+
+            return regionsToRemove;
+        }
+
+        #endregion
 
         #endregion
     }

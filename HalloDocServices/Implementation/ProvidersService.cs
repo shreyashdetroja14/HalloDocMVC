@@ -3,6 +3,8 @@ using HalloDocRepository.Implementation;
 using HalloDocRepository.Interface;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels.AdminViewModels;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -22,12 +24,14 @@ namespace HalloDocServices.Implementation
 
     public class ProvidersService : IProvidersService
     {
+        private readonly IUserRepository _userRepository;
         private readonly IPhysicianRepository _physicianRepository;
         private readonly INotesAndLogsRepository _notesAndLogsRepository;
         private readonly ICommonRepository _commonRepository;
 
-        public ProvidersService(IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository)
+        public ProvidersService(IUserRepository userRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository)
         {
+            _userRepository = userRepository;
             _physicianRepository = physicianRepository;
             _notesAndLogsRepository = notesAndLogsRepository;
             _commonRepository = commonRepository;
@@ -61,9 +65,9 @@ namespace HalloDocServices.Implementation
         public List<ProviderRowViewModel> GetProvidersList(int regionId)
         {
             var providersFetched = _physicianRepository.GetIQueryablePhysicians();
-            //providersFetched = providersFetched.Include(x => x.Role);
+            providersFetched = providersFetched.Include(x => x.Role);
 
-            if(regionId != 0)
+            if (regionId != 0)
             {
                 providersFetched = providersFetched.Where(x => x.RegionId == regionId);
             }
@@ -76,7 +80,7 @@ namespace HalloDocServices.Implementation
                 {
                     ProviderId = provider.PhysicianId,
                     ProviderName = provider.FirstName + " " + provider.LastName,
-                    IsNotificationStopped = provider.IsNotificationsStopped,
+                    IsNotificationStopped = provider.IsNotificationStopped,
                     Role = provider.Role?.Name,
                     //On call status
                     OnCallStatus = "unavailable",
@@ -104,19 +108,250 @@ namespace HalloDocServices.Implementation
         {
             var providers = _physicianRepository.GetAllPhysicians();
 
-           foreach (var provider in providers)
+            foreach (var provider in providers)
             {
-                provider.IsNotificationsStopped = true;
+                provider.IsNotificationStopped = true;
             }
 
             providers = providers.Where(x => !StopNotificationIds.Contains(x.PhysicianId)).ToList();
 
-            foreach(var provider in providers)
+            foreach (var provider in providers)
             {
-                provider.IsNotificationsStopped = false;
+                provider.IsNotificationStopped = false;
             }
 
             await _physicianRepository.Update(providers);
+
+            return true;
+        }
+
+        public EditProviderViewModel GetEditProviderViewModel(EditProviderViewModel EditProvider)
+        {
+            var providers = _physicianRepository.GetIQueryablePhysicians(EditProvider.ProviderId);
+            var provider = providers.Include(x => x.AspNetUser).Include(x => x.Role).Include(x => x.Region).Include(x => x.PhysicianRegions).FirstOrDefault();
+            
+
+            if (provider != null)
+            {
+                EditProvider.Username = provider.AspNetUser?.UserName;
+                EditProvider.Status = provider.Status;
+
+                EditProvider.StatusList.Add(new SelectListItem
+                {
+                    Value = "",
+                    Text = "Set a status",
+                    Selected = true
+                });
+
+                EditProvider.StatusList = Enum.GetValues(typeof(Status))
+                                        .Cast<Status>()
+                                        .Select(status => new SelectListItem
+                                        {
+                                            Value = ((int)status).ToString(),
+                                            Text = status.ToString(),
+                                            Selected = (status == (provider.Status != null ? ((Status)provider.Status) : null))
+                                        }).ToList();
+
+                EditProvider.RoleId = provider.RoleId;
+                
+                var rolesList = _commonRepository.GetAllRoles();
+                foreach(var role in rolesList )
+                {
+                    EditProvider.RoleList.Add(new SelectListItem()
+                    {
+                        Value = role.RoleId.ToString(),
+                        Text = role.Name,
+                        Selected = (role.RoleId == provider.RoleId)
+                    });
+                }
+
+                EditProvider.FirstName = provider.FirstName;
+                EditProvider.LastName = provider.LastName;
+                EditProvider.Email = provider.Email;
+                EditProvider.MedicalLicense = provider.MedicalLicense;
+                EditProvider.NPINumber = provider.NpiNumber;
+                EditProvider.PhoneNumber = provider.Mobile;
+                EditProvider.SyncEmail = provider.SyncEmailAddress;
+
+                foreach(var providerRegion in provider.PhysicianRegions)
+                {
+                    EditProvider.ProviderRegions.Add(providerRegion.RegionId);
+                }
+
+                EditProvider.Address1 = provider.Address1;
+                EditProvider.Address2 = provider.Address2;
+                EditProvider.City = provider.City;
+                EditProvider.RegionId = provider.RegionId;
+
+                var regions = _commonRepository.GetAllRegions();
+
+                foreach (var region in regions)
+                {
+                    EditProvider.StateList.Add(new SelectListItem()
+                    {
+                        Text = region.Name,
+                        Value = region.RegionId.ToString(),
+                        Selected = (region.RegionId == provider.RegionId)
+                    });
+                }
+
+                EditProvider.ZipCode = provider.ZipCode;
+                EditProvider.SecondPhoneNumber = provider.AltPhone;
+                EditProvider.BusinessName = provider.BusinessName;
+                EditProvider.BusinessWebsite = provider.BusinessWebsite;
+                EditProvider.AdminNotes = provider.AdminNotes;
+
+                EditProvider.SignaturePath = provider.Signature;
+
+                EditProvider.IsContractorDoc = provider.IsAgreementDoc;
+                EditProvider.IsBackgroundDoc = provider.IsBackgroundDoc;
+                //EditProvider.IsHippaDoc = provider.IsTrainingDoc
+                EditProvider.IsNonDisclosureDoc = provider.IsNonDisclosureDoc;
+                EditProvider.IsLicenseDoc = provider.IsLicenseDoc;
+            }
+
+            return EditProvider;
+
+        }
+
+        public async Task<bool> EditAccountInfo(EditProviderViewModel AccountInfo)
+        {
+            var provider = _physicianRepository.GetIQueryablePhysicians(AccountInfo.ProviderId).Include(x => x.AspNetUser).FirstOrDefault();
+            var aspnetUser = provider?.AspNetUser;
+
+            if(provider == null)
+            {
+                return false;
+            }
+
+            provider.Status = (short?)AccountInfo.Status;
+            provider.RoleId = AccountInfo.RoleId;
+
+            await _physicianRepository.Update(provider);
+
+            if(aspnetUser == null)
+            {
+                return false;
+            }
+
+            aspnetUser.UserName = AccountInfo.Username;
+            if(AccountInfo.Password != null)
+            {
+                aspnetUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(AccountInfo.Password);
+            }
+
+            await _userRepository.UpdateAspNetUser(aspnetUser);
+
+            return true;
+        }
+        
+        public async Task<bool> EditPhysicianInfo(EditProviderViewModel PhysicianInfo)
+        {
+            var provider = _physicianRepository.GetIQueryablePhysicians(PhysicianInfo.ProviderId).Include(x => x.PhysicianRegions).FirstOrDefault();
+            var providerRegions = provider?.PhysicianRegions.ToList();
+
+            if (provider == null)
+            {
+                return false;
+            }
+
+            provider.FirstName = PhysicianInfo.FirstName;
+            provider.LastName = PhysicianInfo.LastName;
+            provider.Email = PhysicianInfo.Email;
+            provider.Mobile = PhysicianInfo.PhoneNumber;
+            provider.MedicalLicense = PhysicianInfo.MedicalLicense;
+            provider.NpiNumber = PhysicianInfo.NPINumber;
+            provider.SyncEmailAddress = PhysicianInfo.SyncEmail;
+
+            await _physicianRepository.Update(provider);
+
+            var physicianRegions = _physicianRepository.GetRegionsByPhysicianId(provider.PhysicianId);
+
+            if(physicianRegions == null)
+            {
+                return false;
+            }
+
+            var regionsToRemove = physicianRegions?.Where(x => !PhysicianInfo.ProviderRegions.Contains(x.RegionId)).ToList();
+            var regionsToAdd = PhysicianInfo.ProviderRegions.Except(physicianRegions.Select(x => x.RegionId)).ToList();
+
+            if (regionsToAdd.Count > 0)
+            {
+                regionsToAdd = await _physicianRepository.AddPhysicianRegionsAsync(regionsToAdd, provider.PhysicianId);
+            }
+
+            if (regionsToRemove != null && regionsToRemove.Count > 0)
+            {
+                regionsToRemove = await _physicianRepository.RemovePhysicianRegionsAsync(regionsToRemove);
+            }
+
+            return true;
+        }
+
+        public async Task<bool> EditBillingInfo(EditProviderViewModel BillingInfo)
+        {
+            var provider = _physicianRepository.GetPhysicianByPhysicianId(BillingInfo.ProviderId);
+            if(provider == null) { return false; }  
+
+            provider.Address1 = BillingInfo.Address1;
+            provider.Address2 = BillingInfo.Address2;
+            provider.City = BillingInfo.City;
+            provider.RegionId = BillingInfo.RegionId;
+            provider.ZipCode = BillingInfo.ZipCode;
+            provider.AltPhone = BillingInfo.SecondPhoneNumber;
+
+            await _physicianRepository.Update(provider);
+
+            return true;
+        }
+
+        public string UploadFilesToServer(IFormFile? UploadFile, int providerId)
+        {
+                if(UploadFile == null) { return string.Empty; }
+
+                string FilePath = "wwwroot\\Upload\\Physician\\" + providerId;
+                string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                string newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
+
+                string fileNameWithPath = Path.Combine(path, newfilename);
+                string file = FilePath.Replace("wwwroot\\Upload\\Physician\\", "/Upload/Physician/") + "/" + newfilename;
+
+                using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                {
+                    UploadFile.CopyTo(stream);
+                }
+            
+            return file;
+        }
+
+        public async Task<bool> EditProfileInfo(EditProviderViewModel ProfileInfo)
+        {
+            var provider = _physicianRepository.GetPhysicianByPhysicianId(ProfileInfo.ProviderId);
+            if (provider == null) { return false; }
+
+            provider.BusinessName = ProfileInfo.BusinessName;
+            provider.BusinessWebsite = ProfileInfo.BusinessWebsite;
+            provider.AdminNotes = ProfileInfo.AdminNotes;
+
+            string photoFileName = UploadFilesToServer(ProfileInfo.Photo, ProfileInfo.ProviderId);
+            if(photoFileName != string.Empty) 
+            {  
+                provider.Photo = photoFileName;
+            }
+
+            string signatureFileName = UploadFilesToServer(ProfileInfo.Signature, ProfileInfo.ProviderId);
+            if (signatureFileName != string.Empty)
+            {
+                provider.Signature = signatureFileName;
+            }
+
+            await _physicianRepository.Update(provider);
 
             return true;
         }

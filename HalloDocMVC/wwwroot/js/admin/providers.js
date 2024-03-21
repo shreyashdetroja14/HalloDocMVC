@@ -1,7 +1,6 @@
 ﻿const selectList = document.querySelector('.selectlist');
 
 document.addEventListener("DOMContentLoaded", async () => {
-
     await GetProvidersListPartial(0);
     console.log("DOM is loaded and ready!");
 });

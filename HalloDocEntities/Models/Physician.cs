@@ -132,8 +132,8 @@ public partial class Physician
     [StringLength(50)]
     public string? SyncEmailAddress { get; set; }
 
-    [Column("is_notifications_stopped")]
-    public bool? IsNotificationsStopped { get; set; }
+    [Column("is_notification_stopped")]
+    public bool? IsNotificationStopped { get; set; }
 
     [ForeignKey("AspNetUserId")]
     [InverseProperty("PhysicianAspNetUsers")]
@@ -142,6 +142,9 @@ public partial class Physician
     [ForeignKey("ModifiedBy")]
     [InverseProperty("PhysicianModifiedByNavigations")]
     public virtual AspNetUser? ModifiedByNavigation { get; set; }
+
+    [InverseProperty("Physician")]
+    public virtual ICollection<PhysicianRegion> PhysicianRegions { get; set; } = new List<PhysicianRegion>();
 
     [ForeignKey("RegionId")]
     [InverseProperty("Physicians")]

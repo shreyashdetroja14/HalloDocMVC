@@ -17,11 +17,27 @@ namespace HalloDocRepository.Interface
 
         IQueryable<Physician> GetIQueryablePhysicians();
 
+        IQueryable<Physician> GetIQueryablePhysicians(int physicianId);
+
+
+
         #endregion
 
         #region UPDATE
 
         Task<List<Physician>> Update(List<Physician> physicians);
+
+        Task<Physician> Update(Physician physician);
+
+        #endregion
+
+        #region PHYSICIAN REGION
+
+        List<PhysicianRegion> GetRegionsByPhysicianId(int physicianId);
+
+        Task<List<int>> AddPhysicianRegionsAsync(List<int> regionsToAdd, int physicianId);
+
+        Task<List<PhysicianRegion>> RemovePhysicianRegionsAsync(List<PhysicianRegion> regionsToRemove);
 
         #endregion
     }

@@ -8,6 +8,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <link href="@Url.Content("~/css/requestform.css")" rel="stylesheet" type="text/css" />
+    <style>
+        #sig-canvas {
+            border: 2px dotted #CCCCCC;
+            border-radius: 15px;
+            cursor: crosshair;
+        }
+    </style>
 }
 
 @model HalloDocServices.ViewModels.AdminViewModels.EditProviderViewModel
@@ -16,44 +23,45 @@
 
     <partial name="_NavbarLinks"></partial>
 
-    <div class="container p-4">
+    <div class="container-xl p-4">
         <div class=" back p-0 pb-4 d-flex justify-content-between">
-            <h2>Profile</h2>
-            <a class="btn back-btn">
+            <h2>Edit Physician Account</h2>
+            <a asp-action="Index" class="btn back-btn">
                 <img src="/images/backIcon.svg" alt="">
                 Back
             </a>
         </div>
 
-        <form asp-action="ResetPassword" class="bg-white p-4 request-form rounded-0 shadow-none">
-            <input type="number" asp-for="AdminId" hidden>
+        <form asp-action="EditAccountInfo" class="bg-white p-4 request-form rounded-0 shadow-none">
+            <input type="number" asp-for="ProviderId" hidden>
             <div class="info mb-4">
                 <h4 class="mb-3">Account Information</h4>
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
-                            <input type="text" asp-for="Username" class="form-control" id="Username"
+                            <input type="text" asp-for="Username" class="form-control account-info" id="Username"
                                    placeholder="Username" readonly>
                             <label asp-for="Username">Username</label>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
-                            <input type="password" asp-for="Password" class="form-control" id="Password"
-                                   placeholder="Password">
+                            <input type="password" asp-for="Password" class="form-control account-info" id="Password"
+                                   placeholder="Password" readonly>
                             <label asp-for="Password">Password</label>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
-                            <input type="text" asp-for="Status" class="form-control" id="Status" placeholder="Status" readonly>
-                            <label asp-for="Status">Status</label>
+                            <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="@Model.StatusList" disabled>
+                                <option value="">Set a status</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class=" mb-3">
-                            <select asp-for="RoleId" id="role-list" class="form-select p-3" disabled>
-                                <option value="@Model.RoleId">@Model.RoleName</option>
+                            <select asp-for="RoleId" id="role-list" class="form-select p-3 account-info" asp-items="@Model.RoleList" disabled>
+                                
                             </select>
                         </div>
                     </div>
@@ -61,13 +69,15 @@
             </div>
 
             <div class="submit d-flex justify-content-end">
-                <input type="submit" value="Reset Password" id="reset-pass" class="btn btn-outline-info py-2 px-3 ms-3" />
+                <button type="button" id="reset-pass" class="btn btn-outline-info py-2 px-3 ms-3 d-none">Reset Password</button>
+                <button type="button" id="account-info-editbtn" class="btn btn-outline-info py-2 px-3 ms-3">Edit</button>
+                <input type="submit" value="Save" id="account-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
+                <input type="reset" value="Cancel" id="account-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
             </div>
-
         </form>
 
         <form asp-action="EditPhysicianInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
-            <input type="number" asp-for="AdminId" hidden>
+            <input type="number" asp-for="ProviderId" hidden>
             <div class="info mb-4">
                 <h4 class="mb-3">Physician Information</h4>
                 <div class="row">
@@ -91,25 +101,40 @@
                             <label asp-for="Email">Email</label>
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="email" asp-for="ConfirmEmail" class="form-control physician-info" id="ConfirmEmail" placeholder="ConfirmEmail" readonly>
-                            <label asp-for="ConfirmEmail">ConfirmEmail</label>
-                        </div>
-                    </div>
                     <div class="col-sm-6 pb-3">
                         <input type="tel" asp-for="PhoneNumber" class="form-control w-100 physician-info" id="PhoneNumber" readonly />
                     </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="MedicalLicense" class="form-control physician-info" id="MedicalLicense" placeholder="MedicalLicense" readonly>
+                            <label asp-for="MedicalLicense">Medical License</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="NPINumber" class="form-control physician-info" id="NPINumber" placeholder="NPINumber" readonly>
+                            <label asp-for="NPINumber">NPI Number</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="email" asp-for="SyncEmail" class="form-control physician-info" id="SyncEmail" placeholder="SyncEmail" readonly>
+                            <label asp-for="SyncEmail">Sync Email</label>
+                        </div>
+                    </div>
+                   
                     <div class="col-sm-6 pb-3">
                         @foreach (var state in Model.StateList)
                         {
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input"
+                                <input class="form-check-input physician-info-checkbox"
                                        type="checkbox"
                                        value="@state.Value"
                                        id="region-@state.Value"
-                                       name="AdminRegions"
-                                       checked="@(Model.AdminRegions.Contains(int.Parse(state.Value)) ? "true" : false)">
+                                       name="ProviderRegions"
+                                       checked="@(Model.ProviderRegions.Contains(int.Parse(state.Value)) ? "true" : false)"
+                                       disabled
+                                >
                                 <label class="form-check-label" for="region-@state.Value">
                                     @state.Text
                                 </label>
@@ -127,8 +152,8 @@
 
         </form>
 
-        <form asp-action="EditBilling" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
-            <input type="number" asp-for="AdminId" hidden>
+        <form asp-action="EditBillingInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
+            <input type="number" asp-for="ProviderId" hidden>
             <div class="info mb-4">
                 <h4 class="mb-3">Mailing & Billing Information</h4>
                 <div class="row">
@@ -178,28 +203,28 @@
 
         </form>
 
-        <form asp-action="EditProfile" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
-            <input type="number" asp-for="AdminId" hidden>
+        <form asp-action="EditProfileInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none" enctype="multipart/form-data">
+            <input type="number" asp-for="ProviderId" hidden>
             <div class="info mb-4">
                 <h4 class="mb-3">Provider Profile</h4>
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
-                            <input type="text" asp-for="BusinessName" class="form-control billing-info" id="BusinessName"
+                            <input type="text" asp-for="BusinessName" class="form-control profile-info" id="BusinessName"
                                    placeholder="BusinessName" readonly>
                             <label asp-for="BusinessName">Business Name</label>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
-                            <input type="text" asp-for="BusinessWebsite" class="form-control billing-info" id="BusinessWebsite"
+                            <input type="text" asp-for="BusinessWebsite" class="form-control profile-info" id="BusinessWebsite"
                                    placeholder="BusinessWebsite" readonly>
                             <label asp-for="BusinessWebsite">Business Website</label>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="input-group mb-3">
-                            <input type="file" asp-for="Photo" class="form-control px-3 py-2 file-upload" id="Photo">
+                            <input type="file" accept=".jpg,.jpeg,.png" asp-for="Photo" class="form-control px-3 py-2 file-upload profile-info-upload" id="Photo" disabled>
 
                             <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
                                    asp-for="Photo">
@@ -212,7 +237,7 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="input-group mb-3">
-                            <input type="file" asp-for="Signature" class="form-control px-3 py-2 file-upload" id="Signature">
+                            <input type="file" accept=".jpg,.jpeg,.png" asp-for="Signature" class="form-control px-3 py-2 file-upload profile-info-upload" id="Signature" disabled>
 
                             <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
                                    asp-for="Signature">
@@ -221,28 +246,57 @@
                                     <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
                                 </div>
                             </label>
+                            <button type="button" class="btn btn-outline-info mt-3 p-3 rounded-2">Create signature</button>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <canvas id="sig-canvas" style="width: 100%" height="160">
+                                            
+                                        </canvas>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button type="button" class="btn btn-primary" id="sig-submitBtn">Submit Signature</button>
+                                        <button type="button" class="btn btn-default" id="sig-clearBtn">Clear Signature</button>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <textarea id="sig-dataUrl" class="form-control" rows="5">Data URL for your signature will go here!</textarea>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <img id="sig-image" src="" alt="Your signature will go here!" />
+                                    </div>
+                                </div>
+                            </div>
+                            
                         </div>
+                        @if (Model.SignaturePath != null)
+                        {
+                            <img src="@Model.SignaturePath" class="mb-3" style="height: 100px; width: 100px;" />
+                        }
+                        
                     </div>
                     <div class="col-12">
                         <div class="form-floating mb-3">
-                            <textarea asp-for="AdminNotes" class="form-control" placeholder="Enter Symptoms" id="AdminNotes"
-                                      style="height: 150px"></textarea>
+                            <textarea asp-for="AdminNotes" class="form-control profile-info" placeholder="Enter Symptoms" id="AdminNotes"
+                                      style="height: 150px" readonly></textarea>
                             <label asp-for="AdminNotes">Admin Notes</label>
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" asp-for="ZipCode" class="form-control billing-info" id="ZipCode" placeholder="ZipCode" readonly>
-                            <label asp-for="ZipCode">ZipCode</label>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
 
             <div class="submit d-flex justify-content-end">
-                <button type="button" id="billing-info-editbtn" class="btn btn-outline-info py-2 px-3 ms-3">Edit</button>
-                <input type="submit" value="Save" id="billing-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
-                <input type="reset" value="Cancel" id="billing-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
+                <button type="button" id="profile-info-editbtn" class="btn btn-outline-info py-2 px-3 ms-3">Edit</button>
+                <input type="submit" value="Save" id="profile-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
+                <input type="reset" value="Cancel" id="profile-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
             </div>
 
         </form>
@@ -256,19 +310,154 @@
 @section AddScript {
 
     <partial name="_ToastMessageScriptsPartial" />
+    <script>
+        (function () {
+            window.requestAnimFrame = (function (callback) {
+                return window.requestAnimationFrame ||
+                    window.webkitRequestAnimationFrame ||
+                    window.mozRequestAnimationFrame ||
+                    window.oRequestAnimationFrame ||
+                    window.msRequestAnimaitonFrame ||
+                    function (callback) {
+                        window.setTimeout(callback, 1000 / 60);
+                    };
+            })();
 
+            var canvas = document.getElementById("sig-canvas");
+            var ctx = canvas.getContext("2d");
+            ctx.strokeStyle = "#222222";
+            ctx.lineWidth = 4;
+
+            var drawing = false;
+            var mousePos = {
+                x: 0,
+                y: 0
+            };
+            var lastPos = mousePos;
+
+            canvas.addEventListener("mousedown", function (e) {
+                drawing = true;
+                lastPos = getMousePos(canvas, e);
+            }, false);
+
+            canvas.addEventListener("mouseup", function (e) {
+                drawing = false;
+            }, false);
+
+            canvas.addEventListener("mousemove", function (e) {
+                mousePos = getMousePos(canvas, e);
+            }, false);
+
+            // Add touch event support for mobile
+            canvas.addEventListener("touchstart", function (e) {
+
+            }, false);
+
+            canvas.addEventListener("touchmove", function (e) {
+                var touch = e.touches[0];
+                var me = new MouseEvent("mousemove", {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                canvas.dispatchEvent(me);
+            }, false);
+
+            canvas.addEventListener("touchstart", function (e) {
+                mousePos = getTouchPos(canvas, e);
+                var touch = e.touches[0];
+                var me = new MouseEvent("mousedown", {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                canvas.dispatchEvent(me);
+            }, false);
+
+            canvas.addEventListener("touchend", function (e) {
+                var me = new MouseEvent("mouseup", {});
+                canvas.dispatchEvent(me);
+            }, false);
+
+            function getMousePos(canvasDom, mouseEvent) {
+                var rect = canvasDom.getBoundingClientRect();
+                return {
+                    x: mouseEvent.clientX - rect.left,
+                    y: mouseEvent.clientY - rect.top
+                }
+            }
+
+            function getTouchPos(canvasDom, touchEvent) {
+                var rect = canvasDom.getBoundingClientRect();
+                return {
+                    x: touchEvent.touches[0].clientX - rect.left,
+                    y: touchEvent.touches[0].clientY - rect.top
+                }
+            }
+
+            function renderCanvas() {
+                if (drawing) {
+                    ctx.moveTo(lastPos.x, lastPos.y);
+                    ctx.lineTo(mousePos.x, mousePos.y);
+                    ctx.stroke();
+                    lastPos = mousePos;
+                }
+            }
+
+            // Prevent scrolling when touching the canvas
+            document.body.addEventListener("touchstart", function (e) {
+                if (e.target == canvas) {
+                    e.preventDefault();
+                }
+            }, false);
+            document.body.addEventListener("touchend", function (e) {
+                if (e.target == canvas) {
+                    e.preventDefault();
+                }
+            }, false);
+            document.body.addEventListener("touchmove", function (e) {
+                if (e.target == canvas) {
+                    e.preventDefault();
+                }
+            }, false);
+
+            (function drawLoop() {
+                requestAnimFrame(drawLoop);
+                renderCanvas();
+            })();
+
+            function clearCanvas() {
+                canvas.width = canvas.width;
+            }
+
+            // Set up the UI
+            var sigText = document.getElementById("sig-dataUrl");
+            var sigImage = document.getElementById("sig-image");
+            var clearBtn = document.getElementById("sig-clearBtn");
+            var submitBtn = document.getElementById("sig-submitBtn");
+            clearBtn.addEventListener("click", function (e) {
+                clearCanvas();
+                sigText.innerHTML = "Data URL for your signature will go here!";
+                sigImage.setAttribute("src", "");
+            }, false);
+            submitBtn.addEventListener("click", function (e) {
+                var dataUrl = canvas.toDataURL();
+                sigText.innerHTML = dataUrl;
+                sigImage.setAttribute("src", dataUrl);
+            }, false);
+
+        })();
+    </script>
     <script>
 
         const phoneInputField = document.querySelector("#PhoneNumber");
         const phoneInput = window.intlTelInput(phoneInputField, {
-            preferredCountries: ["us", "in", "au", "de"],
+            preferredCountries: ["in"],
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
 
         const phoneInputField2 = document.querySelector("#SecondPhoneNumber");
         const phoneInput2 = window.intlTelInput(phoneInputField2, {
-            preferredCountries: ["us", "in", "au", "de"],
+            preferredCountries: ["in"],
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
@@ -276,11 +465,61 @@
     </script>
     <script>
 
+        const accountInfoEditBtn = document.querySelector('#account-info-editbtn');
+        const accountInfoSubmitBtn = document.querySelector('#account-info-save');
+        const accountInfoCancelBtn = document.querySelector('#account-info-cancel');
+        const accountInfoInputTags = document.querySelectorAll('.account-info');
+        const passwordInput = document.querySelector('#Password');
+        const roleList = document.querySelector('#role-list');
+        const statusList = document.querySelector('#status-list');
+        const resetPassBtn = document.querySelector('#reset-pass');
+
+
+        accountInfoEditBtn.addEventListener('click', () => {
+
+            accountInfoEditBtn.classList.add('d-none');
+
+            accountInfoSubmitBtn.classList.remove('d-none');
+            accountInfoCancelBtn.classList.remove('d-none');
+            resetPassBtn.classList.remove('d-none');
+
+            accountInfoInputTags.forEach(input => {
+                input.readOnly = false;
+            });
+
+            roleList.disabled = false;
+            statusList.disabled = false;
+
+            passwordInput.readOnly = true;
+        });
+
+        accountInfoCancelBtn.addEventListener('click', () => {
+
+            accountInfoSubmitBtn.classList.add('d-none');
+            accountInfoCancelBtn.classList.add('d-none');
+            resetPassBtn.classList.add('d-none');
+
+            accountInfoEditBtn.classList.remove('d-none');
+
+            accountInfoInputTags.forEach(input => {
+                input.readOnly = true;
+            });
+
+            roleList.disabled = true;
+            statusList.disabled = true;
+        });
+
+        resetPassBtn.addEventListener('click', () => {
+            passwordInput.readOnly = false;
+            resetPassBtn.classList.add('d-none');
+        })
+
+
         const physicianInfoEditBtn = document.querySelector('#physician-info-editbtn');
         const physicianInfoSubmitBtn = document.querySelector('#physician-info-save');
         const physicianInfoCancelBtn = document.querySelector('#physician-info-cancel');
         const physicianInfoInputTags = document.querySelectorAll('.physician-info');
-        const regionList = document.querySelector('#region-list');
+        const physicianInfoCheckboxes = document.querySelectorAll('.physician-info-checkbox');
 
 
         physicianInfoEditBtn.addEventListener('click', () => {
@@ -288,12 +527,15 @@
             physicianInfoEditBtn.classList.add('d-none');
 
             physicianInfoSubmitBtn.classList.remove('d-none');
-            physicianInfoSubmitBtn.classList.remove('d-none');
+            physicianInfoCancelBtn.classList.remove('d-none');
 
             physicianInfoInputTags.forEach(input => {
                 input.readOnly = false;
             });
 
+            physicianInfoCheckboxes.forEach(checkbox => {
+                checkbox.disabled = false;
+            });
 
         });
 
@@ -302,13 +544,15 @@
             physicianInfoSubmitBtn.classList.add('d-none');
             physicianInfoCancelBtn.classList.add('d-none');
 
-            physicianInfoCancelBtn.classList.remove('d-none');
+            physicianInfoEditBtn.classList.remove('d-none');
 
             physicianInfoInputTags.forEach(input => {
                 input.readOnly = true;
             });
 
-
+            physicianInfoCheckboxes.forEach(checkbox => {
+                checkbox.disabled = true;
+            })
         });
 
 
@@ -316,6 +560,7 @@
         const billingInfoSubmitBtn = document.querySelector('#billing-info-save');
         const billingInfoCancelBtn = document.querySelector('#billing-info-cancel');
         const billingInfoInputTags = document.querySelectorAll('.billing-info');
+        const regionList = document.querySelector('#region-list');
 
 
         billingInfoEditBtn.addEventListener('click', () => {
@@ -346,36 +591,80 @@
             regionList.disabled = true;
         });
 
-    </script>
 
-    <script>
-        const actualPhotoBtn = document.querySelector('#Photo');
+        const profileInfoEditBtn = document.querySelector('#profile-info-editbtn');
+        const profileInfoSubmitBtn = document.querySelector('#profile-info-save');
+        const profileInfoCancelBtn = document.querySelector('#profile-info-cancel');
+        const profileInfoInputTags = document.querySelectorAll('.profile-info');
+        const profileInfoUploads = document.querySelectorAll('.profile-info-upload');
+        const profileInfoUploadLables = document.querySelectorAll('.upload-label');
 
-        const photoChosen = document.querySelector('#photoSpan');
 
+        profileInfoEditBtn.addEventListener('click', () => {
 
-        actualPhotoBtn.addEventListener('change', function () {
-            photoChosen.textContent = '';
-            for (var i = 0; i < this.files.length; i++) {
-                photoChosen.textContent += this.files[i].name + ', ';
-            }
-            photoChosen.textContent = photoChosen.textContent.slice(0, photoChosen.textContent.length - 2);
+            profileInfoEditBtn.classList.add('d-none');
+
+            profileInfoSubmitBtn.classList.remove('d-none');
+            profileInfoCancelBtn.classList.remove('d-none');
+
+            profileInfoInputTags.forEach(input => {
+                input.readOnly = false;
+            });
+
+            profileInfoUploads.forEach(input => {
+                input.disabled = false;
+            });
+
+            profileInfoUploadLables.forEach(label => {
+                label.classList.add('bg-white');
+            });
+        });
+
+        profileInfoCancelBtn.addEventListener('click', () => {
+
+            profileInfoSubmitBtn.classList.add('d-none');
+            profileInfoCancelBtn.classList.add('d-none');
+
+            profileInfoEditBtn.classList.remove('d-none');
+
+            profileInfoInputTags.forEach(input => {
+                input.readOnly = true;
+            });
+
+            profileInfoUploads.forEach(input => {
+                input.disabled = true;
+            });
+
+            profileInfoUploadLables.forEach(label => {
+                label.classList.remove('bg-white');
+            });
 
         });
 
+    </script>
 
-        const actualSignatureBtn = document.querySelector('#Signature');
+    <script>
+        const photoInput = document.getElementById('Photo');
+        const signatureInput = document.getElementById('Signature');
+        const photoSpan = document.getElementById('photoSpan');
+        const signatureSpan = document.getElementById('signatureSpan');
 
-        const signatureChosen = document.querySelector('#signatureSpan');
-
-
-        actualSignatureBtn.addEventListener('change', function () {
-            signatureChosen.textContent = '';
-            for (var i = 0; i < this.files.length; i++) {
-                signatureChosen.textContent += this.files[i].name + ', ';
+        photoInput.addEventListener('change', (event) => {
+            const photoFile = event.target.files[0];
+            if (photoFile) {
+                photoSpan.textContent = photoFile.name;
+            } else {
+                photoSpan.textContent = "Select File"; 
             }
-            signatureChosen.textContent = photoChosen.textContent.slice(0, photoChosen.textContent.length - 2);
+        });
 
+        signatureInput.addEventListener('change', (event) => {
+            const signatureFile = event.target.files[0];
+            if (signatureFile) {
+                signatureSpan.textContent = signatureFile.name;
+            } else {
+                signatureSpan.textContent = "Select File"; 
+            }
         });
     </script>
 }

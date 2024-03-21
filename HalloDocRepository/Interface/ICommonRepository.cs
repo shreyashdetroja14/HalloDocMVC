@@ -48,6 +48,8 @@ namespace HalloDocRepository.Interface
 
         Role GetRoleById(int roleId);
 
+        List<Role> GetAllRoles();
+
         #endregion
     }
 }

@@ -109,5 +109,75 @@ namespace HalloDocMVC.Controllers
 
             return RedirectToAction("Index");
         }
+
+        public IActionResult EditProvider(int providerId)
+        {
+            EditProviderViewModel ProviderInfo = new EditProviderViewModel();
+            ProviderInfo.ProviderId = providerId;
+
+            ProviderInfo = _providersService.GetEditProviderViewModel(ProviderInfo);
+
+            return View(ProviderInfo);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditAccountInfo(EditProviderViewModel AccountInfo)
+        {
+            bool isInfoUpdated= await _providersService.EditAccountInfo(AccountInfo);
+            if (isInfoUpdated)
+            {
+                TempData["SuccessMessage"] = "Account Info Updated Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Update Account Info.";
+            }
+            return RedirectToAction("EditProvider", new {providerId = AccountInfo.ProviderId});
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditPhysicianInfo(EditProviderViewModel PhysicianInfo)
+        {
+            bool isInfoUpdated = await _providersService.EditPhysicianInfo(PhysicianInfo);
+            if (isInfoUpdated)
+            {
+                TempData["SuccessMessage"] = "Physician Info Updated Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Update Physician Info.";
+            }
+            return RedirectToAction("EditProvider", new { providerId = PhysicianInfo.ProviderId });
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> EditBillingInfo(EditProviderViewModel BillingInfo)
+        {
+            bool isInfoUpdated = await _providersService.EditBillingInfo(BillingInfo);
+            if (isInfoUpdated)
+            {
+                TempData["SuccessMessage"] = "Billing Info Updated Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Update Billing Info.";
+            }
+            return RedirectToAction("EditProvider", new { providerId = BillingInfo.ProviderId });
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> EditProfileInfo(EditProviderViewModel ProfileInfo)
+        {
+            bool isInfoUpdated = await _providersService.EditProfileInfo(ProfileInfo);
+            if (isInfoUpdated)
+            {
+                TempData["SuccessMessage"] = "Profile Info Updated Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Update Profile Info.";
+            }
+            return RedirectToAction("EditProvider", new { providerId = ProfileInfo.ProviderId });
+        }
     }
 }

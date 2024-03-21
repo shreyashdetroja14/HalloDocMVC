@@ -16,5 +16,15 @@ namespace HalloDocServices.Interface
         ContactProviderViewModel GetContactProvider(ContactProviderViewModel ContactProvider);
 
         Task<bool> UpdateNotiStatus(List<int> StopNotificationIds);
+
+        EditProviderViewModel GetEditProviderViewModel(EditProviderViewModel EditProvider);
+
+        Task<bool> EditAccountInfo(EditProviderViewModel AccountInfo);
+
+        Task<bool> EditPhysicianInfo(EditProviderViewModel PhysicianInfo);
+
+        Task<bool> EditBillingInfo(EditProviderViewModel BillingInfo);
+
+        Task<bool> EditProfileInfo(EditProviderViewModel ProfileInfo);
     }
 }
