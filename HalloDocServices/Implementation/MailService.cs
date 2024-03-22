@@ -37,13 +37,23 @@ namespace HalloDocServices.Implementation
                 };
 
                 string senderDisplayName = "HalloDoc Admin";
-                string receiverDisplayName = receiver.First();
+                //string receiverDisplayName = receiver.First();
 
-                MailAddress senderMailAddress = new MailAddress(mail ?? "", senderDisplayName);
-                MailAddress receiverMailAddress = new MailAddress(receiver.First(), receiverDisplayName);
-
-                using (var mailMessage = new MailMessage(senderMailAddress, receiverMailAddress))
+                //MailAddress senderMailAddress = new MailAddress(mail ?? "", senderDisplayName);
+                //MailAddress receiverMailAddress = new MailAddress(receiver.First(), receiverDisplayName);
+                MailAddressCollection receiverMailAddresses = new MailAddressCollection();
+                foreach(var recipient in receiver)
                 {
+                    receiverMailAddresses.Add(new MailAddress(recipient));
+                }
+
+                using (var mailMessage = new MailMessage())
+                {
+                    mailMessage.From = new MailAddress(mail ?? "", senderDisplayName);
+                    foreach(var recipient in receiverMailAddresses)
+                    {
+                        mailMessage.To.Add(recipient);
+                    }
                     mailMessage.Subject = subject;
                     mailMessage.Body = body;
                     mailMessage.IsBodyHtml = isHtml;

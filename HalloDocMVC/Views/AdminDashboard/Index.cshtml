@@ -20,8 +20,8 @@
         <div class="row request-status-tabs mb-3">
             <div class="col-12 col-lg-6">
                 <div class="row">
-                    <div class="col-4 px-2 pb-3">
-                        <div class="new-btn status-btn px-3 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                    <div class="col-4 pb-3">
+                        <div class="new-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
                             <div class="d-flex">
                                 <i class="material-symbols-outlined d-none d-md-inline me-2">
                                     new_releases
@@ -34,8 +34,8 @@
                         </div>
                         <div class="triangle mx-auto d-none d-lg-block"></div>
                     </div>
-                    <div class="col-4 px-2 pb-3">
-                        <div class="pending-btn status-btn px-3 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                    <div class="col-4 pb-3">
+                        <div class="pending-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
                             <div class="d-flex">
                                 <i class="material-symbols-outlined d-none d-md-inline me-2">
                                     pending_actions
@@ -48,8 +48,8 @@
                         </div>
                         <div class="triangle mx-auto d-none d-lg-block"></div>
                     </div>
-                    <div class="col-4 px-2 pb-3">
-                        <div class="active-btn status-btn px-3 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                    <div class="col-4 pb-3">
+                        <div class="active-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
                             <div class="d-flex">
                                 <i class="material-symbols-outlined d-none d-md-inline me-2">
                                     task_alt
@@ -66,8 +66,8 @@
             </div>
             <div class="col-12 col-lg-6">
                 <div class="row">
-                    <div class="col-4 px-2 pb-3">
-                        <div class="conclude-btn status-btn px-3 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                    <div class="col-4 pb-3">
+                        <div class="conclude-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
                             <div class="d-flex">
                                 <i class="material-symbols-outlined d-none d-md-inline me-2">
                                     av_timer
@@ -80,8 +80,8 @@
                         </div>
                         <div class="triangle mx-auto d-none d-lg-block"></div>
                     </div>
-                    <div class="col-4 px-2 pb-3">
-                        <div class="to-close-btn status-btn px-3 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                    <div class="col-4 pb-3">
+                        <div class="to-close-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
                             <div class="d-flex">
                                 <i class="material-symbols-outlined d-none d-md-inline me-2">
                                     person_remove
@@ -94,8 +94,8 @@
                         </div>
                         <div class="triangle mx-auto d-none d-lg-block"></div>
                     </div>
-                    <div class="col-4 px-2 pb-3">
-                        <div class="unpaid-btn status-btn px-3 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                    <div class="col-4 pb-3">
+                        <div class="unpaid-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
                             <div class="d-flex">
                                 <i class="material-symbols-outlined d-none d-md-inline me-2">
                                     monetization_on
@@ -119,26 +119,50 @@
                 <span id="request-status-name"></span>
             </p>
             <div class="utility-buttons">
-                <button class="btn btn-info text-white">
-                    <img src="~/images/sendIcon.svg" />
+                <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#mailModal">
+                    <i class="bi bi-send"></i>
                     <span class="d-none d-lg-inline">Send Link</span>
                 </button>
-                <button class="btn btn-info text-white">
-                    <img src="~/images/documentIcon.svg" />
+                <button class="btn btn-outline-info">
+                    <i class="bi bi-file-earmark-text"></i>
                     <span class="d-none d-lg-inline">Create Requests</span>
                 </button>
-                <button class="btn btn-info text-white">
-                    <img src="~/images/exportIcon.svg" />
+                <button class="btn btn-outline-info">
+                    <i class="bi bi-upload"></i>
                     <span class="d-none d-lg-inline">Export</span>
                 </button>
-                <button class="btn btn-info text-white">
-                    <img src="~/images/exportAllIcon.svg" />
+                <button class="btn btn-outline-info " id="export-all">
+                    <i class="bi bi-file-earmark-arrow-up"></i>
                     <span class="d-none d-lg-inline">Export All</span>
                 </button>
-                <button class="btn btn-info text-white">
-                    <img src="~/images/doctorIconWhite.svg" />
+                <button class="btn btn-outline-info ">
+                    <i class="bi bi-person-raised-hand"></i>
                     <span class="d-none d-lg-inline">Request Support</span>
                 </button>
+            </div>
+        </div>
+
+        <div class="modal fade" id="mailModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Send Link</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="mailform" asp-action="SendLink">
+                            <div class="form-floating mb-3">
+                                <input type="email" asp-for="Email" class="form-control" id="recipient-email" required>
+                                <label for="recipient-email" class="col-form-label">Recipient:</label>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <input type="submit" value="Send" class="btn btn-info text-white">
+                                <button type="button" class="btn btn-outline-info ms-2" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -185,5 +209,6 @@
 
 @section AddScript
 {
+    <partial name="_ToastMessageScriptsPartial" />
         <script src="~/js/admin/admindashboard.js"></script>
 }

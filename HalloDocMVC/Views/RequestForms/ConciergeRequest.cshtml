@@ -51,6 +51,7 @@
                         <input type="text" asp-for="ConciergeFirstName" class="form-control" id="ConciergeFirstName"
                                placeholder="First Name">
                         <label asp-for="ConciergeFirstName">Your First Name</label>
+                        <span asp-validation-for="ConciergeFirstName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -58,10 +59,12 @@
                         <input type="text" asp-for="ConciergeLastName" class="form-control" id="ConciergeLastName"
                                placeholder="Last Name">
                         <label asp-for="ConciergeLastName">Your Last Name</label>
+                        <span asp-validation-for="ConciergeLastName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6 pb-3">
                     <input type="tel" asp-for="ConciergePhoneNumber" class="form-control w-100" id="ConciergePhoneNumber" />
+                    <span asp-validation-for="ConciergePhoneNumber" class="text-danger"></span>
 
                 </div>
                 <div class="col-sm-6">
@@ -69,6 +72,7 @@
                         <input type="email" asp-for="ConciergeEmail" class="form-control" id="ConciergeEmail"
                                placeholder="abc@xyz.pqr">
                         <label asp-for="ConciergeEmail">Your Email</label>
+                        <span asp-validation-for="ConciergeEmail" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -76,6 +80,7 @@
                         <input type="text" asp-for="ConciergePropertyName" class="form-control" id="ConciergePropertyName" 
                                placeholder="House/Property Name">
                         <label asp-for="ConciergePropertyName">House/Property Name</label>
+                        <span asp-validation-for="ConciergePropertyName" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -90,6 +95,7 @@
                         <input type="text" asp-for="ConciergeStreet" class="form-control" id="ConciergeStreet" 
                                placeholder="Street">
                         <label asp-for="ConciergeStreet">Street</label>
+                        <span asp-validation-for="ConciergeStreet" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -97,6 +103,7 @@
                         <input type="text" asp-for="ConciergeCity" class="form-control" id="ConciergeCity" 
                                placeholder="City">
                         <label asp-for="ConciergeCity">City</label>
+                        <span asp-validation-for="ConciergeCity" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -104,6 +111,7 @@
                         <input type="text" asp-for="ConciergeState" class="form-control" id="ConciergeState" 
                                placeholder="City">
                         <label asp-for="ConciergeState">State</label>
+                        <span asp-validation-for="ConciergeState" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -111,6 +119,7 @@
                         <input type="text" asp-for="ConciergeZipCode" class="form-control" id="ConciergeZipCode"
                                placeholder="Zipcode">
                         <label asp-for="ConciergeZipCode">Zipcode</label>
+                        <span asp-validation-for="ConciergeZipCode" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -131,6 +140,7 @@
                         <input type="text" asp-for="PatientInfo.FirstName" class="form-control" id="PatientInfo.FirstName"
                                placeholder="First Name">
                         <label asp-for="PatientInfo.FirstName">First Name</label>
+                        <span asp-validation-for="PatientInfo.FirstName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -158,10 +168,12 @@
                         <input type="email" asp-for="PatientInfo.Email" class="form-control" id="PatientInfo.Email"
                                placeholder="abc@xyz.pqr">
                         <label asp-for="PatientInfo.Email">Email</label>
+                        <span asp-validation-for="PatientInfo.Email" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6 pb-3">
                     <input asp-for="PatientInfo.PhoneNumber" class="form-control w-100" id="PhoneNumber" type="tel" />
+                    <span asp-validation-for="PatientInfo.PhoneNumber" class="text-danger"></span>
 
                 </div>
             </div>
@@ -194,13 +206,17 @@
         const ptphoneInputField = document.querySelector("#PhoneNumber");
 
         const phoneInput = window.intlTelInput(phoneInputField, {
-            preferredCountries: ["us", "in", "au", "de"],
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
 
         const ptphoneInput = window.intlTelInput(ptphoneInputField, {
-            preferredCountries: ["us", "in", "au", "de"],
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });

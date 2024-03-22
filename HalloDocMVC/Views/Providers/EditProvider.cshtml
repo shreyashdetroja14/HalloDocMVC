@@ -245,7 +245,7 @@
                             </label>
                             <button type="button" class="btn btn-outline-info mt-3 p-3 rounded-2">Create signature</button>
                         </div>
-                        <div class="signature-container d-flex flex-column align-items-center my-3">
+                        @*<div class="signature-container d-flex flex-column align-items-center my-3">
                             <canvas id="signature-pad" class="border border-dark mb-3" width="250" height="150"></canvas>
                             <div>
                                 <button type="button" id="clear-button" class="btn btn-outline-danger">Clear</button>
@@ -255,7 +255,7 @@
                         @if (Model.SignaturePath != null)
                         {
                             <img src="@Model.SignaturePath" class="mb-3" style="height: 100px; width: 100px;" />
-                        }
+                        }*@
                         
                     </div>
                     <div class="col-12">
@@ -286,7 +286,7 @@
 @section AddScript {
 
     <partial name="_ToastMessageScriptsPartial" />
-    <script>
+    @*<script>
         // Get the canvas element and clear and save buttons
         const canvas = document.getElementById("signature-pad");
         const clearButton = document.getElementById("clear-button");
@@ -333,7 +333,7 @@
             const dataURL = canvas.toDataURL("image/png");
             signatureInput.setAttribute('value', dataURL);
         });
-    </script>
+    </script>*@
     <script>
 
         const phoneInputField = document.querySelector("#PhoneNumber");

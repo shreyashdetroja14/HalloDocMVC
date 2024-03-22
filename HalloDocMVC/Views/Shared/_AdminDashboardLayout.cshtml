@@ -22,6 +22,14 @@
             font-weight: bold;
             opacity: 1;
         }
+
+        .btn-check:focus + .btn-info, .btn-info:focus{
+            box-shadow: none;
+        }
+
+        .btn-check:focus + .btn, .btn:focus{
+            box-shadow:none;
+        }
     </style>
 
     @if (IsSectionDefined("AddStyles"))
@@ -102,7 +110,8 @@
                 "showMethod": "fadeIn",
                 "hideMethod": "fadeOut",
                 iconClasses: {
-                    success: 'toast-success updated'
+                    success: 'toast-success updated',
+                    error: 'toast-error updated'
                 }
             };
     </script>

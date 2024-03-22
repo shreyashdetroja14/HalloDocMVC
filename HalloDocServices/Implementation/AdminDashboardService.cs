@@ -925,5 +925,21 @@ namespace HalloDocServices.Implementation
             return false;
 
         }
+
+        public async Task<bool> SendLink(string receiverEmail)
+        {
+            string subject = "Get Medical Assistance @HalloDoc";
+
+            string url = "http://localhost:5059/RequestForms/SubmitRequest";
+            string body = "Click on the link and create a new request to get the medical assistance for you or your family : " + url;
+
+            List<string> receivers = new List<string>
+                {
+                    receiverEmail
+                };
+
+            bool isMailSent = await _mailService.SendMail(receivers, subject, body, false, new List<string>());
+            return isMailSent;
+        }
     }
 }

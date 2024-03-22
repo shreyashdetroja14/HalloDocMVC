@@ -13,7 +13,7 @@
 
 <div class="main p-4">
     <div class="back pb-4 d-flex justify-content-end">
-        <a asp-area="" asp-controller="RequestForms" asp-action="SubmitRequest" class="btn back-btn">
+        <a  class="btn back-btn">
             <img src="/images/backIcon.svg" alt="">
             Back
         </a>
@@ -39,6 +39,7 @@
                         <input type="text" asp-for="PatientInfo.FirstName" class="form-control" id="firstname"
                                placeholder="First Name">
                         <label asp-for="PatientInfo.FirstName">First Name</label>
+                        <span asp-validation-for="PatientInfo.FirstName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -65,10 +66,12 @@
                         <input type="email" asp-for="PatientInfo.Email" class="form-control" id="email"
                                placeholder="abc@xyz.pqr">
                         <label asp-for="PatientInfo.Email">Email</label>
+                        <span asp-validation-for="PatientInfo.Email" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6 pb-3">
                     <input type="tel" asp-for="PatientInfo.PhoneNumber" class="form-control w-100" id="phone" />
+                    <span asp-validation-for="PatientInfo.PhoneNumber" class="text-danger"></span>
 
                 </div>
             </div>
@@ -96,6 +99,7 @@
                         <input type="text" asp-for="PatientInfo.State" class="form-control" id="state"
                                placeholder="State">
                         <label asp-for="PatientInfo.State">State</label>
+                        <span asp-validation-for="PatientInfo.State" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -103,6 +107,7 @@
                         <input type="text" asp-for="PatientInfo.ZipCode" class="form-control" id="zipcode"
                                placeholder="Zipcode">
                         <label asp-for="PatientInfo.ZipCode">Zipcode</label>
+                        <span asp-validation-for="PatientInfo.ZipCode" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -127,6 +132,8 @@
                             <input type="text" asp-for="FamilyRelation" class="form-control" id="FamilyRelation"
                                    placeholder="Relation">
                             <label asp-for="FamilyRelation">Your Relation With Patient (Optional)</label>
+                            <span asp-validation-for="FamilyRelation" class="text-danger"></span>
+
                         </div>
                     </div>
                 </div>

@@ -51,6 +51,7 @@
                         <input type="text" asp-for="BusinessFirstName" class="form-control" id="BusinessFirstName" 
                                placeholder="First Name">
                         <label asp-for="BusinessFirstName">Your First Name</label>
+                        <span asp-validation-for="BusinessFirstName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -62,13 +63,15 @@
                 </div>
                 <div class="col-sm-6 pb-3">
                     <input type="tel" asp-for="BusinessPhoneNumber" class="form-control w-100" id="BusinessPhone" />
+                    <span asp-validation-for="BusinessPhoneNumber" class="text-danger"></span>
 
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
                         <input type="email" asp-for="BusinessEmail" class=" form-control" id="BusinessEmail" 
                                placeholder="abc@xyz.pqr">
-                        <label for="floatingInput">Your Email</label>
+                        <label asp-for="BusinessEmail">Your Email</label>
+                        <span asp-validation-for="BusinessEmail" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -76,6 +79,7 @@
                         <input type="text" asp-for="BusinessName" class="form-control" id="BusinessName"
                                placeholder="Business/Property Name">
                         <label asp-for="BusinessName">Business/Property Name</label>
+                        <span asp-validation-for="BusinessName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -83,6 +87,7 @@
                         <input type="number" asp-for="BusinessCaseNumber" class="form-control" id="BusinessCaseNumber" 
                                placeholder="Case Number">
                         <label asp-for="BusinessCaseNumber">Case Number (Optional)</label>
+                        <span asp-validation-for="BusinessCaseNumber" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -103,6 +108,7 @@
                         <input type="text" asp-for="PatientInfo.FirstName" class="form-control" id="FirstName" 
                                placeholder="First Name">
                         <label asp-for="PatientInfo.FirstName">First Name</label>
+                        <span asp-validation-for="PatientInfo.FirstName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -130,10 +136,12 @@
                         <input type="email" asp-for="PatientInfo.Email" class="form-control" id="Email"
                                placeholder="abc@xyz.pqr">
                         <label asp-for="PatientInfo.Email">Email</label>
+                        <span asp-validation-for="PatientInfo.Email" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6 pb-3">
                     <input type="tel" asp-for="PatientInfo.PhoneNumber" class="form-control w-100" id="PhoneNumber" />
+                    <span asp-validation-for="PatientInfo.PhoneNumber" class="text-danger"></span>
 
                 </div>
             </div>
@@ -161,6 +169,7 @@
                         <input type="text" asp-for="PatientInfo.State" class="form-control" id="State"
                                placeholder="State">
                         <label asp-for="PatientInfo.State">State</label>
+                        <span asp-validation-for="PatientInfo.State" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -168,6 +177,7 @@
                         <input type="text" asp-for="PatientInfo.ZipCode" class="form-control" id="ZipCode"
                                placeholder="Zip Code">
                         <label asp-for="PatientInfo.ZipCode">Zipcode</label>
+                        <span asp-validation-for="PatientInfo.ZipCode" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -194,13 +204,17 @@
         const ptphoneInputField = document.querySelector("#PhoneNumber");
 
         const phoneInput = window.intlTelInput(phoneInputField, {
-            preferredCountries: ["us", "in", "au", "de"],
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
 
         const ptphoneInput = window.intlTelInput(ptphoneInputField, {
-            preferredCountries: ["us", "in", "au", "de"],
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
@@ -210,6 +224,10 @@
         $(window).on('load', function () {
             $('#myModal').modal('show');
         });
+    </script>
+    <script>
+        const dateInput = document.querySelector('#DOB');
+        dateInput.max = new Date().toISOString().split("T")[0];
     </script>
 }
 

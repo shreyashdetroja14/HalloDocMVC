@@ -159,7 +159,7 @@ namespace HalloDocMVC.Controllers
 
             await _patientService.EditProfile(ProfileDetails);
 
-            return RedirectToAction("GoToDashboard", new { UserId = ProfileDetails.UserId });
+            return RedirectToAction("Profile", new { UserId = ProfileDetails.UserId });
         }
 
         [CustomAuthorize("patient")]
@@ -188,7 +188,7 @@ namespace HalloDocMVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("~/Views/Home/Index.cshtml");
+                return View(frvm);
             }
 
             int userRequestUserId = await _patientService.CreatePatientRequest(frvm);
@@ -213,7 +213,9 @@ namespace HalloDocMVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("~/Views/Home/Index.cshtml");
+                ViewBag.UserId = UserId;
+                ViewBag.RequestType = 3;
+                return View("~/Views/Patient/PatientRequest.cshtml", frvm);
             }
 
             await _patientService.CreateFamilyRequest(frvm, UserId);

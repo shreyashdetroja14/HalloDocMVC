@@ -4,12 +4,11 @@ namespace HalloDocServices.ViewModels
 {
     public class LoginViewModel
     {
-        [Required(ErrorMessage ="Email cannot be empty")]
-        [RegularExpression(@"^[\w!#$%&'*+/=?^`{|}~-]+(?:\.[\w!#$%&'*+/=?^`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$", ErrorMessage = "Invalid Email Address")]
-
+        [Required(ErrorMessage = "Please Enter Email Address")]
+        [RegularExpression(@"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}))$", ErrorMessage = "Please enter a valid email address. (e.g., user@example.com)")]
         public string Email { get; set; } = null!;
 
-        [Required(ErrorMessage = "Password can't be empty")]
+        [Required(ErrorMessage = "Please Enter Password")]
         public string Password { get; set; } = null!;
     }
 }

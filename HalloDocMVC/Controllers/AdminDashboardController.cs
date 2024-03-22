@@ -410,5 +410,25 @@ namespace HalloDocMVC.Controllers
 
             return View(EncounterFormDetails);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SendLink(AdminDashboardViewModel EmailData)
+        {
+            bool isLinkSent = await _adminDashboardService.SendLink(EmailData.Email ?? "");
+            if (isLinkSent)
+            {
+                TempData["SuccessMessage"] = "Link Sent Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to Send The Link.";
+            }
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult ExportAll(int requestStatus)
+        {
+            return View();
+        }
     }
 }

@@ -611,3 +611,16 @@ function addEventListnersForPartial() {
     }
 }
 
+
+const exportAllBtn = document.querySelector('#export-all');
+exportAllBtn.addEventListener('click',async () => {
+    const url = `/AdminDashboard/ExportAll/?requestStatus=${urlparams.requestStatus}`;
+    try {
+        console.log(urlparams.requestStatus);
+        console.log(url)
+        const response = await fetch(url);
+    }
+    catch (error) {
+        console.log(error);
+    }
+});

@@ -45,7 +45,7 @@ namespace HalloDocMVC.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View("~/Views/Home/Index.cshtml");
+                return View(prvm);
             }
 
             bool isrequestcreated = await _requestFormService.CreatePatientRequest(prvm);
@@ -68,9 +68,9 @@ namespace HalloDocMVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("~/Views/Home/Index.cshtml");
+                return View(frvm);
             }
-            
+
             bool isUserExists = await _requestFormService.CheckUser(frvm.PatientInfo.Email);
             if (!isUserExists)
             {

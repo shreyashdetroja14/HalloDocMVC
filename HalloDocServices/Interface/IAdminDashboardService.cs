@@ -71,5 +71,7 @@ namespace HalloDocServices.Interface
         EncounterFormViewModel GetEncounterFormViewModelData(EncounterFormViewModel EncounterFormDetails);
 
         Task<bool> UpdateEncounterForm(EncounterFormViewModel EncounterFormDetails);
+
+        Task<bool> SendLink(string receiverEmail);
     }
 }
