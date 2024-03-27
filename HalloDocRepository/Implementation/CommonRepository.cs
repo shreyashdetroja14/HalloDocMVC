@@ -77,20 +77,6 @@ namespace HalloDocRepository.Implementation
             return true;
         }
 
-        #region ROLE
-
-        public Role GetRoleById(int roleId)
-        {
-            var role = _context.Roles.FirstOrDefault(x => x.RoleId  == roleId);
-            return role ?? new Role();
-        }
-
-        public List<Role> GetAllRoles()
-        {
-            var roles = _context.Roles.ToList();
-            return roles;
-        }
-
-        #endregion
+        
     }
 }

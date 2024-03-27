@@ -114,6 +114,7 @@ namespace HalloDocMVC.Controllers
         {
             EditProviderViewModel ProviderInfo = new EditProviderViewModel();
             ProviderInfo.ProviderId = providerId;
+            ProviderInfo.IsCreateProvider = false;
 
             ProviderInfo = _providersService.GetEditProviderViewModel(ProviderInfo);
 
@@ -178,6 +179,16 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Update Profile Info.";
             }
             return RedirectToAction("EditProvider", new { providerId = ProfileInfo.ProviderId });
+        }
+
+        public IActionResult CreateProvider()
+        {
+            EditProviderViewModel ProviderInfo = new EditProviderViewModel();
+            ProviderInfo.IsCreateProvider = false;
+
+            ProviderInfo = _providersService.GetEditProviderViewModel(ProviderInfo);
+
+            return View("EditProvider", ProviderInfo);
         }
     }
 }

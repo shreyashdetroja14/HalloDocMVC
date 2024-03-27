@@ -81,3 +81,36 @@
     background-color: #0dcaf0;
     border-color: #0dcaf0;
 }
+
+.form-floating>label{
+    transition: all .1s ease-in-out;
+}
+
+.updated {
+    font-size: 16px;
+    color: white !important;
+    font-weight: bold;
+    opacity: 1 !important;
+    min-width: 345px !important;
+    height: 60px !important;
+}
+
+.toast-message{
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.btn-check:focus + .btn-info, .btn-info:focus {
+    box-shadow: none;
+}
+
+.btn-check:focus + .btn, .btn:focus {
+    box-shadow: none;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    color: #0dcaf0;
+    font-weight: bold;
+    background-color: #0dcaf025;
+}

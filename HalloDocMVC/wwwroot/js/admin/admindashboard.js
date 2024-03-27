@@ -619,6 +619,12 @@ exportAllBtn.addEventListener('click',async () => {
         console.log(urlparams.requestStatus);
         console.log(url)
         const response = await fetch(url);
+
+        const json = await response.json();
+
+        if (json.result == 'Redirect') {
+            window.location = json.url;
+        }
     }
     catch (error) {
         console.log(error);

@@ -233,6 +233,7 @@
                         </div>
                     </div>
                     <div class="col-sm-6">
+                        
                         <div class="input-group mb-3">
                             <input type="file" accept=".jpg,.jpeg,.png" asp-for="Signature" class="form-control px-3 py-2 file-upload profile-info-upload" id="Signature" disabled>
 
@@ -243,19 +244,24 @@
                                     <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
                                 </div>
                             </label>
-                            <button type="button" class="btn btn-outline-info mt-3 p-3 rounded-2">Create signature</button>
+
                         </div>
-                        @*<div class="signature-container d-flex flex-column align-items-center my-3">
-                            <canvas id="signature-pad" class="border border-dark mb-3" width="250" height="150"></canvas>
-                            <div>
-                                <button type="button" id="clear-button" class="btn btn-outline-danger">Clear</button>
-                                <button type="button" id="save-button" class="btn btn-info">Save</button>
+                        <button type="button" class="btn btn-outline-info p-3 rounded-2 d-none" id="create-sign">Create signature</button>
+
+                        <div class="w-100 d-flex justify-content-evenly flex-column align-items-center flex-lg-row align-items-lg-start my-3">
+                            @if (Model.SignaturePath != null)
+                            {
+                                <img src="@Model.SignaturePath" class="border mb-3 mb-lg-0" style="width: 150px; height: 150px;" />
+                            }
+                            <div class="signature-container d-flex flex-column align-items-center d-none">
+                                <canvas id="signature-pad" class="border border-dark mb-3" width="150" height="150"></canvas>
+                                <div>
+                                    <button type="button" id="clear-button" class="btn btn-outline-danger">Clear</button>
+                                    <button type="button" id="save-button" class="btn btn-info">Save</button>
+                                </div>
                             </div>
+                            
                         </div>
-                        @if (Model.SignaturePath != null)
-                        {
-                            <img src="@Model.SignaturePath" class="mb-3" style="height: 100px; width: 100px;" />
-                        }*@
                         
                     </div>
                     <div class="col-12">
@@ -286,7 +292,7 @@
 @section AddScript {
 
     <partial name="_ToastMessageScriptsPartial" />
-    @*<script>
+    <script>
         // Get the canvas element and clear and save buttons
         const canvas = document.getElementById("signature-pad");
         const clearButton = document.getElementById("clear-button");
@@ -327,13 +333,32 @@
         // Event listener for the clear button
         clearButton.addEventListener("click", () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            saveButton.disabled = false;
+            signatureInput.value = "";
+
+            var event = new Event('change');
+            signatureInput.dispatchEvent(event);
         });
         // Event listener for the save button
-        saveButton.addEventListener("click", () => {
+        saveButton.addEventListener("click", async () => {
             const dataURL = canvas.toDataURL("image/png");
-            signatureInput.setAttribute('value', dataURL);
+            console.log(dataURL);
+            const data = await fetch(dataURL);
+            const blob = await data.blob();
+            console.log('blob: ', blob);
+
+            const file = new File([blob], "signature.png", { type: "image/png" });
+            const container = new DataTransfer();
+            container.items.add(file);
+
+            signatureInput.files = container.files;
+
+            var event = new Event('change');
+            signatureInput.dispatchEvent(event);
+
+            saveButton.disabled = true;
         });
-    </script>*@
+    </script>
     <script>
 
         const phoneInputField = document.querySelector("#PhoneNumber");
@@ -486,6 +511,8 @@
         const profileInfoInputTags = document.querySelectorAll('.profile-info');
         const profileInfoUploads = document.querySelectorAll('.profile-info-upload');
         const profileInfoUploadLables = document.querySelectorAll('.upload-label');
+        const createSignatureBtn = document.querySelector('#create-sign');
+        const signContainer = document.querySelector('.signature-container');
 
 
         profileInfoEditBtn.addEventListener('click', () => {
@@ -506,6 +533,8 @@
             profileInfoUploadLables.forEach(label => {
                 label.classList.add('bg-white');
             });
+
+            createSignatureBtn.classList.remove('d-none');
         });
 
         profileInfoCancelBtn.addEventListener('click', () => {
@@ -527,8 +556,15 @@
                 label.classList.remove('bg-white');
             });
 
+            createSignatureBtn.classList.add('d-none');
+            signContainer.classList.add('d-none');
+
         });
 
+        createSignatureBtn.addEventListener('click', () => {
+            signContainer.classList.remove('d-none');
+            createSignatureBtn.classList.add('d-none');
+        })
     </script>
 
     <script>

@@ -1,0 +1,100 @@
+﻿@{
+    ViewData["Title"] = "Create Role";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+@using HalloDocServices.Implementation
+
+@model HalloDocServices.ViewModels.AdminViewModels.CreateRoleViewModel
+
+<div class="main">
+    <partial name="_NavbarLinks">
+
+        <div class="container-xl p-4">
+
+            <div class="heading d-flex justify-content-between align-items-center mb-3">
+                <h1 class="h2 mb-3">Create Role</h1>
+                <a class="btn back-btn">
+                    <img src="~/images/backIcon.svg" alt="">
+                    Back
+                </a>
+            </div>
+
+            <form asp-action="CreateRole" class="bg-white p-4 request-form rounded-0 shadow">
+                <h4 class="mb-3">Details</h4>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="RoleName" class="form-control" id="RoleName"
+                                   placeholder="Role Name">
+                            <label asp-for="RoleName">Role</label>
+                            <span asp-validation-for="RoleName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <select asp-for="AccountType" id="account-type-list" class="form-select p-3" asp-items="Html.GetEnumSelectList<AccountType>()">
+                                <option value="">All</option>
+                            </select>
+                            <span asp-validation-for="AccountType" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        @foreach(var menuItem in Model.MenuItems)
+                        {
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       value="@menuItem.MenuId"
+                                       id="menu-@menuItem.MenuId"
+                                       name="MenuIds"
+                                       checked="@menuItem.IsChecked"
+                                       data-account-type="@menuItem.AccountType"
+                                       >
+                                <label class="form-check-label" for="menu-@menuItem.MenuId">
+                                    @menuItem.Name
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="submit d-flex justify-content-end">
+                    <input type="submit" value="Save" id="" class="btn btn-info py-2 px-3 ms-3 text-white">
+                    <input type="reset" value="Cancel" id="" class="btn btn-outline-info py-2 px-3 ms-3">
+                </div>
+            </form>
+
+        </div>
+
+</div>
+
+
+
+@section AddScript
+    {
+    <partial name="_ToastMessageScriptsPartial" />
+
+    <script>
+        const accountTypeList = document.querySelector('#account-type-list');
+        const menuItems = document.querySelectorAll('.form-check-input');
+
+        accountTypeList.addEventListener('change', () => {
+            const accountType = accountTypeList.value;
+            console.log('acc type: ', accountType);
+            menuItems.forEach(item => {
+                if(accountType != '' && item.dataset.accountType != accountType){
+                    const div = item.parentNode.closest('.form-check');
+                    div.classList.add('d-none');
+                    console.log('hidden acc type: ', item.dataset.accountType)
+                }
+                else{
+                    const div = item.parentNode.closest('.form-check');
+                    div.classList.remove('d-none');
+                    console.log('shown acc type: ', item.dataset.accountType)
+                }
+            })
+        })
+    </script>
+}

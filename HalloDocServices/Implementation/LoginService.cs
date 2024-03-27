@@ -22,13 +22,14 @@ namespace HalloDocServices.Implementation
         private readonly HalloDocContext _context;
         private readonly IUserRepository _userRepository;
         private readonly IRequestRepository _requestRepository;
+        
 
         public LoginService(HalloDocContext context, IUserRepository userRepository, IRequestRepository requestRepository)
         {
             _context = context;
             _userRepository = userRepository;
             _requestRepository = requestRepository;
-
+           
         }
         public AspNetUser CheckLogin(LoginViewModel LoginInfo)
         {

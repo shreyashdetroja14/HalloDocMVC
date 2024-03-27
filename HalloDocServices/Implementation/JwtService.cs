@@ -23,14 +23,29 @@ namespace HalloDocServices.Implementation
 
         public string GenerateJwtToken(AspNetUser aspNetUser)
         {
+            int id = 0;
+            string role = aspNetUser.AspNetUserRoles.FirstOrDefault()?.Role.Name ?? "";
+            if(role == "admin")
+            {
+                id = aspNetUser.AdminAspNetUsers.FirstOrDefault()?.AdminId ?? 0;
+            }
+            else if(role == "physician")
+            {
+                id = aspNetUser.PhysicianAspNetUsers.FirstOrDefault()?.PhysicianId ?? 0;
+            }
+            else if(role == "patient")
+            {
+                id = aspNetUser.Users.FirstOrDefault()?.UserId ?? 0;
+            }
+
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, aspNetUser.Email??""),
-                new Claim(ClaimTypes.Role, aspNetUser.AspNetUserRoles.FirstOrDefault()?.Role.Name??""),
+                new Claim(ClaimTypes.Email, aspNetUser.Email ?? ""),
+                new Claim(ClaimTypes.Role, aspNetUser.AspNetUserRoles.FirstOrDefault()?.Role.Name ?? ""),
                 new Claim("aspnetuserId", aspNetUser.Id),
-                new Claim("username", aspNetUser.UserName)
-                /*new Claim("firstName", aspNetUser.Users.FirstOrDefault(x => x.AspNetUserId == aspNetUser.Id)?.FirstName??""),
-                new Claim("lastName", aspNetUser.Users.FirstOrDefault(x => x.AspNetUserId == aspNetUser.Id)?.LastName??"")*/
+                new Claim("username", aspNetUser.UserName),
+                new Claim("id", id.ToString()),
+                
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? ""));

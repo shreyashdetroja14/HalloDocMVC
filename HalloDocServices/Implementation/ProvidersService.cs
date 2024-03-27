@@ -28,13 +28,15 @@ namespace HalloDocServices.Implementation
         private readonly IPhysicianRepository _physicianRepository;
         private readonly INotesAndLogsRepository _notesAndLogsRepository;
         private readonly ICommonRepository _commonRepository;
+        private readonly IRoleRepository _roleRepository;
 
-        public ProvidersService(IUserRepository userRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository)
+        public ProvidersService(IUserRepository userRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IRoleRepository roleRepository)
         {
             _userRepository = userRepository;
             _physicianRepository = physicianRepository;
             _notesAndLogsRepository = notesAndLogsRepository;
             _commonRepository = commonRepository;
+            _roleRepository = roleRepository;
         }
 
         public ProvidersViewModel GetProvidersViewModel(ProvidersViewModel Providers)
@@ -129,41 +131,61 @@ namespace HalloDocServices.Implementation
         {
             var providers = _physicianRepository.GetIQueryablePhysicians(EditProvider.ProviderId);
             var provider = providers.Include(x => x.AspNetUser).Include(x => x.Role).Include(x => x.Region).Include(x => x.PhysicianRegions).FirstOrDefault();
-            
+
+            EditProvider.StatusList = Enum.GetValues(typeof(Status))
+                                    .Cast<Status>()
+                                    .Select(status => new SelectListItem
+                                    {
+                                        Value = ((int)status).ToString(),
+                                        Text = status.ToString(),
+                                        Selected = (status == (provider?.Status != null ? ((Status)provider.Status) : null))
+                                    }).ToList();
+
+            var rolesList = _roleRepository.GetAllRoles();
+
+            EditProvider.RoleList.Add(new SelectListItem()
+            {
+                Value = "0",
+                Text = "Set a role",
+                Selected = true
+            });
+
+            foreach (var role in rolesList)
+            {
+                EditProvider.RoleList.Add(new SelectListItem()
+                {
+                    Value = role.RoleId.ToString(),
+                    Text = role.Name,
+                    Selected = (role.RoleId == provider?.RoleId)
+                });
+            }
+
+            var regions = _commonRepository.GetAllRegions();
+
+            EditProvider.StateList.Add(new SelectListItem()
+            {
+                Text = "Set a region",
+                Value = "0",
+                Selected = true
+            });
+
+            foreach (var region in regions)
+            {
+                EditProvider.StateList.Add(new SelectListItem()
+                {
+                    Text = region.Name,
+                    Value = region.RegionId.ToString(),
+                    Selected = (region.RegionId == provider?.RegionId)
+                });
+            }
 
             if (provider != null)
             {
-                EditProvider.Username = provider.AspNetUser?.UserName;
+
+                EditProvider.Username = provider.AspNetUser?.UserName ?? "";
                 EditProvider.Status = provider.Status;
 
-                EditProvider.StatusList.Add(new SelectListItem
-                {
-                    Value = "",
-                    Text = "Set a status",
-                    Selected = true
-                });
-
-                EditProvider.StatusList = Enum.GetValues(typeof(Status))
-                                        .Cast<Status>()
-                                        .Select(status => new SelectListItem
-                                        {
-                                            Value = ((int)status).ToString(),
-                                            Text = status.ToString(),
-                                            Selected = (status == (provider.Status != null ? ((Status)provider.Status) : null))
-                                        }).ToList();
-
                 EditProvider.RoleId = provider.RoleId;
-                
-                var rolesList = _commonRepository.GetAllRoles();
-                foreach(var role in rolesList )
-                {
-                    EditProvider.RoleList.Add(new SelectListItem()
-                    {
-                        Value = role.RoleId.ToString(),
-                        Text = role.Name,
-                        Selected = (role.RoleId == provider.RoleId)
-                    });
-                }
 
                 EditProvider.FirstName = provider.FirstName;
                 EditProvider.LastName = provider.LastName;
@@ -173,7 +195,7 @@ namespace HalloDocServices.Implementation
                 EditProvider.PhoneNumber = provider.Mobile;
                 EditProvider.SyncEmail = provider.SyncEmailAddress;
 
-                foreach(var providerRegion in provider.PhysicianRegions)
+                foreach (var providerRegion in provider.PhysicianRegions)
                 {
                     EditProvider.ProviderRegions.Add(providerRegion.RegionId);
                 }
@@ -182,18 +204,6 @@ namespace HalloDocServices.Implementation
                 EditProvider.Address2 = provider.Address2;
                 EditProvider.City = provider.City;
                 EditProvider.RegionId = provider.RegionId;
-
-                var regions = _commonRepository.GetAllRegions();
-
-                foreach (var region in regions)
-                {
-                    EditProvider.StateList.Add(new SelectListItem()
-                    {
-                        Text = region.Name,
-                        Value = region.RegionId.ToString(),
-                        Selected = (region.RegionId == provider.RegionId)
-                    });
-                }
 
                 EditProvider.ZipCode = provider.ZipCode;
                 EditProvider.SecondPhoneNumber = provider.AltPhone;
@@ -208,6 +218,7 @@ namespace HalloDocServices.Implementation
                 //EditProvider.IsHippaDoc = provider.IsTrainingDoc
                 EditProvider.IsNonDisclosureDoc = provider.IsNonDisclosureDoc;
                 EditProvider.IsLicenseDoc = provider.IsLicenseDoc;
+
             }
 
             return EditProvider;
@@ -219,7 +230,7 @@ namespace HalloDocServices.Implementation
             var provider = _physicianRepository.GetIQueryablePhysicians(AccountInfo.ProviderId).Include(x => x.AspNetUser).FirstOrDefault();
             var aspnetUser = provider?.AspNetUser;
 
-            if(provider == null)
+            if (provider == null)
             {
                 return false;
             }
@@ -229,13 +240,13 @@ namespace HalloDocServices.Implementation
 
             await _physicianRepository.Update(provider);
 
-            if(aspnetUser == null)
+            if (aspnetUser == null)
             {
                 return false;
             }
 
             aspnetUser.UserName = AccountInfo.Username;
-            if(AccountInfo.Password != null)
+            if (AccountInfo.Password != null)
             {
                 aspnetUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(AccountInfo.Password);
             }
@@ -244,7 +255,7 @@ namespace HalloDocServices.Implementation
 
             return true;
         }
-        
+
         public async Task<bool> EditPhysicianInfo(EditProviderViewModel PhysicianInfo)
         {
             var provider = _physicianRepository.GetIQueryablePhysicians(PhysicianInfo.ProviderId).Include(x => x.PhysicianRegions).FirstOrDefault();
@@ -267,7 +278,7 @@ namespace HalloDocServices.Implementation
 
             var physicianRegions = _physicianRepository.GetRegionsByPhysicianId(provider.PhysicianId);
 
-            if(physicianRegions == null)
+            if (physicianRegions == null)
             {
                 return false;
             }
@@ -291,7 +302,7 @@ namespace HalloDocServices.Implementation
         public async Task<bool> EditBillingInfo(EditProviderViewModel BillingInfo)
         {
             var provider = _physicianRepository.GetPhysicianByPhysicianId(BillingInfo.ProviderId);
-            if(provider == null) { return false; }  
+            if (provider == null) { return false; }
 
             provider.Address1 = BillingInfo.Address1;
             provider.Address2 = BillingInfo.Address2;
@@ -307,26 +318,26 @@ namespace HalloDocServices.Implementation
 
         public string UploadFilesToServer(IFormFile? UploadFile, int providerId)
         {
-                if(UploadFile == null) { return string.Empty; }
+            if (UploadFile == null) { return string.Empty; }
 
-                string FilePath = "wwwroot\\Upload\\Physician\\" + providerId;
-                string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+            string FilePath = "wwwroot\\Upload\\Physician\\" + providerId;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
 
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
 
-                string newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
+            string newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
 
-                string fileNameWithPath = Path.Combine(path, newfilename);
-                string file = FilePath.Replace("wwwroot\\Upload\\Physician\\", "/Upload/Physician/") + "/" + newfilename;
+            string fileNameWithPath = Path.Combine(path, newfilename);
+            string file = FilePath.Replace("wwwroot\\Upload\\Physician\\", "/Upload/Physician/") + "/" + newfilename;
 
-                using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
-                {
-                    UploadFile.CopyTo(stream);
-                }
-            
+            using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+            {
+                UploadFile.CopyTo(stream);
+            }
+
             return file;
         }
 
@@ -340,8 +351,8 @@ namespace HalloDocServices.Implementation
             provider.AdminNotes = ProfileInfo.AdminNotes;
 
             string photoFileName = UploadFilesToServer(ProfileInfo.Photo, ProfileInfo.ProviderId);
-            if(photoFileName != string.Empty) 
-            {  
+            if (photoFileName != string.Empty)
+            {
                 provider.Photo = photoFileName;
             }
 

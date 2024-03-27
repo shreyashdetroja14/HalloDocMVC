@@ -10,6 +10,8 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 {
     public class EditProviderViewModel
     {
+        public bool IsCreateProvider { get; set; }
+
         public int ProviderId { get; set; }
 
         public int AdminId { get; set; }

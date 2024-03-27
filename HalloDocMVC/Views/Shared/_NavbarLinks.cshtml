@@ -29,18 +29,20 @@
                     <li><a class="dropdown-item" asp-action="Index" asp-controller="Providers">Provider</a></li>
                     <li><a class="dropdown-item" href="#">Scheduling</a></li>
                     <li><a class="dropdown-item" href="#">Invoicing</a></li>
-                    @*<li>
-                    <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>*@
                 </ul>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="#">Partners</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Access</a>
+            <li class="nav-item dropdown">
+                <a class="access nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                    Access
+                </a>
+                <ul class="dropdown-menu w-100">
+                    <li><a class="dropdown-item" asp-action="Accounts" asp-controller="Access">Account Access</a></li>
+                    <li><a class="dropdown-item" href="#">User Access</a></li>
+                </ul>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Records</a>
@@ -72,17 +74,19 @@
             <li><a class="dropdown-item" asp-action="Index" asp-controller="Providers">Provider</a></li>
             <li><a class="dropdown-item" href="#">Scheduling</a></li>
             <li><a class="dropdown-item" href="#">Invoicing</a></li>
-            @*<li>
-            <hr class="dropdown-divider">
-            </li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>*@
         </ul>
     </li>
     <li class="nav-item" role="presentation">
         <a class="nav-link" href="#">Partners</a>
     </li>
-    <li class="nav-item" role="presentation">
-        <a class="nav-link" href="#">Access</a>
+    <li class="nav-item dropdown">
+        <a class="access nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+            Access
+        </a>
+        <ul class="dropdown-menu w-100">
+            <li><a class="dropdown-item" asp-action="Accounts" asp-controller="Access">Account Access</a></li>
+            <li><a class="dropdown-item" href="#">User Access</a></li>
+        </ul>
     </li>
     <li class="nav-item" role="presentation">
         <a class="nav-link" href="#">Records</a>

@@ -428,7 +428,16 @@ namespace HalloDocMVC.Controllers
 
         public IActionResult ExportAll(int requestStatus)
         {
-            return View();
+            bool isExported = false;
+            if (isExported)
+            {
+                TempData["SuccessMessage"] = "Data Exported Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to Export The Data.";    
+            }
+            return Json(new { result = "Redirect", url = Url.Action("Index", "AdminDashboard") });
         }
     }
 }

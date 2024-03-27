@@ -15,5 +15,14 @@ namespace HalloDocServices.ViewModels
         public string? AspNetUserRole { get; set; }
         
         public string? Username { get; set; }
+
+        public int AdminId { get; set; }
+
+        public int UserId { get; set; }
+        
+        public int PhysicianId { get; set;}
+
+        public int Id { get; set; }
+    
     }
 }

@@ -40,6 +40,8 @@ public partial class HalloDocContext : DbContext
 
     public virtual DbSet<HealthProfessional> HealthProfessionals { get; set; }
 
+    public virtual DbSet<Menu> Menus { get; set; }
+
     public virtual DbSet<OrderDetail> OrderDetails { get; set; }
 
     public virtual DbSet<Physician> Physicians { get; set; }
@@ -63,6 +65,8 @@ public partial class HalloDocContext : DbContext
     public virtual DbSet<RequestWiseFile> RequestWiseFiles { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<RoleMenu> RoleMenus { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -187,6 +191,11 @@ public partial class HalloDocContext : DbContext
             entity.HasOne(d => d.Profession).WithMany(p => p.HealthProfessionals).HasConstraintName("fk_health_profession_type");
 
             entity.HasOne(d => d.Region).WithMany(p => p.HealthProfessionals).HasConstraintName("fk_region");
+        });
+
+        modelBuilder.Entity<Menu>(entity =>
+        {
+            entity.HasKey(e => e.MenuId).HasName("menu_pkey");
         });
 
         modelBuilder.Entity<OrderDetail>(entity =>
@@ -327,6 +336,19 @@ public partial class HalloDocContext : DbContext
             entity.HasKey(e => e.RoleId).HasName("role_pkey");
 
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+        });
+
+        modelBuilder.Entity<RoleMenu>(entity =>
+        {
+            entity.HasKey(e => e.RoleMenuId).HasName("role_menu_pkey");
+
+            entity.HasOne(d => d.Menu).WithMany(p => p.RoleMenus)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_menu");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.RoleMenus)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_role");
         });
 
         modelBuilder.Entity<User>(entity =>

@@ -19,6 +19,7 @@ builder.Services.AddScoped<IPhysicianRepository, PhysicianRepository>();
 builder.Services.AddScoped<INotesAndLogsRepository, NotesAndLogsRepository>();
 builder.Services.AddScoped<ICommonRepository, CommonRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
 
 builder.Services.AddScoped<ILoginService, LoginService>();
@@ -29,6 +30,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IProvidersService, ProvidersService>();
 builder.Services.AddScoped<IMailService, MailService>();
+builder.Services.AddScoped<IAccessService, AccessService>();
 
 
 var app = builder.Build();
