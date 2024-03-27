@@ -60,10 +60,22 @@ async function GetProvidersListPartial(regionId = 0) {
             console.log('response is ok');
 
             const partialViewHtml = await response.text();
-            //console.log(partialViewHtml);
             const partialViewContainer = document.getElementById('partial-container');
-            //console.log(partialViewContainer);
             partialViewContainer.innerHTML = partialViewHtml;
+
+            var labelElement = document.createElement('label');
+            labelElement.setAttribute('for', 'submit-form');
+            labelElement.classList.add('btn', 'btn-outline-info', 'me-2', 'd-none');
+            labelElement.textContent = 'Save';
+            labelElement.id = 'submit-form-label';
+
+            console.log(labelElement);
+
+            var container = document.getElementById('label-container');
+
+            var anchorTag = container.querySelector('#a-tag');
+
+            container.insertBefore(labelElement, anchorTag);
 
             addEventListnersForPartial();
 
@@ -128,7 +140,7 @@ function addEventListnersForPartial() {
 
     const checkboxes = document.querySelectorAll('.StopNotificationIds');
     const checkboxesMobile = document.querySelectorAll('.StopNotificationIdsMobile');
-    const saveBtn = document.querySelector('#submit-form');
+    const saveBtn = document.querySelector('#submit-form-label');
     const saveBtnMobile = document.querySelector('#submit-form-mobile');
 
     if (contactProviderBtn != null) {

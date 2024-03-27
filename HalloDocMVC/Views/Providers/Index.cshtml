@@ -48,11 +48,9 @@
                     <select class="form-select selectlist mb-3 mb-md-0" asp-for="RegionId" asp-items="@Model.RegionList">
 
                     </select>
-                    <div>
-                        @*<label for="submit-form" class="btn btn-outline-info d-none d-md-inline" id="save-btn-label">Save</label>
-                        <label for="submit-form-mobile" class="btn btn-outline-info d-md-none" id="save-btn-label-mobile">Save Mb</label>*@
-                        
-                        <a class="btn btn-info text-white px-3">Create Provider Account</a>
+                    <div id="label-container">
+
+                        <a class="btn btn-info text-white px-3" id="a-tag">Create Provider Account</a>
                     </div>
                 </div>
 

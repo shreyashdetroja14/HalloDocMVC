@@ -283,6 +283,154 @@
 
         </form>
 
+        <div class="p-4 pt-0 bg-white">
+            <h4 class="mb-3">Onboarding</h4>
+            @* <form asp-action="Onboarding" asp-route-docId="1" class="rounded-0 shadow-none d-flex align-items-center flex-wrap py-3">
+                <div class="mb-2">
+                    <input type="checkbox" class="form-check-input me-2" id="ContractorDoc" checked="@Model.IsContractorDoc" />
+                    <label for="ContractorDoc" class="me-2">Independent Contractor Agreement</label>
+                </div>
+                <div class="mb-2">
+                    <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
+                    <a class="btn btn-info text-white">View</a>
+                </div>
+            </form>
+            <form asp-action="Onboarding" asp-route-docId="2" class="rounded-0 shadow-none d-flex align-items-center flex-wrap py-3">
+                <div class="mb-2">
+                    <input type="checkbox" class="form-check-input me-2" id="BackgroundDoc" checked="@Model.IsBackgroundDoc" />
+                    <label for="BackgroundDoc" class="me-2">Background Check</label>
+                </div>
+                <div class="mb-2">
+                    <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
+                    <a class="btn btn-info text-white">View</a>
+                </div>
+                
+            </form>
+            <form asp-action="Onboarding" asp-route-docId="3" class="rounded-0 shadow-none d-flex align-items-center flex-wrap py-3">
+                <div class="mb-2">
+                    <input type="checkbox" class="form-check-input me-2" id="HippaDoc" checked="@Model.IsHippaDoc" />
+                    <label for="HippaDoc" class="me-2">HIPAA Compliance</label>
+                </div>
+                <div class="mb-2">
+                    <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
+                    <a class="btn btn-info text-white">View</a>
+                </div>
+            </form>
+            <form asp-action="Onboarding" asp-route-docId="4" class="rounded-0 shadow-none d-flex align-items-center flex-wrap py-3">
+                <div class="mb-2">
+                    <input type="checkbox" class="form-check-input me-2" id="NonDisclosureDoc" checked="@Model.IsNonDisclosureDoc" />
+                    <label for="NonDisclosureDoc" class="me-2">Non-Disclosure Agreement</label>
+                </div>
+                <div class="mb-2">
+                    <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
+                    <a class="btn btn-info text-white">View</a>
+                </div>
+                
+            </form>
+            <form asp-action="Onboarding" asp-route-docId="5" class="rounded-0 shadow-none d-flex align-items-center flex-wrap py-3">
+                <div class="mb-2">
+                    <input type="checkbox" class="form-check-input me-2" id="LicenseDoc" checked="@Model.IsLicenseDoc" />
+                    <label for="LicenseDoc" class="me-2">License Document</label>
+                </div>
+                <div class="mb-2">
+                    <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
+                    <a class="btn btn-info text-white">View</a>
+                </div>
+                
+            </form> *@
+            <form class="rounded-0 shadow-none mb-3">
+                <div class="row">
+                    <div class="col-md-9 col-lg-8">
+                        <div class="row">
+                            <div class="col-1 mb-3">
+                                <input type="checkbox" class="form-check-input" id="ContractorDoc" checked="@Model.IsContractorDoc" />
+                            </div>
+                            <div class="col-11 col-sm-6 mb-3">
+                                <label for="ContractorDoc" class="me-2">Independent Contractor Agreement</label>
+                            </div>
+                            <div class="col-sm-5 mb-3">
+                                <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
+                                <a class="btn btn-info text-white">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <form class="rounded-0 shadow-none mb-3">
+                <div class="row">
+                    <div class="col-md-9 col-lg-8">
+                        <div class="row">
+                            <div class="col-1 mb-3">
+                                <input type="checkbox" class="form-check-input" id="BackgroundDoc" checked="@Model.IsBackgroundDoc" />
+                            </div>
+                            <div class="col-11 col-sm-6 mb-3">
+                                <label for="BackgroundDoc" class="me-2">Background Check</label>
+                            </div>
+                            <div class="col-sm-5 mb-3">
+                                <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
+                                <a class="btn btn-info text-white">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <form class="rounded-0 shadow-none mb-3">
+                <div class="row">
+                    <div class="col-md-9 col-lg-8">
+                        <div class="row">
+                            <div class="col-1 mb-3">
+                                <input type="checkbox" class="form-check-input me-2" id="HippaDoc" checked="@Model.IsHippaDoc" />
+                            </div>
+                            <div class="col-11 col-sm-6 mb-3">
+                                <label for="HippaDoc" class="me-2">HIPAA Compliance</label>
+                            </div>
+                            <div class="col-sm-5 mb-3">
+                                <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
+                                <a class="btn btn-info text-white">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <form class="rounded-0 shadow-none mb-3">
+                <div class="row">
+                    <div class="col-md-9 col-lg-8">
+                        <div class="row">
+                            <div class="col-1 mb-3">
+                                <input type="checkbox" class="form-check-input me-2" id="NonDisclosureDoc" checked="@Model.IsNonDisclosureDoc" />
+                            </div>
+                            <div class="col-11 col-sm-6 mb-3">
+                                <label for="NonDisclosureDoc" class="me-2">Non-Disclosure Agreement</label>
+                            </div>
+                            <div class="col-sm-5 mb-3">
+                                <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
+                                <a class="btn btn-info text-white">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <form class="rounded-0 shadow-none mb-3">
+                <div class="row">
+                    <div class="col-md-9 col-lg-8">
+                        <div class="row">
+                            <div class="col-1 mb-3">
+                                <input type="checkbox" class="form-check-input me-2" id="LicenseDoc" checked="@Model.IsLicenseDoc" />
+                            </div>
+                            <div class="col-11 col-sm-6 mb-3">
+                                <label for="LicenseDoc" class="me-2">License Document</label>
+                            </div>
+                            <div class="col-sm-5 mb-3">
+                                <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
+                                <a class="btn btn-info text-white">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
     </div>
 
 </div>

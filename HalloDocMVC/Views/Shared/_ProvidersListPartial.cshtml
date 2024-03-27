@@ -15,14 +15,15 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                @* <tr>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td class="text-end"><input type="submit" id="submit-form" class="btn btn-outline-info d-none" /></td>
-                </tr>
+                </tr> *@
+                <input type="submit" id="submit-form" class="btn btn-outline-info" hidden/>
                 @foreach (var provider in Model)
                 {
                     <tr>
@@ -68,7 +69,7 @@
 <div class="providerslist-mobile d-md-none">
     <form asp-action="StopNotifications">
         <div class="mb-3 text-end pe-3">
-            <input type="submit" id="submit-form-mobile" class="btn btn-outline-info d-md-none d-none" />
+            <input type="submit" value="Save" id="submit-form-mobile" class="btn btn-outline-info d-md-none d-none" />
         </div>
         <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
             @foreach (var provider in Model)
@@ -113,7 +114,7 @@
                                 <a class="btn btn-outline-info ms-2 contact-provider-btn" data-provider-id="@provider.ProviderId">
                                     Contact
                                 </a>
-                                <a class="btn btn-outline-info ms-2">
+                                <a asp-action="EditProvider" asp-route-providerId="@provider.ProviderId" class="btn btn-outline-info ms-2">
                                     Edit
                                 </a>
                             </div>
