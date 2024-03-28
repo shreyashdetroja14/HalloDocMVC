@@ -217,11 +217,11 @@ namespace HalloDocMVC.Controllers
         public IActionResult CreateProvider()
         {
             EditProviderViewModel ProviderInfo = new EditProviderViewModel();
-            ProviderInfo.IsCreateProvider = false;
+            ProviderInfo.IsCreateProvider = true;
 
             ProviderInfo = _providersService.GetEditProviderViewModel(ProviderInfo);
 
-            return View("EditProvider", ProviderInfo);
+            return View(ProviderInfo);
         }
     }
 }

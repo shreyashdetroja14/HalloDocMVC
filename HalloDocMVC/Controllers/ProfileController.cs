@@ -58,6 +58,7 @@ namespace HalloDocMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> ResetPassword(AdminProfileViewModel AdminProfileDetails)
         {
+
             if(AdminProfileDetails.Password == null)
             {
                 TempData["ErrorMessage"] = "Unable to reset password";
@@ -85,7 +86,6 @@ namespace HalloDocMVC.Controllers
             {
                 TempData["ErrorMessage"] = "Email and Confirm Email must be equal";
                 return RedirectToAction("Index");
-
             }
 
             bool isAdminInfoUpdated = await _profileService.UpdateAdminInfo(AdminProfileDetails);

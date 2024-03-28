@@ -1,0 +1,407 @@
+﻿@{
+    ViewData["Title"] = "Create Provider";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+@section AddStyles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <link href="@Url.Content("~/css/requestform.css")" rel="stylesheet" type="text/css" />
+    <style>
+
+
+    </style>
+}
+
+@model HalloDocServices.ViewModels.AdminViewModels.EditProviderViewModel
+
+<div class="main">
+
+    <partial name="_NavbarLinks"></partial>
+
+    <div class="container-xl p-4">
+        <div class=" back p-0 pb-4 d-flex justify-content-between">
+            <h2>Edit Physician Account</h2>
+            <a asp-action="Index" class="btn back-btn">
+                <img src="/images/backIcon.svg" alt="">
+                Back
+            </a>
+        </div>
+
+        <div class="shadow rounded-3">
+            <form class="bg-white p-4 shadow-none " enctype="multipart/form-data">
+                <div class="info mb-4">
+                    <h4 class="mb-3">Account Information</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="Username" class="form-control account-info" id="Username"
+                                       placeholder="Username" readonly>
+                                <label asp-for="Username">Username</label>
+                                <span asp-validation-for="Username" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="password" asp-for="Password" class="form-control account-info" id="Password"
+                                       placeholder="Password" readonly>
+                                <label asp-for="Password">Password</label>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="@Model.StatusList" disabled>
+                                    <option value="">Set a status</option>
+                                </select>
+                                <span asp-validation-for="Status" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class=" mb-3">
+                                <select asp-for="RoleId" id="role-list" class="form-select p-3 account-info" asp-items="@Model.RoleList" disabled>
+                                </select>
+                                <span asp-validation-for="RoleId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info mb-4">
+                    <h4 class="mb-3">Physician Information</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="FirstName" class="form-control physician-info" id="FirstName"
+                                       placeholder="FirstName" readonly>
+                                <label asp-for="FirstName">First Name</label>
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="LastName" class="form-control physician-info" id="LastName"
+                                       placeholder="LastName" readonly>
+                                <label asp-for="LastName">Last Name</label>
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="email" asp-for="Email" class="form-control physician-info" id="Email" placeholder="Email" readonly>
+                                <label asp-for="Email">Email</label>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 pb-3">
+                            <input type="tel" asp-for="PhoneNumber" class="form-control w-100 physician-info" id="PhoneNumber" readonly />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="MedicalLicense" class="form-control physician-info" id="MedicalLicense" placeholder="MedicalLicense" readonly>
+                                <label asp-for="MedicalLicense">Medical License</label>
+                                <span asp-validation-for="MedicalLicense" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="NPINumber" class="form-control physician-info" id="NPINumber" placeholder="NPINumber" readonly>
+                                <label asp-for="NPINumber">NPI Number</label>
+                                <span asp-validation-for="NPINumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="email" asp-for="SyncEmail" class="form-control physician-info" id="SyncEmail" placeholder="SyncEmail" readonly>
+                                <label asp-for="SyncEmail">Sync Email</label>
+                                <span asp-validation-for="SyncEmail" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 pb-3">
+                            @foreach (var state in Model.StateList)
+                            {
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input physician-info-checkbox"
+                                           type="checkbox"
+                                           value="@state.Value"
+                                           id="region-@state.Value"
+                                           name="ProviderRegions"
+                                           checked="@(Model.ProviderRegions.Contains(int.Parse(state.Value)) ? "true" : false)"
+                                           disabled>
+                                    <label class="form-check-label" for="region-@state.Value">
+                                        @state.Text
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info mb-4">
+                    <h4 class="mb-3">Mailing & Billing Information</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="Address1" class="form-control billing-info" id="Address1"
+                                       placeholder="Address1" readonly>
+                                <label asp-for="Address1">Address 1</label>
+                                <span asp-validation-for="Address1" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="Address2" class="form-control billing-info" id="Address2"
+                                       placeholder="Address2" readonly>
+                                <label asp-for="Address2">Address 2</label>
+                                <span asp-validation-for="Address2" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="City" class="form-control billing-info" id="City" placeholder="City" readonly>
+                                <label asp-for="City">City</label>
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class=" mb-3">
+                                <select asp-for="RegionId" id="region-list" class="form-select p-3" asp-items="@Model.StateList" disabled>
+                                </select>
+                                <span asp-validation-for="RegionId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="ZipCode" class="form-control billing-info" id="ZipCode" placeholder="ZipCode" readonly>
+                                <label asp-for="ZipCode">ZipCode</label>
+                                <span asp-validation-for="ZipCode" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 pb-3">
+                            <input type="tel" asp-for="SecondPhoneNumber" class="form-control w-100 billing-info" id="SecondPhoneNumber" readonly />
+                            <span asp-validation-for="SecondPhoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info mb-4">
+                    <h4 class="mb-3">Provider Profile</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="BusinessName" class="form-control profile-info" id="BusinessName"
+                                       placeholder="BusinessName" readonly>
+                                <label asp-for="BusinessName">Business Name</label>
+                                <span asp-validation-for="BusinessName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="BusinessWebsite" class="form-control profile-info" id="BusinessWebsite"
+                                       placeholder="BusinessWebsite" readonly>
+                                <label asp-for="BusinessWebsite">Business Website</label>
+                                <span asp-validation-for="BusinessWebsite" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="input-group mb-3">
+                                <input type="file" accept=".jpg,.jpeg,.png" asp-for="Photo" class="form-control px-3 py-2 file-upload profile-info-upload" id="Photo">
+
+                                <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
+                                       asp-for="Photo">
+                                    <span class="px-3 py-2" id="photoSpan">Select File</span>
+                                    <div class="btn btn-info p-3 text-white fw-bold rounded-0">
+                                        <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <textarea asp-for="AdminNotes" class="form-control profile-info" placeholder="Enter Symptoms" id="AdminNotes"
+                                          style="height: 150px" readonly></textarea>
+                                <label asp-for="AdminNotes">Admin Notes</label>
+                                <span asp-validation-for="AdminNotes" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="info mb-4">
+                    <h4 class="mb-3">Onboarding</h4>
+                    <div class="row">
+                        <div class="col-1 mb-3">
+                            <input type="checkbox" class="form-check-input" id="ContractorDoc" checked="@Model.IsContractorDoc" disabled/>
+                        </div>
+                        <div class="col-11 col-sm-6 mb-3">
+                            <label for="ContractorDoc" class="me-2">Independent Contractor Agreement</label>
+                        </div>
+                        <div class="col-sm-5 mb-3">
+                            <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="ContractorInput">
+                            <label for="ContractorInput" class="btn btn-info text-white me-2">Upload</label>
+                            @if (Model.IsContractorDoc ?? false)
+                            {
+                                <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/1.jpg" class="btn btn-info text-white">View</a>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-1 mb-3">
+                            <input type="checkbox" class="form-check-input" id="BackgroundDoc" checked="@Model.IsBackgroundDoc" disabled/>
+                        </div>
+                        <div class="col-11 col-sm-6 mb-3">
+                            <label for="BackgroundDoc" class="me-2">Background Check</label>
+                        </div>
+                        <div class="col-sm-5 mb-3">
+                            <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="BackgroundInput">
+                            <label for="BackgroundInput" class="btn btn-info text-white me-2">Upload</label>
+                            @if (Model.IsBackgroundDoc ?? false)
+                            {
+                                <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/2.jpg" class="btn btn-info text-white">View</a>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-1 mb-3">
+                            <input type="checkbox" class="form-check-input me-2" id="HippaDoc" checked="@Model.IsHippaDoc" disabled/>
+                        </div>
+                        <div class="col-11 col-sm-6 mb-3">
+                            <label for="HippaDoc" class="me-2">HIPAA Compliance</label>
+                        </div>
+                        <div class="col-sm-5 mb-3">
+                            <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="HippaInput">
+                            <label for="HippaInput" class="btn btn-info text-white me-2">Upload</label>
+                            @if (Model.IsHippaDoc ?? false)
+                            {
+                                <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/3.jpg" class="btn btn-info text-white">View</a>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-1 mb-3">
+                            <input type="checkbox" class="form-check-input me-2" id="NonDisclosureDoc" checked="@Model.IsNonDisclosureDoc" disabled />
+                        </div>
+                        <div class="col-11 col-sm-6 mb-3">
+                            <label for="NonDisclosureDoc" class="me-2">Non-Disclosure Agreement</label>
+                        </div>
+                        <div class="col-sm-5 mb-3">
+                            <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="NonDisclosureInput">
+                            <label for="NonDisclosureInput" class="btn btn-info text-white me-2">Upload</label>
+                            @if (Model.IsNonDisclosureDoc ?? false)
+                            {
+                                <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/4.jpg" class="btn btn-info text-white">View</a>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-1 mb-3">
+                            <input type="checkbox" class="form-check-input me-2" id="LicenseDoc" checked="@Model.IsLicenseDoc" disabled />
+                        </div>
+                        <div class="col-11 col-sm-6 mb-3">
+                            <label for="LicenseDoc" class="me-2">License Document</label>
+                        </div>
+                        <div class="col-sm-5 mb-3">
+                            <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="LicenseInput">
+                            <label for="LicenseInput" class="btn btn-info text-white me-2">Upload</label>
+                            @if (Model.IsLicenseDoc ?? false)
+                            {
+                                <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/5.jpg" class="btn btn-info text-white">View</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="submit d-flex justify-content-end">
+                    <input type="submit" value="Save" id="profile-info-save" class="btn btn-info py-2 px-3 ms-3 text-white">
+                    <input type="reset" value="Cancel" id="profile-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3">
+                </div>
+
+            </form>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+@section AddScript {
+
+    <partial name="_ToastMessageScriptsPartial" />
+
+   
+
+
+    @*PHONE NUMBER INPUT SCRIPT*@
+
+    <script>
+
+        const phoneInputField = document.querySelector("#PhoneNumber");
+        const phoneInput = window.intlTelInput(phoneInputField, {
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+        const phoneInputField2 = document.querySelector("#SecondPhoneNumber");
+        const phoneInput2 = window.intlTelInput(phoneInputField2, {
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+    </script>
+
+
+    
+
+
+    @*UPLOAD LABEL SCRIPT*@
+
+    <script>
+        const photoInput = document.getElementById('Photo');
+        const photoSpan = document.getElementById('photoSpan');
+
+        photoInput.addEventListener('change', (event) => {
+            const photoFile = event.target.files[0];
+            if (photoFile) {
+                photoSpan.textContent = photoFile.name;
+            } else {
+                photoSpan.textContent = "Select File";
+            }
+        });
+
+        
+    </script>
+
+
+    @*ONBOARDING DOCS INPUT SCRIPT*@
+
+    <script>
+        const docInputs = document.querySelectorAll('.onboarding-doc');
+
+        docInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                if (input.files.length !== 0) {
+                    const checkbox = input.closest('.row').querySelector('input[type="checkbox"]');
+                    checkbox.checked = true;
+                }
+            })
+        })
+    </script>
+}
+

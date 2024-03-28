@@ -39,6 +39,7 @@
                             <input type="text" asp-for="Username" class="form-control account-info" id="Username"
                                    placeholder="Username" readonly>
                             <label asp-for="Username">Username</label>
+                            <span asp-validation-for="Username" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -46,6 +47,7 @@
                             <input type="password" asp-for="Password" class="form-control account-info" id="Password"
                                    placeholder="Password" readonly>
                             <label asp-for="Password">Password</label>
+                            <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -53,6 +55,7 @@
                             <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="@Model.StatusList" disabled>
                                 <option value="">Set a status</option>
                             </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -60,6 +63,7 @@
                             <select asp-for="RoleId" id="role-list" class="form-select p-3 account-info" asp-items="@Model.RoleList" disabled>
                                 
                             </select>
+                            <span asp-validation-for="RoleId" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -83,6 +87,7 @@
                             <input type="text" asp-for="FirstName" class="form-control physician-info" id="FirstName"
                                    placeholder="FirstName" readonly>
                             <label asp-for="FirstName">First Name</label>
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -90,33 +95,39 @@
                             <input type="text" asp-for="LastName" class="form-control physician-info" id="LastName"
                                    placeholder="LastName" readonly>
                             <label asp-for="LastName">Last Name</label>
+                            <span asp-validation-for="LastName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
                             <input type="email" asp-for="Email" class="form-control physician-info" id="Email" placeholder="Email" readonly>
                             <label asp-for="Email">Email</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6 pb-3">
                         <input type="tel" asp-for="PhoneNumber" class="form-control w-100 physician-info" id="PhoneNumber" readonly />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
                             <input type="text" asp-for="MedicalLicense" class="form-control physician-info" id="MedicalLicense" placeholder="MedicalLicense" readonly>
                             <label asp-for="MedicalLicense">Medical License</label>
+                            <span asp-validation-for="MedicalLicense" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
                             <input type="text" asp-for="NPINumber" class="form-control physician-info" id="NPINumber" placeholder="NPINumber" readonly>
                             <label asp-for="NPINumber">NPI Number</label>
+                            <span asp-validation-for="NPINumber" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
                             <input type="email" asp-for="SyncEmail" class="form-control physician-info" id="SyncEmail" placeholder="SyncEmail" readonly>
                             <label asp-for="SyncEmail">Sync Email</label>
+                            <span asp-validation-for="SyncEmail" class="text-danger"></span>
                         </div>
                     </div>
                    
@@ -159,6 +170,7 @@
                             <input type="text" asp-for="Address1" class="form-control billing-info" id="Address1"
                                    placeholder="Address1" readonly>
                             <label asp-for="Address1">Address 1</label>
+                            <span asp-validation-for="Address1" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -166,28 +178,33 @@
                             <input type="text" asp-for="Address2" class="form-control billing-info" id="Address2"
                                    placeholder="Address2" readonly>
                             <label asp-for="Address2">Address 2</label>
+                            <span asp-validation-for="Address2" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
                             <input type="text" asp-for="City" class="form-control billing-info" id="City" placeholder="City" readonly>
                             <label asp-for="City">City</label>
+                            <span asp-validation-for="City" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class=" mb-3">
                             <select asp-for="RegionId" id="region-list" class="form-select p-3" asp-items="@Model.StateList" disabled>
                             </select>
+                            <span asp-validation-for="RegionId" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
                             <input type="text" asp-for="ZipCode" class="form-control billing-info" id="ZipCode" placeholder="ZipCode" readonly>
                             <label asp-for="ZipCode">ZipCode</label>
+                            <span asp-validation-for="ZipCode" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6 pb-3">
                         <input type="tel" asp-for="SecondPhoneNumber" class="form-control w-100 billing-info" id="SecondPhoneNumber" readonly />
+                        <span asp-validation-for="SecondPhoneNumber" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -210,6 +227,7 @@
                             <input type="text" asp-for="BusinessName" class="form-control profile-info" id="BusinessName"
                                    placeholder="BusinessName" readonly>
                             <label asp-for="BusinessName">Business Name</label>
+                            <span asp-validation-for="BusinessName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -217,6 +235,7 @@
                             <input type="text" asp-for="BusinessWebsite" class="form-control profile-info" id="BusinessWebsite"
                                    placeholder="BusinessWebsite" readonly>
                             <label asp-for="BusinessWebsite">Business Website</label>
+                            <span asp-validation-for="BusinessWebsite" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -269,6 +288,7 @@
                             <textarea asp-for="AdminNotes" class="form-control profile-info" placeholder="Enter Symptoms" id="AdminNotes"
                                       style="height: 150px" readonly></textarea>
                             <label asp-for="AdminNotes">Admin Notes</label>
+                            <span asp-validation-for="AdminNotes" class="text-danger"></span>
                         </div>
                     </div>
                     
@@ -495,14 +515,18 @@
 
         const phoneInputField = document.querySelector("#PhoneNumber");
         const phoneInput = window.intlTelInput(phoneInputField, {
+            initialCountry: "in",
             preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
 
         const phoneInputField2 = document.querySelector("#SecondPhoneNumber");
         const phoneInput2 = window.intlTelInput(phoneInputField2, {
+            initialCountry: "in",
             preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
