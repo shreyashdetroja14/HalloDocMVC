@@ -34,6 +34,7 @@ namespace HalloDocMVC.Controllers
                 claimsData.Email = jwtToken?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
                 claimsData.AspNetUserRole = jwtToken?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
                 claimsData.Username = jwtToken?.Claims.FirstOrDefault(x => x.Type == "username")?.Value;
+                claimsData.Id = int.Parse(jwtToken?.Claims.FirstOrDefault(x => x.Type == "id")?.Value ?? "");
             }
 
             return claimsData;
@@ -179,6 +180,38 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Update Profile Info.";
             }
             return RedirectToAction("EditProvider", new { providerId = ProfileInfo.ProviderId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Onboarding(IFormFile UploadDoc, int docId, int providerId)
+        {
+
+            bool isDocUploaded = await _providersService.Onboarding(UploadDoc, docId, providerId);
+            if (isDocUploaded)
+            {
+                TempData["SuccessMessage"] = "Document Uploaded Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Upload Document.";
+            }
+
+            return RedirectToAction("EditProvider", new { providerId });
+        }
+
+        public async Task<IActionResult> DeleteProvider(int providerId)
+        {
+            bool isProvDeleted = await _providersService.DeleteProvider(providerId);
+            if (isProvDeleted)
+            {
+                TempData["SuccessMessage"] = "Provider Deleted Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Delete Provider.";
+            }
+
+            return RedirectToAction("Index");
         }
 
         public IActionResult CreateProvider()

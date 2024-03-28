@@ -81,5 +81,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public bool? IsNonDisclosureDoc{ get; set;}
 
         public bool? IsLicenseDoc{ get; set;}
+
+        /*public IFormFile? UploadDoc { get; set; }*/
     }
 }

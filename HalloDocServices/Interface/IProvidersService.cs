@@ -1,4 +1,5 @@
 ﻿using HalloDocServices.ViewModels.AdminViewModels;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,5 +27,9 @@ namespace HalloDocServices.Interface
         Task<bool> EditBillingInfo(EditProviderViewModel BillingInfo);
 
         Task<bool> EditProfileInfo(EditProviderViewModel ProfileInfo);
+
+        Task<bool> Onboarding(IFormFile UploadDoc, int docId, int providerId);
+
+        Task<bool> DeleteProvider(int providerId);
     }
 }

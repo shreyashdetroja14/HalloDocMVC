@@ -66,7 +66,7 @@ namespace HalloDocServices.Implementation
 
         public List<ProviderRowViewModel> GetProvidersList(int regionId)
         {
-            var providersFetched = _physicianRepository.GetIQueryablePhysicians();
+            var providersFetched = _physicianRepository.GetIQueryablePhysicians().Where(x => x.IsDeleted != true);
             providersFetched = providersFetched.Include(x => x.Role);
 
             if (regionId != 0)
@@ -215,7 +215,7 @@ namespace HalloDocServices.Implementation
 
                 EditProvider.IsContractorDoc = provider.IsAgreementDoc;
                 EditProvider.IsBackgroundDoc = provider.IsBackgroundDoc;
-                //EditProvider.IsHippaDoc = provider.IsTrainingDoc
+                EditProvider.IsHippaDoc = provider.IsTrainingDoc;
                 EditProvider.IsNonDisclosureDoc = provider.IsNonDisclosureDoc;
                 EditProvider.IsLicenseDoc = provider.IsLicenseDoc;
 
@@ -328,7 +328,7 @@ namespace HalloDocServices.Implementation
                 Directory.CreateDirectory(path);
             }
 
-            string newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
+            string newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}-{DateTime.Now.ToString("yyyyMMddhhmmss")}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
 
             string fileNameWithPath = Path.Combine(path, newfilename);
             string file = FilePath.Replace("wwwroot\\Upload\\Physician\\", "/Upload/Physician/") + "/" + newfilename;
@@ -361,6 +361,69 @@ namespace HalloDocServices.Implementation
             {
                 provider.Signature = signatureFileName;
             }
+
+            await _physicianRepository.Update(provider);
+
+            return true;
+        }
+
+        public async Task<bool> Onboarding(IFormFile UploadDoc, int docId, int providerId)
+        {
+            var provider = _physicianRepository.GetPhysicianByPhysicianId(providerId);
+            if (provider == null) { return false; }
+
+            string FilePath = "wwwroot\\Upload\\Physician\\" + providerId;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            string newfilename = $"{docId}.{Path.GetExtension(UploadDoc.FileName).Trim('.')}";
+            //string newfilename = $"{docId}.pdf";
+
+            string fileNameWithPath = Path.Combine(path, newfilename);
+
+            using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+            {
+                UploadDoc.CopyTo(stream);
+            }
+
+            switch(docId)
+            {
+                case 1:
+                    provider.IsAgreementDoc = true;
+                    break;
+
+                case 2:
+                    provider.IsBackgroundDoc = true;
+                    break;
+
+                case 3:
+                    provider.IsTrainingDoc = true;
+                    break;
+
+                case 4:
+                    provider.IsNonDisclosureDoc = true;
+                    break;
+
+                case 5:
+                    provider.IsLicenseDoc = true;
+                    break;
+            }
+
+            await _physicianRepository.Update(provider);
+
+            return true;
+        }
+
+        public async Task<bool> DeleteProvider(int providerId)
+        {
+            var provider = _physicianRepository.GetPhysicianByPhysicianId(providerId);
+            if (provider == null) { return false; }
+
+            provider.IsDeleted = true;
 
             await _physicianRepository.Update(provider);
 

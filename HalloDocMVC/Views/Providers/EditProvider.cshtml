@@ -285,60 +285,8 @@
 
         <div class="p-4 pt-0 bg-white">
             <h4 class="mb-3">Onboarding</h4>
-            @* <form asp-action="Onboarding" asp-route-docId="1" class="rounded-0 shadow-none d-flex align-items-center flex-wrap py-3">
-                <div class="mb-2">
-                    <input type="checkbox" class="form-check-input me-2" id="ContractorDoc" checked="@Model.IsContractorDoc" />
-                    <label for="ContractorDoc" class="me-2">Independent Contractor Agreement</label>
-                </div>
-                <div class="mb-2">
-                    <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
-                    <a class="btn btn-info text-white">View</a>
-                </div>
-            </form>
-            <form asp-action="Onboarding" asp-route-docId="2" class="rounded-0 shadow-none d-flex align-items-center flex-wrap py-3">
-                <div class="mb-2">
-                    <input type="checkbox" class="form-check-input me-2" id="BackgroundDoc" checked="@Model.IsBackgroundDoc" />
-                    <label for="BackgroundDoc" class="me-2">Background Check</label>
-                </div>
-                <div class="mb-2">
-                    <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
-                    <a class="btn btn-info text-white">View</a>
-                </div>
-                
-            </form>
-            <form asp-action="Onboarding" asp-route-docId="3" class="rounded-0 shadow-none d-flex align-items-center flex-wrap py-3">
-                <div class="mb-2">
-                    <input type="checkbox" class="form-check-input me-2" id="HippaDoc" checked="@Model.IsHippaDoc" />
-                    <label for="HippaDoc" class="me-2">HIPAA Compliance</label>
-                </div>
-                <div class="mb-2">
-                    <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
-                    <a class="btn btn-info text-white">View</a>
-                </div>
-            </form>
-            <form asp-action="Onboarding" asp-route-docId="4" class="rounded-0 shadow-none d-flex align-items-center flex-wrap py-3">
-                <div class="mb-2">
-                    <input type="checkbox" class="form-check-input me-2" id="NonDisclosureDoc" checked="@Model.IsNonDisclosureDoc" />
-                    <label for="NonDisclosureDoc" class="me-2">Non-Disclosure Agreement</label>
-                </div>
-                <div class="mb-2">
-                    <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
-                    <a class="btn btn-info text-white">View</a>
-                </div>
-                
-            </form>
-            <form asp-action="Onboarding" asp-route-docId="5" class="rounded-0 shadow-none d-flex align-items-center flex-wrap py-3">
-                <div class="mb-2">
-                    <input type="checkbox" class="form-check-input me-2" id="LicenseDoc" checked="@Model.IsLicenseDoc" />
-                    <label for="LicenseDoc" class="me-2">License Document</label>
-                </div>
-                <div class="mb-2">
-                    <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
-                    <a class="btn btn-info text-white">View</a>
-                </div>
-                
-            </form> *@
-            <form class="rounded-0 shadow-none mb-3">
+            <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3">
+                <input type="number" value="1" name="docId" hidden />
                 <div class="row">
                     <div class="col-md-9 col-lg-8">
                         <div class="row">
@@ -349,14 +297,20 @@
                                 <label for="ContractorDoc" class="me-2">Independent Contractor Agreement</label>
                             </div>
                             <div class="col-sm-5 mb-3">
-                                <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
-                                <a class="btn btn-info text-white">View</a>
+                                @*<input type="submit" value="Upload" class="btn btn-info text-white me-2" />*@
+                                <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="ContractorInput">
+                                <label for="ContractorInput" class="btn btn-info text-white me-2">Upload</label>
+                                @if (Model.IsContractorDoc ?? false)
+                                {
+                                    <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/1.jpg" class="btn btn-info text-white">View</a>
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
-            <form class="rounded-0 shadow-none mb-3">
+            <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3">
+                <input type="number" value="2" name="docId" hidden />
                 <div class="row">
                     <div class="col-md-9 col-lg-8">
                         <div class="row">
@@ -367,14 +321,19 @@
                                 <label for="BackgroundDoc" class="me-2">Background Check</label>
                             </div>
                             <div class="col-sm-5 mb-3">
-                                <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
-                                <a class="btn btn-info text-white">View</a>
+                                <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="BackgroundInput">
+                                <label for="BackgroundInput" class="btn btn-info text-white me-2">Upload</label>
+                                @if(Model.IsBackgroundDoc ?? false)
+                                {
+                                    <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/2.jpg" class="btn btn-info text-white">View</a>
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
-            <form class="rounded-0 shadow-none mb-3">
+            <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3">
+                <input type="number" value="3" name="docId" hidden />
                 <div class="row">
                     <div class="col-md-9 col-lg-8">
                         <div class="row">
@@ -385,14 +344,19 @@
                                 <label for="HippaDoc" class="me-2">HIPAA Compliance</label>
                             </div>
                             <div class="col-sm-5 mb-3">
-                                <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
-                                <a class="btn btn-info text-white">View</a>
+                                <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="HippaInput">
+                                <label for="HippaInput" class="btn btn-info text-white me-2">Upload</label>
+                                @if(Model.IsHippaDoc ?? false)
+                                {
+                                    <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/3.jpg" class="btn btn-info text-white">View</a>
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
-            <form class="rounded-0 shadow-none mb-3">
+            <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3">
+                <input type="number" value="4" name="docId" hidden />
                 <div class="row">
                     <div class="col-md-9 col-lg-8">
                         <div class="row">
@@ -403,14 +367,19 @@
                                 <label for="NonDisclosureDoc" class="me-2">Non-Disclosure Agreement</label>
                             </div>
                             <div class="col-sm-5 mb-3">
-                                <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
-                                <a class="btn btn-info text-white">View</a>
+                                <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="NonDisclosureInput">
+                                <label for="NonDisclosureInput" class="btn btn-info text-white me-2">Upload</label>
+                                @if (Model.IsNonDisclosureDoc ?? false)
+                                {
+                                    <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/4.jpg" class="btn btn-info text-white">View</a>
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
-            <form class="rounded-0 shadow-none mb-3">
+            <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3 border-bottom">
+                <input type="number" value="5" name="docId" hidden />
                 <div class="row">
                     <div class="col-md-9 col-lg-8">
                         <div class="row">
@@ -421,15 +390,23 @@
                                 <label for="LicenseDoc" class="me-2">License Document</label>
                             </div>
                             <div class="col-sm-5 mb-3">
-                                <input type="submit" value="Upload" class="btn btn-info text-white me-2" />
-                                <a class="btn btn-info text-white">View</a>
+                                <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="LicenseInput">
+                                <label for="LicenseInput" class="btn btn-info text-white me-2">Upload</label>
+                                @if(Model.IsLicenseDoc ?? false)
+                                {
+                                    <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/5.jpg" class="btn btn-info text-white">View</a>
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
 
+            <div class="d-flex justify-content-end">
+                <a asp-action="DeleteProvider" asp-route-providerId="@Model.ProviderId" class="btn btn-danger">Delete Provider</a>
+            </div>
         </div>
+
 
     </div>
 
@@ -440,6 +417,9 @@
 @section AddScript {
 
     <partial name="_ToastMessageScriptsPartial" />
+
+    @*CANVAS SCRIPT*@
+
     <script>
         // Get the canvas element and clear and save buttons
         const canvas = document.getElementById("signature-pad");
@@ -507,6 +487,10 @@
             saveButton.disabled = true;
         });
     </script>
+
+    
+    @*PHONE NUMBER INPUT SCRIPT*@
+
     <script>
 
         const phoneInputField = document.querySelector("#PhoneNumber");
@@ -524,6 +508,10 @@
         });
 
     </script>
+
+
+    @*EDIT BUTTONS SCRIPT*@
+
     <script>
 
         const accountInfoEditBtn = document.querySelector('#account-info-editbtn');
@@ -715,6 +703,9 @@
         })
     </script>
 
+
+    @*UPLOAD LABEL SCRIPT*@
+
     <script>
         const photoInput = document.getElementById('Photo');
         const signatureInput = document.getElementById('Signature');
@@ -738,6 +729,22 @@
                 signatureSpan.textContent = "Select File"; 
             }
         });
+    </script>
+
+
+    @*ONBOARDING DOCS INPUT SCRIPT*@
+
+    <script>
+        const docInputs = document.querySelectorAll('.onboarding-doc');
+
+        docInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                if(input.files.length !== 0){
+                    const form = input.closest('form');
+                    form.submit();
+                }
+            })
+        })
     </script>
 }
 
