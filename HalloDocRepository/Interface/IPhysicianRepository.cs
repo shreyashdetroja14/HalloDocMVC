@@ -31,6 +31,12 @@ namespace HalloDocRepository.Interface
 
         #endregion
 
+        #region CREATE
+
+        Task<Physician> CreateAsync(Physician physician);
+
+        #endregion
+
         #region PHYSICIAN REGION
 
         List<PhysicianRegion> GetRegionsByPhysicianId(int physicianId);

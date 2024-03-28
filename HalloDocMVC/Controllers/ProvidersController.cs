@@ -223,5 +223,23 @@ namespace HalloDocMVC.Controllers
 
             return View(ProviderInfo);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProvider(EditProviderViewModel ProviderInfo)
+         {
+            ProviderInfo.CreatedBy = GetClaimsData().AspNetUserId;
+
+            bool isProvCreated= await _providersService.CreateProvider(ProviderInfo);
+            if (isProvCreated)
+            {
+                TempData["SuccessMessage"] = "Provider Created Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Create Provider.";
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }

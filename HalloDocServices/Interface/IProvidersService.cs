@@ -31,5 +31,7 @@ namespace HalloDocServices.Interface
         Task<bool> Onboarding(IFormFile UploadDoc, int docId, int providerId);
 
         Task<bool> DeleteProvider(int providerId);
+
+        Task<bool> CreateProvider(EditProviderViewModel ProviderInfo);
     }
 }

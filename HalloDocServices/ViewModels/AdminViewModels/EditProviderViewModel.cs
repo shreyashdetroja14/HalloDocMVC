@@ -20,6 +20,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         [Required(ErrorMessage = "Please enter Username")]
         public string Username { get; set; } = null!;
 
+        [Required(ErrorMessage ="Please enter password.")]
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [RegularExpression(@"^((?=.*[a-z])(?=.*[A-Z])(?=.*\d)).+$", ErrorMessage = "Password must contain 1 number, 1 special charecter, 1 uppercase and 1 lowercase charecter")]
         public string? Password { get; set; }
@@ -39,6 +40,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         /*[RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Firstname can only contain letters and spaces.")]*/
         public string FirstName { get; set; } = null!;
 
+        [Required(ErrorMessage = "Please Enter Last Name")]
         /*[RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Lastname can only contain letters and spaces.")]*/
         public string? LastName { get; set; }
 
@@ -106,6 +108,16 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public bool? IsLicenseDoc{ get; set;}
 
-        /*public IFormFile? UploadDoc { get; set; }*/
+        public IFormFile? ContractorDoc { get; set; }
+
+        public IFormFile? BackgroundDoc { get; set; }
+
+        public IFormFile? HippaDoc { get; set; }
+
+        public IFormFile? NonDisclosureDoc { get; set; }
+
+        public IFormFile? LicenseDoc { get; set; }
+
+        public string? CreatedBy { get; set; }
     }
 }

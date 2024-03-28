@@ -64,6 +64,13 @@ namespace HalloDocRepository.Implementation
             return physician;
         }
 
+        public async Task<Physician> CreateAsync(Physician physician)
+        {
+            _context.Add(physician);
+            await _context.SaveChangesAsync();
+
+            return physician;
+        }
 
         #endregion
 

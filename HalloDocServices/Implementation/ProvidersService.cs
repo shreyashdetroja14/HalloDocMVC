@@ -316,7 +316,7 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
-        public string UploadFilesToServer(IFormFile? UploadFile, int providerId)
+        public string UploadFilesToServer(IFormFile? UploadFile, int docId, int providerId)
         {
             if (UploadFile == null) { return string.Empty; }
 
@@ -328,7 +328,15 @@ namespace HalloDocServices.Implementation
                 Directory.CreateDirectory(path);
             }
 
-            string newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}-{DateTime.Now.ToString("yyyyMMddhhmmss")}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
+            string newfilename = "";
+            if(docId > 5)
+            {
+                newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}-{DateTime.Now.ToString("yyyyMMddhhmmss")}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
+            }
+            else
+            {
+                newfilename = $"{docId}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
+            }
 
             string fileNameWithPath = Path.Combine(path, newfilename);
             string file = FilePath.Replace("wwwroot\\Upload\\Physician\\", "/Upload/Physician/") + "/" + newfilename;
@@ -350,13 +358,13 @@ namespace HalloDocServices.Implementation
             provider.BusinessWebsite = ProfileInfo.BusinessWebsite;
             provider.AdminNotes = ProfileInfo.AdminNotes;
 
-            string photoFileName = UploadFilesToServer(ProfileInfo.Photo, ProfileInfo.ProviderId);
+            string photoFileName = UploadFilesToServer(ProfileInfo.Photo, 6, ProfileInfo.ProviderId);
             if (photoFileName != string.Empty)
             {
                 provider.Photo = photoFileName;
             }
 
-            string signatureFileName = UploadFilesToServer(ProfileInfo.Signature, ProfileInfo.ProviderId);
+            string signatureFileName = UploadFilesToServer(ProfileInfo.Signature, 7, ProfileInfo.ProviderId);
             if (signatureFileName != string.Empty)
             {
                 provider.Signature = signatureFileName;
@@ -372,23 +380,7 @@ namespace HalloDocServices.Implementation
             var provider = _physicianRepository.GetPhysicianByPhysicianId(providerId);
             if (provider == null) { return false; }
 
-            string FilePath = "wwwroot\\Upload\\Physician\\" + providerId;
-            string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
-
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-
-            string newfilename = $"{docId}.{Path.GetExtension(UploadDoc.FileName).Trim('.')}";
-            //string newfilename = $"{docId}.pdf";
-
-            string fileNameWithPath = Path.Combine(path, newfilename);
-
-            using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
-            {
-                UploadDoc.CopyTo(stream);
-            }
+            UploadFilesToServer(UploadDoc, docId, providerId);
 
             switch(docId)
             {
@@ -426,6 +418,56 @@ namespace HalloDocServices.Implementation
             provider.IsDeleted = true;
 
             await _physicianRepository.Update(provider);
+
+            return true;
+        }
+
+        public async Task<bool> CreateProvider(EditProviderViewModel ProviderInfo)
+        {
+            var aspnetuserNew = new AspNetUser();
+
+            aspnetuserNew.Id = Guid.NewGuid().ToString();
+
+            aspnetuserNew.UserName = ProviderInfo.Username;
+            aspnetuserNew.PasswordHash = BCrypt.Net.BCrypt.HashPassword(ProviderInfo.Password);
+            aspnetuserNew.Email = ProviderInfo.Email;
+            aspnetuserNew.PhoneNumber = ProviderInfo.PhoneNumber;
+            aspnetuserNew.CreatedDate = DateTime.Now;
+
+            aspnetuserNew = await _userRepository.CreateAspNetUser(aspnetuserNew);
+
+            var provider = new Physician();
+
+            provider.AspNetUserId = aspnetuserNew.Id;
+            provider.FirstName = ProviderInfo.FirstName;
+            provider.LastName = ProviderInfo.LastName;
+            provider.Email = ProviderInfo.Email;
+            provider.Mobile = ProviderInfo.PhoneNumber;
+            provider.MedicalLicense = ProviderInfo.MedicalLicense;
+            provider.AdminNotes = ProviderInfo.AdminNotes;
+            provider.IsAgreementDoc = ProviderInfo.IsContractorDoc;
+            provider.IsBackgroundDoc = ProviderInfo.IsBackgroundDoc;
+            provider.IsTrainingDoc = ProviderInfo.IsContractorDoc;
+            provider.IsNonDisclosureDoc = ProviderInfo.IsNonDisclosureDoc;
+            provider.IsLicenseDoc = ProviderInfo.IsLicenseDoc;
+            provider.Address1 = ProviderInfo.Address1;
+            provider.Address2 = ProviderInfo.Address2;
+            provider.City = ProviderInfo.City; 
+            provider.RegionId = ProviderInfo.RegionId;
+            provider.ZipCode = ProviderInfo.ZipCode;
+            provider.AltPhone = ProviderInfo.SecondPhoneNumber;
+            provider.CreatedBy = ProviderInfo.CreatedBy;
+            provider.CreatedDate = DateTime.Now;
+            provider.Status = (short)(ProviderInfo.Status ?? 0);
+            provider.BusinessName = ProviderInfo.BusinessName;
+            provider.BusinessWebsite = ProviderInfo.BusinessWebsite;
+            provider.IsDeleted = false;
+            provider.RoleId = ProviderInfo.RoleId;
+            provider.NpiNumber = ProviderInfo.NPINumber;
+            provider.SyncEmailAddress = ProviderInfo.SyncEmail;
+            provider.IsNotificationStopped = false;
+
+            await _physicianRepository.CreateAsync(provider);
 
             return true;
         }
