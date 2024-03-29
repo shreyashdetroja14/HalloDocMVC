@@ -25,6 +25,8 @@ namespace HalloDocRepository.Interface
 
         Task<bool> UpdateAspNetUser(AspNetUser aspnetuser);
 
+        IQueryable<AspNetUser> GetIQueryableAspNetUsers();
+
 
         // AspNetUserRoles
 

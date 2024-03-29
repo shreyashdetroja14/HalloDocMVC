@@ -10,13 +10,19 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 {
     public class CreateRoleViewModel
     {
+        public bool IsCreateRole { get; set; }
+
+        public int RoleId { get; set; } 
+
         public string? CreatedBy { get; set; }
 
-        [Required(ErrorMessage ="Please Enter Role Name")]
-        public string? RoleName { get; set; }
+        public string? ModifiedBy { get; set; }
+
+        [Required(ErrorMessage = "Please Enter Role Name")]
+        public string RoleName { get; set; } = null!;
 
         [Required(ErrorMessage ="Please Select Account Type")]
-        public int? AccountType { get; set;}
+        public int AccountType { get; set;}
 
         public List<SelectListItem> AccountTypeList { get; set; } = new List<SelectListItem>();
 

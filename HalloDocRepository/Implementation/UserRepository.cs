@@ -127,5 +127,10 @@ namespace HalloDocRepository.Implementation
 
             return aspnetuserrole;
         }
+
+        public IQueryable<AspNetUser> GetIQueryableAspNetUsers()
+        {
+            return _context.AspNetUsers;
+        }
     }
 }

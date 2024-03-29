@@ -1,6 +1,7 @@
 ﻿using HalloDocEntities.Models;
 using HalloDocRepository.Implementation;
 using HalloDocRepository.Interface;
+using HalloDocServices.Constants;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels.AdminViewModels;
 using Microsoft.AspNetCore.Http;
@@ -15,12 +16,7 @@ using System.Threading.Tasks;
 
 namespace HalloDocServices.Implementation
 {
-    public enum Status
-    {
-        Active = 1,
-        Inactive = 2,
-        Pending = 3
-    }
+    
 
     public class ProvidersService : IProvidersService
     {
@@ -435,6 +431,13 @@ namespace HalloDocServices.Implementation
             aspnetuserNew.CreatedDate = DateTime.Now;
 
             aspnetuserNew = await _userRepository.CreateAspNetUser(aspnetuserNew);
+
+            var aspnetuserRole = new AspNetUserRole();
+            aspnetuserRole.AspNetUserId = aspnetuserNew.Id;
+            aspnetuserRole.RoleId = "527aa89f-ae69-411b-9795-69675356349a";
+
+            await _userRepository.CreateAspNetUserRole(aspnetuserRole);
+
 
             var provider = new Physician();
 

@@ -66,6 +66,22 @@ namespace HalloDocRepository.Implementation
             return MenuIds;
         }
 
+        public List<RoleMenu> GetRolesMenusByRoleId(int roleId)
+        {
+            var roleMenus = _context.RoleMenus.Where(x => x.RoleId == roleId).ToList();
+
+            return roleMenus;
+        }
+
+        public async Task<List<RoleMenu>> RemoveRoleMenusAsync(List<RoleMenu> roleMenus)
+        {
+            _context.RoleMenus.RemoveRange(roleMenus);
+            await _context.SaveChangesAsync();
+
+            return roleMenus;
+        }
+
+
 
         #endregion
 
@@ -77,6 +93,7 @@ namespace HalloDocRepository.Implementation
             return menus;
         }
 
+        
         #endregion
     }
 }

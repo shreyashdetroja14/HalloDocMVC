@@ -25,6 +25,10 @@ namespace HalloDocRepository.Interface
 
         Task<List<int>> CreateRoleMenusAsync(List<int> MenuIds, int roleId);
 
+        List<RoleMenu> GetRolesMenusByRoleId(int roleId);
+
+        Task<List<RoleMenu>> RemoveRoleMenusAsync(List<RoleMenu> roleMenus);
+
         #endregion
 
         #region MENU

@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
 }
 
-@using HalloDocServices.Implementation
+@using HalloDocServices.Constants
 
 @model HalloDocServices.ViewModels.AdminViewModels.CreateRoleViewModel
 
@@ -13,14 +13,22 @@
         <div class="container-xl p-4">
 
             <div class="heading d-flex justify-content-between align-items-center mb-3">
-                <h1 class="h2 mb-3">Create Role</h1>
+                @if (Model.IsCreateRole)
+                {
+                    <h1 class="h2 mb-3">Create Role</h1>
+                }
+                else
+                {
+                    <h1 class="h2 mb-3">Edit Role</h1>
+                }
                 <a class="btn back-btn">
                     <img src="~/images/backIcon.svg" alt="">
                     Back
                 </a>
             </div>
 
-            <form asp-action="CreateRole" class="bg-white p-4 request-form rounded-0 shadow">
+            <form asp-action="@(Model.IsCreateRole ? "CreateRole" : "EditRole")" class="bg-white p-4 request-form rounded-0 shadow">
+                <input type="number" asp-for="RoleId" hidden />
                 <h4 class="mb-3">Details</h4>
                 <div class="row">
                     <div class="col-sm-6">
@@ -80,21 +88,31 @@
         const accountTypeList = document.querySelector('#account-type-list');
         const menuItems = document.querySelectorAll('.form-check-input');
 
-        accountTypeList.addEventListener('change', () => {
+        function changeMenus(){
             const accountType = accountTypeList.value;
             console.log('acc type: ', accountType);
             menuItems.forEach(item => {
-                if(accountType != '' && item.dataset.accountType != accountType){
+                if (accountType != '' && item.dataset.accountType != accountType) {
                     const div = item.parentNode.closest('.form-check');
                     div.classList.add('d-none');
+                    const checkBox = div.querySelector('input[type="checkbox"]'); 
+                    checkBox.removeAttribute('name');
+
                     console.log('hidden acc type: ', item.dataset.accountType)
                 }
-                else{
+                else {
                     const div = item.parentNode.closest('.form-check');
                     div.classList.remove('d-none');
+                    const checkBox = div.querySelector('input[type="checkbox"]'); 
+                    checkBox.setAttribute('name', 'MenuIds');
+
                     console.log('shown acc type: ', item.dataset.accountType)
                 }
-            })
-        })
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', changeMenus);
+
+        accountTypeList.addEventListener('change', changeMenus);
     </script>
 }

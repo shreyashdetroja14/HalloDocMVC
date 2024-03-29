@@ -217,3 +217,7 @@ tr p{
             white-space: nowrap;
         }
     }
+
+.dropdown-menu{
+    font-size: 16px;
+}

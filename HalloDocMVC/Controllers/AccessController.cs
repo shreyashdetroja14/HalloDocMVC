@@ -98,5 +98,38 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Accounts");
 
         }
+
+        public IActionResult EditRole(int roleId)
+        {
+            CreateRoleViewModel EditRoleData = new CreateRoleViewModel();
+            EditRoleData.RoleId = roleId;
+
+            EditRoleData = _accessService.GetCreateRoleViewModel(EditRoleData);
+
+            return View("CreateRole", EditRoleData);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditRole(CreateRoleViewModel EditRoleData)
+        {
+            EditRoleData.ModifiedBy = GetClaimsData().AspNetUserId;
+
+            bool isRoleEdited= await _accessService.EditRole(EditRoleData);
+            if (isRoleEdited)
+            {
+                TempData["SuccessMessage"] = "Role Edited Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Edit Role.";
+            }
+            return RedirectToAction("Accounts");
+        }
+
+        public async Task<IActionResult> UserAccess()
+        {
+            List<UserAccessRow> userAccessList = await _accessService.GetUserAccessList();
+            return View();
+        }
     }
 }

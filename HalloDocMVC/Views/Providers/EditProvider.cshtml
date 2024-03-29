@@ -1,4 +1,4 @@
-﻿@using HalloDocServices.Implementation;
+﻿@using HalloDocServices.Constants;
 
 @{
     ViewData["Title"] = "Edit Provider";
@@ -276,8 +276,8 @@
                             <div class="signature-container d-flex flex-column align-items-center d-none">
                                 <canvas id="signature-pad" class="border border-dark mb-3" width="150" height="150"></canvas>
                                 <div>
-                                    <button type="button" id="clear-button" class="btn btn-outline-danger">Clear</button>
-                                    <button type="button" id="save-button" class="btn btn-info">Save</button>
+                                    <button type="button" id="clear-button" class="btn btn-outline-info">Clear</button>
+                                    <button type="button" id="save-button" class="btn btn-info text-white">Save</button>
                                 </div>
                             </div>
                             
@@ -450,6 +450,9 @@
         let drawing = false;
         let prevX = 0;
         let prevY = 0;
+
+        saveButton.disabled = true;
+
         // Event listeners for drawing
         canvas.addEventListener("mousedown", (e) => {
             drawing = true;
@@ -459,6 +462,8 @@
         canvas.addEventListener("mousemove", (e) => {
             if (!drawing) return;
             draw(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+
+            saveButton.disabled = false;
         });
         canvas.addEventListener("mouseup", () => {
             drawing = false;
@@ -484,6 +489,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             saveButton.disabled = false;
             signatureInput.value = "";
+            saveButton.disabled = true;
 
             var event = new Event('change');
             signatureInput.dispatchEvent(event);

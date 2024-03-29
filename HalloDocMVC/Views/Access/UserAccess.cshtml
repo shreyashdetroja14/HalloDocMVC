@@ -1,0 +1,69 @@
+﻿@using HalloDocServices.Constants;
+@{
+    ViewData["Title"] = "User Access";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+@section AddStyles
+    {
+    <style>
+        tr {
+            vertical-align: middle;
+            font-weight: 500;
+        }
+
+            tr p {
+                margin: 0;
+            }
+
+        .selectlist {
+            width: 30%;
+        }
+
+        @@media screen and (max-width: 767px) {
+            .selectlist {
+                width: 100%;
+            }
+        }
+
+    </style>
+}
+
+@model HalloDocServices.ViewModels.AdminViewModels.ProvidersViewModel
+
+<div class="main">
+    <partial name="_NavbarLinks">
+
+        <div class="container-xl p-4">
+
+            <h2 class="mb-4">
+                User Access
+            </h2>
+
+            <div class="accessSection bg-white rounded-3 shadow">
+                <div class="searchSection p-3 mb-2 d-flex flex-column flex-md-row justify-content-between align-items-center">
+                    <select class="form-select selectlist mb-3 mb-md-0" name="RegionId" asp-items="Html.GetEnumSelectList<AccountType>()">
+                        <option value="">All</option>
+                    </select>
+                    <div id="label-container">
+                        <a asp-action="CreateProvider" class="btn btn-info text-white px-3 create-btn d-none" id="a-tag">Create Provider</a>
+                        <a asp-action="CreateProvider" class="btn btn-info text-white px-3 create-btn d-none" id="a-tag">Create Admin</a>
+                    </div>
+                </div>
+
+                <div id="partial-container">
+                </div>
+            </div>
+
+        </div>
+
+</div>
+
+
+
+@section AddScript
+{
+    <partial name="_ToastMessageScriptsPartial" />
+
+    
+}
