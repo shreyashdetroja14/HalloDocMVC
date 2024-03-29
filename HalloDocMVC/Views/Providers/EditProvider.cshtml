@@ -1,4 +1,5 @@
-﻿
+﻿@using HalloDocServices.Implementation;
+
 @{
     ViewData["Title"] = "Edit Provider";
     Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
@@ -52,7 +53,7 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
-                            <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="@Model.StatusList" disabled>
+                            <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="Html.GetEnumSelectList<Status>()" disabled>
                                 <option value="">Set a status</option>
                             </select>
                             <span asp-validation-for="Status" class="text-danger"></span>
@@ -320,7 +321,7 @@
                                 @*<input type="submit" value="Upload" class="btn btn-info text-white me-2" />*@
                                 <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="ContractorInput">
                                 <label for="ContractorInput" class="btn btn-info text-white me-2">Upload</label>
-                                @if (Model.IsContractorDoc ?? false)
+                                @if (Model.IsContractorDoc)
                                 {
                                     <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/1.jpg" class="btn btn-info text-white">View</a>
                                 }
@@ -343,7 +344,7 @@
                             <div class="col-sm-5 mb-3">
                                 <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="BackgroundInput">
                                 <label for="BackgroundInput" class="btn btn-info text-white me-2">Upload</label>
-                                @if(Model.IsBackgroundDoc ?? false)
+                                @if(Model.IsBackgroundDoc)
                                 {
                                     <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/2.jpg" class="btn btn-info text-white">View</a>
                                 }
@@ -366,7 +367,7 @@
                             <div class="col-sm-5 mb-3">
                                 <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="HippaInput">
                                 <label for="HippaInput" class="btn btn-info text-white me-2">Upload</label>
-                                @if(Model.IsHippaDoc ?? false)
+                                @if(Model.IsHippaDoc)
                                 {
                                     <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/3.jpg" class="btn btn-info text-white">View</a>
                                 }
@@ -389,7 +390,7 @@
                             <div class="col-sm-5 mb-3">
                                 <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="NonDisclosureInput">
                                 <label for="NonDisclosureInput" class="btn btn-info text-white me-2">Upload</label>
-                                @if (Model.IsNonDisclosureDoc ?? false)
+                                @if (Model.IsNonDisclosureDoc)
                                 {
                                     <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/4.jpg" class="btn btn-info text-white">View</a>
                                 }
@@ -412,7 +413,7 @@
                             <div class="col-sm-5 mb-3">
                                 <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="LicenseInput">
                                 <label for="LicenseInput" class="btn btn-info text-white me-2">Upload</label>
-                                @if(Model.IsLicenseDoc ?? false)
+                                @if(Model.IsLicenseDoc)
                                 {
                                     <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/5.jpg" class="btn btn-info text-white">View</a>
                                 }
@@ -542,6 +543,7 @@
         const accountInfoSubmitBtn = document.querySelector('#account-info-save');
         const accountInfoCancelBtn = document.querySelector('#account-info-cancel');
         const accountInfoInputTags = document.querySelectorAll('.account-info');
+        const usernameInput = document.querySelector('#Username');
         const passwordInput = document.querySelector('#Password');
         const roleList = document.querySelector('#role-list');
         const statusList = document.querySelector('#status-list');
@@ -563,6 +565,7 @@
             roleList.disabled = false;
             statusList.disabled = false;
 
+            usernameInput.readOnly = true;
             passwordInput.readOnly = true;
         });
 

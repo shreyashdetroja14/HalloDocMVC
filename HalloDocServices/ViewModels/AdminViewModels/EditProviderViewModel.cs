@@ -18,6 +18,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public int AdminId { get; set; }
 
         [Required(ErrorMessage = "Please enter Username")]
+        [RegularExpression(@"^MD\.[A-Z]{1,3}\.[A-Z]{1,3}$", ErrorMessage = "Please enter a username in the format MD.ABC.DEF")]
         public string Username { get; set; } = null!;
 
         [Required(ErrorMessage ="Please enter password.")]
@@ -25,10 +26,12 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         [RegularExpression(@"^((?=.*[a-z])(?=.*[A-Z])(?=.*\d)).+$", ErrorMessage = "Password must contain 1 number, 1 special charecter, 1 uppercase and 1 lowercase charecter")]
         public string? Password { get; set; }
 
+        [Required(ErrorMessage = "Please select status.")]
         public int? Status { get; set; }
 
         public List<SelectListItem> StatusList { get; set; } = new List<SelectListItem>();
 
+        [Required(ErrorMessage = "Please select role.")]
         public int? RoleId { get; set; }
 
         public List<SelectListItem> RoleList { get; set; } = new List<SelectListItem>();
@@ -98,15 +101,15 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public string? AdminNotes { get; set; }
 
-        public bool? IsContractorDoc { get; set; }
+        public bool IsContractorDoc { get; set; }
 
-        public bool? IsBackgroundDoc { get; set; }
+        public bool IsBackgroundDoc { get; set; }
 
-        public bool? IsHippaDoc{ get; set;}
+        public bool IsHippaDoc{ get; set;}
 
-        public bool? IsNonDisclosureDoc{ get; set;}
+        public bool IsNonDisclosureDoc{ get; set;}
 
-        public bool? IsLicenseDoc{ get; set;}
+        public bool IsLicenseDoc{ get; set;}
 
         public IFormFile? ContractorDoc { get; set; }
 

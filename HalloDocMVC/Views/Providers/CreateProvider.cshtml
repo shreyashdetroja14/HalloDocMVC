@@ -3,6 +3,8 @@
     Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
 }
 
+@using HalloDocServices.Implementation
+
 @section AddStyles {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
@@ -51,7 +53,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="@Model.StatusList" >
+                                <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="Html.GetEnumSelectList<Status>()" >
                                     <option value="">Set a status</option>
                                 </select>
                                 <span asp-validation-for="Status" class="text-danger"></span>
@@ -243,7 +245,7 @@
                         <div class="col-sm-5 mb-3">
                             <input type="file" accept=".jpg" asp-for="ContractorDoc" class="onboarding-doc"  id="ContractorInput">
                             <label for="ContractorInput" class="btn btn-info text-white me-2">Upload</label>
-                            @if (Model.IsContractorDoc ?? false)
+                            @if (Model.IsContractorDoc)
                             {
                                 <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/1.jpg" class="btn btn-info text-white">View</a>
                             }
@@ -252,7 +254,7 @@
                     
                     <div class="row">
                         <div class="col-1 mb-3">
-                            <input type="checkbox" asp-for="IsBackgroundDoc" class="form-check-input" id="BackgroundDoc" checked="@Model.IsBackgroundDoc" />
+                            <input type="checkbox" asp-for="IsBackgroundDoc"  class="form-check-input" id="BackgroundDoc" checked="@Model.IsBackgroundDoc" />
                         </div>
                         <div class="col-11 col-sm-6 mb-3">
                             <label for="BackgroundDoc" class="me-2">Background Check</label>
@@ -260,7 +262,7 @@
                         <div class="col-sm-5 mb-3">
                             <input type="file" accept=".jpg" asp-for="BackgroundDoc" class="onboarding-doc"  id="BackgroundInput">
                             <label for="BackgroundInput" class="btn btn-info text-white me-2">Upload</label>
-                            @if (Model.IsBackgroundDoc ?? false)
+                            @if (Model.IsBackgroundDoc )
                             {
                                 <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/2.jpg" class="btn btn-info text-white">View</a>
                             }
@@ -277,7 +279,7 @@
                         <div class="col-sm-5 mb-3">
                             <input type="file" accept=".jpg" asp-for="HippaDoc" class="onboarding-doc"  id="HippaInput">
                             <label for="HippaInput" class="btn btn-info text-white me-2">Upload</label>
-                            @if (Model.IsHippaDoc ?? false)
+                            @if (Model.IsHippaDoc )
                             {
                                 <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/3.jpg" class="btn btn-info text-white">View</a>
                             }
@@ -286,7 +288,7 @@
                     
                     <div class="row">
                         <div class="col-1 mb-3">
-                            <input type="checkbox" asp-for="IsNonDisclosureDoc" class="form-check-input me-2" id="NonDisclosureDoc" checked="@Model.IsNonDisclosureDoc"  />
+                            <input type="checkbox" asp-for="IsNonDisclosureDoc" class="form-check-input me-2" id="NonDisclosureDoc" checked="@Model.IsNonDisclosureDoc" />
                         </div>
                         <div class="col-11 col-sm-6 mb-3">
                             <label for="NonDisclosureDoc" class="me-2">Non-Disclosure Agreement</label>
@@ -294,7 +296,7 @@
                         <div class="col-sm-5 mb-3">
                             <input type="file" accept=".jpg" asp-for="NonDisclosureDoc" class="onboarding-doc"  id="NonDisclosureInput">
                             <label for="NonDisclosureInput" class="btn btn-info text-white me-2">Upload</label>
-                            @if (Model.IsNonDisclosureDoc ?? false)
+                            @if (Model.IsNonDisclosureDoc )
                             {
                                 <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/4.jpg" class="btn btn-info text-white">View</a>
                             }
@@ -303,7 +305,7 @@
                     
                     <div class="row">
                         <div class="col-1 mb-3">
-                            <input type="checkbox" asp-for="IsLicenseDoc" class="form-check-input me-2" id="LicenseDoc" checked="@Model.IsLicenseDoc"  />
+                            <input type="checkbox" asp-for="IsLicenseDoc" class="form-check-input me-2" id="LicenseDoc" checked="@Model.IsLicenseDoc" />
                         </div>
                         <div class="col-11 col-sm-6 mb-3">
                             <label for="LicenseDoc" class="me-2">License Document</label>
@@ -311,7 +313,7 @@
                         <div class="col-sm-5 mb-3">
                             <input type="file" accept=".jpg" asp-for="LicenseDoc" class="onboarding-doc"  id="LicenseInput">
                             <label for="LicenseInput" class="btn btn-info text-white me-2">Upload</label>
-                            @if (Model.IsLicenseDoc ?? false)
+                            @if (Model.IsLicenseDoc )
                             {
                                 <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/5.jpg" class="btn btn-info text-white">View</a>
                             }

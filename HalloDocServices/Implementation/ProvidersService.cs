@@ -132,20 +132,20 @@ namespace HalloDocServices.Implementation
             var providers = _physicianRepository.GetIQueryablePhysicians(EditProvider.ProviderId);
             var provider = providers.Include(x => x.AspNetUser).Include(x => x.Role).Include(x => x.Region).Include(x => x.PhysicianRegions).FirstOrDefault();
 
-            EditProvider.StatusList = Enum.GetValues(typeof(Status))
+            /*EditProvider.StatusList = Enum.GetValues(typeof(Status))
                                     .Cast<Status>()
                                     .Select(status => new SelectListItem
                                     {
                                         Value = ((int)status).ToString(),
                                         Text = status.ToString(),
                                         Selected = (status == (provider?.Status != null ? ((Status)provider.Status) : null))
-                                    }).ToList();
+                                    }).ToList();*/
 
             var rolesList = _roleRepository.GetAllRoles();
 
             EditProvider.RoleList.Add(new SelectListItem()
             {
-                Value = "0",
+                Value = "",
                 Text = "Set a role",
                 Selected = true
             });
@@ -162,12 +162,6 @@ namespace HalloDocServices.Implementation
 
             var regions = _commonRepository.GetAllRegions();
 
-            EditProvider.StateList.Add(new SelectListItem()
-            {
-                Text = "Set a region",
-                Value = "0",
-                Selected = true
-            });
 
             foreach (var region in regions)
             {
@@ -213,11 +207,11 @@ namespace HalloDocServices.Implementation
 
                 EditProvider.SignaturePath = provider.Signature;
 
-                EditProvider.IsContractorDoc = provider.IsAgreementDoc;
-                EditProvider.IsBackgroundDoc = provider.IsBackgroundDoc;
-                EditProvider.IsHippaDoc = provider.IsTrainingDoc;
-                EditProvider.IsNonDisclosureDoc = provider.IsNonDisclosureDoc;
-                EditProvider.IsLicenseDoc = provider.IsLicenseDoc;
+                EditProvider.IsContractorDoc = provider.IsAgreementDoc ?? false;
+                EditProvider.IsBackgroundDoc = provider.IsBackgroundDoc ?? false;
+                EditProvider.IsHippaDoc = provider.IsTrainingDoc ?? false;
+                EditProvider.IsNonDisclosureDoc = provider.IsNonDisclosureDoc ?? false;
+                EditProvider.IsLicenseDoc = provider.IsLicenseDoc ?? false;
 
             }
 
@@ -245,7 +239,7 @@ namespace HalloDocServices.Implementation
                 return false;
             }
 
-            aspnetUser.UserName = AccountInfo.Username;
+            //aspnetUser.UserName = AccountInfo.Username;
             if (AccountInfo.Password != null)
             {
                 aspnetUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(AccountInfo.Password);
@@ -258,13 +252,19 @@ namespace HalloDocServices.Implementation
 
         public async Task<bool> EditPhysicianInfo(EditProviderViewModel PhysicianInfo)
         {
-            var provider = _physicianRepository.GetIQueryablePhysicians(PhysicianInfo.ProviderId).Include(x => x.PhysicianRegions).FirstOrDefault();
+            var provider = _physicianRepository.GetIQueryablePhysicians(PhysicianInfo.ProviderId).Include(x => x.PhysicianRegions).Include(x => x.AspNetUser).FirstOrDefault();
             var providerRegions = provider?.PhysicianRegions.ToList();
+            var aspnetuser = provider?.AspNetUser;
 
-            if (provider == null)
+            if (provider == null || aspnetuser == null)
             {
                 return false;
             }
+
+            aspnetuser.Email = PhysicianInfo.Email;
+            aspnetuser.PhoneNumber = PhysicianInfo.PhoneNumber;
+
+            await _userRepository.UpdateAspNetUser(aspnetuser);
 
             provider.FirstName = PhysicianInfo.FirstName;
             provider.LastName = PhysicianInfo.LastName;
@@ -468,6 +468,8 @@ namespace HalloDocServices.Implementation
             provider.IsNotificationStopped = false;
 
             await _physicianRepository.CreateAsync(provider);
+
+            await _physicianRepository.AddPhysicianRegionsAsync(ProviderInfo.ProviderRegions, provider.PhysicianId);
 
             return true;
         }
