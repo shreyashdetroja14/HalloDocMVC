@@ -4,6 +4,7 @@ using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using HalloDocServices.ViewModels.AdminViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -15,12 +16,16 @@ namespace HalloDocMVC.Controllers
         private readonly IJwtService _jwtService;
         private readonly IAccessService _accessService;
         private readonly IMailService _mailService;
+        private readonly IProvidersService _providersService;
+        private readonly IProfileService _profileService;
 
-        public AccessController(IJwtService jwtService, IAccessService accessService, IMailService mailService)
+        public AccessController(IJwtService jwtService, IAccessService accessService, IMailService mailService, IProvidersService providersService, IProfileService profileService)
         {
             _jwtService = jwtService;
             _accessService = accessService;
             _mailService = mailService;
+            _providersService = providersService;
+            _profileService = profileService;
         }
 
         public ClaimsData GetClaimsData()
@@ -62,7 +67,7 @@ namespace HalloDocMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRole(CreateRoleViewModel CreateRoleData)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 CreateRoleData = _accessService.GetCreateRoleViewModel(CreateRoleData);
                 return View(CreateRoleData);
@@ -114,7 +119,7 @@ namespace HalloDocMVC.Controllers
         {
             EditRoleData.ModifiedBy = GetClaimsData().AspNetUserId;
 
-            bool isRoleEdited= await _accessService.EditRole(EditRoleData);
+            bool isRoleEdited = await _accessService.EditRole(EditRoleData);
             if (isRoleEdited)
             {
                 TempData["SuccessMessage"] = "Role Edited Successfully";
@@ -129,7 +134,71 @@ namespace HalloDocMVC.Controllers
         public async Task<IActionResult> UserAccess()
         {
             List<UserAccessRow> userAccessList = await _accessService.GetUserAccessList();
-            return View();
+            return View(userAccessList);
+        }
+
+        public IActionResult CreatePhysician()
+        {
+            EditProviderViewModel ProviderInfo = new EditProviderViewModel();
+            ProviderInfo.IsCreateProvider = true;
+
+            ProviderInfo = _providersService.GetEditProviderViewModel(ProviderInfo);
+
+            return View("~/Views/Providers/CreateProvider.cshtml", ProviderInfo);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProvider(EditProviderViewModel ProviderInfo)
+        {
+            ProviderInfo.CreatedBy = GetClaimsData().AspNetUserId;
+
+            bool isProvCreated = await _providersService.CreateProvider(ProviderInfo);
+            if (isProvCreated)
+            {
+                TempData["SuccessMessage"] = "Provider Created Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Create Provider.";
+            }
+
+            return RedirectToAction("UserAccess");
+        }
+
+        public IActionResult CreateAdmin()
+        {
+            AdminProfileViewModel AdminDetails = new AdminProfileViewModel();
+            AdminDetails = _accessService.GetCreateAdminViewModel(AdminDetails);
+
+            return View(AdminDetails);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAdmin(AdminProfileViewModel AdminDetails)
+        {
+            AdminDetails.CreatedBy = GetClaimsData().AspNetUserId ?? "";
+            bool isAdminCreated = await _accessService.CreateAdmin(AdminDetails);
+            if (isAdminCreated)
+            {
+                TempData["SuccessMessage"] = "Admin Created Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Create Admin.";
+            }
+
+            return RedirectToAction("UserAccess");
+        }
+
+        public IActionResult EditAdmin(string aspnetuserId)
+        {
+            ClaimsData claimsData = GetClaimsData();
+
+            AdminProfileViewModel AdminProfileDetails = _profileService.GetAdminProfileViewModelData(claimsData.AspNetUserId ?? "");
+            AdminProfileDetails.IsEditAdmin = true;
+
+            return View("~/Views/Profile/Index.cshtml", AdminProfileDetails);
+
         }
     }
 }

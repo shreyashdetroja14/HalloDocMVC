@@ -18,7 +18,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public int AdminId { get; set; }
 
         [Required(ErrorMessage = "Please enter Username")]
-        [RegularExpression(@"^MD\.[A-Z]{1,3}\.[A-Z]{1,3}$", ErrorMessage = "Please enter a username in the format MD.ABC.DEF")]
+        /*[RegularExpression(@"^MD\.[A-Z]{1,3}\.[A-Z]{1,3}(?=.*\d)$", ErrorMessage = "Please enter a username in the format MD.ABC.DEF")]*/
         public string Username { get; set; } = null!;
 
         [Required(ErrorMessage ="Please enter password.")]

@@ -29,7 +29,8 @@
     </style>
 }
 
-@model HalloDocServices.ViewModels.AdminViewModels.ProvidersViewModel
+@model List<HalloDocServices.ViewModels.AdminViewModels.UserAccessRow>
+
 
 <div class="main">
     <partial name="_NavbarLinks">
@@ -42,16 +43,124 @@
 
             <div class="accessSection bg-white rounded-3 shadow">
                 <div class="searchSection p-3 mb-2 d-flex flex-column flex-md-row justify-content-between align-items-center">
-                    <select class="form-select selectlist mb-3 mb-md-0" name="RegionId" asp-items="Html.GetEnumSelectList<AccountType>()">
-                        <option value="">All</option>
+                    <select class="form-select selectlist mb-3 mb-md-0" name="RegionId">
+                        <option value="" selected>All</option>
+                        <option value="1">Admin</option>
+                        <option value="2">Physician</option>
                     </select>
                     <div id="label-container">
-                        <a asp-action="CreateProvider" class="btn btn-info text-white px-3 create-btn d-none" id="a-tag">Create Provider</a>
-                        <a asp-action="CreateProvider" class="btn btn-info text-white px-3 create-btn d-none" id="a-tag">Create Admin</a>
+                        <a asp-action="CreatePhysician" asp-controller="Access" class="btn btn-info text-white px-3 create-physician d-none">Create Physician</a>
+                        <a asp-action="CreateAdmin" class="btn btn-info text-white px-3 create-admin d-none">Create Admin</a>
                     </div>
                 </div>
 
-                <div id="partial-container">
+                @*<div id="partial-container">
+                </div>*@
+
+                <div class="providerslist-desktop table-responsive-lg d-none d-md-block">
+
+
+                    <table class="table mb-0">
+                        <thead style="background-color: #FAF9F6;">
+                            <tr class="providerslistheader">
+                                <th scope="col" class="p-3">Account Type</th>
+                                <th scope="col" class="py-3">Account POC</th>
+                                <th scope="col" class="py-3">Phone</th>
+                                <th scope="col" class="py-3">Status</th>
+                                <th scope="col" class="py-3">Open Requests</th>
+                                <th scope="col" class="py-3 text-center" style="min-width:7rem">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model)
+                            {
+                                <tr class="user-row" data-account-type="@user.AccountType">
+                                    <td class="p-3">
+                                        @(((AccountType)(user.AccountType ?? 0)).ToString())
+                                    </td>
+                                    <td class="py-3">
+                                        @user.FullName
+                                    </td>
+                                    <td class="py-3">
+                                        @user.PhoneNumber
+                                    </td>
+                                    <td class="py-3">
+                                        @user.Status
+                                    </td>
+                                    <td class="py-3">
+                                        @user.OpenRequests
+                                    </td>
+                                    <td class="py-3 text-center">
+                                        @if(user.AccountType == 1)
+                                        {
+                                            <a asp-action="EditAdmin" asp-route-aspnetuserId="@user.AspNetUserId" class="btn btn-outline-info">
+                                                Edit
+                                            </a>
+                                        }
+                                        else if(user.AccountType == 2)
+                                        {
+                                            <a asp-action="EditPhysician" asp-route-aspnetuserId="@user.PhysicianId" class="btn btn-outline-info">
+                                                Edit
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="modal-container">
+                </div>
+
+                <div class="providerslist-mobile d-md-none">
+                    <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
+                        @foreach (var user in Model)
+                        {
+                            <div class="accordion-item" data-account-type="@user.AccountType">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed d-flex flex-column align-items-start" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#user-@user.AspNetUserId">
+                                        <h5>@user.FullName</h5>
+                                        <div>
+                                            <span>Account Type: </span>
+                                            <span>@(((AccountType)(user.AccountType ?? 0)).ToString())</span>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="user-@user.AspNetUserId" class="accordion-collapse collapse">
+                                    <div class="accordion-body">
+                                        <div class="mb-2 d-flex align-items-center">
+                                            <span class="material-symbols-outlined text-info me-1">
+                                                call
+                                            </span>
+                                            <span class="me-2">Phone: </span>
+                                            <span>@user.PhoneNumber</span>
+                                        </div>
+                                        <div class="mb-2 d-flex align-items-center">
+                                            <span class="material-symbols-outlined text-info me-1">
+                                                check_circle
+                                            </span>
+                                            <span class="me-2">Status: </span>
+                                            <span>@user.Status</span>
+                                        </div>
+                                        <div class="mb-2 d-flex align-items-center">
+                                            <span class="material-symbols-outlined text-info me-1">
+                                                description
+                                            </span>
+                                            <span class="me-2">Open Requests: </span>
+                                            <span>@user.OpenRequests</span>
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                            <a asp-action="EditProvider" asp-route-providerId="@(user.AccountType == 1 ? user.AdminId : user.PhysicianId)" class="btn btn-outline-info">
+                                                Edit
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
 
@@ -65,5 +174,38 @@
 {
     <partial name="_ToastMessageScriptsPartial" />
 
-    
+    <script>
+        $('.selectlist').change(function() {
+            if ($('.selectlist').val() == 1){
+                $('.create-admin').removeClass('d-none');
+                $('.create-physician').addClass('d-none');
+            }
+            else if ($('.selectlist').val() == 2){
+                $('.create-admin').addClass('d-none');
+                $('.create-physician').removeClass('d-none');
+            }
+            else if ($('.selectlist').val() == 0){
+                $('.create-admin').addClass('d-none');
+                $('.create-physician').addClass('d-none');
+            }
+
+            $('.user-row').each(function(){
+                if ($('.selectlist').val() != 0 &&  $(this).data('account-type') != $('.selectlist').val()){
+                    $(this).hide();
+                }
+                else{
+                    $(this).show();
+                }
+            });
+
+            $('.accordion-item').each(function () {
+                if ($('.selectlist').val() != 0 &&  $(this).data('account-type') != $('.selectlist').val()){
+                    $(this).hide();
+                }
+                else{
+                    $(this).show();
+                }
+            });
+        });
+    </script>
 }

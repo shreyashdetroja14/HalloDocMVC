@@ -33,5 +33,7 @@ namespace HalloDocServices.Interface
         Task<bool> DeleteProvider(int providerId);
 
         Task<bool> CreateProvider(EditProviderViewModel ProviderInfo);
+
+        int CheckUserName(string username);
     }
 }

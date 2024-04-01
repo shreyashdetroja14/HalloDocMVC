@@ -22,6 +22,12 @@ namespace HalloDocRepository.Interface
 
         #endregion
 
+        #region ADD
+
+        Task<Admin> CreateAdmin(Admin admin);
+
+        #endregion
+
         #endregion
 
         #region ADMIN REGION

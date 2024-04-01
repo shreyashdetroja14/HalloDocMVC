@@ -132,5 +132,11 @@ namespace HalloDocRepository.Implementation
         {
             return _context.AspNetUsers;
         }
+
+        public int GetMatchingUserNameCount(string username)
+        {
+            int count = _context.AspNetUsers.Where(x => x.UserName.Contains(username)).Count();
+            return count;
+        }
     }
 }

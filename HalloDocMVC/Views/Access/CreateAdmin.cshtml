@@ -1,0 +1,236 @@
+﻿@using HalloDocServices.Constants;
+@{
+    ViewData["Title"] = "Create Admin";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+@section AddStyles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <link href="@Url.Content("~/css/requestform.css")" rel="stylesheet" type="text/css" />
+}
+
+@model HalloDocServices.ViewModels.AdminViewModels.AdminProfileViewModel
+
+<div class="main">
+
+    <partial name="_NavbarLinks"></partial>
+
+    <div class="container-lg p-4">
+        <div class=" back p-0 pb-4 d-flex justify-content-between">
+            <h2>Create Admin</h2>
+            <a class="btn back-btn">
+                <img src="/images/backIcon.svg" alt="">
+                Back
+            </a>
+        </div>
+        <form asp-action="CreateAdmin" class="bg-white p-4 request-form">
+
+            <input type="number" asp-for="AdminId" hidden>
+            <div class="info mb-4">
+                <h4 class="mb-3">Account Information</h4>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="Username" class="form-control" id="Username"
+                                   placeholder="Username" readonly >    
+                            <label asp-for="Username">Username</label>
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="password" asp-for="Password" class="form-control" id="Password"
+                                   placeholder="Password">
+                            <label asp-for="Password">Password</label>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="Html.GetEnumSelectList<Status>()">
+                                <option value="">Set a status</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class=" mb-3">
+                            <select asp-for="RoleId" id="role-list" class="form-select p-3" asp-items="@Model.RoleList">
+                                
+                            </select>
+                            <span asp-validation-for="RoleId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info mb-4">
+                <h4 class="mb-3">Administrator Information</h4>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="FirstName" class="form-control admin-info" id="FirstName"
+                                   placeholder="FirstName"  >
+                            <label asp-for="FirstName">First Name</label>
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="LastName" class="form-control admin-info" id="LastName"
+                                   placeholder="LastName"  >
+                            <label asp-for="LastName">Last Name</label>
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="email" asp-for="Email" class="form-control admin-info" id="Email" placeholder="Email"  >
+                            <label asp-for="Email">Email</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="email" asp-for="ConfirmEmail" class="form-control admin-info" id="ConfirmEmail" placeholder="ConfirmEmail"  >
+                            <label asp-for="ConfirmEmail">ConfirmEmail</label>
+                            <span asp-validation-for="ConfirmEmail" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 pb-3">
+                        <input type="tel" asp-for="PhoneNumber" class="form-control w-100 admin-info" id="PhoneNumber"   />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="col-sm-6 pb-3">
+                        @foreach (var state in Model.StateList)
+                        {
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       value="@state.Value"
+                                       id="region-@state.Value"
+                                       name="AdminRegions"
+                                       checked="@(Model.AdminRegions.Contains(int.Parse(state.Value)) ? "true" : false)">
+                                <label class="form-check-label" for="region-@state.Value">
+                                    @state.Text
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="info mb-4">
+                <h4 class="mb-3">Mailing & Billing Information</h4>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="Address1" class="form-control billing-info" id="Address1"
+                                   placeholder="Address1"  >
+                            <label asp-for="Address1">Address 1</label>
+                            <span asp-validation-for="Address1" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="Address2" class="form-control billing-info" id="Address2"
+                                   placeholder="Address2"  >
+                            <label asp-for="Address2">Address 2</label>
+                            <span asp-validation-for="Address2" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="City" class="form-control billing-info" id="City" placeholder="City"  >
+                            <label asp-for="City">City</label>
+                            <span asp-validation-for="City" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class=" mb-3">
+                            <select asp-for="RegionId" id="region-list" class="form-select p-3" asp-items="@Model.StateList"  >
+                                <option value="">Select a state</option>
+                            </select>
+                            <span asp-validation-for="RegionId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="ZipCode" class="form-control billing-info" id="ZipCode" placeholder="ZipCode"  >
+                            <label asp-for="ZipCode">ZipCode</label>
+                            <span asp-validation-for="ZipCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 pb-3">
+                        <input type="tel" asp-for="SecondPhoneNumber" class="form-control w-100 billing-info" id="SecondPhoneNumber"   />
+                        <span asp-validation-for="SecondPhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit d-flex justify-content-end">
+                <input type="submit" value="Save" id="billing-info-save" class="btn btn-info py-2 px-3 ms-3 text-white">
+                <input type="reset" value="Cancel" id="billing-info-cancel" class="btn cancelbtn btn-outline-info py-2 px-3 ms-3">
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+@section AddScript{
+
+    <partial name="_ToastMessageScriptsPartial" />
+
+    <script>
+
+        const phoneInputField = document.querySelector("#PhoneNumber");
+        const phoneInput = window.intlTelInput(phoneInputField, {
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+        const phoneInputField2 = document.querySelector("#SecondPhoneNumber");
+        const phoneInput2 = window.intlTelInput(phoneInputField2, {
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+    </script>
+
+    <script>
+        const userNameInput = document.querySelector('#Username');
+        const firstNameInput = document.querySelector('#FirstName');
+        const lastNameInput = document.querySelector('#LastName');
+
+        function generateUsername() {
+            const firstName = firstNameInput.value.trim().toUpperCase();
+            const lastName = lastNameInput.value.trim().toUpperCase();
+
+            let firstNamePart = firstName.substring(0, 3);
+            let lastNamePart = lastName.substring(0, 3);
+
+            if (firstName.length < 3) {
+                firstNamePart = firstName;
+            }
+            if (lastName.length < 3) {
+                lastNamePart = lastName;
+            }
+
+            const username = `MD.${firstNamePart}.${lastNamePart}`;
+            userNameInput.value = username;
+        }
+
+        firstNameInput.addEventListener('keyup', generateUsername);
+        lastNameInput.addEventListener('keyup', generateUsername);
+
+    </script>
+
+}

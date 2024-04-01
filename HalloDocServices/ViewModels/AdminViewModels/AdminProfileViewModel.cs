@@ -12,8 +12,12 @@ namespace HalloDocServices.ViewModels.AdminViewModels
     {
         public int AdminId { get; set; }
 
+        public string CreatedBy { get; set; } = string.Empty;
+
+        public bool? IsEditAdmin { get; set; }
+
         [Required(ErrorMessage = "Please enter Username")]
-        public string? Username { get; set; }
+        public string Username { get; set; } = null!;
 
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [RegularExpression(@"^((?=.*[a-z])(?=.*[A-Z])(?=.*\d)).+$", ErrorMessage = "Password must contain 1 number, 1 special charecter, 1 uppercase and 1 lowercase charecter")]
@@ -21,7 +25,10 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public int? Status { get; set; }
 
+        [Required(ErrorMessage = "Please Set a Role")]
         public int? RoleId { get; set; }
+
+        public List<SelectListItem> RoleList { get; set; } = new List<SelectListItem>();
 
         public string? RoleName { get; set; }
 
@@ -55,6 +62,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "City name can only contain letters, spaces, hyphens, and apostrophes.")]
         public string? City { get; set;}
 
+        [Required(ErrorMessage = "Please Select a State")]
         public int? RegionId { get; set; }
 
         public List<SelectListItem> StateList { get; set; } = new List<SelectListItem>();

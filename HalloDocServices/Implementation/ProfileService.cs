@@ -1,5 +1,6 @@
 ﻿using BCrypt.Net;
 using HalloDocEntities.Models;
+using HalloDocRepository.Implementation;
 using HalloDocRepository.Interface;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels.AdminViewModels;
@@ -18,17 +19,17 @@ namespace HalloDocServices.Implementation
     {
         private readonly IUserRepository _userRepository;
         private readonly IPhysicianRepository _physicianRepository;
-        private readonly INotesAndLogsRepository _notesAndLogsRepository;
         private readonly ICommonRepository _commonRepository;
         private readonly IAdminRepository _adminRepository;
+        private readonly IRoleRepository _roleRepository;
 
-        public ProfileService(IUserRepository userRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IAdminRepository adminRepository)
+        public ProfileService(IUserRepository userRepository, IPhysicianRepository physicianRepository, ICommonRepository commonRepository, IAdminRepository adminRepository, IRoleRepository roleRepository)
         {
             _userRepository = userRepository;
             _physicianRepository = physicianRepository;
-            _notesAndLogsRepository = notesAndLogsRepository;
             _commonRepository = commonRepository;
             _adminRepository = adminRepository;
+            _roleRepository = roleRepository;
         }
 
         public AdminProfileViewModel GetAdminProfileViewModelData(string aspnetuserId)
@@ -46,6 +47,26 @@ namespace HalloDocServices.Implementation
                 AdminProfileDetails.Username = aspnetuserFetched.UserName;
                 AdminProfileDetails.Status = adminFetched?.Status;
                 AdminProfileDetails.RoleId = adminFetched?.RoleId;
+
+                var rolesList = _roleRepository.GetAllRoles();
+
+                AdminProfileDetails.RoleList.Add(new SelectListItem()
+                {
+                    Value = "",
+                    Text = "Set a role",
+                    Selected = true
+                });
+
+                foreach (var role in rolesList)
+                {
+                    AdminProfileDetails.RoleList.Add(new SelectListItem()
+                    {
+                        Value = role.RoleId.ToString(),
+                        Text = role.Name,
+                        Selected = (role.RoleId == adminFetched?.RoleId)
+                    });
+                }
+
                 AdminProfileDetails.RoleName = adminFetched?.Role?.Name;
 
                 AdminProfileDetails.FirstName = adminFetched?.FirstName ?? "";

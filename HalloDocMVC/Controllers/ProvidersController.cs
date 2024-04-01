@@ -241,5 +241,6 @@ namespace HalloDocMVC.Controllers
 
             return RedirectToAction("Index");
         }
+
     }
 }

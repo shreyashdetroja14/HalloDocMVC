@@ -20,5 +20,9 @@ namespace HalloDocServices.Interface
         Task<bool> EditRole(CreateRoleViewModel EditRoleData);
 
         Task<List<UserAccessRow>> GetUserAccessList();
+
+        AdminProfileViewModel GetCreateAdminViewModel(AdminProfileViewModel AdminDetails);
+
+        Task<bool> CreateAdmin(AdminProfileViewModel AdminDetails);
     }
 }

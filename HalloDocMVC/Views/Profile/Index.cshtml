@@ -1,4 +1,5 @@
-﻿@{
+﻿@using HalloDocServices.Constants;
+@{
     ViewData["Title"] = "Admin Profile";
     Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
 }
@@ -32,15 +33,15 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <input type="text" asp-for="Username" class="form-control" id="Username"
-                                       placeholder="Username" readonly>
+                                <input type="text" asp-for="Username" class="form-control account-info" id="Username"
+                                       placeholder="Username" disabled>
                                 <label asp-for="Username">Username</label>
                                 <span asp-validation-for="Username" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <input type="password" asp-for="Password" class="form-control" id="Password"
+                                <input type="password" asp-for="Password" class="form-control account-info" id="Password"
                                        placeholder="Password">
                                 <label asp-for="Password">Password</label>
                                 <span asp-validation-for="Password" class="text-danger"></span>
@@ -48,15 +49,16 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <input type="text" asp-for="Status" class="form-control" id="Status" placeholder="Status" readonly>
-                                <label asp-for="Status">Status</label>
+                                <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="Html.GetEnumSelectList<Status>()" >
+                                    <option value="">Set a status</option>
+                                </select>
                                 <span asp-validation-for="Status" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class=" mb-3">
-                                <select asp-for="RoleId" id="role-list" class="form-select p-3" disabled>
-                                    <option value="@Model.RoleId">@Model.RoleName</option>
+                                <select asp-for="RoleId" id="role-list" class="form-select p-3 account-info" asp-items="@Model.RoleList" disabled>
+                                    
                                 </select>
                                 <span asp-validation-for="RoleId" class="text-danger"></span>
                             </div>
@@ -66,6 +68,9 @@
 
                 <div class="submit d-flex justify-content-end">
                     <input type="submit" value="Reset Password" id="reset-pass" class="btn btn-outline-info py-2 px-3 ms-3" />
+                    <input type="submit" value="Save" id="account-info-save" class="btn btn-info text-white py-2 px-3 ms-3" />
+                    <input type="reset" value="Cancel" id="account-info-cancel" class="btn btn-outline-info py-2 px-3 ms-3" />
+
                 </div>
 
             </form>

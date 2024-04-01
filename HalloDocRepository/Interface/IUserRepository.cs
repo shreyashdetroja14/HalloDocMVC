@@ -27,6 +27,8 @@ namespace HalloDocRepository.Interface
 
         IQueryable<AspNetUser> GetIQueryableAspNetUsers();
 
+        int GetMatchingUserNameCount(string username);
+
 
         // AspNetUserRoles
 

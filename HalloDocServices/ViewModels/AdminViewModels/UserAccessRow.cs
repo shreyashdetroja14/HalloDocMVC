@@ -14,6 +14,8 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public int PhysicianId { get; set; }
 
+        public int? AccountType { get; set; }
+
         public string? FullName { get; set; }
 
         public string? PhoneNumber { get; set; }

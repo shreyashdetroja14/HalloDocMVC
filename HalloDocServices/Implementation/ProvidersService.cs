@@ -235,7 +235,7 @@ namespace HalloDocServices.Implementation
                 return false;
             }
 
-            //aspnetUser.UserName = AccountInfo.Username;
+            aspnetUser.UserName = AccountInfo.Username;
             if (AccountInfo.Password != null)
             {
                 aspnetUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(AccountInfo.Password);
@@ -257,6 +257,7 @@ namespace HalloDocServices.Implementation
                 return false;
             }
 
+            aspnetuser.UserName = PhysicianInfo.Username;
             aspnetuser.Email = PhysicianInfo.Email;
             aspnetuser.PhoneNumber = PhysicianInfo.PhoneNumber;
 
@@ -475,6 +476,12 @@ namespace HalloDocServices.Implementation
             await _physicianRepository.AddPhysicianRegionsAsync(ProviderInfo.ProviderRegions, provider.PhysicianId);
 
             return true;
+        }
+
+        public int CheckUserName(string username)
+        {
+            int count = _userRepository.GetMatchingUserNameCount(username); 
+            return count;
         }
     }
 }

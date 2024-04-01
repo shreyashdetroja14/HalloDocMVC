@@ -1,0 +1,98 @@
+﻿@model List<HalloDocServices.ViewModels.AdminViewModels.UserAccessRow>
+
+<div class="providerslist-desktop table-responsive-lg d-none d-md-block">
+
+
+    <table class="table mb-0">
+        <thead style="background-color: #FAF9F6;">
+            <tr class="providerslistheader">
+                <th scope="col" class="py-3">Account Type</th>
+                <th scope="col" class="py-3">Account POC</th>
+                <th scope="col" class="py-3">Phone</th>
+                <th scope="col" class="py-3">Status</th>
+                <th scope="col" class="py-3">Open Requests</th>
+                <th scope="col" class="py-3 text-center" style="min-width:7rem">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td class="py-3">
+                        @user.AccountType
+                    </td>
+                    <td class="py-3">
+                        @user.FullName
+                    </td>
+                    <td class="py-3">
+                        @user.PhoneNumber
+                    </td>
+                    <td class="py-3">
+                        @user.Status
+                    </td>
+                    <td class="py-3">
+                        @user.OpenRequests
+                    </td>
+                    <td class="py-3 text-center">
+                        <a asp-action="EditProvider" asp-route-providerId="@(user.AccountType == 1 ? user.AdminId : user.PhysicianId)" class="btn btn-outline-info">
+                            Edit
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div id="modal-container">
+</div>
+
+<div class="providerslist-mobile d-md-none">
+    <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
+        @foreach (var user in Model)
+        {
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed d-flex flex-column align-items-start" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#user-@user.AspNetUserId">
+                        <h5>@user.FullName</h5>
+                        <div>
+                            <span>Account Type: </span>
+                            <span class="fw-bold">@user.AccountType</span>
+                        </div>
+                    </button>
+                </h2>
+                <div id="user-@user.AspNetUserId" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <div class="mb-2 d-flex align-items-center">
+                            <span class="material-symbols-outlined">
+                                call
+                            </span>
+                            <span class="me-2">Phone: </span>
+                            <span>@user.PhoneNumber</span>
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <span class="material-symbols-outlined text-info me-1">
+                                check_circle
+                            </span>
+                            <span class="me-2">Status: </span>
+                            <span>@user.Status</span>
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <span class="material-symbols-outlined text-info me-1">
+                                description
+                            </span>
+                            <span class="me-2">Open Requests: </span>
+                            <span>@user.OpenRequests</span>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <a asp-action="EditProvider" asp-route-providerId="@(user.AccountType == 1 ? user.AdminId : user.PhysicianId)" class="btn btn-outline-info">
+                                Edit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
