@@ -68,6 +68,12 @@ public partial class HalloDocContext : DbContext
 
     public virtual DbSet<RoleMenu> RoleMenus { get; set; }
 
+    public virtual DbSet<Shift> Shifts { get; set; }
+
+    public virtual DbSet<ShiftDetail> ShiftDetails { get; set; }
+
+    public virtual DbSet<ShiftDetailRegion> ShiftDetailRegions { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -349,6 +355,46 @@ public partial class HalloDocContext : DbContext
             entity.HasOne(d => d.Role).WithMany(p => p.RoleMenus)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_role");
+        });
+
+        modelBuilder.Entity<Shift>(entity =>
+        {
+            entity.HasKey(e => e.ShiftId).HasName("shift_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+            entity.Property(e => e.WeekDays).IsFixedLength();
+
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.Shifts)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_created_by");
+
+            entity.HasOne(d => d.Physician).WithMany(p => p.Shifts)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_physician");
+        });
+
+        modelBuilder.Entity<ShiftDetail>(entity =>
+        {
+            entity.HasKey(e => e.ShiftDetailId).HasName("shift_detail_pkey");
+
+            entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.ShiftDetails).HasConstraintName("fk_modified_by");
+
+            entity.HasOne(d => d.Shift).WithMany(p => p.ShiftDetails)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_shift");
+        });
+
+        modelBuilder.Entity<ShiftDetailRegion>(entity =>
+        {
+            entity.HasKey(e => e.ShiftDetailRegionId).HasName("shift_detail_region_pkey");
+
+            entity.HasOne(d => d.Region).WithMany(p => p.ShiftDetailRegions)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_region");
+
+            entity.HasOne(d => d.ShiftDetail).WithMany(p => p.ShiftDetailRegions)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_shift_detail");
         });
 
         modelBuilder.Entity<User>(entity =>

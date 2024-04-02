@@ -165,4 +165,7 @@ public partial class Physician
     [ForeignKey("RoleId")]
     [InverseProperty("Physicians")]
     public virtual Role? Role { get; set; }
+
+    [InverseProperty("Physician")]
+    public virtual ICollection<Shift> Shifts { get; set; } = new List<Shift>();
 }
