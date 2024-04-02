@@ -23,6 +23,8 @@ namespace HalloDocMVC.Controllers
             _mailService = mailService;
         }
 
+        #region JWT TOKEN DATA
+
         public ClaimsData GetClaimsData()
         {
             ClaimsData claimsData = new ClaimsData();
@@ -40,6 +42,10 @@ namespace HalloDocMVC.Controllers
 
             return claimsData;
         }
+
+        #endregion
+
+        #region PROVIDERS LIST 
 
         public IActionResult Index()
         {
@@ -111,6 +117,10 @@ namespace HalloDocMVC.Controllers
 
             return RedirectToAction("Index");
         }
+
+        #endregion
+
+        #region EDIT PROVIDER
 
         public IActionResult EditProvider(int providerId)
         {
@@ -239,6 +249,10 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
+        #endregion
+
+        #region CREATE PROVIDER
+
         public IActionResult CreateProvider()
         {
             EditProviderViewModel ProviderInfo = new EditProviderViewModel();
@@ -265,6 +279,17 @@ namespace HalloDocMVC.Controllers
 
             return RedirectToAction("Index");
         }
+
+        #endregion
+
+        #region SCHEDULING PAGE
+
+        public IActionResult Scheduling()
+        {
+            return View();
+        }
+
+        #endregion
 
     }
 }

@@ -1,0 +1,147 @@
+﻿@{
+    ViewData["Title"] = "Scheduling";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+<div class="main">
+    <partial name="_NavbarLinks">
+
+        <div class="container-xl p-4">
+            <h2 class="mb-4">Scheduling</h2>
+
+            <div class="search-area d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+                <select class="form-select selectlist mb-3 mb-md-0" style="width: 270px;">
+                </select>
+                <div class="d-flex">
+                    <a class="btn btn-info text-white me-2">Providers On Call</a>
+                    <a class="btn btn-info text-white me-2">Shifts For Review</a>
+                    <button type="button" class="btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#create-shift-modal">Add Shift</button>
+                </div>
+            </div>
+
+            <div class="partial-container">
+                <div class="daywise">
+                    <h5 class="mb-3">Monday, Dec 4, 2024</h5>
+                    <div class="d-flex justify-content-end mb-3">
+                        <div class="d-flex align-items-center me-2">
+                            <div style="width:4rem; height:2rem; background-color: #d6338440; border: 1px solid #d63384;" class="d-inline-block me-2 rounded-3"></div>
+                            <span>Pending Shifts</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div style="width:4rem; height:2rem; background-color: #19875440; border: 1px solid #198754;" class="d-inline-block me-2 rounded-3"></div>
+                            <span>Approved Shifts</span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <span class="material-symbols-outlined p-2 rounded-circle bg-info text-white text-center fs-6">
+                                arrow_back
+                            </span>
+                            <span class="material-symbols-outlined text-secondary mx-2">
+                                calendar_month
+                            </span>
+                            <span class="material-symbols-outlined p-2 rounded-circle bg-info text-white text-center fs-6">
+                                arrow_forward
+                            </span>
+                        </div>
+                        <div>
+                            <button class="btn btn-outline-info">Day</button>
+                            <button class="btn btn-outline-info">Week</button>
+                            <button class="btn btn-outline-info">Month</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+</div>
+
+<div class="modal fade" data-bs-backdrop="static" id="create-shift-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3">
+            <div class="modal-header fw-bold bg-info text-white">
+                <h1 class="modal-title fs-5 " id="modaltitle">Create Shift</h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form>
+                    <div class="form-floating mb-3">
+                        <select class="form-select selectlist mb-3" id="RegionList">
+                        </select>
+                        <label for="RegionList">Regions</label>
+                    </div>
+                    
+                    <div class="form-floating mb-3">
+                        <select class="form-select selectlist mb-3" id="PhysicianList">
+                        </select>
+                        <label for="RegionList">Physicians</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="date"  class="form-control" id="DOB" placeholder="DOB">
+                        <label for="DOB">Shift Date</label>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="time" class="form-control" id="StartTime" placeholder="Start Time">
+                                <label for="StartTime">Start Time</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="time" class="form-control" id="EndTime" placeholder="End Time">
+                                <label for="EndTime">End Time</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                        <label class="form-check-label" for="flexSwitchCheckDefault">Repeat</label>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input physician-info-checkbox"
+                                   type="checkbox"
+                                   value=""
+                                   id="repeat-1"
+                                   name="ProviderRegions"
+                                   checked>
+                            <label class="form-check-label" for="repeat-1">
+                                Every Sunday
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input physician-info-checkbox"
+                                   type="checkbox"
+                                   value=""
+                                   id="repeat-2"
+                                   name="ProviderRegions">
+                            <label class="form-check-label" for="repeat-2">
+                                Every Monday
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input physician-info-checkbox"
+                                   type="checkbox"
+                                   value=""
+                                   id="repeat-3"
+                                   name="ProviderRegions"
+                                   checked>
+                            <label class="form-check-label" for="repeat-3">
+                                Every Tuesday
+                            </label>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <input type="submit" value="Confirm" class="btn btn-info text-white" />
+                        <button type="button" class="btn btn-outline-info ms-3" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
