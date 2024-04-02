@@ -37,5 +37,11 @@ namespace HalloDocServices.Interface
         Task<bool> CreateProvider(EditProviderViewModel ProviderInfo);
 
         int CheckUserName(string username);
+
+        #region SCHEDULING
+
+        SchedulingViewModel GetSchedulingViewModel(SchedulingViewModel SchedulingData);
+
+        #endregion
     }
 }

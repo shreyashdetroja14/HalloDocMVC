@@ -286,7 +286,26 @@ namespace HalloDocMVC.Controllers
 
         public IActionResult Scheduling()
         {
-            return View();
+            SchedulingViewModel SchedulingData = new SchedulingViewModel();
+            SchedulingData = _providersService.GetSchedulingViewModel(SchedulingData);
+
+            return View(SchedulingData);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateShift(CreateShiftViewModel CreateShiftData)
+        {
+            bool isShiftCreated = true;
+            if (isShiftCreated)
+            {
+                TempData["SuccessMessage"] = "Shift Created Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Create Shift.";
+            }
+
+            return RedirectToAction("Scheduling");
         }
 
         #endregion

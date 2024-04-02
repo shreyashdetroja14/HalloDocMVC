@@ -2,6 +2,12 @@
     ViewData["Title"] = "Scheduling";
     Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
 }
+@using HalloDocServices.ViewModels.AdminViewModels
+@model HalloDocServices.ViewModels.AdminViewModels.SchedulingViewModel
+
+@{
+    CreateShiftViewModel CreateShiftData = Model.CreateShiftData;
+}
 
 <div class="main">
     <partial name="_NavbarLinks">
@@ -10,7 +16,8 @@
             <h2 class="mb-4">Scheduling</h2>
 
             <div class="search-area d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
-                <select class="form-select selectlist mb-3 mb-md-0" style="width: 270px;">
+                <select class="form-select selectlist mb-3 mb-md-0" style="width: 270px;" asp-for="RegionId" asp-items="@Model.RegionList">
+                    <option value="">All Regions</option>
                 </select>
                 <div class="d-flex">
                     <a class="btn btn-info text-white me-2">Providers On Call</a>
@@ -66,78 +73,129 @@
             </div>
             <div class="modal-body">
 
-                <form>
+                <form asp-action="CreateShift">
                     <div class="form-floating mb-3">
-                        <select class="form-select selectlist mb-3" id="RegionList">
+                        <select class="form-select selectlist mb-3" id="RegionList" asp-for="@CreateShiftData.RegionId" asp-items="@CreateShiftData.RegionList">
+                            <option value="">Select Region</option>
                         </select>
                         <label for="RegionList">Regions</label>
                     </div>
                     
                     <div class="form-floating mb-3">
-                        <select class="form-select selectlist mb-3" id="PhysicianList">
+                        <select class="form-select selectlist mb-3" id="PhysicianList" asp-for="@CreateShiftData.PhysicianId" asp-items="@CreateShiftData.PhysicianList">
+                            <option value="">Select Physician</option>
                         </select>
-                        <label for="RegionList">Physicians</label>
+                        <label for="PhysicianList">Physicians</label>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="date"  class="form-control" id="DOB" placeholder="DOB">
-                        <label for="DOB">Shift Date</label>
+                        <input type="date" asp-for="@CreateShiftData.ShiftDate" class="form-control" id="ShiftDate" placeholder="Shift Date">
+                        <label for="ShiftDate">Shift Date</label>
                     </div>
 
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <input type="time" class="form-control" id="StartTime" placeholder="Start Time">
+                                <input type="time" asp-for="@CreateShiftData.StartTime" class="form-control" id="StartTime" placeholder="Start Time">
                                 <label for="StartTime">Start Time</label>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <input type="time" class="form-control" id="EndTime" placeholder="End Time">
+                                <input type="time"asp-for="@CreateShiftData.EndTime" class="form-control" id="EndTime" placeholder="End Time">
                                 <label for="EndTime">End Time</label>
                             </div>
                         </div>
                     </div>
                     <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-                        <label class="form-check-label" for="flexSwitchCheckDefault">Repeat</label>
+                        <input type="checkbox" asp-for="@CreateShiftData.IsRepeat" class="form-check-input" role="switch" id="IsRepeat">
+                        <label class="form-check-label" for="IsRepeat">Repeat</label>
                     </div>
                     <div class="mb-3">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input physician-info-checkbox"
+                            <input class="form-check-input"
                                    type="checkbox"
-                                   value=""
-                                   id="repeat-1"
-                                   name="ProviderRegions"
-                                   checked>
-                            <label class="form-check-label" for="repeat-1">
+                                   value="1"
+                                   id="sunday"
+                                   name="RepeatDays">
+                            <label class="form-check-label" for="sunday">
                                 Every Sunday
                             </label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input physician-info-checkbox"
+                            <input class="form-check-input"
                                    type="checkbox"
-                                   value=""
-                                   id="repeat-2"
-                                   name="ProviderRegions">
-                            <label class="form-check-label" for="repeat-2">
+                                   value="2"
+                                   id="monday"
+                                   name="RepeatDays">
+                            <label class="form-check-label" for="monday">
                                 Every Monday
                             </label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input physician-info-checkbox"
+                            <input class="form-check-input"
                                    type="checkbox"
-                                   value=""
-                                   id="repeat-3"
-                                   name="ProviderRegions"
-                                   checked>
-                            <label class="form-check-label" for="repeat-3">
+                                   value="3"
+                                   id="tuesday"
+                                   name="RepeatDays">
+                            <label class="form-check-label" for="tuesday">
                                 Every Tuesday
                             </label>
                         </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   value="4"
+                                   id="wednesday"
+                                   name="RepeatDays">
+                            <label class="form-check-label" for="wednesday">
+                                Every Wednesday
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   value="5"
+                                   id="thrusday"
+                                   name="RepeatDays">
+                            <label class="form-check-label" for="thrusday">
+                                Every Thrusday
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   value="6"
+                                   id="friday"
+                                   name="RepeatDays">
+                            <label class="form-check-label" for="friday">
+                                Every Friday
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input "
+                                   type="checkbox"
+                                   value="7"
+                                   id="saturday"
+                                   name="RepeatDays">
+                            <label class="form-check-label" for="saturday">
+                                Every Saturday
+                            </label>
+                        </div>
                     </div>
+
+                    <div class="form-floating mb-3">
+                        <select class="form-select selectlist mb-3" id="RepeatUptoList" asp-for="@CreateShiftData.RepeatUpto" >
+                            <option value="0">0-times</option>
+                            <option value="1">1-times</option>
+                            <option value="2">2-times</option>
+                            <option value="3">3-times</option>
+                        </select>
+                        <label for="RepeatUptoList">Repeat Upto</label>
+                    </div>
+
                     <div class="d-flex justify-content-end">
-                        <input type="submit" value="Confirm" class="btn btn-info text-white" />
+                        <input type="submit" value="Create" class="btn btn-info text-white" />
                         <button type="button" class="btn btn-outline-info ms-3" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </form>
@@ -145,3 +203,10 @@
         </div>
     </div>
 </div>
+
+@section AddScript 
+{
+
+    <partial name="_ToastMessageScriptsPartial" />
+
+}

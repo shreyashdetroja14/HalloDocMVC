@@ -504,6 +504,42 @@ namespace HalloDocServices.Implementation
             return count;
         }
 
-        
+
+        #region SCHEDULING 
+
+        public SchedulingViewModel GetSchedulingViewModel(SchedulingViewModel SchedulingData)
+        {
+            var regions = _commonRepository.GetAllRegions();
+
+            foreach (var region in regions)
+            {
+                SchedulingData.RegionList.Add(new SelectListItem()
+                {
+                    Text = region.Name,
+                    Value = region.RegionId.ToString(),
+                });
+                
+                SchedulingData.CreateShiftData.RegionList.Add(new SelectListItem()
+                {
+                    Text = region.Name,
+                    Value = region.RegionId.ToString(),
+                });
+            }
+
+            var physicianList = _physicianRepository.GetAllPhysicians();
+
+            foreach (var physian in physicianList)
+            {
+                SchedulingData.CreateShiftData.PhysicianList.Add(new SelectListItem()
+                {
+                    Text = physian.FirstName + " " + physian.LastName,
+                    Value = physian.PhysicianId.ToString(),
+                });
+            }
+
+            return SchedulingData;
+        }
+
+        #endregion
     }
 }
