@@ -44,6 +44,7 @@ namespace HalloDocMVC.Controllers
             if(claimsData.AspNetUserRole == "admin")
             {
                 AdminProfileViewModel AdminProfileDetails = _profileService.GetAdminProfileViewModelData(claimsData.AspNetUserId??"");
+                AdminProfileDetails.IsEditAdmin = false;
                 return View(AdminProfileDetails);
             }
             else
@@ -80,14 +81,26 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditAdminInfo(AdminProfileViewModel AdminProfileDetails)
+        public async Task<IActionResult> EditAccountInfo(AdminProfileViewModel AdminProfileDetails)
         {
-            if(!AdminProfileDetails.Email.Equals(AdminProfileDetails.ConfirmEmail))
+
+            bool isAdminInfoUpdated = await _profileService.UpdateAccountInfo(AdminProfileDetails);
+            if (isAdminInfoUpdated)
             {
-                TempData["ErrorMessage"] = "Email and Confirm Email must be equal";
-                return RedirectToAction("Index");
+                TempData["SuccessMessage"] = "Account Info Updated Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable To Update Account Info";
+
             }
 
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditAdminInfo(AdminProfileViewModel AdminProfileDetails)
+        {
             bool isAdminInfoUpdated = await _profileService.UpdateAdminInfo(AdminProfileDetails);
             if (isAdminInfoUpdated)
             {

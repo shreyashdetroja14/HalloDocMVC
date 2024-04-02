@@ -88,18 +88,17 @@
 
 .updated {
     font-size: 16px;
-    color: white !important;
     font-weight: bold;
     opacity: 1 !important;
     min-width: 345px !important;
-    height: 60px !important;
+    /*height: 60px !important;*/
 }
 
-.toast-message{
+/*.toast-message{
     height: 100%;
     display: flex;
     align-items: center;
-}
+}*/
 
 .btn-check:focus + .btn-info, .btn-info:focus {
     box-shadow: none;

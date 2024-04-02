@@ -193,9 +193,9 @@
     box-shadow:none;
 }
 
-.type-btn:hover, .type-btn.border {
-    box-shadow: 0px 0px 3px gray;
-}
+    .type-btn:hover, .type-btn.border {
+        box-shadow: 0px 0px 2px 1px #0dcaf0;
+    }
 
 /*table{
     text-align: center;

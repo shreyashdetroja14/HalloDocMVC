@@ -202,6 +202,7 @@ namespace HalloDocServices.Implementation
                 EditProvider.AdminNotes = provider.AdminNotes;
 
                 EditProvider.SignaturePath = provider.Signature;
+                EditProvider.PhotoPath = provider.Photo;
 
                 EditProvider.IsContractorDoc = provider.IsAgreementDoc ?? false;
                 EditProvider.IsBackgroundDoc = provider.IsBackgroundDoc ?? false;
@@ -215,12 +216,30 @@ namespace HalloDocServices.Implementation
 
         }
 
+        public async Task<bool> ResetPassword(EditProviderViewModel AccountInfo)
+        {
+            var provider = _physicianRepository.GetIQueryablePhysicians(AccountInfo.ProviderId).Include(x => x.AspNetUser).FirstOrDefault();
+            var aspnetUser = provider?.AspNetUser;
+
+            if(aspnetUser == null)
+            {
+                return false;
+            }
+           
+            aspnetUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(AccountInfo.Password);
+
+            await _userRepository.UpdateAspNetUser(aspnetUser);
+
+            return true;
+
+        }
+
         public async Task<bool> EditAccountInfo(EditProviderViewModel AccountInfo)
         {
             var provider = _physicianRepository.GetIQueryablePhysicians(AccountInfo.ProviderId).Include(x => x.AspNetUser).FirstOrDefault();
             var aspnetUser = provider?.AspNetUser;
 
-            if (provider == null)
+            if (provider == null || aspnetUser == null)
             {
                 return false;
             }
@@ -230,17 +249,8 @@ namespace HalloDocServices.Implementation
 
             await _physicianRepository.Update(provider);
 
-            if (aspnetUser == null)
-            {
-                return false;
-            }
-
             aspnetUser.UserName = AccountInfo.Username;
-            if (AccountInfo.Password != null)
-            {
-                aspnetUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(AccountInfo.Password);
-            }
-
+            
             await _userRepository.UpdateAspNetUser(aspnetUser);
 
             return true;
@@ -426,7 +436,7 @@ namespace HalloDocServices.Implementation
             aspnetuserNew.Id = Guid.NewGuid().ToString();
 
             aspnetuserNew.UserName = ProviderInfo.Username;
-            aspnetuserNew.PasswordHash = BCrypt.Net.BCrypt.HashPassword(ProviderInfo.Password);
+            aspnetuserNew.PasswordHash = ProviderInfo.Password != null ? BCrypt.Net.BCrypt.HashPassword(ProviderInfo.Password) : null;
             aspnetuserNew.Email = ProviderInfo.Email;
             aspnetuserNew.PhoneNumber = ProviderInfo.PhoneNumber;
             aspnetuserNew.CreatedDate = DateTime.Now;
@@ -473,6 +483,16 @@ namespace HalloDocServices.Implementation
 
             await _physicianRepository.CreateAsync(provider);
 
+            UploadFilesToServer(ProviderInfo.ContractorDoc, 1, provider.PhysicianId);
+            UploadFilesToServer(ProviderInfo.BackgroundDoc, 2, provider.PhysicianId);
+            UploadFilesToServer(ProviderInfo.HippaDoc, 3, provider.PhysicianId);
+            UploadFilesToServer(ProviderInfo.NonDisclosureDoc, 4, provider.PhysicianId);
+            UploadFilesToServer(ProviderInfo.LicenseDoc, 5, provider.PhysicianId);
+
+            provider.Photo = UploadFilesToServer(ProviderInfo.Photo, 6, provider.PhysicianId);
+
+            await _physicianRepository.Update(provider);
+
             await _physicianRepository.AddPhysicianRegionsAsync(ProviderInfo.ProviderRegions, provider.PhysicianId);
 
             return true;
@@ -483,5 +503,7 @@ namespace HalloDocServices.Implementation
             int count = _userRepository.GetMatchingUserNameCount(username); 
             return count;
         }
+
+        
     }
 }

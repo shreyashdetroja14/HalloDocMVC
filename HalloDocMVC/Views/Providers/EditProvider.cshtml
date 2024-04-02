@@ -23,409 +23,415 @@
 
     <div class="container-xl p-4">
         <div class=" back p-0 pb-4 d-flex justify-content-between">
-            <h2>Edit Physician Account</h2>
+            <h2>Edit Physician</h2>
             <a asp-action="Index" class="btn back-btn">
                 <img src="/images/backIcon.svg" alt="">
                 Back
             </a>
         </div>
 
-        <form asp-action="EditAccountInfo" class="bg-white p-4 request-form rounded-0 shadow-none">
-            <input type="number" asp-for="ProviderId" hidden>
-            <div class="info mb-4">
-                <h4 class="mb-3">Account Information</h4>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" asp-for="Username" class="form-control account-info" id="Username"
-                                   placeholder="Username" readonly>
-                            <label asp-for="Username">Username</label>
-                            <span asp-validation-for="Username" class="text-danger"></span>
+        <div class=" rounded-3" style="box-shadow: 0 0 5px rgba(0,0,0,0.3)">
+            <form id="form-account-info" class="bg-white p-4 request-form rounded-3 rounded-top shadow-none">
+                <input type="number" asp-for="ProviderId" hidden>
+                <div class="info mb-4">
+                    <h4 class="mb-3">Account Information</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="Username" class="form-control account-info" id="Username"
+                                       placeholder="Username" readonly>
+                                <label asp-for="Username">Username</label>
+                                <span asp-validation-for="Username" class="text-danger"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="password" asp-for="Password" class="form-control account-info" id="Password"
-                                   placeholder="Password" readonly>
-                            <label asp-for="Password">Password</label>
-                            <span asp-validation-for="Password" class="text-danger"></span>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="password" asp-for="Password" class="form-control" id="Password"
+                                       placeholder="Password">
+                                <label asp-for="Password">Password</label>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="Html.GetEnumSelectList<Status>()" disabled>
-                                <option value="">Set a status</option>
-                            </select>
-                            <span asp-validation-for="Status" class="text-danger"></span>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="Html.GetEnumSelectList<Status>()" disabled>
+                                    <option value="">Set a status</option>
+                                </select>
+                                <span asp-validation-for="Status" class="text-danger"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class=" mb-3">
-                            <select asp-for="RoleId" id="role-list" class="form-select p-3 account-info" asp-items="@Model.RoleList" disabled>
-                                
-                            </select>
-                            <span asp-validation-for="RoleId" class="text-danger"></span>
+                        <div class="col-sm-6">
+                            <div class=" mb-3">
+                                <select asp-for="RoleId" id="role-list" class="form-select p-3 account-info" asp-items="@Model.RoleList" disabled>
+                                </select>
+                                <span asp-validation-for="RoleId" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="submit d-flex justify-content-end">
-                <button type="button" id="reset-pass" class="btn btn-outline-info py-2 px-3 ms-3 d-none">Reset Password</button>
-                <button type="button" id="account-info-editbtn" class="btn btn-outline-info py-2 px-3 ms-3">Edit</button>
-                <input type="submit" value="Save" id="account-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
-                <input type="reset" value="Cancel" id="account-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
-            </div>
-        </form>
+                <div class="submit d-flex justify-content-end">
+                    <button type="button" id="reset-pass" class="btn btn-outline-info py-2 px-3 ms-3">Reset Password</button>
+                    <button type="button" id="account-info-editbtn" class="btn btn-outline-info py-2 px-3 ms-3">Edit</button>
+                    <button type="button" id="account-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">Save</button>
+                    <input type="reset" value="Cancel" id="account-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none" />
+                </div>
+            </form>
 
-        <form asp-action="EditPhysicianInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
-            <input type="number" asp-for="ProviderId" hidden>
-            <input type="text" asp-for="Username" id="Username2" hidden>
-            <div class="info mb-4">
-                <h4 class="mb-3">Physician Information</h4>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" asp-for="FirstName" class="form-control physician-info" id="FirstName"
-                                   placeholder="FirstName" readonly>
-                            <label asp-for="FirstName">First Name</label>
-                            <span asp-validation-for="FirstName" class="text-danger"></span>
+            <form asp-action="EditPhysicianInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
+                <input type="number" asp-for="ProviderId" hidden>
+                <input type="text" asp-for="Username" id="Username2" hidden>
+                <div class="info mb-4">
+                    <h4 class="mb-3">Physician Information</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="FirstName" class="form-control physician-info" id="FirstName"
+                                       placeholder="FirstName" readonly>
+                                <label asp-for="FirstName">First Name</label>
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="LastName" class="form-control physician-info" id="LastName"
+                                       placeholder="LastName" readonly>
+                                <label asp-for="LastName">Last Name</label>
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="email" asp-for="Email" class="form-control physician-info" id="Email" placeholder="Email" readonly>
+                                <label asp-for="Email">Email</label>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 pb-3">
+                            <input type="tel" asp-for="PhoneNumber" class="form-control w-100 physician-info" id="PhoneNumber" readonly />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="MedicalLicense" class="form-control physician-info" id="MedicalLicense" placeholder="MedicalLicense" readonly>
+                                <label asp-for="MedicalLicense">Medical License</label>
+                                <span asp-validation-for="MedicalLicense" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="NPINumber" class="form-control physician-info" id="NPINumber" placeholder="NPINumber" readonly>
+                                <label asp-for="NPINumber">NPI Number</label>
+                                <span asp-validation-for="NPINumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="email" asp-for="SyncEmail" class="form-control physician-info" id="SyncEmail" placeholder="SyncEmail" readonly>
+                                <label asp-for="SyncEmail">Sync Email</label>
+                                <span asp-validation-for="SyncEmail" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 pb-3">
+                            @foreach (var state in Model.StateList)
+                            {
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input physician-info-checkbox"
+                                           type="checkbox"
+                                           value="@state.Value"
+                                           id="region-@state.Value"
+                                           name="ProviderRegions"
+                                           checked="@(Model.ProviderRegions.Contains(int.Parse(state.Value)) ? "true" : false)"
+                                           disabled>
+                                    <label class="form-check-label" for="region-@state.Value">
+                                        @state.Text
+                                    </label>
+                                </div>
+                            }
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" asp-for="LastName" class="form-control physician-info" id="LastName"
-                                   placeholder="LastName" readonly>
-                            <label asp-for="LastName">Last Name</label>
-                            <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                <div class="submit d-flex justify-content-end">
+                    <button type="button" class="btn btn-outline-info py-2 px-3 ms-3" id="physician-info-editbtn">Edit</button>
+                    <input type="submit" value="Save" id="physician-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
+                    <input type="reset" value="Cancel" id="physician-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
+                </div>
+
+            </form>
+
+            <form asp-action="EditBillingInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
+                <input type="number" asp-for="ProviderId" hidden>
+                <div class="info mb-4">
+                    <h4 class="mb-3">Mailing & Billing Information</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="Address1" class="form-control billing-info" id="Address1"
+                                       placeholder="Address1" readonly>
+                                <label asp-for="Address1">Address 1</label>
+                                <span asp-validation-for="Address1" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="Address2" class="form-control billing-info" id="Address2"
+                                       placeholder="Address2" readonly>
+                                <label asp-for="Address2">Address 2</label>
+                                <span asp-validation-for="Address2" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="City" class="form-control billing-info" id="City" placeholder="City" readonly>
+                                <label asp-for="City">City</label>
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class=" mb-3">
+                                <select asp-for="RegionId" id="region-list" class="form-select p-3" asp-items="@Model.StateList" disabled>
+                                </select>
+                                <span asp-validation-for="RegionId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="ZipCode" class="form-control billing-info" id="ZipCode" placeholder="ZipCode" readonly>
+                                <label asp-for="ZipCode">ZipCode</label>
+                                <span asp-validation-for="ZipCode" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 pb-3">
+                            <input type="tel" asp-for="SecondPhoneNumber" class="form-control w-100 billing-info" id="SecondPhoneNumber" readonly />
+                            <span asp-validation-for="SecondPhoneNumber" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="email" asp-for="Email" class="form-control physician-info" id="Email" placeholder="Email" readonly>
-                            <label asp-for="Email">Email</label>
-                            <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="submit d-flex justify-content-end">
+                    <button type="button" id="billing-info-editbtn" class="btn btn-outline-info py-2 px-3 ms-3">Edit</button>
+                    <input type="submit" value="Save" id="billing-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
+                    <input type="reset" value="Cancel" id="billing-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
+                </div>
+
+            </form>
+
+            <form asp-action="EditProfileInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none" enctype="multipart/form-data">
+                <input type="number" asp-for="ProviderId" hidden>
+                <div class="info mb-4">
+                    <h4 class="mb-3">Provider Profile</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="BusinessName" class="form-control profile-info" id="BusinessName"
+                                       placeholder="BusinessName" readonly>
+                                <label asp-for="BusinessName">Business Name</label>
+                                <span asp-validation-for="BusinessName" class="text-danger"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-6 pb-3">
-                        <input type="tel" asp-for="PhoneNumber" class="form-control w-100 physician-info" id="PhoneNumber" readonly />
-                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" asp-for="MedicalLicense" class="form-control physician-info" id="MedicalLicense" placeholder="MedicalLicense" readonly>
-                            <label asp-for="MedicalLicense">Medical License</label>
-                            <span asp-validation-for="MedicalLicense" class="text-danger"></span>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="BusinessWebsite" class="form-control profile-info" id="BusinessWebsite"
+                                       placeholder="BusinessWebsite" readonly>
+                                <label asp-for="BusinessWebsite">Business Website</label>
+                                <span asp-validation-for="BusinessWebsite" class="text-danger"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" asp-for="NPINumber" class="form-control physician-info" id="NPINumber" placeholder="NPINumber" readonly>
-                            <label asp-for="NPINumber">NPI Number</label>
-                            <span asp-validation-for="NPINumber" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="email" asp-for="SyncEmail" class="form-control physician-info" id="SyncEmail" placeholder="SyncEmail" readonly>
-                            <label asp-for="SyncEmail">Sync Email</label>
-                            <span asp-validation-for="SyncEmail" class="text-danger"></span>
-                        </div>
-                    </div>
-                   
-                    <div class="col-sm-6 pb-3">
-                        @foreach (var state in Model.StateList)
-                        {
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input physician-info-checkbox"
-                                       type="checkbox"
-                                       value="@state.Value"
-                                       id="region-@state.Value"
-                                       name="ProviderRegions"
-                                       checked="@(Model.ProviderRegions.Contains(int.Parse(state.Value)) ? "true" : false)"
-                                       disabled
-                                >
-                                <label class="form-check-label" for="region-@state.Value">
-                                    @state.Text
+                        <div class="col-sm-6">
+                            <div class="input-group mb-3">
+                                <input type="file" accept=".jpg,.jpeg,.png" asp-for="Photo" class="form-control px-3 py-2 file-upload profile-info-upload" id="Photo" disabled>
+
+                                <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
+                                       asp-for="Photo">
+                                    <span class="px-3 py-2" id="photoSpan">Select File</span>
+                                    <div class="btn btn-info p-3 text-white fw-bold rounded-0">
+                                        <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
+                                    </div>
                                 </label>
                             </div>
-                        }
+                            <div class="d-flex justify-content-center">
+                                @if (Model.PhotoPath != null)
+                                {
+                                    <img src="@Model.PhotoPath" class="border mb-3" style="width: 150px; height: 150px;" />
+                                }
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+
+                            <div class="input-group mb-3">
+                                <input type="file" accept=".jpg,.jpeg,.png" asp-for="Signature" class="form-control px-3 py-2 file-upload profile-info-upload" id="Signature" disabled>
+
+                                <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
+                                       asp-for="Signature">
+                                    <span class="px-3 py-2" id="signatureSpan">Select File</span>
+                                    <div class="btn btn-info p-3 text-white fw-bold rounded-0">
+                                        <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
+                                    </div>
+                                </label>
+
+                            </div>
+                            <button type="button" class="btn btn-outline-info p-3 rounded-2 d-none" id="create-sign">Create signature</button>
+
+                            <div class="w-100 d-flex justify-content-evenly flex-column align-items-center flex-lg-row align-items-lg-start my-3">
+                                @if (Model.SignaturePath != null)
+                                {
+                                    <img src="@Model.SignaturePath" class="border mb-3 mb-lg-0" style="width: 150px; height: 150px;" />
+                                }
+                                <div class="signature-container d-flex flex-column align-items-center d-none">
+                                    <canvas id="signature-pad" class="border border-dark mb-3" width="150" height="150"></canvas>
+                                    <div>
+                                        <button type="button" id="clear-button" class="btn btn-outline-info">Clear</button>
+                                        <button type="button" id="save-button" class="btn btn-info text-white">Save</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <textarea asp-for="AdminNotes" class="form-control profile-info" placeholder="Enter Symptoms" id="AdminNotes"
+                                          style="height: 150px" readonly></textarea>
+                                <label asp-for="AdminNotes">Admin Notes</label>
+                                <span asp-validation-for="AdminNotes" class="text-danger"></span>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-            </div>
 
-            <div class="submit d-flex justify-content-end">
-                <button type="button" class="btn btn-outline-info py-2 px-3 ms-3" id="physician-info-editbtn">Edit</button>
-                <input type="submit" value="Save" id="physician-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
-                <input type="reset" value="Cancel" id="physician-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
-            </div>
-
-        </form>
-
-        <form asp-action="EditBillingInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
-            <input type="number" asp-for="ProviderId" hidden>
-            <div class="info mb-4">
-                <h4 class="mb-3">Mailing & Billing Information</h4>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" asp-for="Address1" class="form-control billing-info" id="Address1"
-                                   placeholder="Address1" readonly>
-                            <label asp-for="Address1">Address 1</label>
-                            <span asp-validation-for="Address1" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" asp-for="Address2" class="form-control billing-info" id="Address2"
-                                   placeholder="Address2" readonly>
-                            <label asp-for="Address2">Address 2</label>
-                            <span asp-validation-for="Address2" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" asp-for="City" class="form-control billing-info" id="City" placeholder="City" readonly>
-                            <label asp-for="City">City</label>
-                            <span asp-validation-for="City" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class=" mb-3">
-                            <select asp-for="RegionId" id="region-list" class="form-select p-3" asp-items="@Model.StateList" disabled>
-                            </select>
-                            <span asp-validation-for="RegionId" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" asp-for="ZipCode" class="form-control billing-info" id="ZipCode" placeholder="ZipCode" readonly>
-                            <label asp-for="ZipCode">ZipCode</label>
-                            <span asp-validation-for="ZipCode" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 pb-3">
-                        <input type="tel" asp-for="SecondPhoneNumber" class="form-control w-100 billing-info" id="SecondPhoneNumber" readonly />
-                        <span asp-validation-for="SecondPhoneNumber" class="text-danger"></span>
-                    </div>
+                <div class="submit d-flex justify-content-end">
+                    <button type="button" id="profile-info-editbtn" class="btn btn-outline-info py-2 px-3 ms-3">Edit</button>
+                    <input type="submit" value="Save" id="profile-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
+                    <input type="reset" value="Cancel" id="profile-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
                 </div>
-            </div>
 
-            <div class="submit d-flex justify-content-end">
-                <button type="button" id="billing-info-editbtn" class="btn btn-outline-info py-2 px-3 ms-3">Edit</button>
-                <input type="submit" value="Save" id="billing-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
-                <input type="reset" value="Cancel" id="billing-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
-            </div>
+            </form>
 
-        </form>
-
-        <form asp-action="EditProfileInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none" enctype="multipart/form-data">
-            <input type="number" asp-for="ProviderId" hidden>
-            <div class="info mb-4">
-                <h4 class="mb-3">Provider Profile</h4>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" asp-for="BusinessName" class="form-control profile-info" id="BusinessName"
-                                   placeholder="BusinessName" readonly>
-                            <label asp-for="BusinessName">Business Name</label>
-                            <span asp-validation-for="BusinessName" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" asp-for="BusinessWebsite" class="form-control profile-info" id="BusinessWebsite"
-                                   placeholder="BusinessWebsite" readonly>
-                            <label asp-for="BusinessWebsite">Business Website</label>
-                            <span asp-validation-for="BusinessWebsite" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="input-group mb-3">
-                            <input type="file" accept=".jpg,.jpeg,.png" asp-for="Photo" class="form-control px-3 py-2 file-upload profile-info-upload" id="Photo" disabled>
-
-                            <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
-                                   asp-for="Photo">
-                                <span class="px-3 py-2" id="photoSpan">Select File</span>
-                                <div class="btn btn-info p-3 text-white fw-bold rounded-0">
-                                    <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
+            <div class="p-4 pt-0 bg-white rounded-3 rounded-bottom">
+                <h4 class="mb-3">Onboarding</h4>
+                <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3">
+                    <input type="number" value="1" name="docId" hidden />
+                    <div class="row">
+                        <div class="col-md-9 col-lg-8">
+                            <div class="row">
+                                <div class="col-1 mb-3">
+                                    <input type="checkbox" class="form-check-input" id="ContractorDoc" checked="@Model.IsContractorDoc" />
                                 </div>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        
-                        <div class="input-group mb-3">
-                            <input type="file" accept=".jpg,.jpeg,.png" asp-for="Signature" class="form-control px-3 py-2 file-upload profile-info-upload" id="Signature" disabled>
-
-                            <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
-                                   asp-for="Signature">
-                                <span class="px-3 py-2" id="signatureSpan">Select File</span>
-                                <div class="btn btn-info p-3 text-white fw-bold rounded-0">
-                                    <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
+                                <div class="col-11 col-sm-6 mb-3">
+                                    <label for="ContractorDoc" class="me-2">Independent Contractor Agreement</label>
                                 </div>
-                            </label>
-
-                        </div>
-                        <button type="button" class="btn btn-outline-info p-3 rounded-2 d-none" id="create-sign">Create signature</button>
-
-                        <div class="w-100 d-flex justify-content-evenly flex-column align-items-center flex-lg-row align-items-lg-start my-3">
-                            @if (Model.SignaturePath != null)
-                            {
-                                <img src="@Model.SignaturePath" class="border mb-3 mb-lg-0" style="width: 150px; height: 150px;" />
-                            }
-                            <div class="signature-container d-flex flex-column align-items-center d-none">
-                                <canvas id="signature-pad" class="border border-dark mb-3" width="150" height="150"></canvas>
-                                <div>
-                                    <button type="button" id="clear-button" class="btn btn-outline-info">Clear</button>
-                                    <button type="button" id="save-button" class="btn btn-info text-white">Save</button>
+                                <div class="col-sm-5 mb-3">
+                                    @*<input type="submit" value="Upload" class="btn btn-info text-white me-2" />*@
+                                    <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="ContractorInput">
+                                    <label for="ContractorInput" class="btn btn-info text-white me-2">Upload</label>
+                                    @if (Model.IsContractorDoc)
+                                    {
+                                        <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/1.jpg" class="btn btn-info text-white">View</a>
+                                    }
                                 </div>
                             </div>
-                            
-                        </div>
-                        
-                    </div>
-                    <div class="col-12">
-                        <div class="form-floating mb-3">
-                            <textarea asp-for="AdminNotes" class="form-control profile-info" placeholder="Enter Symptoms" id="AdminNotes"
-                                      style="height: 150px" readonly></textarea>
-                            <label asp-for="AdminNotes">Admin Notes</label>
-                            <span asp-validation-for="AdminNotes" class="text-danger"></span>
                         </div>
                     </div>
-                    
-                </div>
-            </div>
+                </form>
+                <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3">
+                    <input type="number" value="2" name="docId" hidden />
+                    <div class="row">
+                        <div class="col-md-9 col-lg-8">
+                            <div class="row">
+                                <div class="col-1 mb-3">
+                                    <input type="checkbox" class="form-check-input" id="BackgroundDoc" checked="@Model.IsBackgroundDoc" />
+                                </div>
+                                <div class="col-11 col-sm-6 mb-3">
+                                    <label for="BackgroundDoc" class="me-2">Background Check</label>
+                                </div>
+                                <div class="col-sm-5 mb-3">
+                                    <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="BackgroundInput">
+                                    <label for="BackgroundInput" class="btn btn-info text-white me-2">Upload</label>
+                                    @if (Model.IsBackgroundDoc)
+                                    {
+                                        <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/2.jpg" class="btn btn-info text-white">View</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3">
+                    <input type="number" value="3" name="docId" hidden />
+                    <div class="row">
+                        <div class="col-md-9 col-lg-8">
+                            <div class="row">
+                                <div class="col-1 mb-3">
+                                    <input type="checkbox" class="form-check-input me-2" id="HippaDoc" checked="@Model.IsHippaDoc" />
+                                </div>
+                                <div class="col-11 col-sm-6 mb-3">
+                                    <label for="HippaDoc" class="me-2">HIPAA Compliance</label>
+                                </div>
+                                <div class="col-sm-5 mb-3">
+                                    <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="HippaInput">
+                                    <label for="HippaInput" class="btn btn-info text-white me-2">Upload</label>
+                                    @if (Model.IsHippaDoc)
+                                    {
+                                        <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/3.jpg" class="btn btn-info text-white">View</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3">
+                    <input type="number" value="4" name="docId" hidden />
+                    <div class="row">
+                        <div class="col-md-9 col-lg-8">
+                            <div class="row">
+                                <div class="col-1 mb-3">
+                                    <input type="checkbox" class="form-check-input me-2" id="NonDisclosureDoc" checked="@Model.IsNonDisclosureDoc" />
+                                </div>
+                                <div class="col-11 col-sm-6 mb-3">
+                                    <label for="NonDisclosureDoc" class="me-2">Non-Disclosure Agreement</label>
+                                </div>
+                                <div class="col-sm-5 mb-3">
+                                    <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="NonDisclosureInput">
+                                    <label for="NonDisclosureInput" class="btn btn-info text-white me-2">Upload</label>
+                                    @if (Model.IsNonDisclosureDoc)
+                                    {
+                                        <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/4.jpg" class="btn btn-info text-white">View</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3 border-bottom">
+                    <input type="number" value="5" name="docId" hidden />
+                    <div class="row">
+                        <div class="col-md-9 col-lg-8">
+                            <div class="row">
+                                <div class="col-1 mb-3">
+                                    <input type="checkbox" class="form-check-input me-2" id="LicenseDoc" checked="@Model.IsLicenseDoc" />
+                                </div>
+                                <div class="col-11 col-sm-6 mb-3">
+                                    <label for="LicenseDoc" class="me-2">License Document</label>
+                                </div>
+                                <div class="col-sm-5 mb-3">
+                                    <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="LicenseInput">
+                                    <label for="LicenseInput" class="btn btn-info text-white me-2">Upload</label>
+                                    @if (Model.IsLicenseDoc)
+                                    {
+                                        <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/5.jpg" class="btn btn-info text-white">View</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
 
-            <div class="submit d-flex justify-content-end">
-                <button type="button" id="profile-info-editbtn" class="btn btn-outline-info py-2 px-3 ms-3">Edit</button>
-                <input type="submit" value="Save" id="profile-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
-                <input type="reset" value="Cancel" id="profile-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
-            </div>
-
-        </form>
-
-        <div class="p-4 pt-0 bg-white">
-            <h4 class="mb-3">Onboarding</h4>
-            <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3">
-                <input type="number" value="1" name="docId" hidden />
-                <div class="row">
-                    <div class="col-md-9 col-lg-8">
-                        <div class="row">
-                            <div class="col-1 mb-3">
-                                <input type="checkbox" class="form-check-input" id="ContractorDoc" checked="@Model.IsContractorDoc" />
-                            </div>
-                            <div class="col-11 col-sm-6 mb-3">
-                                <label for="ContractorDoc" class="me-2">Independent Contractor Agreement</label>
-                            </div>
-                            <div class="col-sm-5 mb-3">
-                                @*<input type="submit" value="Upload" class="btn btn-info text-white me-2" />*@
-                                <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="ContractorInput">
-                                <label for="ContractorInput" class="btn btn-info text-white me-2">Upload</label>
-                                @if (Model.IsContractorDoc)
-                                {
-                                    <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/1.jpg" class="btn btn-info text-white">View</a>
-                                }
-                            </div>
-                        </div>
-                    </div>
+                <div class="d-flex justify-content-end">
+                    <a asp-action="DeleteProvider" asp-route-providerId="@Model.ProviderId" class="btn btn-danger">Delete Provider</a>
                 </div>
-            </form>
-            <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3">
-                <input type="number" value="2" name="docId" hidden />
-                <div class="row">
-                    <div class="col-md-9 col-lg-8">
-                        <div class="row">
-                            <div class="col-1 mb-3">
-                                <input type="checkbox" class="form-check-input" id="BackgroundDoc" checked="@Model.IsBackgroundDoc" />
-                            </div>
-                            <div class="col-11 col-sm-6 mb-3">
-                                <label for="BackgroundDoc" class="me-2">Background Check</label>
-                            </div>
-                            <div class="col-sm-5 mb-3">
-                                <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="BackgroundInput">
-                                <label for="BackgroundInput" class="btn btn-info text-white me-2">Upload</label>
-                                @if(Model.IsBackgroundDoc)
-                                {
-                                    <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/2.jpg" class="btn btn-info text-white">View</a>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-            <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3">
-                <input type="number" value="3" name="docId" hidden />
-                <div class="row">
-                    <div class="col-md-9 col-lg-8">
-                        <div class="row">
-                            <div class="col-1 mb-3">
-                                <input type="checkbox" class="form-check-input me-2" id="HippaDoc" checked="@Model.IsHippaDoc" />
-                            </div>
-                            <div class="col-11 col-sm-6 mb-3">
-                                <label for="HippaDoc" class="me-2">HIPAA Compliance</label>
-                            </div>
-                            <div class="col-sm-5 mb-3">
-                                <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="HippaInput">
-                                <label for="HippaInput" class="btn btn-info text-white me-2">Upload</label>
-                                @if(Model.IsHippaDoc)
-                                {
-                                    <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/3.jpg" class="btn btn-info text-white">View</a>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-            <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3">
-                <input type="number" value="4" name="docId" hidden />
-                <div class="row">
-                    <div class="col-md-9 col-lg-8">
-                        <div class="row">
-                            <div class="col-1 mb-3">
-                                <input type="checkbox" class="form-check-input me-2" id="NonDisclosureDoc" checked="@Model.IsNonDisclosureDoc" />
-                            </div>
-                            <div class="col-11 col-sm-6 mb-3">
-                                <label for="NonDisclosureDoc" class="me-2">Non-Disclosure Agreement</label>
-                            </div>
-                            <div class="col-sm-5 mb-3">
-                                <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="NonDisclosureInput">
-                                <label for="NonDisclosureInput" class="btn btn-info text-white me-2">Upload</label>
-                                @if (Model.IsNonDisclosureDoc)
-                                {
-                                    <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/4.jpg" class="btn btn-info text-white">View</a>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-            <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3 border-bottom">
-                <input type="number" value="5" name="docId" hidden />
-                <div class="row">
-                    <div class="col-md-9 col-lg-8">
-                        <div class="row">
-                            <div class="col-1 mb-3">
-                                <input type="checkbox" class="form-check-input me-2" id="LicenseDoc" checked="@Model.IsLicenseDoc" />
-                            </div>
-                            <div class="col-11 col-sm-6 mb-3">
-                                <label for="LicenseDoc" class="me-2">License Document</label>
-                            </div>
-                            <div class="col-sm-5 mb-3">
-                                <input type="file" accept=".jpg" class="onboarding-doc" name="UploadDoc" id="LicenseInput">
-                                <label for="LicenseInput" class="btn btn-info text-white me-2">Upload</label>
-                                @if(Model.IsLicenseDoc)
-                                {
-                                    <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/5.jpg" class="btn btn-info text-white">View</a>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-
-            <div class="d-flex justify-content-end">
-                <a asp-action="DeleteProvider" asp-route-providerId="@Model.ProviderId" class="btn btn-danger">Delete Provider</a>
             </div>
         </div>
 
@@ -554,7 +560,34 @@
         const passwordInput = document.querySelector('#Password');
         const roleList = document.querySelector('#role-list');
         const statusList = document.querySelector('#status-list');
-        const resetPassBtn = document.querySelector('#reset-pass');
+
+        const resetPassBtn = $('#reset-pass');
+        const isAccessProvider = '@Model.IsAccessProvider'
+        console.log(isAccessProvider);
+
+        resetPassBtn.click(function () {
+            console.log('reset btn clicked');
+           if(isAccessProvider){
+                $('#form-account-info').attr('action', '/Access/ResetProviderPassword');
+           }
+           else{
+                $('#form-account-info').attr('action', '/Providers/ResetPassword');
+           }
+            $('#form-account-info').attr('method', 'post');
+            $('#form-account-info').submit();
+        });
+
+        $('#account-info-save').click(function () {
+            console.log('reset btn clicked');
+            if (isAccessProvider) {
+                $('#form-account-info').attr('action', '/Access/EditProviderAccountInfo');
+            }
+            else {
+                $('#form-account-info').attr('action', '/Providers/EditAccountInfo');
+            }
+            $('#form-account-info').attr('method', 'post');
+            $('#form-account-info').submit();
+        });
 
 
         accountInfoEditBtn.addEventListener('click', () => {
@@ -563,7 +596,6 @@
 
             accountInfoSubmitBtn.classList.remove('d-none');
             accountInfoCancelBtn.classList.remove('d-none');
-            resetPassBtn.classList.remove('d-none');
 
             accountInfoInputTags.forEach(input => {
                 input.readOnly = false;
@@ -573,14 +605,12 @@
             statusList.disabled = false;
 
             usernameInput.readOnly = true;
-            passwordInput.readOnly = true;
         });
 
         accountInfoCancelBtn.addEventListener('click', () => {
 
             accountInfoSubmitBtn.classList.add('d-none');
             accountInfoCancelBtn.classList.add('d-none');
-            resetPassBtn.classList.add('d-none');
 
             accountInfoEditBtn.classList.remove('d-none');
 
@@ -592,10 +622,6 @@
             statusList.disabled = true;
         });
 
-        resetPassBtn.addEventListener('click', () => {
-            passwordInput.readOnly = false;
-            resetPassBtn.classList.add('d-none');
-        })
 
 
         const physicianInfoEditBtn = document.querySelector('#physician-info-editbtn');

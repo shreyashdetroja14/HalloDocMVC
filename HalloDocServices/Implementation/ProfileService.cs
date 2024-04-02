@@ -131,6 +131,29 @@ namespace HalloDocServices.Implementation
             return false;
         }
 
+        public async Task<bool> UpdateAccountInfo(AdminProfileViewModel AdminProfileDetails)
+        {
+            var adminFetched = _adminRepository.GetAdminByAdminId(AdminProfileDetails.AdminId);
+            var aspnetuserFetched = _userRepository.GetAspNetUserById(adminFetched.AspNetUserId);
+
+            if (aspnetuserFetched.Id == null || adminFetched.AdminId == 0)
+            {
+                return false;
+            }
+
+            aspnetuserFetched.UserName = AdminProfileDetails.Username;
+
+            await _userRepository.UpdateAspNetUser(aspnetuserFetched);
+
+            adminFetched.Status = (short)(AdminProfileDetails.Status ?? 0);
+            adminFetched.RoleId = AdminProfileDetails.RoleId;
+
+            await _adminRepository.UpdateAdminAsync(adminFetched);
+
+            return true;
+
+        }
+
         public async Task<bool> UpdateAdminInfo(AdminProfileViewModel AdminProfileDetails)
         {
             var adminFetched = _adminRepository.GetAdminByAdminId(AdminProfileDetails.AdminId);

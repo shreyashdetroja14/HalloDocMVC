@@ -20,6 +20,8 @@ namespace HalloDocServices.Interface
 
         EditProviderViewModel GetEditProviderViewModel(EditProviderViewModel EditProvider);
 
+        Task<bool> ResetPassword(EditProviderViewModel AccountInfo);
+
         Task<bool> EditAccountInfo(EditProviderViewModel AccountInfo);
 
         Task<bool> EditPhysicianInfo(EditProviderViewModel PhysicianInfo);

@@ -18,16 +18,24 @@
 
     <div class="container p-4">
         <div class=" back p-0 pb-4 d-flex justify-content-between">
-            <h2>Profile</h2>
+            @if(Model.IsEditAdmin == true)
+            {
+                <h2>Edit Admin</h2>
+            }
+            else
+            {
+                <h2>Profile</h2>
+            }
             <a class="btn back-btn">
                 <img src="/images/backIcon.svg" alt="">
                 Back
             </a>
         </div>
 
-        <div class="shadow rounded-3">
-            <form asp-action="ResetPassword" class="bg-white p-4 request-form rounded-0 shadow-none">
+        <div class="rounded-3" style="box-shadow: 0 0 5px rgba(0,0,0,0.3)">
+            <form id="form-account-info" class="bg-white p-4 request-form rounded-3 rounded-top shadow-none">
                 <input type="number" asp-for="AdminId" hidden>
+                <input type="text" asp-for="AspNetUserId" hidden>
                 <div class="info mb-4">
                     <h4 class="mb-3">Account Information</h4>
                     <div class="row">
@@ -41,7 +49,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <input type="password" asp-for="Password" class="form-control account-info" id="Password"
+                                <input type="password" asp-for="Password" class="form-control" id="Password"
                                        placeholder="Password">
                                 <label asp-for="Password">Password</label>
                                 <span asp-validation-for="Password" class="text-danger"></span>
@@ -49,7 +57,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="Html.GetEnumSelectList<Status>()" >
+                                <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="Html.GetEnumSelectList<Status>()" disabled>
                                     <option value="">Set a status</option>
                                 </select>
                                 <span asp-validation-for="Status" class="text-danger"></span>
@@ -67,8 +75,12 @@
                 </div>
 
                 <div class="submit d-flex justify-content-end">
-                    <input type="submit" value="Reset Password" id="reset-pass" class="btn btn-outline-info py-2 px-3 ms-3" />
-                    <input type="submit" value="Save" id="account-info-save" class="btn btn-info text-white py-2 px-3 ms-3" />
+                    <button type="button" id="reset-pass" class="btn btn-outline-info py-2 px-3 ms-3" >Reset Password</button>
+                    @if(Model.IsEditAdmin == true)
+                    {
+                        <button type="button" id="account-info-edit" class="btn btn-outline-info py-2 px-3 ms-3">Edit</button>
+                    }
+                    <button type="button" id="account-info-save" class="btn btn-info text-white py-2 px-3 ms-3" >Save</button>
                     <input type="reset" value="Cancel" id="account-info-cancel" class="btn btn-outline-info py-2 px-3 ms-3" />
 
                 </div>
@@ -77,6 +89,7 @@
 
             <form asp-action="EditAdminInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
                 <input type="number" asp-for="AdminId" hidden>
+                <input type="text" asp-for="AspNetUserId" hidden>
                 <div class="info mb-4">
                     <h4 class="mb-3">Administrator Information</h4>
                     <div class="row">
@@ -141,8 +154,9 @@
 
             </form>
 
-            <form asp-action="EditBilling" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
+            <form asp-action="EditBilling" class="bg-white p-4 pt-0 request-form rounded-3 rounded-bottom shadow-none">
                 <input type="number" asp-for="AdminId" hidden>
+                <input type="text" asp-for="AspNetUserId" hidden>
                 <div class="info mb-4">
                     <h4 class="mb-3">Mailing & Billing Information</h4>
                     <div class="row">
@@ -233,6 +247,69 @@
     </script>
     <script>
 
+        //ACCOUNT INFO EDIT
+
+        $('#account-info-save').hide();
+        $('#account-info-cancel').hide();
+
+        $('#account-info-edit').click(function(){
+            $('.account-info').each(function () {
+                $(this).prop('disabled', false);
+            })
+            $('#account-info-save').show();
+            $('#account-info-cancel').show();
+
+            $(this).hide();
+        });
+        
+        $('#account-info-cancel').click(function(){
+            $('.account-info').each(function () {
+                $(this).prop('disabled', true);
+            })
+            $('#account-info-edit').show();
+
+            $('#account-info-save').hide();
+            $(this).hide();
+        });
+
+        
+
+        const resetPassBtn = $('#reset-pass');
+        const accountInfoSubmitBtn = $('#account-info-save');
+
+        const isEditAdmin = '@Model.IsEditAdmin';
+        console.log('is edit admin: ', isEditAdmin);
+        
+        resetPassBtn.click(function(){
+            console.log('reset btn clicked');
+            if(isEditAdmin){
+                $('#form-account-info').attr('action', '/Access/ResetPassword');
+            }
+            else{
+                $('#form-account-info').attr('action', '/Profile/ResetPassword');
+            }
+
+            $('#form-account-info').attr('method', 'post');
+            $('#form-account-info').submit();
+        });
+        
+        accountInfoSubmitBtn.click(function(){
+            console.log('reset btn clicked');
+            if (isEditAdmin) {
+                $('#form-account-info').attr('action', '/Access/EditAccountInfo');
+            }
+            else {
+                $('#form-account-info').attr('action', '/Profile/EditAccountInfo');
+            }
+            $('#form-account-info').attr('method', 'post');
+            $('#form-account-info').submit();
+        });
+
+        
+
+
+        //ADMIN INFO EDIT
+
         const adminInfoEditBtn = document.querySelector('#admin-info-editbtn');
         const adminInfoSubmitBtn = document.querySelector('#admin-info-save');
         const adminInfoCancelBtn = document.querySelector('#admin-info-cancel');
@@ -268,6 +345,9 @@
 
         });
 
+
+
+        // BILLING INFO EDIT
 
         const billingInfoEditBtn = document.querySelector('#billing-info-editbtn');
         const billingInfoSubmitBtn = document.querySelector('#billing-info-save');

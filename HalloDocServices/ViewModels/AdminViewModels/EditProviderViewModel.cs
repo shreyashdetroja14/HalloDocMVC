@@ -11,7 +11,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 {
     public class EditProviderViewModel
     {
-        public bool IsCreateProvider { get; set; }
+        public bool IsAccessProvider { get; set; }
 
         public int ProviderId { get; set; }
 
@@ -21,7 +21,6 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         /*[RegularExpression(@"^MD\.[A-Z]{1,3}\.[A-Z]{1,3}(?=.*\d)$", ErrorMessage = "Please enter a username in the format MD.ABC.DEF")]*/
         public string Username { get; set; } = null!;
 
-        [Required(ErrorMessage ="Please enter password.")]
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [RegularExpression(@"^((?=.*[a-z])(?=.*[A-Z])(?=.*\d)).+$", ErrorMessage = "Password must contain 1 number, 1 special charecter, 1 uppercase and 1 lowercase charecter")]
         public string? Password { get; set; }
@@ -94,6 +93,8 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public string BusinessWebsite { get; set; } = null!;
 
         public IFormFile? Photo { get; set; }
+
+        public string? PhotoPath { get; set; }
 
         public IFormFile? Signature { get; set; }
 

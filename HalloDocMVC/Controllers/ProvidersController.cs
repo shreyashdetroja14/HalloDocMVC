@@ -1,4 +1,5 @@
 ﻿using HalloDocMVC.Auth;
+using HalloDocServices.Implementation;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using HalloDocServices.ViewModels.AdminViewModels;
@@ -115,11 +116,35 @@ namespace HalloDocMVC.Controllers
         {
             EditProviderViewModel ProviderInfo = new EditProviderViewModel();
             ProviderInfo.ProviderId = providerId;
-            ProviderInfo.IsCreateProvider = false;
+            ProviderInfo.IsAccessProvider = false;
 
             ProviderInfo = _providersService.GetEditProviderViewModel(ProviderInfo);
 
             return View(ProviderInfo);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(EditProviderViewModel AccountInfo)
+        {
+
+            if (AccountInfo.Password == null)
+            {
+                TempData["ErrorMessage"] = "Unable to reset password";
+                return RedirectToAction("EditProvider", new { providerId = AccountInfo.ProviderId });
+            }
+
+            bool isPasswordReset = await _providersService.ResetPassword(AccountInfo);
+            if (isPasswordReset)
+            {
+                TempData["SuccessMessage"] = "Password has been reset successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to reset password";
+
+            }
+
+            return RedirectToAction("EditProvider", new { providerId = AccountInfo.ProviderId });
         }
 
         [HttpPost]
@@ -217,7 +242,6 @@ namespace HalloDocMVC.Controllers
         public IActionResult CreateProvider()
         {
             EditProviderViewModel ProviderInfo = new EditProviderViewModel();
-            ProviderInfo.IsCreateProvider = true;
 
             ProviderInfo = _providersService.GetEditProviderViewModel(ProviderInfo);
 

@@ -13,6 +13,8 @@ namespace HalloDocServices.Interface
 
         Task<bool> ResetPassword(AdminProfileViewModel AdminProfileDetails);
 
+        Task<bool> UpdateAccountInfo(AdminProfileViewModel AdminProfileDetails);
+
         Task<bool> UpdateBillingInfo(AdminProfileViewModel AdminProfileDetails);
 
         Task<bool> UpdateAdminInfo(AdminProfileViewModel AdminProfileDetails);

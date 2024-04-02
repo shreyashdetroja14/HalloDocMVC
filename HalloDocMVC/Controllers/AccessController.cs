@@ -1,4 +1,5 @@
-﻿using HalloDocMVC.Auth;
+﻿using HalloDocEntities.Models;
+using HalloDocMVC.Auth;
 using HalloDocServices.Implementation;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
@@ -140,7 +141,6 @@ namespace HalloDocMVC.Controllers
         public IActionResult CreatePhysician()
         {
             EditProviderViewModel ProviderInfo = new EditProviderViewModel();
-            ProviderInfo.IsCreateProvider = true;
 
             ProviderInfo = _providersService.GetEditProviderViewModel(ProviderInfo);
 
@@ -192,13 +192,200 @@ namespace HalloDocMVC.Controllers
 
         public IActionResult EditAdmin(string aspnetuserId)
         {
-            ClaimsData claimsData = GetClaimsData();
 
-            AdminProfileViewModel AdminProfileDetails = _profileService.GetAdminProfileViewModelData(claimsData.AspNetUserId ?? "");
+            AdminProfileViewModel AdminProfileDetails = _profileService.GetAdminProfileViewModelData(aspnetuserId);
+            AdminProfileDetails.AspNetUserId = aspnetuserId;
             AdminProfileDetails.IsEditAdmin = true;
 
             return View("~/Views/Profile/Index.cshtml", AdminProfileDetails);
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(AdminProfileViewModel AdminProfileDetails)
+        {
+
+            if (AdminProfileDetails.Password == null)
+            {
+                TempData["ErrorMessage"] = "Unable to reset password";
+                return RedirectToAction("EditAdmin", new {aspnetuserId = AdminProfileDetails.AspNetUserId});
+            }
+
+            bool isPasswordReset = await _profileService.ResetPassword(AdminProfileDetails);
+            if (isPasswordReset)
+            {
+                TempData["SuccessMessage"] = "Password has been reset successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to reset password";
+
+            }
+
+            return RedirectToAction("EditAdmin", new { aspnetuserId = AdminProfileDetails.AspNetUserId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditAccountInfo(AdminProfileViewModel AdminProfileDetails)
+        {
+
+            bool isAdminInfoUpdated = await _profileService.UpdateAccountInfo(AdminProfileDetails);
+            if (isAdminInfoUpdated)
+            {
+                TempData["SuccessMessage"] = "Account Info Updated Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable To Update Account Info";
+
+            }
+
+            return RedirectToAction("EditAdmin", new { aspnetuserId = AdminProfileDetails.AspNetUserId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditAdminInfo(AdminProfileViewModel AdminProfileDetails)
+        {
+            bool isAdminInfoUpdated = await _profileService.UpdateAdminInfo(AdminProfileDetails);
+            if (isAdminInfoUpdated)
+            {
+                TempData["SuccessMessage"] = "Admin Info Updated Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable To Update Info";
+
+            }
+
+            return RedirectToAction("EditAdmin", new { aspnetuserId = AdminProfileDetails.AspNetUserId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditBilling(AdminProfileViewModel AdminProfileDetails)
+        {
+            bool isBillingInfoUpdated = await _profileService.UpdateBillingInfo(AdminProfileDetails);
+            if (isBillingInfoUpdated)
+            {
+                TempData["SuccessMessage"] = "Mailing & Billing Info Updated Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable To Update Info";
+
+            }
+
+            return RedirectToAction("EditAdmin", new { aspnetuserId = AdminProfileDetails.AspNetUserId });
+        }
+
+        public IActionResult EditPhysician(int physicianId)
+        {
+            EditProviderViewModel ProviderInfo = new EditProviderViewModel();
+            ProviderInfo.ProviderId = physicianId;
+            ProviderInfo.IsAccessProvider = true;
+
+            ProviderInfo = _providersService.GetEditProviderViewModel(ProviderInfo);
+
+            return View("~/Views/Providers/EditProvider.cshtml", ProviderInfo);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetProviderPassword(EditProviderViewModel AccountInfo)
+        {
+
+            if (AccountInfo.Password == null)
+            {
+                TempData["ErrorMessage"] = "Unable to reset password";
+                return RedirectToAction("EditPhysician", new { physicianId = AccountInfo.ProviderId });
+            }
+
+            bool isPasswordReset = await _providersService.ResetPassword(AccountInfo);
+            if (isPasswordReset)
+            {
+                TempData["SuccessMessage"] = "Password has been reset successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to reset password";
+
+            }
+
+            return RedirectToAction("EditPhysician", new { providerId = AccountInfo.ProviderId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditProviderAccountInfo(EditProviderViewModel AccountInfo)
+        {
+            bool isInfoUpdated = await _providersService.EditAccountInfo(AccountInfo);
+            if (isInfoUpdated)
+            {
+                TempData["SuccessMessage"] = "Account Info Updated Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Update Account Info.";
+            }
+            return RedirectToAction("EditPhysician", new { physicianId = AccountInfo.ProviderId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditPhysicianInfo(EditProviderViewModel PhysicianInfo)
+        {
+            bool isInfoUpdated = await _providersService.EditPhysicianInfo(PhysicianInfo);
+            if (isInfoUpdated)
+            {
+                TempData["SuccessMessage"] = "Physician Info Updated Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Update Physician Info.";
+            }
+            return RedirectToAction("EditPhysician", new { physicianId = PhysicianInfo.ProviderId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditBillingInfo(EditProviderViewModel BillingInfo)
+        {
+            bool isInfoUpdated = await _providersService.EditBillingInfo(BillingInfo);
+            if (isInfoUpdated)
+            {
+                TempData["SuccessMessage"] = "Billing Info Updated Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Update Billing Info.";
+            }
+            return RedirectToAction("EditPhysician", new { physicianId = BillingInfo.ProviderId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditProfileInfo(EditProviderViewModel ProfileInfo)
+        {
+            bool isInfoUpdated = await _providersService.EditProfileInfo(ProfileInfo);
+            if (isInfoUpdated)
+            {
+                TempData["SuccessMessage"] = "Profile Info Updated Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Update Profile Info.";
+            }
+            return RedirectToAction("EditPhysician", new { physicianId = ProfileInfo.ProviderId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Onboarding(IFormFile UploadDoc, int docId, int providerId)
+        {
+
+            bool isDocUploaded = await _providersService.Onboarding(UploadDoc, docId, providerId);
+            if (isDocUploaded)
+            {
+                TempData["SuccessMessage"] = "Document Uploaded Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Upload Document.";
+            }
+
+            return RedirectToAction("EditPhysician", new { physicianId = providerId });
         }
     }
 }

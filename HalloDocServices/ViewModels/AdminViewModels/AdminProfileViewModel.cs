@@ -10,6 +10,8 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 {
     public class AdminProfileViewModel
     {
+        public string? AspNetUserId { get; set; }
+
         public int AdminId { get; set; }
 
         public string CreatedBy { get; set; } = string.Empty;
