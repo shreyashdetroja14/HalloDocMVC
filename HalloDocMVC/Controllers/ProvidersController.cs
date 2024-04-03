@@ -295,7 +295,8 @@ namespace HalloDocMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateShift(CreateShiftViewModel CreateShiftData)
         {
-            bool isShiftCreated = true;
+            CreateShiftData.CreatedBy = GetClaimsData().AspNetUserId;
+            bool isShiftCreated = await _providersService.CreateShift(CreateShiftData);
             if (isShiftCreated)
             {
                 TempData["SuccessMessage"] = "Shift Created Successfully.";

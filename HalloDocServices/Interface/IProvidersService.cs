@@ -10,6 +10,8 @@ namespace HalloDocServices.Interface
 {
     public interface IProvidersService
     {
+        #region PROVIDERS LIST
+
         ProvidersViewModel GetProvidersViewModel(ProvidersViewModel Providers);
 
         List<ProviderRowViewModel> GetProvidersList(int regionId);
@@ -17,6 +19,10 @@ namespace HalloDocServices.Interface
         ContactProviderViewModel GetContactProvider(ContactProviderViewModel ContactProvider);
 
         Task<bool> UpdateNotiStatus(List<int> StopNotificationIds);
+
+        #endregion
+
+        #region EDIT PROVIDER
 
         EditProviderViewModel GetEditProviderViewModel(EditProviderViewModel EditProvider);
 
@@ -34,13 +40,21 @@ namespace HalloDocServices.Interface
 
         Task<bool> DeleteProvider(int providerId);
 
+        #endregion
+
+        #region CREATE PROVIDER 
+
         Task<bool> CreateProvider(EditProviderViewModel ProviderInfo);
 
         int CheckUserName(string username);
 
+        #endregion
+
         #region SCHEDULING
 
         SchedulingViewModel GetSchedulingViewModel(SchedulingViewModel SchedulingData);
+
+        Task<bool> CreateShift(CreateShiftViewModel CreateShiftData);
 
         #endregion
     }

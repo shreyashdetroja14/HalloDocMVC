@@ -28,5 +28,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public List<int> RepeatDays { get; set; } = new List<int>();
 
         public int RepeatUpto {  get; set; }
+
+        public string CreatedBy { get; set; } = string.Empty;
     }
 }

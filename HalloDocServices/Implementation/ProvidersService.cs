@@ -10,13 +10,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace HalloDocServices.Implementation
 {
-    
+
 
     public class ProvidersService : IProvidersService
     {
@@ -25,15 +26,19 @@ namespace HalloDocServices.Implementation
         private readonly INotesAndLogsRepository _notesAndLogsRepository;
         private readonly ICommonRepository _commonRepository;
         private readonly IRoleRepository _roleRepository;
+        private readonly IShiftRepository _shiftRepository;
 
-        public ProvidersService(IUserRepository userRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IRoleRepository roleRepository)
+        public ProvidersService(IUserRepository userRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IRoleRepository roleRepository, IShiftRepository shiftRepository)
         {
             _userRepository = userRepository;
             _physicianRepository = physicianRepository;
             _notesAndLogsRepository = notesAndLogsRepository;
             _commonRepository = commonRepository;
             _roleRepository = roleRepository;
+            _shiftRepository = shiftRepository;
         }
+
+        #region PROVIDERS LIST
 
         public ProvidersViewModel GetProvidersViewModel(ProvidersViewModel Providers)
         {
@@ -122,6 +127,10 @@ namespace HalloDocServices.Implementation
 
             return true;
         }
+
+        #endregion
+
+        #region EDIT PROVIDER
 
         public EditProviderViewModel GetEditProviderViewModel(EditProviderViewModel EditProvider)
         {
@@ -221,11 +230,11 @@ namespace HalloDocServices.Implementation
             var provider = _physicianRepository.GetIQueryablePhysicians(AccountInfo.ProviderId).Include(x => x.AspNetUser).FirstOrDefault();
             var aspnetUser = provider?.AspNetUser;
 
-            if(aspnetUser == null)
+            if (aspnetUser == null)
             {
                 return false;
             }
-           
+
             aspnetUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(AccountInfo.Password);
 
             await _userRepository.UpdateAspNetUser(aspnetUser);
@@ -250,7 +259,7 @@ namespace HalloDocServices.Implementation
             await _physicianRepository.Update(provider);
 
             aspnetUser.UserName = AccountInfo.Username;
-            
+
             await _userRepository.UpdateAspNetUser(aspnetUser);
 
             return true;
@@ -336,7 +345,7 @@ namespace HalloDocServices.Implementation
             }
 
             string newfilename = "";
-            if(docId > 5)
+            if (docId > 5)
             {
                 newfilename = $"{Path.GetFileNameWithoutExtension(UploadFile.FileName)}-{DateTime.Now.ToString("yyyyMMddhhmmss")}.{Path.GetExtension(UploadFile.FileName).Trim('.')}";
             }
@@ -389,7 +398,7 @@ namespace HalloDocServices.Implementation
 
             UploadFilesToServer(UploadDoc, docId, providerId);
 
-            switch(docId)
+            switch (docId)
             {
                 case 1:
                     provider.IsAgreementDoc = true;
@@ -429,6 +438,10 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
+        #endregion
+
+        #region CREATE PROVIDER
+
         public async Task<bool> CreateProvider(EditProviderViewModel ProviderInfo)
         {
             var aspnetuserNew = new AspNetUser();
@@ -466,7 +479,7 @@ namespace HalloDocServices.Implementation
             provider.IsLicenseDoc = ProviderInfo.IsLicenseDoc;
             provider.Address1 = ProviderInfo.Address1;
             provider.Address2 = ProviderInfo.Address2;
-            provider.City = ProviderInfo.City; 
+            provider.City = ProviderInfo.City;
             provider.RegionId = ProviderInfo.RegionId;
             provider.ZipCode = ProviderInfo.ZipCode;
             provider.AltPhone = ProviderInfo.SecondPhoneNumber;
@@ -500,10 +513,11 @@ namespace HalloDocServices.Implementation
 
         public int CheckUserName(string username)
         {
-            int count = _userRepository.GetMatchingUserNameCount(username); 
+            int count = _userRepository.GetMatchingUserNameCount(username);
             return count;
         }
 
+        #endregion
 
         #region SCHEDULING 
 
@@ -518,7 +532,7 @@ namespace HalloDocServices.Implementation
                     Text = region.Name,
                     Value = region.RegionId.ToString(),
                 });
-                
+
                 SchedulingData.CreateShiftData.RegionList.Add(new SelectListItem()
                 {
                     Text = region.Name,
@@ -538,6 +552,93 @@ namespace HalloDocServices.Implementation
             }
 
             return SchedulingData;
+        }
+
+        public async Task<bool> CreateShift(CreateShiftViewModel CreateShiftData)
+        {
+            var shift = new Shift();
+
+            shift.PhysicianId = CreateShiftData.PhysicianId;
+
+            shift.StartDate = DateTime.ParseExact(CreateShiftData.ShiftDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+            var initialShiftDate = DateOnly.FromDateTime(shift.StartDate);
+
+            shift.IsRepeat = CreateShiftData.IsRepeat;
+
+            for (int i = 0; i < 7; i++)
+            {
+                if (CreateShiftData.RepeatDays.Contains(i + 1))
+                {
+                    shift.WeekDays += "1";
+                }
+                else
+                {
+                    shift.WeekDays += "0";
+                }
+            }
+
+            shift.RepeatUpto = CreateShiftData.RepeatUpto;
+            shift.CreatedBy = CreateShiftData.CreatedBy;
+            shift.CreatedDate = DateTime.Now;
+
+            shift = await _shiftRepository.CreateShift(shift);
+
+            List<ShiftDetail> shiftDetails = new List<ShiftDetail>();
+
+            shiftDetails.Add(new ShiftDetail
+            {
+                ShiftId = shift.ShiftId,
+                ShiftDate = shift.StartDate,
+                RegionId = CreateShiftData.RegionId,
+                StartTime = CreateShiftData.StartTime,
+                EndTime = CreateShiftData.EndTime,
+                //status
+                IsDeleted = false,
+            });
+
+            if (CreateShiftData.IsRepeat)
+            {
+                int initialDay = (int)(initialShiftDate.DayOfWeek + 1);
+                for (int i = 0; i < CreateShiftData.RepeatUpto; i++)
+                {
+                    foreach (var day in CreateShiftData.RepeatDays)
+                    {
+                        int offset = ((7 - (initialDay - day)) % 7) + (7 * i);
+                        if (offset % 7 == 0)
+                        {
+                            offset += 7;
+                        }
+                        var newDate = initialShiftDate.AddDays(offset);
+                        shiftDetails.Add(new ShiftDetail
+                        {
+                            ShiftId = shift.ShiftId,
+                            ShiftDate = new DateTime(newDate.Year, newDate.Month, newDate.Day),
+                            RegionId = CreateShiftData.RegionId,
+                            StartTime = CreateShiftData.StartTime,
+                            EndTime = CreateShiftData.EndTime,
+                            IsDeleted = false,
+                        });
+                    }
+                }
+            }
+
+            shiftDetails = await _shiftRepository.CreateShiftDetails(shiftDetails);
+
+            List<ShiftDetailRegion> shiftDetailRegions = new List<ShiftDetailRegion>();
+            foreach(var shiftDetail in shiftDetails)
+            {
+                shiftDetailRegions.Add(new ShiftDetailRegion
+                {
+                    ShiftDetailId = shiftDetail.ShiftDetailId,
+                    RegionId = CreateShiftData.RegionId,
+                    IsDeleted = false,
+                });
+            }
+
+            shiftDetailRegions = await _shiftRepository.CreateShiftDetailRegions(shiftDetailRegions);
+
+            return true;
         }
 
         #endregion
