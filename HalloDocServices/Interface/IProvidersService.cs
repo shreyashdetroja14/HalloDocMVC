@@ -57,5 +57,11 @@ namespace HalloDocServices.Interface
         Task<bool> CreateShift(CreateShiftViewModel CreateShiftData);
 
         #endregion
+
+        #region REQUEST SHIFT 
+
+        RequestedShiftViewModel GetRequestedShiftViewModel(RequestedShiftViewModel RequestedShiftData);
+
+        #endregion
     }
 }

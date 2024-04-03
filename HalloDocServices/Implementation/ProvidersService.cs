@@ -641,6 +641,22 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
+        public RequestedShiftViewModel GetRequestedShiftViewModel(RequestedShiftViewModel RequestedShiftData)
+        {
+            var regions = _commonRepository.GetAllRegions();
+
+            foreach (var region in regions)
+            {
+                RequestedShiftData.RegionList.Add(new SelectListItem()
+                {
+                    Text = region.Name,
+                    Value = region.RegionId.ToString(),
+                });
+            }
+
+            return RequestedShiftData;
+        }
+
         #endregion
     }
 }

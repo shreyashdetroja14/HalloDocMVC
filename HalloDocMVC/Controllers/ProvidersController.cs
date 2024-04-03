@@ -311,5 +311,16 @@ namespace HalloDocMVC.Controllers
 
         #endregion
 
+        #region REQUESTED SHIFTS
+
+        public IActionResult RequestedShifts()
+        {
+            RequestedShiftViewModel RequestedShiftData = new RequestedShiftViewModel();
+            RequestedShiftData = _providersService.GetRequestedShiftViewModel(RequestedShiftData);
+            return View(RequestedShiftData);
+        }
+
+        #endregion
+
     }
 }
