@@ -10,7 +10,33 @@
 }
 
 @section AddStyles{
+    <!-- FullCalendar CSS -->
+    <link href="https://unpkg.com/fullcalendar@5.10.1/main.min.css" rel="stylesheet" />
+    <!-- FullCalendar Scheduler CSS -->
+    <link href="https://unpkg.com/fullcalendar-scheduler@5.10.1/main.min.css" rel="stylesheet" />
 
+    <style>
+        .fc-next-button, .fc-prev-button{
+            background-color: #0dcaf0 !important;
+            border: 0 !important;
+            border-radius: 50% !important;
+        }
+
+        .fc-today-button{
+            background-color: #0dcaf0 !important;
+            border: 0 !important;
+        }
+
+        @@media screen and (max-width: 767px) {
+            /*.fc-header-toolbar{
+                flex-direction: column !important;
+                align-items: center !important;
+            }
+            .fc-toolbar-chunk{
+                margin-bottom: 1rem !important;
+            }*/
+        }
+    </style>
 }
 
 <div class="main">
@@ -32,7 +58,7 @@
 
             <div class="partial-container">
                 <div class="daywise">
-                    <h5 class="mb-3">Monday, Dec 4, 2024</h5>
+                    <h5 class="mb-3" id="calendar-title">Monday, Dec 4, 2024</h5>
                     <div class="d-flex justify-content-end mb-3">
                         <div class="d-flex align-items-center me-2">
                             <div style="width:4rem; height:2rem; background-color: #d6338440; border: 1px solid #d63384;" class="d-inline-block me-2 rounded-3"></div>
@@ -43,7 +69,7 @@
                             <span>Approved Shifts</span>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-between">
+                    @*<div class="d-flex justify-content-between mb-3">
                         <div class="d-flex align-items-center">
                             <span class="material-symbols-outlined p-2 rounded-circle bg-info text-white text-center fs-6">
                                 arrow_back
@@ -60,8 +86,8 @@
                             <button class="btn btn-outline-info">Week</button>
                             <button class="btn btn-outline-info">Month</button>
                         </div>
-                    </div>
-                    
+                    </div>*@
+                    <div id="calendar" class=""></div>
 
                 </div>
             </div>
@@ -214,6 +240,63 @@
 
     <partial name="_ToastMessageScriptsPartial" />
 
-   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    @*<script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>*@
+
+    <!-- FullCalendar JavaScript -->
+    <script src="https://unpkg.com/fullcalendar@5.10.1/main.min.js"></script>
+    <!-- FullCalendar Scheduler JavaScript -->
+    <script src="https://unpkg.com/fullcalendar-scheduler@5.10.1/main.min.js"></script>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'resourceTimeline', // Use a timeline view to display resources
+                height: 'auto',
+                headerToolbar: {
+                    left: 'prev today next',
+                    center: 'title',
+                    right: 'resourceTimelineDay resourceTimelineWeek dayGridMonth'
+                },
+                navLinks: true,
+                resources: [
+                    { id: 'a', title: 'Room A' },
+                    { id: 'b', title: 'Room B' },
+                    { id: 'c', title: 'Room C' }
+                ],
+                events: [
+                    { id: '1', resourceId: 'a', title: 'Meeting 1', start: '2024-04-03T08:00:00', end: '2024-04-03T10:00:00' },
+                    { id: '2', resourceId: 'b', title: 'Meeting 2', start: '2024-04-03T09:00:00', end: '2024-04-03T11:00:00' },
+                    { id: '3', resourceId: 'c', title: 'Meeting 3', start: '2024-04-03T10:00:00', end: '2024-04-03T12:00:00' },
+                    { id: '4', resourceId: 'a', title: 'Meeting 1', start: '2024-04-03T08:00:00', end: '2024-04-03T10:00:00' },
+                    { id: '5', resourceId: 'b', title: 'Meeting 2', start: '2024-04-03T09:00:00', end: '2024-04-03T11:00:00' },
+                    { id: '6', resourceId: 'a', title: 'Meeting 1', start: '2024-04-03T08:00:00', end: '2024-04-03T10:00:00' },
+                    { id: '7', resourceId: 'b', title: 'Meeting 2', start: '2024-04-03T09:00:00', end: '2024-04-03T11:00:00' },
+                ],
+                
+                schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source', // Required for resourceTimeline views
+                views: {
+                    resourceTimelineWeek: {
+                        slotDuration: { days: 1 },
+                        slotLabelFormat: { weekday: 'short', day: 'numeric', week: 'long' }
+                    },
+                    dayGridMonth: {
+                        eventLimit: true 
+                    }
+                },
+            });
+
+            calendar.render();
+
+
+            
+        })
+
+        
+    </script>
 
 }
