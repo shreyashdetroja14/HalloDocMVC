@@ -357,7 +357,12 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("RequestedShifts");
         }
 
+        public IActionResult GetEventResources(int regionId)
+        {
+            CalendarViewModel calendarData = _providersService.GetCalendarViewModel(regionId);
 
+            return Json(calendarData);
+        }
 
         #endregion
 

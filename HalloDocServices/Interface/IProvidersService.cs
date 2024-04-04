@@ -68,6 +68,8 @@ namespace HalloDocServices.Interface
 
         Task<bool> DeleteShifts(List<int> shiftDetailIds, string modifiedBy);
 
+        CalendarViewModel GetCalendarViewModel(int regionId);
+
         #endregion
     }
 }

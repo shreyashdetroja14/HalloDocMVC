@@ -27,7 +27,7 @@
             <h2 class="mb-4">Scheduling</h2>
 
             <div class="search-area d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
-                <select class="form-select selectlist mb-3 mb-md-0" style="width: 270px;" asp-for="RegionId" asp-items="@Model.RegionList">
+                <select class="form-select mb-3 mb-md-0" id="region-list" style="width: 270px;" asp-for="RegionId" asp-items="@Model.RegionList">
                     <option value="">All Regions</option>
                 </select>
                 <div class="d-flex">
@@ -232,32 +232,18 @@
 
     <script>
         $(document).ready(function () {
-            const calendarEl = $('#calendar')[0]; // Use jQuery to select the element and get the raw DOM element
 
+            const calendarEl = $('#calendar')[0];
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'resourceTimeline', // Use a timeline view to display resources
+                initialView: 'resourceTimeline',
                 height: 'auto',
+                dayMaxEvents: 4,
                 headerToolbar: false,
                 navLinks: true,
                 datesSet: function (info) {
                     var title = info.view.title;
                     $("#calendar-title").html(title);
                 },
-                resources: [
-                    { id: 'a', title: 'Room A' },
-                    { id: 'b', title: 'Room B' },
-                    { id: 'c', title: 'Room C' }
-                ],
-                events: [
-                    { id: '1', resourceId: 'a', title: 'Meeting 1', start: '2024-04-03T08:00:00', end: '2024-04-03T10:00:00' },
-                    { id: '2', resourceId: 'b', title: 'Meeting 2', start: '2024-04-03T09:00:00', end: '2024-04-03T11:00:00' },
-                    { id: '3', resourceId: 'c', title: 'Meeting 3', start: '2024-04-03T10:00:00', end: '2024-04-03T12:00:00' },
-                    { id: '4', resourceId: 'a', title: 'Meeting 1', start: '2024-04-03T08:00:00', end: '2024-04-03T10:00:00' },
-                    { id: '5', resourceId: 'b', title: 'Meeting 2', start: '2024-04-03T09:00:00', end: '2024-04-03T11:00:00' },
-                    { id: '6', resourceId: 'a', title: 'Meeting 1', start: '2024-04-03T08:00:00', end: '2024-04-03T10:00:00' },
-                    { id: '7', resourceId: 'b', title: 'Meeting 2', start: '2024-04-03T09:00:00', end: '2024-04-03T11:00:00' },
-                ],
-
                 schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source', // Required for resourceTimeline views
                 views: {
                     resourceTimelineWeek: {
@@ -291,6 +277,55 @@
             });
 
             calendar.render();
+
+            $('#region-list').change(function () {
+                console.log('region: ', $('#region-list').val());
+            });
+
+            function GetEventResources() {
+                $.ajax({
+                    url: '/Providers/GetEventResources',
+                    data: {
+                        regionId: $('#region-list').val(),
+                    },
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data.resources);
+                        console.log(data.events);
+
+                        const resources = data.resources.map(item => ({
+                            id: item.physicianId,
+                            title: item.physicianName
+                        }));
+
+                        const events = data.events.map(item => ({
+                            id: item.shiftDetailId,
+                            resourceId: item.physicianId,
+                            title: item.physicianName,
+                            start: item.shiftDate + 'T' + item.startTime + ':00',
+                            end: item.shiftDate + 'T' + item.endTime + ':00'
+                        }));
+
+                        console.log(resources);
+                        console.log(events);
+
+                        calendar.setOption('resources', resources);
+                        calendar.setOption('events', events);
+
+                        
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error fetching data:", textStatus);
+                        if (errorThrown) {
+                            console.error("Specific error:", errorThrown);
+                        }
+                        console.error("HTTP status code:", jqXHR.status);
+                    }
+                });
+            }
+
+            GetEventResources();
         });
 
     </script>

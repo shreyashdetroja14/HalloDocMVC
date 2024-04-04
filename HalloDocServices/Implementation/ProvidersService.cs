@@ -709,6 +709,30 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
+        public CalendarViewModel GetCalendarViewModel(int regionId)
+        {
+            CalendarViewModel calendarData = new CalendarViewModel();
+
+            calendarData.Resources = _physicianRepository.GetIQueryablePhysicians().Where(x => regionId == 0 || x.RegionId == regionId).Select(x => new ResourceViewModel
+            {
+                PhysicianId = x.PhysicianId,
+                PhysicianName = x.FirstName + " " + x.LastName,
+            }).ToList();
+
+            calendarData.Events = _shiftRepository.GetShiftDetails().Where(x => regionId == 0 || x.RegionId == regionId).Select(x => new EventViewModel
+            {
+                ShiftDetailId = x.ShiftDetailId,
+                PhysicianId = x.Shift.PhysicianId,
+                PhysicianName = x.Shift.Physician.FirstName + " " + x.Shift.Physician.LastName,
+                ShiftDate = x.ShiftDate.ToString("yyyy-MM-dd"),
+                StartTime = x.StartTime.ToString(),
+                EndTime = x.EndTime.ToString(),
+
+            }).ToList();
+
+            return calendarData;
+        }
+
         #endregion
     }
 }

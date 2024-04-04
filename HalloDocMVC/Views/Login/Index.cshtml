@@ -17,7 +17,7 @@
     <p class="text-center text-danger fw-bold">@ViewBag.Message</p>   
     <form class="d-flex flex-column" asp-action="CheckLogin" asp-controller="Login">
         <div class="form-floating mb-4">
-            <input asp-for="Email" type="email" class="form-control transparent" id="Email" placeholder="name@example.com">
+            <input asp-for="Email" type="text" class="form-control transparent" id="Email" placeholder="name@example.com">
             <label for="Email">Email</label>
             <img src="~/images/usernameIcon.svg" alt="" class="label-icon">
             <span asp-validation-for="Email" class="text-danger"></span>
