@@ -1,127 +1,61 @@
 ﻿@model List<HalloDocServices.ViewModels.AdminViewModels.RequestShiftRowViewModel>
 
 <div class="requestShifts-md d-none d-md-block">
-    <table class="table">
-        <thead style="background-color: #FAF9F6;">
-            <tr class="requestshiftsheader">
-                <th scope="col" class="p-3">
-                    <input type="checkbox" name="" id="selectAll" value="">
-                </th>
-                <th scope="col" class="py-3">Staff</th>
-                <th scope="col" class="py-3">Day</th>
-                <th scope="col" class="py-3">Time</th>
-                <th scope="col" class="py-3">Region</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="bg-white">
-                <td class="p-3">
-                    <input type="checkbox" name="selectFile" id="" class="selectFile" value="FileId">
-                </td>
-                <td class="py-3">Nikunj Agola</td>
-                <td class="py-3">Dec 09, 2023</td>
-                <td class="py-3">8:15PM-9:15PM</td>
-                <td class="py-3">Gujarat</td>
-
-            </tr>
-            @* @if (Model.FileInfo != null)
-            {
-            @foreach (var item in Model.FileInfo)
-            {
-            <tr class="bg-white">
-            <td class="p-3">
-            <input type="checkbox" name="selectFile" id="" class="selectFile" value="@item.FileId">
-            </td>
-            <td class="py-3">@(item.FileName.Substring(0, item.FileName.LastIndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</td>
-            <td class="py-3">@item.Uploader</td>
-            <td class="py-3">@item.UploadDate</td>
-            <td class="py-3">
-            <a asp-action="DownloadFile" asp-route-fileId="@item.FileId" class="btn btn-outline-info">
-            <i class="bi bi-cloud-arrow-down"></i>
-            </a>
-            <a asp-action="DeleteFile" asp-route-fileId="@item.FileId" class="btn btn-outline-info">
-            <i class="bi bi-trash"></i>
-            </a>
-            </td>
-            </tr>
-            }
-            } *@
-        </tbody>
-    </table>
+    <form asp-controller="Providers">
+        <input type="submit" id="approve" asp-action="ApproveShifts" hidden/>
+        <input type="submit" id="delete" asp-action="DeleteShifts" hidden/>
+        <table class="table">
+            <thead style="background-color: #FAF9F6;">
+                <tr class="requestshiftsheader">
+                    <th scope="col" class="p-3">
+                        <input type="checkbox" class="form-check-input" id="selectAll">
+                    </th>
+                    <th scope="col" class="py-3">Staff</th>
+                    <th scope="col" class="py-3">Day</th>
+                    <th scope="col" class="py-3">Time</th>
+                    <th scope="col" class="py-3">Region</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var shift in Model)
+                {
+                    <tr class="bg-white">
+                        <td class="p-3">
+                            <input type="checkbox" class="form-check-input selectShift" name="shiftDetailIds" value="@shift.ShiftDetailId">
+                        </td>
+                        <td class="py-3">@shift.Staff</td>
+                        <td class="py-3">@shift.Day</td>
+                        <td class="py-3">@shift.Time</td>
+                        <td class="py-3">@shift.RegionName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
 </div>
 
 <div class="requestfiles d-md-none">
-    <div class="shift-item d-flex flex-column p-3 mb-1" style="box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.2);">
-        <div class="mb-3">
-            <input type="checkbox" name="selectFile" id="" class="selectFile" value="FileId">
-            <span class="fs-5">Nikunj Agola</span>
-        </div>
-        <div class="mb-3">
-            <span>Dec 09, 2023</span>
-        </div>
-        <div class="mb-3">
-            <span>8:15PM-9:15PM</span>
-        </div>
-        <div class="mb-3">
-            <span>Gujarat</span>
-        </div>
-
-    </div>
-
-    <div class="shift-item d-flex flex-column p-3 mb-1" style="box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.2);">
-        <div class="mb-3">
-            <input type="checkbox" name="selectFile" id="" class="selectFile" value="FileId">
-            <span class="fs-5">Nikunj Agola</span>
-        </div>
-        <div class="mb-3">
-            <span>Dec 09, 2023</span>
-        </div>
-        <div class="mb-3">
-            <span>8:15PM-9:15PM</span>
-        </div>
-        <div class="mb-3">
-            <span>Gujarat</span>
-        </div>
-
-    </div>
-    @* <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
-
-
-
-    @if (Model.FileInfo != null)
+    <form asp-controller="Providers">
+        <input type="submit" id="approve-sm" asp-action="ApproveShifts" hidden />
+        <input type="submit" id="delete-sm" asp-action="DeleteShifts" hidden />
+    @foreach (var shift in Model)
     {
-    @foreach (var item in Model.FileInfo)
-    {
-    <div class="accordion-item">
-    <h2 class="accordion-header">
-    <button class="accordion-button collapsed d-flex" type="button"
-    data-bs-toggle="collapse" data-bs-target="#flush-collapse-@item.FileId">
+        <div class="shift-item d-flex flex-column p-3 mb-1">
+            <div class="mb-3">
+                <input type="checkbox" class="form-check-input" name="shiftDetailIds" value="@shift.ShiftDetailId">
+                <span class="fs-5">@shift.Staff</span>
+            </div>
+            <div class="mb-2">
+                <span>@shift.Day</span>
+            </div>
+            <div class="mb-2">
+                <span>@shift.Time</span>
+            </div>
+            <div class="mb-2">
+                <span>@shift.RegionName</span>
+            </div>
 
-    <i class="bi bi-clock text-info"></i>
-    <span class="px-2">@(item.FileName.Substring(0, item.FileName.IndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</span>
-    </button>
-    </h2>
-    <div id="flush-collapse-@item.FileId" class="accordion-collapse collapse">
-    <div class="accordion-body">
-    <div class="mb-2">
-    <input type="checkbox" name="selectFile" id="" class="selectFileMobile" value="@item.FileId">
-    <span>@(item.FileName.Substring(0, item.FileName.IndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</span>
-    </div>
-    <div class="mb-2">
-    <span>@item.UploadDate</span>
-    </div>
-    <div>
-    <a asp-action="DownloadFile" asp-route-fileId="@item.FileId" class="btn btn-outline-info">
-    <i class="bi bi-cloud-arrow-down"></i>
-    </a>
-    <a asp-action="DeleteFile" asp-route-fileId="@item.FileId" class="btn btn-outline-info">
-    <i class="bi bi-trash"></i>
-    </a>
-    </div>
-    </div>
-    </div>
-    </div>
+        </div>
     }
-    }
-    </div> *@
+    </form>
 </div>

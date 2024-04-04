@@ -62,6 +62,12 @@ namespace HalloDocServices.Interface
 
         RequestedShiftViewModel GetRequestedShiftViewModel(RequestedShiftViewModel RequestedShiftData);
 
+        List<RequestShiftRowViewModel> GetShiftsList(int regionId);
+
+        Task<bool> ApproveShifts(List<int> shiftDetailIds, string modifiedBy);
+
+        Task<bool> DeleteShifts(List<int> shiftDetailIds, string modifiedBy);
+
         #endregion
     }
 }

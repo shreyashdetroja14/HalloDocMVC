@@ -657,6 +657,58 @@ namespace HalloDocServices.Implementation
             return RequestedShiftData;
         }
 
+        public List<RequestShiftRowViewModel> GetShiftsList(int regionId)
+        {
+            List<RequestShiftRowViewModel> shiftsList = _shiftRepository.GetShiftDetails().Where(x => x.Status == (short)ShiftStatus.Unapproved).Select(x => new RequestShiftRowViewModel
+            {
+                ShiftDetailId = x.ShiftDetailId,
+                PhysicianId = x.Shift.PhysicianId,
+                Staff = x.Shift.Physician.FirstName + " " + x.Shift.Physician.LastName,
+                Day = DateOnly.FromDateTime(x.ShiftDate).ToString("MMMM dd, yyyy"),
+                Time = x.StartTime.ToString("h:mm tt") + " - " + x.EndTime.ToString("h:mm tt"),
+                RegionName = x.ShiftDetailRegions.First().Region.Name,
+                RegionId = x.RegionId ?? 0
+
+            }).ToList();
+
+            if(regionId != 0)
+            {
+                shiftsList = shiftsList.Where(x => x.RegionId == regionId).ToList();
+            }
+             
+            return shiftsList;
+        }
+
+        public async Task<bool> ApproveShifts(List<int> shiftDetailIds, string modifiedBy)
+        {
+            List<ShiftDetail> shiftDetails = _shiftRepository.GetShiftDetails(shiftDetailIds);
+            foreach (var shiftDetail in shiftDetails)
+            {
+                shiftDetail.Status = (short)ShiftStatus.Approved;
+                shiftDetail.ModifiedBy = modifiedBy;
+                shiftDetail.ModifiedDate = DateTime.Now;
+            }
+
+            await _shiftRepository.UpdateShiftDetails(shiftDetails);
+
+            return true;
+        }
+
+        public async Task<bool> DeleteShifts(List<int> shiftDetailIds, string modifiedBy)
+        {
+            List<ShiftDetail> shiftDetails = _shiftRepository.GetShiftDetails(shiftDetailIds);
+            foreach (var shiftDetail in shiftDetails)
+            {
+                shiftDetail.Status = (short)ShiftStatus.Deleted;
+                shiftDetail.ModifiedBy = modifiedBy;
+                shiftDetail.ModifiedDate = DateTime.Now;
+            }
+
+            await _shiftRepository.UpdateShiftDetails(shiftDetails);
+
+            return true;
+        }
+
         #endregion
     }
 }

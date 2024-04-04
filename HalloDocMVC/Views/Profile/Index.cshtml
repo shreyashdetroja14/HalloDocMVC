@@ -277,25 +277,28 @@
         const resetPassBtn = $('#reset-pass');
         const accountInfoSubmitBtn = $('#account-info-save');
 
-        const isEditAdmin = '@Model.IsEditAdmin';
-        console.log('is edit admin: ', isEditAdmin);
+        //const isEditAdmin = '@Model.IsEditAdmin';
+        //console.log('is edit admin: ', isEditAdmin);
         
         resetPassBtn.click(function(){
             console.log('reset btn clicked');
-            if(isEditAdmin){
+            if(window.location.href.toLowerCase().includes('access')){
+                //console.log('status: ', isEditAdmin);
                 $('#form-account-info').attr('action', '/Access/ResetPassword');
             }
             else{
+                //console.log('status: ', isEditAdmin);
                 $('#form-account-info').attr('action', '/Profile/ResetPassword');
             }
 
+            console.log($('#form-account-info').attr('action'));
             $('#form-account-info').attr('method', 'post');
             $('#form-account-info').submit();
         });
         
         accountInfoSubmitBtn.click(function(){
             console.log('reset btn clicked');
-            if (isEditAdmin) {
+            if (window.location.href.toLowerCase().includes('access')) {
                 $('#form-account-info').attr('action', '/Access/EditAccountInfo');
             }
             else {

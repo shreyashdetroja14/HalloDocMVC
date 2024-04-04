@@ -320,6 +320,45 @@ namespace HalloDocMVC.Controllers
             return View(RequestedShiftData);
         }
 
+        public IActionResult GetShiftsList(int regionId)
+        {
+            List<RequestShiftRowViewModel> shiftsList = _providersService.GetShiftsList(regionId);
+
+            return PartialView("_RequestShiftTablePartial", shiftsList);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ApproveShifts(List<int> shiftDetailIds)
+        {
+            bool isShiftApproved = await _providersService.ApproveShifts(shiftDetailIds, GetClaimsData().AspNetUserId);
+            if (isShiftApproved)
+            {
+                TempData["SuccessMessage"] = "Shifts Approved Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Approve Shifts.";
+            }
+            return RedirectToAction("RequestedShifts");
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> DeleteShifts(List<int> shiftDetailIds)
+        {
+            bool isShiftDeleted = await _providersService.DeleteShifts(shiftDetailIds, GetClaimsData().AspNetUserId);
+            if (isShiftDeleted)
+            {
+                TempData["SuccessMessage"] = "Shifts Deleted Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Delete Shifts.";
+            }
+            return RedirectToAction("RequestedShifts");
+        }
+
+
+
         #endregion
 
     }

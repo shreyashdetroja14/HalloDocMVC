@@ -19,5 +19,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public string? Time { get; set; }
 
         public string? RegionName { get; set; }
+
+        public int RegionId { get; set; }
     }
 }

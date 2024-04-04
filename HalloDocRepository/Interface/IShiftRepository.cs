@@ -19,6 +19,16 @@ namespace HalloDocRepository.Interface
 
         Task<List<ShiftDetail>> CreateShiftDetails(List<ShiftDetail> shiftDetails);
 
+        List<ShiftDetail> GetAllShiftDetails();
+
+        List<ShiftDetail> GetShiftDetailsByRegionId(int regionId);
+
+        IQueryable<ShiftDetail> GetShiftDetails();
+
+        List<ShiftDetail> GetShiftDetails(List<int> shiftDetailIds);
+
+        Task<List<ShiftDetail>> UpdateShiftDetails(List<ShiftDetail> shiftDetails);
+
         #endregion
 
         #region SHIFT DETAIL REGIONS

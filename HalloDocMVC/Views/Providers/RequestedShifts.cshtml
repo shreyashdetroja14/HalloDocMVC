@@ -8,7 +8,13 @@
     <style>
         .shift-item{
             background-color: #e7f1ff;
+            box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.2);
         }
+
+        .action-btn{
+            box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.4);
+        }
+
     </style>
 }
 
@@ -26,19 +32,20 @@
                 Back
             </a>
         </div>
-        <div class="shiftsSection bg-white rounded-3" style="box-shadow: 0 0 5px rgba(0,0,0,0.3)">
+        <div class="shiftsSection bg-white rounded-3 custom-shadow">
             <div class="search-area p-3 d-flex flex-column flex-md-row flex-md-wrap justify-content-between align-items-center">
-                <select class="form-select selectlist mb-2 me-md-2" style="width: 270px;" asp-items="@Model.RegionList">
+                <select class="form-select mb-2 me-md-2" style="width: 270px;" id="region-list" asp-items="@Model.RegionList">
                     <option value="">All Regions</option>
                 </select>
-                <div class="d-flex flex-wrap flex-sm-nowrap">
-                    <a class="btn btn-success text-white me-2 mb-2" style="box-shadow:1px 1px 2px 1px rgba(0,0,0,0.4)">View Current Month Shifts</a>
-                    <a class="btn btn-success text-white me-2 mb-2" style="box-shadow:1px 1px 2px 1px rgba(0,0,0,0.4)">Approve Selected</a>
-                    <button type="button" class="btn btn-danger text-white mb-2" style="box-shadow:1px 1px 2px 1px rgba(0,0,0,0.4)" data-bs-toggle="modal" data-bs-target="#create-shift-modal">Delete Selected</button>
+                <div class="action-btns d-flex flex-wrap flex-sm-nowrap">
+                    <a class="btn btn-success text-white me-2 mb-2 action-btn">View Current Month Shifts</a>
+                    @*<a class="btn btn-success text-white me-2 mb-2 action-btn">Approve Selected</a>
+                    <a class="btn btn-danger text-white me-2 mb-2 action-btn">Delete Selected</a>*@
+                    
                 </div>
             </div>
             
-            <div class="partial-container">
+            <div id="partial-container">
                 @* <partial name="_RequestShiftTablePartial"> *@
             </div>
 
@@ -50,4 +57,49 @@
 
 @section AddScript {
     <partial name="_ToastMessageScriptsPartial" />
+
+    <script>
+        
+        function GetRequestedShifts(){
+            $.ajax({
+                url: '/Providers/GetShiftsList',
+                data: {
+                    regionId: $('#region-list').val(),
+                },
+                type: 'GET',
+                success: function(data){
+                    $('#partial-container').html(data);
+                    if ($('.action-btns label[for="approve"]').length === 0){
+                        var buttonsHtml = '<label for="approve" class="btn btn-success text-white me-2 mb-2 action-btn d-none d-md-inline">Approve Selected</label><label for="delete" class="btn btn-danger text-white me-2 mb-2 action-btn d-none d-md-inline">Delete Selected</label><label for="approve-sm" class="btn btn-success text-white me-2 mb-2 action-btn d-md-none">Approve Selected M</label><label for="delete-sm" class="btn btn-danger text-white me-2 mb-2 action-btn d-md-none">Delete Selected M</label>';
+
+                        $('.action-btns').append(buttonsHtml);
+                    }
+
+                    partialEventListeners();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error fetching data:", textStatus);
+                    if (errorThrown) {
+                        console.error("Specific error:", errorThrown);
+                    }
+                    console.error("HTTP status code:", jqXHR.status);
+                }
+            });
+        }
+
+        function partialEventListeners(){
+            $("#selectAll").click(function () {
+                $(".selectShift").prop('checked', $(this).prop('checked'));
+            });
+        }
+
+        $('document').ready(function () {
+            GetRequestedShifts();
+        });
+
+        $('#region-list').change(function(){
+            GetRequestedShifts();
+        });
+
+    </script>
 }

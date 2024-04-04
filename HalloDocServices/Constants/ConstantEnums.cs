@@ -46,4 +46,11 @@ namespace HalloDocServices.Constants
         November = 11,
         December = 12,
     }
+
+    public enum ShiftStatus
+    {
+        Unapproved = 0,
+        Approved = 1,
+        Deleted = 2,
+    }
 }

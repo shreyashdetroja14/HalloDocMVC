@@ -113,3 +113,7 @@
     font-weight: bold;
     background-color: #0dcaf025;
 }
+
+.custom-shadow {
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
