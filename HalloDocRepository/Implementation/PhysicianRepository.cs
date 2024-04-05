@@ -85,6 +85,11 @@ namespace HalloDocRepository.Implementation
             return physicianRegions;
         }
 
+        public List<Physician> GetPhysiciansByRegionId(int regionId)
+        {
+            var physicians = _context.PhysicianRegions.Where(x => regionId == 0 || x.RegionId == regionId).Select(x => x.Physician).ToList();
+            return physicians;
+        }
 
 
         #endregion

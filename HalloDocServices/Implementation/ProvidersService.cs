@@ -554,6 +554,25 @@ namespace HalloDocServices.Implementation
             return SchedulingData;
         }
 
+        public List<SelectListItem> GetPhysiciansByRegion(int regionId)
+        {
+            var physicians = _physicianRepository.GetPhysiciansByRegionId(regionId);
+
+            List<SelectListItem> physicianList = new List<SelectListItem>();
+
+            foreach(var physician in physicians)
+            {
+                physicianList.Add(new SelectListItem
+                {
+                    Value = physician.PhysicianId.ToString(),
+                    Text = physician.FirstName + " " + physician.LastName,
+                });
+            }
+
+            return physicianList;
+
+        }
+
         public async Task<bool> CreateShift(CreateShiftViewModel CreateShiftData)
         {
             var shift = new Shift();
@@ -713,7 +732,7 @@ namespace HalloDocServices.Implementation
         {
             CalendarViewModel calendarData = new CalendarViewModel();
 
-            calendarData.Resources = _physicianRepository.GetIQueryablePhysicians().Where(x => regionId == 0 || x.RegionId == regionId).Select(x => new ResourceViewModel
+            calendarData.Resources = _physicianRepository.GetPhysiciansByRegionId(regionId).Select(x => new ResourceViewModel
             {
                 PhysicianId = x.PhysicianId,
                 PhysicianName = x.FirstName + " " + x.LastName,
@@ -727,10 +746,55 @@ namespace HalloDocServices.Implementation
                 ShiftDate = x.ShiftDate.ToString("yyyy-MM-dd"),
                 StartTime = x.StartTime.ToString(),
                 EndTime = x.EndTime.ToString(),
+                IsApproved = x.Status == (short)ShiftStatus.Approved
 
             }).ToList();
 
             return calendarData;
+        }
+
+        public CreateShiftViewModel GetViewShiftViewModel(CreateShiftViewModel ViewShiftData)
+        {
+            var shiftDetails = _shiftRepository.GetShiftDetails().Include(x => x.Shift).Where(x => x.ShiftDetailId == ViewShiftData.ShiftDetailId).ToList();
+
+            ShiftDetail shiftDetail = shiftDetails.FirstOrDefault() ?? new ShiftDetail();
+
+            if(shiftDetail.ShiftDetailId != 0)
+            {
+                var regions = _commonRepository.GetAllRegions();
+
+                foreach (var region in regions)
+                {
+                    ViewShiftData.RegionList.Add(new SelectListItem()
+                    {
+                        Text = region.Name,
+                        Value = region.RegionId.ToString(),
+                        Selected = region.RegionId == shiftDetail.RegionId
+                    });
+                }
+
+                var physicianList = _physicianRepository.GetAllPhysicians();
+
+                foreach (var physian in physicianList)
+                {
+                    ViewShiftData.PhysicianList.Add(new SelectListItem()
+                    {
+                        Text = physian.FirstName + " " + physian.LastName,
+                        Value = physian.PhysicianId.ToString(),
+                        Selected = physian.PhysicianId == shiftDetail.Shift.PhysicianId
+                    });
+                }
+
+                ViewShiftData.RegionId = shiftDetail.RegionId ?? 0;
+                ViewShiftData.PhysicianId = shiftDetail.Shift.PhysicianId;
+                ViewShiftData.ShiftDate = DateOnly.FromDateTime(shiftDetail.ShiftDate).ToString("yyyy-MM-dd");
+                ViewShiftData.StartTime = shiftDetail.StartTime;
+                ViewShiftData.EndTime = shiftDetail.EndTime;
+                ViewShiftData.CreatedBy = shiftDetail.Shift.CreatedBy;
+
+            }
+            return ViewShiftData;
+            
         }
 
         #endregion

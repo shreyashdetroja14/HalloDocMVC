@@ -4,6 +4,7 @@ using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using HalloDocServices.ViewModels.AdminViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -292,6 +293,13 @@ namespace HalloDocMVC.Controllers
             return View(SchedulingData);
         }
 
+        public IActionResult GetEventResources(int regionId)
+        {
+            CalendarViewModel calendarData = _providersService.GetCalendarViewModel(regionId);
+
+            return Json(calendarData);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateShift(CreateShiftViewModel CreateShiftData)
         {
@@ -307,6 +315,23 @@ namespace HalloDocMVC.Controllers
             }
 
             return RedirectToAction("Scheduling");
+        }
+
+        public IActionResult GetPhysicianSelectList(int regionId)
+        {
+            List<SelectListItem> physicianList = _providersService.GetPhysiciansByRegion(regionId);
+
+            return Json(physicianList);
+        }
+
+        public IActionResult ViewShift(int shiftDetailId)
+        {
+
+            CreateShiftViewModel ViewShiftData = new CreateShiftViewModel();
+            ViewShiftData.ShiftDetailId = shiftDetailId;
+            ViewShiftData = _providersService.GetViewShiftViewModel(ViewShiftData);
+
+            return PartialView("_ViewShiftModal", ViewShiftData);
         }
 
         #endregion
@@ -355,13 +380,6 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Delete Shifts.";
             }
             return RedirectToAction("RequestedShifts");
-        }
-
-        public IActionResult GetEventResources(int regionId)
-        {
-            CalendarViewModel calendarData = _providersService.GetCalendarViewModel(regionId);
-
-            return Json(calendarData);
         }
 
         #endregion

@@ -16,7 +16,7 @@
     <link href="https://unpkg.com/fullcalendar-scheduler@5.10.1/main.min.css" rel="stylesheet" />
 
     <style>
-        
+
     </style>
 }
 
@@ -37,41 +37,36 @@
                 </div>
             </div>
 
-            <div class="partial-container">
-                <div class="daywise">
-                    <h5 class="mb-3" id="calendar-title"></h5>
-                    <div class="d-flex justify-content-end mb-3">
-                        <div class="d-flex align-items-center me-2">
-                            <div style="width:4rem; height:2rem; background-color: #d6338440; border: 1px solid #d63384;" class="d-inline-block me-2 rounded-3"></div>
-                            <span>Pending Shifts</span>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div style="width:4rem; height:2rem; background-color: #19875440; border: 1px solid #198754;" class="d-inline-block me-2 rounded-3"></div>
-                            <span>Approved Shifts</span>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between mb-3">
-                        <div class="d-flex align-items-center">
-                            <span id="prev" class="material-symbols-outlined p-2 rounded-circle bg-info text-white text-center fs-6">
-                                arrow_back
-                            </span>
-                            <span class="material-symbols-outlined text-secondary mx-2">
-                                calendar_month
-                            </span>
-                            <span id="next" class="material-symbols-outlined p-2 rounded-circle bg-info text-white text-center fs-6">
-                                arrow_forward
-                            </span>
-                        </div>
-                        <div>
-                            <button id="day" class="btn btn-outline-info">Day</button>
-                            <button id="week" class="btn btn-outline-info">Week</button>
-                            <button id="month" class="btn btn-outline-info">Month</button>
-                        </div>
-                    </div>
-                    <div id="calendar" class=""></div>
-
+            <h5 class="mb-3" id="calendar-title"></h5>
+            <div class="d-flex justify-content-end mb-3">
+                <div class="d-flex align-items-center me-2">
+                    <div style="width:4rem; height:2rem; background-color: #d6338440; border: 1px solid #d63384;" class="d-inline-block me-2 rounded-3"></div>
+                    <span>Pending Shifts</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div style="width:4rem; height:2rem; background-color: #19875440; border: 1px solid #198754;" class="d-inline-block me-2 rounded-3"></div>
+                    <span>Approved Shifts</span>
                 </div>
             </div>
+            <div class="d-flex justify-content-between mb-3">
+                <div class="d-flex align-items-center">
+                    <span id="prev" class="material-symbols-outlined p-2 rounded-circle bg-info text-white text-center fs-6">
+                        arrow_back
+                    </span>
+                    <span class="material-symbols-outlined text-secondary mx-2">
+                        calendar_month
+                    </span>
+                    <span id="next" class="material-symbols-outlined p-2 rounded-circle bg-info text-white text-center fs-6">
+                        arrow_forward
+                    </span>
+                </div>
+                <div>
+                    <button id="day" class="btn btn-outline-info">Day</button>
+                    <button id="week" class="btn btn-outline-info">Week</button>
+                    <button id="month" class="btn btn-outline-info">Month</button>
+                </div>
+            </div>
+            <div id="calendar" class=""></div>
 
         </div>
 </div>
@@ -87,127 +82,136 @@
 
                 <form asp-action="CreateShift">
                     <div class="form-floating mb-3">
-                        <select class="form-select selectlist mb-3" id="RegionList" asp-for="@CreateShiftData.RegionId" asp-items="@CreateShiftData.RegionList">
+                        <select class="form-select mb-3" id="modal-region-list" asp-for="CreateShiftData.RegionId" asp-items="CreateShiftData.RegionList">
                             <option value="">Select Region</option>
                         </select>
-                        <label for="RegionList">Regions</label>
-                    </div>
-                    
-                    <div class="form-floating mb-3">
-                        <select class="form-select selectlist mb-3" id="PhysicianList" asp-for="@CreateShiftData.PhysicianId" asp-items="@CreateShiftData.PhysicianList">
-                            <option value="">Select Physician</option>
-                        </select>
-                        <label for="PhysicianList">Physicians</label>
+                        <label for="modal-region-list">Regions</label>
+                        <span class="text-danger" asp-validation-for="CreateShiftData.RegionId"></span>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="date" asp-for="@CreateShiftData.ShiftDate" class="form-control" id="ShiftDate" placeholder="Shift Date">
+                        <select class="form-select selectlist mb-3" id="modal-physician-list" asp-for="CreateShiftData.PhysicianId" asp-items="CreateShiftData.PhysicianList">
+                            <option value="">Select Physician</option>
+                        </select>
+                        <label for="modal-physician-list">Physicians</label>
+                        <span class="text-danger" asp-validation-for="CreateShiftData.PhysicianId"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="date" asp-for="CreateShiftData.ShiftDate" class="form-control" id="ShiftDate" placeholder="Shift Date" min="@(DateOnly.FromDateTime(DateTime.Now).ToString("yyyy-MM-dd"))">
                         <label for="ShiftDate">Shift Date</label>
+                        <span class="text-danger" asp-validation-for="CreateShiftData.ShiftDate"></span>
                     </div>
 
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <input type="time" asp-for="@CreateShiftData.StartTime" class="form-control" id="StartTime" placeholder="Start Time">
+                                <input type="time" asp-for="CreateShiftData.StartTime" class="form-control" id="StartTime" placeholder="Start Time">
                                 <label for="StartTime">Start Time</label>
+                                <span class="text-danger" asp-validation-for="CreateShiftData.StartTime"></span>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <input type="time"asp-for="@CreateShiftData.EndTime" class="form-control" id="EndTime" placeholder="End Time">
+                                <input type="time" asp-for="CreateShiftData.EndTime" class="form-control" id="EndTime" placeholder="End Time">
                                 <label for="EndTime">End Time</label>
+                                <span class="text-danger" asp-validation-for="CreateShiftData.EndTime"></span>
                             </div>
+                            <div id="timeError" style="color: red; display: none;" class="mb-3">End time must be later than start time.</div>
                         </div>
                     </div>
                     <div class="form-check form-switch mb-3">
-                        <input type="checkbox" asp-for="@CreateShiftData.IsRepeat" class="form-check-input" role="switch" id="IsRepeat">
+                        <input type="checkbox" asp-for="CreateShiftData.IsRepeat" class="form-check-input" role="switch" id="IsRepeat">
                         <label class="form-check-label" for="IsRepeat">Repeat</label>
+                        <span class="text-danger" asp-validation-for="CreateShiftData.IsRepeat"></span>
                     </div>
-                    <div class="mb-3">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   value="1"
-                                   id="sunday"
-                                   name="CreateShiftData.RepeatDays">
-                            <label class="form-check-label" for="sunday">
-                                Every Sunday
-                            </label>
+                    <div id="repeat">
+                        <div class="mb-3">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       value="1"
+                                       id="sunday"
+                                       name="CreateShiftData.RepeatDays">
+                                <label class="form-check-label" for="sunday">
+                                    Every Sunday
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       value="2"
+                                       id="monday"
+                                       name="CreateShiftData.RepeatDays">
+                                <label class="form-check-label" for="monday">
+                                    Every Monday
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       value="3"
+                                       id="tuesday"
+                                       name="CreateShiftData.RepeatDays">
+                                <label class="form-check-label" for="tuesday">
+                                    Every Tuesday
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       value="4"
+                                       id="wednesday"
+                                       name="CreateShiftData.RepeatDays">
+                                <label class="form-check-label" for="wednesday">
+                                    Every Wednesday
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       value="5"
+                                       id="thrusday"
+                                       name="CreateShiftData.RepeatDays">
+                                <label class="form-check-label" for="thrusday">
+                                    Every Thrusday
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       value="6"
+                                       id="friday"
+                                       name="CreateShiftData.RepeatDays">
+                                <label class="form-check-label" for="friday">
+                                    Every Friday
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input "
+                                       type="checkbox"
+                                       value="7"
+                                       id="saturday"
+                                       name="CreateShiftData.RepeatDays">
+                                <label class="form-check-label" for="saturday">
+                                    Every Saturday
+                                </label>
+                            </div>
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   value="2"
-                                   id="monday"
-                                   name="CreateShiftData.RepeatDays">
-                            <label class="form-check-label" for="monday">
-                                Every Monday
-                            </label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   value="3"
-                                   id="tuesday"
-                                   name="CreateShiftData.RepeatDays">
-                            <label class="form-check-label" for="tuesday">
-                                Every Tuesday
-                            </label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   value="4"
-                                   id="wednesday"
-                                   name="CreateShiftData.RepeatDays">
-                            <label class="form-check-label" for="wednesday">
-                                Every Wednesday
-                            </label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   value="5"
-                                   id="thrusday"
-                                   name="CreateShiftData.RepeatDays">
-                            <label class="form-check-label" for="thrusday">
-                                Every Thrusday
-                            </label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   value="6"
-                                   id="friday"
-                                   name="CreateShiftData.RepeatDays">
-                            <label class="form-check-label" for="friday">
-                                Every Friday
-                            </label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input "
-                                   type="checkbox"
-                                   value="7"
-                                   id="saturday"
-                                   name="CreateShiftData.RepeatDays">
-                            <label class="form-check-label" for="saturday">
-                                Every Saturday
-                            </label>
-                        </div>
-                    </div>
 
-                    <div class="form-floating mb-3">
-                        <select class="form-select selectlist mb-3" id="RepeatUptoList" asp-for="@CreateShiftData.RepeatUpto" >
-                            <option value="0">0-times</option>
-                            <option value="1">1-times</option>
-                            <option value="2">2-times</option>
-                            <option value="3">3-times</option>
-                        </select>
-                        <label for="RepeatUptoList">Repeat Upto</label>
+                        <div class="form-floating mb-3">
+                            <select class="form-select selectlist mb-3" id="RepeatUptoList" asp-for="CreateShiftData.RepeatUpto">
+                                <option value="1">1-times</option>
+                                <option value="2">2-times</option>
+                                <option value="3">3-times</option>
+                            </select>
+                            <label for="RepeatUptoList">Repeat Upto</label>
+                            <span class="text-danger" asp-validation-for="CreateShiftData.RepeatUpto"></span>
+                        </div>
                     </div>
 
                     <div class="d-flex justify-content-end">
-                        <input type="submit" value="Create" class="btn btn-info text-white" />
+                        <input type="submit" value="Create" class="btn btn-info text-white" id="create-shift" />
                         <button type="button" class="btn btn-outline-info ms-3" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </form>
@@ -216,8 +220,12 @@
     </div>
 </div>
 
-@section AddScript 
-{
+<div id="modal-container">
+
+</div>
+
+@section AddScript
+    {
 
     <partial name="_ToastMessageScriptsPartial" />
 
@@ -233,7 +241,77 @@
     <script>
         $(document).ready(function () {
 
+            //start - end time validation
+
+            function validateTimes() {
+                var startTime = $('#StartTime').val();
+                var endTime = $('#EndTime').val();
+
+                var startTimeObj = new Date("1970-01-01T" + startTime + ":00");
+                var endTimeObj = new Date("1970-01-01T" + endTime + ":00");
+
+                if (endTimeObj <= startTimeObj) {
+                    $('#create-shift').prop('disabled', true);
+                    $('#timeError').show();
+                } else {
+                    $('#create-shift').prop('disabled', false);
+                    $('#timeError').hide();
+                }
+            }
+
+            $('#StartTime').change(function () {
+                var startTime = $(this).val();
+                $('#EndTime').attr('min', startTime);
+                validateTimes(); 
+            });
+
+            $('#EndTime').change(validateTimes);
+
+
+            //start -end time validation for VIEW SHIFT
+
+            //start - end time validation
+
+            function validateTimesView() {
+                var startTime = $('#ViewStartTime').val();
+                var endTime = $('#ViewEndTime').val();
+
+                var startTimeObj = new Date("1970-01-01T" + startTime + ":00");
+                var endTimeObj = new Date("1970-01-01T" + endTime + ":00");
+
+                if (endTimeObj <= startTimeObj) {
+                    $('#edit-shift').prop('disabled', true);
+                    $('#viewTimeError').show();
+                } else {
+                    $('#create-shift').prop('disabled', false);
+                    $('#viewTimeError').hide();
+                }
+                console.log('func running')
+            }
+
+            
+
+
+            // repeat switch toggle
+
+            $('#repeat').hide();
+
+            $('#IsRepeat').change(function(){
+                if ($('#IsRepeat').prop('checked')){
+                    $('#repeat').show();
+                }
+                else{
+                    $('#repeat').hide();
+                }
+            });
+
+
+            // calendar
+
             const calendarEl = $('#calendar')[0];
+
+            // calendar initialize
+
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'resourceTimeline',
                 height: 'auto',
@@ -254,7 +332,16 @@
                         eventLimit: true
                     }
                 },
+                eventClick: function(info){
+                    console.log(info);
+                    const eventId= info.event.id;
+                    console.log('event clicked: ', eventId);
+
+                    ViewShift(eventId);
+                },
             });
+
+            // calendar toggle buttons
 
             $("#next").click(function () {
                 calendar.next();
@@ -278,9 +365,16 @@
 
             calendar.render();
 
+
+            //region filter for shifts
+
             $('#region-list').change(function () {
                 console.log('region: ', $('#region-list').val());
+                GetEventResources();
             });
+
+
+            // resource event ajax call function
 
             function GetEventResources() {
                 $.ajax({
@@ -304,7 +398,10 @@
                             resourceId: item.physicianId,
                             title: item.physicianName,
                             start: item.shiftDate + 'T' + item.startTime + ':00',
-                            end: item.shiftDate + 'T' + item.endTime + ':00'
+                            end: item.shiftDate + 'T' + item.endTime + ':00',
+                            backgroundColor: item.isApproved ? '#19875440' : '#d6338440',
+                            color: item.isApproved ? '#198754' : '#d63384',
+                            textColor: item.isApproved ? '#198754' : '#d63384'
                         }));
 
                         console.log(resources);
@@ -313,7 +410,7 @@
                         calendar.setOption('resources', resources);
                         calendar.setOption('events', events);
 
-                        
+
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         console.error("Error fetching data:", textStatus);
@@ -326,6 +423,103 @@
             }
 
             GetEventResources();
+
+            function ViewShift(eventId){
+                $.ajax({
+                    url: '/Providers/ViewShift',
+                    data: {
+                        shiftDetailId: eventId,
+                    },
+                    type: 'GET',
+                    success: function (data) {
+                        console.log(data);
+                        $('#modal-container').html(data);
+
+                        $('#cancel-btn').hide();
+                        $('#edit-shift').hide();
+                        $('.view-shift').each(function () {
+                            $(this).prop('disabled', true);
+                        });
+
+                        $('#edit-btn').click(function(){
+                            $('#cancel-btn').show();
+                            $('#edit-shift').show();
+
+                            $('.view-shift').each(function(){
+                                $(this).prop('disabled', false);
+                            });
+
+                            $(this).hide();
+                        });
+
+                        $('#cancel-btn').click(function () {
+                            $('#edit-btn').show();
+                            $('.view-shift').each(function () {
+                                $(this).prop('disabled', true);
+                            });
+
+                            $('#edit-shift').hide();
+                            $(this).hide();
+                        });
+
+                        $('#ViewStartTime').change(function () {
+                            var startTime = $(this).val();
+                            $('#ViewEndTime').attr('min', startTime);
+                            console.log()
+                            validateTimesView($(this).val());
+                        });
+
+                        $('#ViewEndTime').change(validateTimesView);
+
+                        $('#view-shift-modal').modal('show');
+
+                        //partialEventListeners();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error fetching data:", textStatus);
+                        if (errorThrown) {
+                            console.error("Specific error:", errorThrown);
+                        }
+                        console.error("HTTP status code:", jqXHR.status);
+                    }
+                });
+            }
+
+
+            // create shift modal 
+
+            //region filter for physicians
+
+            $('#modal-region-list').change(function () {
+                console.log('region changed: ', $('#modal-region-list').val());
+                $.ajax({
+                    url: '/Providers/GetPhysicianSelectList',
+                    data: {
+                        regionId: $('#modal-region-list').val(),
+                    },
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data);
+
+                        let options = '<option value="" selected>Select Physician</option>';
+                        data.forEach(physician => {
+                            options += `<option value="${physician.value}">${physician.text}</option>`;
+                        });
+
+                        console.log(options);
+
+                        $('#modal-physician-list').html(options);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error fetching data:", textStatus);
+                        if (errorThrown) {
+                            console.error("Specific error:", errorThrown);
+                        }
+                        console.error("HTTP status code:", jqXHR.status);
+                    }
+                });
+            });
         });
 
     </script>
@@ -361,7 +555,7 @@
         //            { id: '6', resourceId: 'a', title: 'Meeting 1', start: '2024-04-03T08:00:00', end: '2024-04-03T10:00:00' },
         //            { id: '7', resourceId: 'b', title: 'Meeting 2', start: '2024-04-03T09:00:00', end: '2024-04-03T11:00:00' },
         //        ],
-                
+
         //        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source', // Required for resourceTimeline views
         //        views: {
         //            resourceTimelineWeek: {
@@ -369,7 +563,7 @@
         //                slotLabelFormat: { weekday: 'short', day: 'numeric', week: 'long' }
         //            },
         //            dayGridMonth: {
-        //                eventLimit: true 
+        //                eventLimit: true
         //            }
         //        },
         //    });

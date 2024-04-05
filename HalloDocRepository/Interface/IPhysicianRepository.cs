@@ -45,6 +45,8 @@ namespace HalloDocRepository.Interface
 
         Task<List<PhysicianRegion>> RemovePhysicianRegionsAsync(List<PhysicianRegion> regionsToRemove);
 
+        List<Physician> GetPhysiciansByRegionId(int regionId);
+
         #endregion
     }
 }

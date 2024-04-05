@@ -76,5 +76,11 @@ namespace HalloDocRepository.Implementation
 
             return shiftDetails;
         }
+
+        public ShiftDetail GetShiftDetailByShiftDetailId(int shiftDetailId)
+        {
+            var shiftDetail = _context.ShiftDetails.FirstOrDefault(x => x.ShiftDetailId == shiftDetailId);
+            return shiftDetail ?? new ShiftDetail();
+        }
     }
 }

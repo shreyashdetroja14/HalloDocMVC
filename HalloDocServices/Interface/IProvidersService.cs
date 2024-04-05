@@ -1,5 +1,6 @@
 ﻿using HalloDocServices.ViewModels.AdminViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,7 +55,13 @@ namespace HalloDocServices.Interface
 
         SchedulingViewModel GetSchedulingViewModel(SchedulingViewModel SchedulingData);
 
+        CalendarViewModel GetCalendarViewModel(int regionId);
+
         Task<bool> CreateShift(CreateShiftViewModel CreateShiftData);
+
+        List<SelectListItem> GetPhysiciansByRegion(int regionId);
+
+        CreateShiftViewModel GetViewShiftViewModel(CreateShiftViewModel ViewShiftData);
 
         #endregion
 
@@ -67,8 +74,6 @@ namespace HalloDocServices.Interface
         Task<bool> ApproveShifts(List<int> shiftDetailIds, string modifiedBy);
 
         Task<bool> DeleteShifts(List<int> shiftDetailIds, string modifiedBy);
-
-        CalendarViewModel GetCalendarViewModel(int regionId);
 
         #endregion
     }

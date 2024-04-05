@@ -20,5 +20,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public string StartTime { get; set; } = string.Empty;
 
         public string EndTime { get; set; } = string.Empty;
+
+        public bool IsApproved { get; set; }
     }
 }
