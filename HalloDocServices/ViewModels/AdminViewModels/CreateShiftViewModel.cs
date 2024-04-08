@@ -40,5 +40,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public int RepeatUpto {  get; set; }
 
         public string CreatedBy { get; set; } = string.Empty;
+
+        public string ModifiedBy { get; set; } = string.Empty;
     }
 }

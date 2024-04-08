@@ -57,11 +57,19 @@ namespace HalloDocServices.Interface
 
         CalendarViewModel GetCalendarViewModel(int regionId);
 
+        bool CheckAvailableShift(CreateShiftViewModel CreateShiftData);
+
         Task<bool> CreateShift(CreateShiftViewModel CreateShiftData);
 
         List<SelectListItem> GetPhysiciansByRegion(int regionId);
 
         CreateShiftViewModel GetViewShiftViewModel(CreateShiftViewModel ViewShiftData);
+
+        Task<bool> EditShift(CreateShiftViewModel EditShiftData);
+
+        Task<bool> ReturnShift(CreateShiftViewModel ReturnShiftData);
+
+        Task<bool> DeleteShift(CreateShiftViewModel DeleteShiftData);
 
         #endregion
 
@@ -74,6 +82,14 @@ namespace HalloDocServices.Interface
         Task<bool> ApproveShifts(List<int> shiftDetailIds, string modifiedBy);
 
         Task<bool> DeleteShifts(List<int> shiftDetailIds, string modifiedBy);
+
+        #endregion
+
+        #region MDS ON CALL 
+
+        MDsOnCallViewModel GetMDsOnCallViewModel(MDsOnCallViewModel MDsOnCallData);
+
+        MDsListViewModel GetMDsList(int regionId);
 
         #endregion
     }

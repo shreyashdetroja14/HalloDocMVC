@@ -31,7 +31,7 @@
                     <option value="">All Regions</option>
                 </select>
                 <div class="d-flex">
-                    <a class="btn btn-info text-white me-2" style="box-shadow:1px 1px 2px 1px rgba(0,0,0,0.4)">Providers On Call</a>
+                    <a asp-action="MDsOnCall" class="btn btn-info text-white me-2" style="box-shadow:1px 1px 2px 1px rgba(0,0,0,0.4)">Providers On Call</a>
                     <a asp-action="RequestedShifts" class="btn btn-info text-white me-2" style="box-shadow:1px 1px 2px 1px rgba(0,0,0,0.4)">Shifts For Review</a>
                     <button type="button" class="btn btn-info text-white" style="box-shadow:1px 1px 2px 1px rgba(0,0,0,0.4)" data-bs-toggle="modal" data-bs-target="#create-shift-modal">Add Shift</button>
                 </div>
@@ -80,9 +80,11 @@
             </div>
             <div class="modal-body">
 
-                <form asp-action="CreateShift">
+                <div id="createShiftError"></div>
+
+                <form asp-action="CreateShift" id="create-shift-form">
                     <div class="form-floating mb-3">
-                        <select class="form-select mb-3" id="modal-region-list" asp-for="CreateShiftData.RegionId" asp-items="CreateShiftData.RegionList">
+                        <select class="form-select" id="modal-region-list" asp-for="CreateShiftData.RegionId" asp-items="CreateShiftData.RegionList">
                             <option value="">Select Region</option>
                         </select>
                         <label for="modal-region-list">Regions</label>
@@ -90,7 +92,7 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <select class="form-select selectlist mb-3" id="modal-physician-list" asp-for="CreateShiftData.PhysicianId" asp-items="CreateShiftData.PhysicianList">
+                        <select class="form-select selectlist" id="modal-physician-list" asp-for="CreateShiftData.PhysicianId" asp-items="CreateShiftData.PhysicianList">
                             <option value="">Select Physician</option>
                         </select>
                         <label for="modal-physician-list">Physicians</label>
@@ -126,7 +128,7 @@
                         <span class="text-danger" asp-validation-for="CreateShiftData.IsRepeat"></span>
                     </div>
                     <div id="repeat">
-                        <div class="mb-3">
+                        <div class="mb-3" id="select-repeat-days">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input"
                                        type="checkbox"
@@ -200,7 +202,7 @@
                         </div>
 
                         <div class="form-floating mb-3">
-                            <select class="form-select selectlist mb-3" id="RepeatUptoList" asp-for="CreateShiftData.RepeatUpto">
+                            <select class="form-select selectlist" id="RepeatUptoList" asp-for="CreateShiftData.RepeatUpto">
                                 <option value="1">1-times</option>
                                 <option value="2">2-times</option>
                                 <option value="3">3-times</option>
@@ -211,7 +213,7 @@
                     </div>
 
                     <div class="d-flex justify-content-end">
-                        <input type="submit" value="Create" class="btn btn-info text-white" id="create-shift" />
+                        <button type="button" class="btn btn-info text-white" id="create-shift" >Create</button>
                         <button type="button" class="btn btn-outline-info ms-3" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </form>
@@ -326,7 +328,16 @@
                 views: {
                     resourceTimelineWeek: {
                         slotDuration: { days: 1 },
-                        slotLabelFormat: { weekday: 'short', day: 'numeric', week: 'long' }
+                        slotLabelInterval: { days: 1 },
+                        slotMinTime: '00:00:00',
+                        slotMaxTime: '23:59:59',
+                        slotLabelFormat: {
+                            omitWeekday: false,
+                            weekday: 'short',
+                            day: '2-digit',
+                            omitCommas: true,
+                            meridiem: 'short'
+                        }
                     },
                     dayGridMonth: {
                         eventLimit: true
@@ -338,6 +349,16 @@
                     console.log('event clicked: ', eventId);
 
                     ViewShift(eventId);
+                },
+                resourceLabelDidMount: function (resourceObj) {
+                    const img = document.createElement('img');
+                    const imgUrl = `/Upload/Physician/${resourceObj.el.dataset.resourceId}/ProfilePhoto.jpg`;
+                    img.src = imgUrl;
+                    console.log(imgUrl);
+                    img.style.maxHeight = '30px';
+                    img.style.maxWidth= '30px';
+                    img.style.marginLeft = "8px";
+                    resourceObj.el.querySelector('.fc-datagrid-cell-main').appendChild(img);
                 },
             });
 
@@ -432,48 +453,14 @@
                     },
                     type: 'GET',
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         $('#modal-container').html(data);
 
-                        $('#cancel-btn').hide();
-                        $('#edit-shift').hide();
-                        $('.view-shift').each(function () {
-                            $(this).prop('disabled', true);
-                        });
-
-                        $('#edit-btn').click(function(){
-                            $('#cancel-btn').show();
-                            $('#edit-shift').show();
-
-                            $('.view-shift').each(function(){
-                                $(this).prop('disabled', false);
-                            });
-
-                            $(this).hide();
-                        });
-
-                        $('#cancel-btn').click(function () {
-                            $('#edit-btn').show();
-                            $('.view-shift').each(function () {
-                                $(this).prop('disabled', true);
-                            });
-
-                            $('#edit-shift').hide();
-                            $(this).hide();
-                        });
-
-                        $('#ViewStartTime').change(function () {
-                            var startTime = $(this).val();
-                            $('#ViewEndTime').attr('min', startTime);
-                            console.log()
-                            validateTimesView($(this).val());
-                        });
-
-                        $('#ViewEndTime').change(validateTimesView);
+                        viewShiftEventListeners();
 
                         $('#view-shift-modal').modal('show');
 
-                        //partialEventListeners();
+                        
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         console.error("Error fetching data:", textStatus);
@@ -520,6 +507,159 @@
                     }
                 });
             });
+
+            $('#create-shift').click(function(event){
+                console.log('submit btn clicked');
+                $('div').remove('#alert-shift');
+
+                const isValid = $('#create-shift-form').valid();
+                console.log('isValid: ', isValid);
+                console.log('form validated');
+
+                if(isValid){
+
+                    var formData = $("#create-shift-form").serialize();
+
+                    $.ajax({
+                        url: '/Providers/CheckAvailableShift',
+                        data: formData,
+                        type: 'POST',
+                        success: function (data) {
+                            if (data.status == true) {
+                                $('#create-shift-form').submit();
+                            }
+                            else {
+                                const appendAlert = (message, type) => {
+                                    const alertPlaceholder = document.getElementById('createShiftError');
+                                    const wrapper = document.createElement('div');
+                                    wrapper.innerHTML = [
+                                        `<div class="alert alert-${type} alert-dismissible" role="alert" id="alert-shift">`,
+                                        `   <div>${message}</div>`,
+                                        '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+                                        '</div>'
+                                    ].join('');
+
+                                    alertPlaceholder.append(wrapper);
+                                }
+
+                                appendAlert('Physician Unavailable during this time', 'danger');
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.error("Error fetching data:", textStatus);
+                            if (errorThrown) {
+                                console.error("Specific error:", errorThrown);
+                            }
+                            console.error("HTTP status code:", jqXHR.status);
+                        }
+                    });
+                }
+                console.log('form submitted');
+            });
+
+            function viewShiftEventListeners(){
+
+                $('#cancel-btn').hide();
+                $('#edit-shift').hide();
+                $('.view-shift').each(function () {
+                    $(this).prop('disabled', true);
+                });
+
+                $('#edit-btn').click(function () {
+                    $('#cancel-btn').show();
+                    $('#edit-shift').show();
+
+                    $('.view-shift').each(function () {
+                        $(this).prop('disabled', false);
+                    });
+
+                    $(this).hide();
+                });
+
+                $('#cancel-btn').click(function () {
+                    $('#edit-btn').show();
+                    $('.view-shift').each(function () {
+                        $(this).prop('disabled', true);
+                    });
+
+                    $('#edit-shift').hide();
+                    $(this).hide();
+                });
+
+                $('#ViewStartTime').change(function () {
+                    var startTime = $(this).val();
+                    $('#ViewEndTime').attr('min', startTime);
+                    console.log()
+                    validateTimesView($(this).val());
+                });
+
+                $('#ViewEndTime').change(validateTimesView);
+
+                $('#edit-shift').click(function (event) {
+                    console.log('save btn clicked');
+                    $('div').remove('#alert-edit-shift');
+
+                    const isValid = $('#edit-shift-form').valid();
+                    console.log('isValid: ', isValid);
+                    console.log('form validated');
+
+                    if (isValid) {
+
+                        var formData = $("#edit-shift-form").serialize();
+
+                        $.ajax({
+                            url: '/Providers/CheckAvailableShift',
+                            data: formData,
+                            type: 'POST',
+                            success: function (data) {
+                                if (data.status == true) {
+
+                                    $('#edit-shift-form').attr('action', '/Providers/EditShift');
+                                    $('#edit-shift-form').attr('method', 'post');
+                                    $('#edit-shift-form').submit();
+                                }
+                                else {
+                                    const appendAlert = (message, type) => {
+                                        const alertPlaceholder = document.getElementById('editShiftError');
+                                        const wrapper = document.createElement('div');
+                                        wrapper.innerHTML = [
+                                            `<div class="alert alert-${type} alert-dismissible" role="alert" id="alert-edit-shift">`,
+                                            `   <div>${message}</div>`,
+                                            '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+                                            '</div>'
+                                        ].join('');
+
+                                        alertPlaceholder.append(wrapper);
+                                    }
+
+                                    appendAlert('Physician Unavailable during this time', 'danger');
+                                }
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                console.error("Error fetching data:", textStatus);
+                                if (errorThrown) {
+                                    console.error("Specific error:", errorThrown);
+                                }
+                                console.error("HTTP status code:", jqXHR.status);
+                            }
+                        });
+                    }
+                    console.log('form submitted');
+                });
+
+                $('#return-shift').click(function (event) {
+                    $('#edit-shift-form').attr('action', '/Providers/ReturnShift');
+                    $('#edit-shift-form').attr('method', 'post');
+                    $('#edit-shift-form').submit();
+                });
+                
+                $('#delete-shift').click(function (event) {
+                    $('#edit-shift-form').attr('action', '/Providers/DeleteShift');
+                    $('#edit-shift-form').attr('method', 'post');
+                    $('#edit-shift-form').submit();
+                });
+
+            }
         });
 
     </script>

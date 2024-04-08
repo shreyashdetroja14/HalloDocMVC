@@ -9,8 +9,11 @@
             </div>
             <div class="modal-body">
 
-                <form asp-action="CreateShift">
+                <div id="editShiftError"></div>
+
+                <form id="edit-shift-form">
                     <input type="number" asp-for="ShiftDetailId" hidden/>
+                    <input type="number" asp-for="PhysicianId" hidden/>
                     <div class="form-floating mb-3">
                         <select class="form-select mb-3" id="view-shift-region-list" asp-for="RegionId" asp-items="Model.RegionList" disabled>
                             <option value="">Select Region</option>
@@ -53,11 +56,11 @@
 
                     <div class="d-flex justify-content-end">
                         
-                        <input type="submit" value="Return" asp-action="ReturnShift" class="btn btn-info text-white ms-2" id="return-shift" />
+                        <button type="button" class="btn btn-info text-white ms-2" id="return-shift" >Return</button>
                         <button type="button" class="btn btn-outline-info ms-2" id="edit-btn">Edit</button>
-                        <input type="submit" value="Save" asp-action="EditShift" class="btn btn-info text-white ms-2" id="edit-shift" />
+                        <button type="button" class="btn btn-info text-white ms-2" id="edit-shift" >Save</button>
                         <input type="reset" value="Cancel" class="btn btn-outline-info ms-2" id="cancel-btn" />
-                        <input type="submit" value="Delete" asp-action="DeleteShift" class="btn btn-danger text-white ms-2" id="delete-shift" />
+                        <button type="button" class="btn btn-danger text-white ms-2" id="delete-shift" >Delete</button>
                         
                     </div>
 

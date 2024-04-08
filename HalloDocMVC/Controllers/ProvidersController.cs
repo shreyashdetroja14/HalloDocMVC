@@ -301,6 +301,14 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        public IActionResult CheckAvailableShift(CreateShiftViewModel CreateShiftData)
+        {
+            bool isShiftAvailable = _providersService.CheckAvailableShift(CreateShiftData);
+
+            return Json(new { status = isShiftAvailable });
+        }
+
+        [HttpPost]
         public async Task<IActionResult> CreateShift(CreateShiftViewModel CreateShiftData)
         {
             CreateShiftData.CreatedBy = GetClaimsData().AspNetUserId;
@@ -332,6 +340,51 @@ namespace HalloDocMVC.Controllers
             ViewShiftData = _providersService.GetViewShiftViewModel(ViewShiftData);
 
             return PartialView("_ViewShiftModal", ViewShiftData);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditShift(CreateShiftViewModel EditShiftData)
+        {
+            bool isShiftEdited= await _providersService.EditShift(EditShiftData);
+            if (isShiftEdited)
+            {
+                TempData["SuccessMessage"] = "Shift Edited Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Edit Shift.";
+            }
+            return RedirectToAction("Scheduling");
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> ReturnShift(CreateShiftViewModel ReturnShiftData)
+        {
+            bool isShiftReturned= await _providersService.ReturnShift(ReturnShiftData);
+            if (isShiftReturned)
+            {
+                TempData["SuccessMessage"] = "Shift Returned Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Return Shift.";
+            }
+            return RedirectToAction("Scheduling");
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> DeleteShift(CreateShiftViewModel DeleteShiftData)
+        {
+            bool isShiftDeleted= await _providersService.DeleteShift(DeleteShiftData);
+            if (isShiftDeleted)
+            {
+                TempData["SuccessMessage"] = "Shift Deleted Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Delete Shift.";
+            }
+            return RedirectToAction("Scheduling");
         }
 
         #endregion
@@ -380,6 +433,24 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Delete Shifts.";
             }
             return RedirectToAction("RequestedShifts");
+        }
+
+        #endregion
+
+        #region MDS ON CALL
+
+        public IActionResult MDsOnCall()
+        {
+            MDsOnCallViewModel MDsOnCallData = new MDsOnCallViewModel();
+            MDsOnCallData = _providersService.GetMDsOnCallViewModel(MDsOnCallData);
+
+            return View(MDsOnCallData);
+        }
+
+        public IActionResult GetMDsList(int regionId)
+        {
+            MDsListViewModel MDsList = _providersService.GetMDsList(regionId);
+            return PartialView("_MDsOnCallListPartial", MDsList);
         }
 
         #endregion

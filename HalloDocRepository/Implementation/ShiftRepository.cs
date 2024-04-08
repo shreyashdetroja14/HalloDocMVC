@@ -76,11 +76,24 @@ namespace HalloDocRepository.Implementation
 
             return shiftDetails;
         }
+        
+        public async Task<ShiftDetail> UpdateShiftDetail(ShiftDetail shiftDetail)
+        {
+            _context.ShiftDetails.Update(shiftDetail);
+            await _context.SaveChangesAsync();
+
+            return shiftDetail;
+        }
 
         public ShiftDetail GetShiftDetailByShiftDetailId(int shiftDetailId)
         {
             var shiftDetail = _context.ShiftDetails.FirstOrDefault(x => x.ShiftDetailId == shiftDetailId);
             return shiftDetail ?? new ShiftDetail();
+        }
+
+        public IQueryable<Shift> GetIqueryableShift()
+        {
+            return _context.Shifts;
         }
     }
 }

@@ -53,4 +53,10 @@ namespace HalloDocServices.Constants
         Approved = 1,
         Deleted = 2,
     }
+
+    public enum OnCallStatus
+    {
+        Unavailable = 0,
+        Available = 1
+    }
 }

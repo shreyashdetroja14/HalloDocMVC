@@ -13,6 +13,8 @@ namespace HalloDocRepository.Interface
 
         Task<Shift> CreateShift(Shift shift);
 
+        IQueryable<Shift> GetIqueryableShift();
+
         #endregion
 
         #region SHIFT DETAILS
@@ -28,6 +30,8 @@ namespace HalloDocRepository.Interface
         List<ShiftDetail> GetShiftDetails(List<int> shiftDetailIds);
 
         Task<List<ShiftDetail>> UpdateShiftDetails(List<ShiftDetail> shiftDetails);
+
+        Task<ShiftDetail> UpdateShiftDetail(ShiftDetail shiftDetail);
 
         ShiftDetail GetShiftDetailByShiftDetailId(int shiftDetailId);
 
