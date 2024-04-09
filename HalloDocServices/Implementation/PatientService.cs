@@ -410,7 +410,18 @@ namespace HalloDocServices.Implementation
             return files;
         }
 
+        string GenerateConfirmationNumber(DateTime createdate, string lastname, string firstname, string state)
+        {
+            string datePart = createdate.ToString("yyMMdd");
+            string lastNamePart = (lastname?.Length >= 2 ? lastname?.Substring(0, 2) : lastname?.PadRight(2, 'X')) ?? "XX";
+            string firstNamePart = firstname.Length >= 2 ? firstname.Substring(0, 2) : firstname.PadRight(2, 'X');
+            string regionAbbr = state?.Substring(0, 2) ?? "ZZ";
+            int count = _requestRepository.GetTotalRequestCountByDate(DateOnly.FromDateTime(createdate)) + 1;
 
+            string confirmationNumber = $"{regionAbbr}{datePart}{lastNamePart}{firstNamePart}{count:D4}";
+
+            return confirmationNumber.ToUpper();
+        }
         #endregion
 
         public async Task<int> CreatePatientRequest(FamilyRequestViewModel frvm)
@@ -432,6 +443,8 @@ namespace HalloDocServices.Implementation
                 requestNew.IsUrgentEmailSent = false;
                 requestNew.PatientAccountId = aspnetuserFetched?.Id;
                 requestNew.CreatedUserId = userFetched.UserId;
+
+                requestNew.ConfirmationNumber = GenerateConfirmationNumber(requestNew.CreatedDate, frvm.PatientInfo.LastName ?? "", frvm.PatientInfo.FirstName, frvm.PatientInfo.State ?? "");
 
                 await _requestRepository.CreateRequest(requestNew);
 
@@ -480,6 +493,8 @@ namespace HalloDocServices.Implementation
                 requestNew.PatientAccountId = aspnetuserFetched?.Id;
                 requestNew.CreatedUserId = requestorUser?.UserId;
                 requestNew.RelationName = frvm.FamilyRelation;
+
+                requestNew.ConfirmationNumber = GenerateConfirmationNumber(requestNew.CreatedDate, frvm.PatientInfo.LastName ?? "", frvm.PatientInfo.FirstName, frvm.PatientInfo.State ?? "");
 
                 await _requestRepository.CreateRequest(requestNew);
 

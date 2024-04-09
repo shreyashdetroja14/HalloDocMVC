@@ -209,6 +209,12 @@ namespace HalloDocRepository.Implementation
             return count;
         }
 
+        public int GetTotalRequestCountByDate(DateOnly date)
+        {
+            int count = _context.Requests.Where(x => DateOnly.FromDateTime(x.CreatedDate) == date).Count();
+            return count;
+        }
+
         public async Task<RequestClient> GetRequestClientByRequestId(int requestId)
         {
             var requestClient = await _context.RequestClients.FirstOrDefaultAsync(x => x.RequestId == requestId);

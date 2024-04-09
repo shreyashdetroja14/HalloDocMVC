@@ -64,6 +64,8 @@ namespace HalloDocRepository.Interface
 
         Task<int> GetClearedRequestCount();
 
+        int GetTotalRequestCountByDate(DateOnly date);
+
 
         // Request Wise File
 

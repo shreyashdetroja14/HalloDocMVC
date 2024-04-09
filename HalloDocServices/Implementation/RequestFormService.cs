@@ -170,6 +170,19 @@ namespace HalloDocServices.Implementation
             }
 
         }
+
+        string GenerateConfirmationNumber(DateTime createdate, string lastname, string firstname, string state)
+        {
+            string datePart = createdate.ToString("yyMMdd");
+            string lastNamePart = (lastname?.Length >= 2 ? lastname?.Substring(0, 2) : lastname?.PadRight(2, 'X')) ?? "XX";
+            string firstNamePart = firstname.Length >= 2 ? firstname.Substring(0, 2) : firstname.PadRight(2, 'X');
+            string regionAbbr = state?.Substring(0, 2) ?? "ZZ";
+            int count = _requestRepository.GetTotalRequestCountByDate(DateOnly.FromDateTime(createdate)) + 1;
+
+            string confirmationNumber = $"{regionAbbr}{datePart}{lastNamePart}{firstNamePart}{count:D4}";
+
+            return confirmationNumber.ToUpper();
+        }
         #endregion
 
         public List<SelectListItem> GetRegionList()
@@ -257,6 +270,8 @@ namespace HalloDocServices.Implementation
                 requestNew.PatientAccountId = aspnetuserFetched?.Id;
                 requestNew.CreatedUserId = userFetched.UserId;
 
+                requestNew.ConfirmationNumber = GenerateConfirmationNumber(requestNew.CreatedDate, requestNew.LastName??"", requestNew.FirstName, prvm.State??"");
+
                 requestNew = await _requestRepository.CreateRequest(requestNew);
 
                 var requestClientNew = CreateRequestClient(prvm, requestNew);
@@ -302,6 +317,8 @@ namespace HalloDocServices.Implementation
             requestNew.RelationName = frvm.FamilyRelation;
             requestNew.PatientAccountId = aspnetuserFetched?.Id;
             requestNew.CreatedUserId = requestorUser?.UserId;
+
+            requestNew.ConfirmationNumber = GenerateConfirmationNumber(requestNew.CreatedDate, frvm.PatientInfo.LastName ?? "", frvm.PatientInfo.FirstName, frvm.PatientInfo.State ?? "");
 
             requestNew = await _requestRepository.CreateRequest(requestNew);
 
@@ -363,6 +380,8 @@ namespace HalloDocServices.Implementation
             requestNew.PatientAccountId = aspnetuserFetched?.Id;
             requestNew.CreatedUserId = requestorUser?.UserId;
 
+            requestNew.ConfirmationNumber = GenerateConfirmationNumber(requestNew.CreatedDate, crvm.PatientInfo.LastName ?? "", crvm.PatientInfo.FirstName, crvm.ConciergeState ?? "");
+
             requestNew = await _requestRepository.CreateRequest(requestNew);
 
             //add concierge location in patient info
@@ -410,6 +429,8 @@ namespace HalloDocServices.Implementation
             requestNew.IsUrgentEmailSent = false;
             requestNew.PatientAccountId = aspnetuserFetched?.Id;
             requestNew.CreatedUserId = requestorUser?.UserId;
+
+            requestNew.ConfirmationNumber = GenerateConfirmationNumber(requestNew.CreatedDate, brvm.PatientInfo.LastName ?? "", brvm.PatientInfo.FirstName, brvm.PatientInfo.State ?? "");
 
             requestNew = await _requestRepository.CreateRequest(requestNew);
 
