@@ -123,5 +123,9 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public IFormFile? LicenseDoc { get; set; }
 
         public string? CreatedBy { get; set; }
+
+        public decimal? Latitude { get; set; }
+
+        public decimal? Longitude { get; set; }
     }
 }

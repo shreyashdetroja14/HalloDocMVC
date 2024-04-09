@@ -18,7 +18,7 @@ namespace HalloDocRepository.Implementation
             _context = context;
         }
 
-        #region GET
+        #region PHYSICIAN
 
         public List<Physician> GetAllPhysicians()
         {
@@ -31,7 +31,7 @@ namespace HalloDocRepository.Implementation
             var physicians = _context.Physicians.AsQueryable();
             return physicians;
         }
-        
+
         public IQueryable<Physician> GetIQueryablePhysicians(int physicianId)
         {
             var physician = _context.Physicians.AsQueryable().Where(x => x.PhysicianId == physicianId);
@@ -43,10 +43,6 @@ namespace HalloDocRepository.Implementation
             var physician = _context.Physicians.FirstOrDefault(x => x.PhysicianId == physicianId);
             return physician;
         }
-
-        #endregion
-
-        #region UPDATE
 
         public async Task<List<Physician>> Update(List<Physician> physicians)
         {
@@ -74,10 +70,7 @@ namespace HalloDocRepository.Implementation
 
         #endregion
 
-
         #region PHYSICIAN REGION
-
-        #region GET
 
         public List<PhysicianRegion> GetRegionsByPhysicianId(int physicianId)
         {
@@ -91,15 +84,6 @@ namespace HalloDocRepository.Implementation
             return physicians;
         }
 
-
-        #endregion
-
-        #region UPDATE
-
-        #endregion
-
-        #region ADD
-
         public async Task<List<int>> AddPhysicianRegionsAsync(List<int> regionsToAdd, int physicianId)
         {
             foreach (var regionId in regionsToAdd)
@@ -112,12 +96,6 @@ namespace HalloDocRepository.Implementation
             return regionsToAdd;
         }
 
-
-
-        #endregion
-
-        #region REMOVE
-
         public async Task<List<PhysicianRegion>> RemovePhysicianRegionsAsync(List<PhysicianRegion> regionsToRemove)
         {
             _context.PhysicianRegions.RemoveRange(regionsToRemove);
@@ -126,8 +104,23 @@ namespace HalloDocRepository.Implementation
             return regionsToRemove;
         }
 
+
         #endregion
 
+        #region PHYSICIAN LOCATION
+
+        public List<PhysicianLocation> GetAllPhysicianLocations()
+        {
+            return _context.PhysicianLocations.ToList();
+        }
+
+        public async Task<PhysicianLocation> CreatePhysicianLocation(PhysicianLocation physicianLocation)
+        {
+            _context.PhysicianLocations.Add(physicianLocation);
+            await _context.SaveChangesAsync();
+
+            return physicianLocation;
+        }
         #endregion
     }
 }

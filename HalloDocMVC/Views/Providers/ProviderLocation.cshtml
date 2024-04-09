@@ -1,0 +1,65 @@
+﻿
+@{
+    ViewData["Title"] = "Provider Location";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+@section AddStyles
+{
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
+}
+
+@model List<HalloDocServices.ViewModels.AdminViewModels.ProviderLocationViewModel>
+
+<div class="main">
+    <partial name="_NavbarLinks" >
+
+        <div class="container-xl p-4">
+
+            <h2 class="mb-4">
+                Provider Location
+            </h2>
+
+            
+            <div style="height:70vh; width:100%; border: 10px solid white">
+                <div id="map" style="height:100%; width:100%"></div>
+            </div>
+
+        </div>
+
+</div>
+
+
+
+@section AddScript
+    {
+    <partial name="_ToastMessageScriptsPartial" />
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+
+    <script>
+        var map = L.map('map');
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        var providers = @Html.Raw(Json.Serialize(Model));
+
+        var markers = [];
+
+        for (var i = 0; i < providers.length; i++) {
+            var provider = providers[i];
+            var marker = L.marker([provider.latitude, provider.longitude])
+                .bindPopup("<h4> " + provider.physicianName + "</h4><p> Address: " + provider.address + "</p><p> Latitude: " + provider.latitude + "</p><p> Longitude: " + provider.longitude + "</p>")
+                .addTo(map);
+            console.log(provider);
+            markers.push(marker);
+        }
+
+        var group = L.featureGroup(markers).addTo(map);
+        map.fitBounds(group.getBounds());
+    </script>
+}
+

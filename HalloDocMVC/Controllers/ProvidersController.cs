@@ -455,5 +455,15 @@ namespace HalloDocMVC.Controllers
 
         #endregion
 
+        #region PROVIDER LOCATION
+
+        public IActionResult ProviderLocation()
+        {
+            List<ProviderLocationViewModel> ProviderLocations = _providersService.GetProviderLocations();
+            return View(ProviderLocations);
+        }
+
+        #endregion
+
     }
 }

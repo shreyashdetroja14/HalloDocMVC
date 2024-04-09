@@ -31,8 +31,20 @@
     }
     
     if(url.includes('vendors')){
-        const accessTabs = document.querySelectorAll('.vendors');
-        accessTabs.forEach(tab => {
+        const vendorTabs = document.querySelectorAll('.vendors');
+        vendorTabs.forEach(tab => {
+            tab.classList.add('active');
+        })
+    }
+    
+    if(url.includes('providerlocation')){
+        const providerTabs = document.querySelectorAll('.providers');
+        providerTabs.forEach(tab => {
+            tab.classList.remove('active');
+        })
+
+        const locationTabs = document.querySelectorAll('.location');
+        locationTabs.forEach(tab => {
             tab.classList.add('active');
         })
     }

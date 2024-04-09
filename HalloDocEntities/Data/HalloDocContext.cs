@@ -46,6 +46,8 @@ public partial class HalloDocContext : DbContext
 
     public virtual DbSet<Physician> Physicians { get; set; }
 
+    public virtual DbSet<PhysicianLocation> PhysicianLocations { get; set; }
+
     public virtual DbSet<PhysicianRegion> PhysicianRegions { get; set; }
 
     public virtual DbSet<Region> Regions { get; set; }
@@ -230,6 +232,17 @@ public partial class HalloDocContext : DbContext
             entity.HasOne(d => d.Region).WithMany(p => p.Physicians).HasConstraintName("fk_region");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Physicians).HasConstraintName("fk_role");
+        });
+
+        modelBuilder.Entity<PhysicianLocation>(entity =>
+        {
+            entity.HasKey(e => e.LocationId).HasName("physician_location_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.Physician).WithMany(p => p.PhysicianLocations)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_physician");
         });
 
         modelBuilder.Entity<PhysicianRegion>(entity =>

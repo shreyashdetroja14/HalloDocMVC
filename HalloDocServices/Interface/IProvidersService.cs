@@ -92,5 +92,11 @@ namespace HalloDocServices.Interface
         MDsListViewModel GetMDsList(int regionId);
 
         #endregion
+
+        #region PROVIDER LOCATION
+
+        List<ProviderLocationViewModel> GetProviderLocations();
+
+        #endregion
     }
 }

@@ -31,7 +31,10 @@
         </div>
 
         <div class="shadow rounded-3">
-            <form asp-action="CreateProvider" class="bg-white p-4 shadow-none " enctype="multipart/form-data">
+            <form asp-action="CreateProvider" class="bg-white p-4 shadow-none " id="create-form" enctype="multipart/form-data">
+                <input type="number" asp-for="Latitude" id="Latitude" hidden/>
+                <input type="number" asp-for="Longitude" id="Longitude" hidden />
+
                 <div class="info mb-4">
                     <h4 class="mb-3">Account Information</h4>
                     <div class="row">
@@ -322,8 +325,8 @@
                 </div>
 
                 <div class="submit d-flex justify-content-end">
-                    <input type="submit" value="Save" id="profile-info-save" class="btn btn-info py-2 px-3 ms-3 text-white">
-                    <input type="reset" value="Cancel" id="profile-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3">
+                    <button type="button" id="create-btn" class="btn btn-info py-2 px-3 ms-3 text-white">Create</button>
+                    <input type="reset" value="Cancel" id="cancel-btn" class="btn cancelbtn btn-outline-info py-2 px-3 ms-3">
                 </div>
 
             </form>
@@ -368,6 +371,7 @@
 
     </script>
 
+    @*USERNAME GENERATE SCRIPT*@
 
     <script>
         const userNameInput = document.querySelector('#Username');
@@ -431,6 +435,41 @@
                 }
             })
         })
+    </script>
+
+
+    @*GET LATITUDE LONGITUDE FROM ADDRESS*@
+    @*SUBMIT FORM*@
+
+    <script type="text/javascript" async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARrk6kY-nnnSpReeWotnQxCAo_MoI4qbU"></script>
+
+    <script>
+        $('#create-btn').click(async function(event){
+            event.preventDefault();
+            console.log('btn clicked');
+
+            await setLatLong();
+
+            $('#create-form').submit();
+        });
+
+        async function setLatLong(){
+            var geocoder = new google.maps.Geocoder();
+            const address = $('#Address1').val() + ' ' + $('#City').val() + ' ' + $('#region-list').find('option:selected').text() + ' ' + $('#ZipCode').val();
+            console.log(address);
+            geocoder.geocode({ address: address }, function (results, status) {
+                if (status == "OK") {
+                    var latitude = results[0].geometry.location.lat();
+                    var longitude = results[0].geometry.location.lng();
+
+                    $('#Latitude').val(latitude);
+                    $('#Longitude').val(longitude);
+
+                    console.log($('#Latitude').val());
+                    console.log($('#Longitude').val());
+                }
+            });
+        }
     </script>
 }
 

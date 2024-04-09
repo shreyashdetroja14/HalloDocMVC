@@ -512,6 +512,17 @@ namespace HalloDocServices.Implementation
 
             await _physicianRepository.AddPhysicianRegionsAsync(ProviderInfo.ProviderRegions, provider.PhysicianId);
 
+            PhysicianLocation location = new PhysicianLocation();
+            location.PhysicianId = provider.PhysicianId;
+            location.PhysicianName = provider.FirstName + " " + provider.LastName;
+            location.Address = provider.City + " " + provider.ZipCode + " ";
+            location.Latitude = ProviderInfo.Latitude;
+            location.Longitude = ProviderInfo.Longitude;
+            location.CreatedDate = DateTime.Now;
+
+            await _physicianRepository.CreatePhysicianLocation(location);
+
+
             return true;
         }
 
@@ -1006,6 +1017,26 @@ namespace HalloDocServices.Implementation
             MDsList.UnavailableMDs = UnavailableMDs;
 
             return MDsList;
+        }
+
+        #endregion
+
+        #region PROVIDER LOCATION
+
+        public List<ProviderLocationViewModel> GetProviderLocations()
+        {
+            List<ProviderLocationViewModel> ProviderLocations = _physicianRepository.GetAllPhysicianLocations().Where(x => x.Latitude != null && x.Longitude != null).Select(x => new ProviderLocationViewModel
+            {
+                LocationId = x.LocationId,
+                PhysicianId = x.PhysicianId,
+                Latitude = x.Latitude,
+                Longitude = x.Longitude,
+                PhysicianName = x.PhysicianName,
+                Address = x.Address,
+
+            }).ToList();
+
+            return ProviderLocations;
         }
 
         #endregion

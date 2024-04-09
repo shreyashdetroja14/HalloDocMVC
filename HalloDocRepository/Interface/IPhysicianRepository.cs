@@ -9,7 +9,7 @@ namespace HalloDocRepository.Interface
 {
     public interface IPhysicianRepository
     {
-        #region GET
+        #region Physician
 
         List<Physician> GetAllPhysicians();
 
@@ -19,19 +19,9 @@ namespace HalloDocRepository.Interface
 
         IQueryable<Physician> GetIQueryablePhysicians(int physicianId);
 
-
-
-        #endregion
-
-        #region UPDATE
-
         Task<List<Physician>> Update(List<Physician> physicians);
 
         Task<Physician> Update(Physician physician);
-
-        #endregion
-
-        #region CREATE
 
         Task<Physician> CreateAsync(Physician physician);
 
@@ -46,6 +36,14 @@ namespace HalloDocRepository.Interface
         Task<List<PhysicianRegion>> RemovePhysicianRegionsAsync(List<PhysicianRegion> regionsToRemove);
 
         List<Physician> GetPhysiciansByRegionId(int regionId);
+
+        #endregion
+
+        #region PHYSICIAN LOCATION
+
+        List<PhysicianLocation> GetAllPhysicianLocations();
+
+        Task<PhysicianLocation> CreatePhysicianLocation(PhysicianLocation physicianLocation);
 
         #endregion
     }
