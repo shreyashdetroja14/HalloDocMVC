@@ -315,7 +315,7 @@
             // calendar initialize
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'resourceTimeline',
+                
                 height: 'auto',
                 dayMaxEvents: 4,
                 headerToolbar: false,
@@ -373,16 +373,24 @@
             });
 
             $("#day").click(function () {
-                calendar.changeView('resourceTimelineDay');
+                if ($(window).width() < 768) {
+                    calendar.changeView('timeGridDay');
+                }
+                else {
+                    calendar.changeView('resourceTimelineDay');
+                }
+                
             });
 
             $("#week").click(function () {
                 calendar.changeView('resourceTimelineWeek');
+                
             });
 
             $("#month").click(function () {
                 calendar.changeView('dayGridMonth');
             });
+
 
             calendar.render();
 

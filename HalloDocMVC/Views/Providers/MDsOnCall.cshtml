@@ -61,6 +61,10 @@
             }
 
             GetMDsList();
+
+            $('#region-list').change(function(){
+                GetMDsList();
+            });
         });
     </script>
 }

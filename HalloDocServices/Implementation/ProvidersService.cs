@@ -647,8 +647,7 @@ namespace HalloDocServices.Implementation
                 }
             }
 
-            var shiftDetailsFetched = _shiftRepository.GetShiftDetails().Include(x => x.Shift)
-                                        .Where(x => x.Shift.PhysicianId == CreateShiftData.PhysicianId).OrderBy(x => x.ShiftDate).ThenBy(x => x.StartTime).ToList();
+            var shiftDetailsFetched = _shiftRepository.GetShiftDetails().Where(x => x.IsDeleted == false && x.Shift.PhysicianId == CreateShiftData.PhysicianId).OrderBy(x => x.ShiftDate).ThenBy(x => x.StartTime).ToList();
 
             foreach(var shiftDetailFetched in shiftDetailsFetched)
             {
@@ -972,29 +971,31 @@ namespace HalloDocServices.Implementation
 
         public MDsListViewModel GetMDsList(int regionId)
         {
-            var activeShifts = _shiftRepository.GetShiftDetails()
-                                            .Where(x => DateOnly.FromDateTime(x.ShiftDate) == DateOnly.FromDateTime(DateTime.Now) &&
-                                            x.StartTime <= TimeOnly.FromDateTime(DateTime.Now) &&
-                                            x.EndTime >= TimeOnly.FromDateTime(DateTime.Now));
 
-            var inactiveShifts = _shiftRepository.GetShiftDetails().Except(activeShifts);
+            var activeMDs = _physicianRepository.GetIQueryablePhysicians().Where(z => z.Shifts.Where(y => y.ShiftDetails.Where(x => x.IsDeleted == false && DateOnly.FromDateTime(x.ShiftDate) == DateOnly.FromDateTime(DateTime.Now) && x.StartTime <= TimeOnly.FromDateTime(DateTime.Now) && x.EndTime >= TimeOnly.FromDateTime(DateTime.Now)).Any()).Any());
 
-            //var activeMDs = _physicianRepository.GetIQueryablePhysicians().Where()
+            var inactiveMDs = _physicianRepository.GetIQueryablePhysicians().Except(activeMDs);
 
-            List<MDCardViewModel> UnavailableMDs = activeShifts.Select(x => new MDCardViewModel
+            if (regionId != 0)
             {
-                PhysicianId = x.Shift.PhysicianId,
-                FullName = x.Shift.Physician.FirstName + " " + x.Shift.Physician.LastName,
-                ProfilePhotoPath = x.Shift.Physician.Photo,
+                activeMDs = activeMDs.Where(x => x.PhysicianRegions.Where(x => regionId == 0 || x.RegionId == regionId).Any());
+                inactiveMDs = inactiveMDs.Where(x => x.PhysicianRegions.Where(x => regionId == 0 || x.RegionId == regionId).Any());
+            }
+
+            List<MDCardViewModel> UnavailableMDs = activeMDs.Select(x => new MDCardViewModel
+            {
+                PhysicianId = x.PhysicianId,
+                FullName = x.FirstName + " " + x.LastName,
+                ProfilePhotoPath = x.Photo,
                 OnCallStatus = (OnCallStatus.Unavailable).ToString()
 
             }).ToList();
 
-            List<MDCardViewModel> AvailableMDs = inactiveShifts.Select(x => new MDCardViewModel
+            List<MDCardViewModel> AvailableMDs = inactiveMDs.Select(x => new MDCardViewModel
             {
-                PhysicianId = x.Shift.PhysicianId,
-                FullName = x.Shift.Physician.FirstName + " " + x.Shift.Physician.LastName,
-                ProfilePhotoPath = x.Shift.Physician.Photo,
+                PhysicianId = x.PhysicianId,
+                FullName = x.FirstName + " " + x.LastName,
+                ProfilePhotoPath = x.Photo,
                 OnCallStatus = (OnCallStatus.Available).ToString()
 
             }).ToList();
