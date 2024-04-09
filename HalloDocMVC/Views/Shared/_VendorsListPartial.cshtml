@@ -1,0 +1,116 @@
+﻿@model List<HalloDocServices.ViewModels.AdminViewModels.VendorRowViewModel>
+
+<div class="vendorlist table-responsive-lg d-none d-md-block">
+    <table class="table mb-0">
+        <thead style="background-color: #FAF9F6;">
+            <tr class="providerslistheader">
+                <th scope="col" class="p-3">Profession</th>
+                <th scope="col" class="py-3">Vendor Name</th>
+                <th scope="col" class="py-3">Email</th>
+                <th scope="col" class="py-3" style="min-width:10rem">Fax Number</th>
+                <th scope="col" class="py-3">Phone Number</th>
+                <th scope="col" class="py-3">Business Contact</th>
+                <th scope="col" class="py-3 text-center" style="min-width:15rem">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vendor in Model)
+            {
+                <tr class="vendor-row">
+                    <td class="p-3">
+                        @vendor.ProfessionName
+                    </td>
+                    <td class="py-3">
+                        @vendor.VendorName
+                    </td>
+                    <td class="py-3">
+                        @vendor.Email
+                    </td>
+                    <td class="py-3">
+                        @vendor.FaxNumber
+                    </td>
+                    <td class="py-3">
+                        @vendor.PhoneNumber
+                    </td>
+                    <td class="py-3">
+                        @vendor.BusinessContact
+                    </td>
+                    <td class="py-3 text-center">
+                        <a asp-action="EditVendor" asp-route-vendorId="@vendor.VendorId" class="btn btn-outline-info">
+                            Edit
+                        </a>
+                        <a asp-action="DeleteVendor" asp-route-vendorId="@vendor.VendorId" class="btn btn-outline-info">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<div class="providerslist-mobile d-md-none">
+    <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
+        @foreach (var vendor in Model)
+        {
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed d-flex flex-column align-items-start" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#vendor-@vendor.VendorId">
+                        <div class="mb-3 fw-bold">
+                            <span>@vendor.VendorName</span>
+                        </div>
+                        <div>
+                            <span class="material-symbols-outlined text-info me-1 fs-6">
+                                person_3
+                            </span>
+                            <span>Profession: </span>
+                            <span>@vendor.ProfessionName</span>
+                        </div>
+                    </button>
+                </h2>
+                <div id="vendor-@vendor.VendorId" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <div class="mb-2 d-flex align-items-center">
+                            <span class="material-symbols-outlined text-info me-1 fs-6">
+                                mail
+                            </span>
+                            <span class="me-2">Email: </span>
+                            <span>@vendor.Email</span>
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <span class="material-symbols-outlined text-info me-1 fs-6">
+                                call
+                            </span>
+                            <span class="me-2">Fax Number: </span>
+                            <span>@vendor.FaxNumber</span>
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <span class="material-symbols-outlined text-info me-1 fs-6">
+                                call
+                            </span>
+                            <span class="me-2">Phone Number: </span>
+                            <span>@vendor.PhoneNumber</span>
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <span class="material-symbols-outlined text-info me-1 fs-6">
+                                call
+                            </span>
+                            <span class="me-2">Business Contact: </span>
+                            <span>@vendor.BusinessContact</span>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <a asp-action="EditVendor" asp-route-vendorId="@vendor.VendorId" class="btn btn-outline-info">
+                                Edit
+                            </a>
+                            <a asp-action="DeleteVendor" asp-route-vendorId="@vendor.VendorId" class="btn btn-outline-info ms-2">
+                                Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -29,26 +29,10 @@ namespace HalloDocRepository.Implementation
             return regions;
         }
 
-        public List<HealthProfessionType> GetAllHealthProfessionTypes()
+        public Region GetRegionById(int regionId)
         {
-            var healthProfessionTypes = _context.HealthProfessionTypes.ToList();
-            return healthProfessionTypes;
-        }
-
-        public List<HealthProfessional> GetAllHealthProfessionals()
-        {
-            var healthProfessionals = _context.HealthProfessionals.ToList();
-            return healthProfessionals;
-        }
-
-        public HealthProfessional GetVendorById(int vendorId)
-        {
-            var vendor = _context.HealthProfessionals.FirstOrDefault(x => x.VendorId == vendorId);
-            if (vendor == null)
-            {
-                return new HealthProfessional();
-            }
-            return vendor;
+            var region = _context.Regions.FirstOrDefault(x => x.RegionId == regionId);
+            return region ?? new Region();
         }
 
         public async Task<OrderDetail> CreateOrder(OrderDetail order)

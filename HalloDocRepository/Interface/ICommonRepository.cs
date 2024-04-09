@@ -19,18 +19,7 @@ namespace HalloDocRepository.Interface
 
         List<Region> GetAllRegions();
 
-
-        // Health Profession Type
-
-        List<HealthProfessionType> GetAllHealthProfessionTypes();
-
-
-        // Health Professionals
-
-        List<HealthProfessional> GetAllHealthProfessionals();
-
-        HealthProfessional GetVendorById(int vendorId);
-
+        Region GetRegionById(int regionId);
 
         // Order Details
 

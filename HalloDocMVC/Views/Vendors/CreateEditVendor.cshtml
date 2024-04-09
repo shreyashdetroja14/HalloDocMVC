@@ -1,0 +1,147 @@
+﻿@{
+    if (Model.IsEditVendor)
+    {
+        ViewData["Title"] = "Edit Vendor";
+    }
+    else
+    {
+        ViewData["Title"] = "Create Vendor";
+    }
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+@section AddStyles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <link href="@Url.Content("~/css/requestform.css")" rel="stylesheet" type="text/css" />
+}
+
+@model HalloDocServices.ViewModels.AdminViewModels.CreateVendorViewModel
+
+
+<div class="main">
+
+    <partial name="_NavbarLinks"></partial>
+    <div class="container-xl p-4">
+
+        <div class=" back p-0 pb-4 d-flex justify-content-between">
+            @if (Model.IsEditVendor)
+            {
+                <h2>Edit Vendor</h2>
+            }
+            else
+            {
+                <h2>Create Vendor</h2>
+            }
+            <button class="btn back-btn" onclick="window.history.back()">
+                <img src="/images/backIcon.svg" alt="">
+                Back
+            </button>
+        </div>
+        <form asp-action="@(Model.IsEditVendor ? "EditVendor" : "CreateVendor")" class=" bg-white p-4 request-form">
+            <input type="number" asp-for="VendorId" hidden>
+            <h4 class="mb-3">Submit Information</h4>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" asp-for="VendorName" class="form-control" id="VendorName"
+                               placeholder="Vendor Name" autocomplete="off">
+                        <label asp-for="VendorName">Vendor Name</label>
+                        <span asp-validation-for="VendorName"class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <select asp-for="ProfessionId" id="profession-list" class="form-select p-3" asp-items="@Model.ProfessionList">
+                            <option value="" selected>Select Profession</option>
+                        </select>
+                        <span asp-validation-for="ProfessionId"class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" asp-for="FaxNumber" class="form-control" id="FaxNumber"
+                               placeholder="Fax Number" autocomplete="off">
+                        <label asp-for="FaxNumber">Fax Number</label>
+                        <span asp-validation-for="FaxNumber"class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-6 pb-3">
+                    <input type="tel" asp-for="PhoneNumber" class="form-control w-100 admin-info" id="PhoneNumber" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"class="text-danger"></span>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" asp-for="Email" class="form-control" id="Email"
+                               placeholder="abc@xyz.pqr" autocomplete="off">
+                        <label asp-for="Email">Email</label>
+                        <span asp-validation-for="Email"class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" asp-for="BusinessContact" class="form-control" id="BusinessContact"
+                               placeholder="BusinessContact">
+                        <label asp-for="BusinessContact">Business Contact</label>
+                        <span asp-validation-for="BusinessContact"class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" asp-for="Street" class="form-control" id="Street"
+                               placeholder="Street">
+                        <label asp-for="Street">Street</label>
+                        <span asp-validation-for="Street"class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" asp-for="City" class="form-control" id="City"
+                               placeholder="City">
+                        <label asp-for="City">City</label>
+                        <span asp-validation-for="City"class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <select asp-for="RegionId" id="region-list" class="form-select p-3" asp-items="@Model.RegionList">
+                            <option value="" selected>Select State</option>
+                        </select>
+                        <span asp-validation-for="RegionId"class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" asp-for="ZipCode" class="form-control" id="ZipCode"
+                               placeholder="Zipcode">
+                        <label asp-for="ZipCode">Zipcode</label>
+                        <span asp-validation-for="ZipCode"class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <input type="submit" value="@(Model.IsEditVendor ? "Edit" : "Create")" class="btn btn-info py-2 px-3 text-white">
+                <input type="reset" value="Cancel" class="btn cancelbtn btn-outline-info py-2 px-3 ms-3">
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section AddScript
+{
+    <partial name="_ToastMessageScriptsPartial" />
+
+    <script>
+        const phoneInputField = document.querySelector("#PhoneNumber");
+        const phoneInput = window.intlTelInput(phoneInputField, {
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+    </script>
+    
+}

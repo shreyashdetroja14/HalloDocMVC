@@ -16,7 +16,7 @@
 
     <partial name="_NavbarLinks"></partial>
 
-    <div class="container p-4">
+    <div class="container-xl p-4">
         <div class=" back p-0 pb-4 d-flex justify-content-between">
             @if(Model.IsEditAdmin == true)
             {
@@ -32,7 +32,7 @@
             </a>
         </div>
 
-        <div class="rounded-3" style="box-shadow: 0 0 5px rgba(0,0,0,0.3)">
+        <div class="rounded-3 custom-shadow" >
             <form id="form-account-info" class="bg-white p-4 request-form rounded-3 rounded-top shadow-none">
                 <input type="number" asp-for="AdminId" hidden>
                 <input type="text" asp-for="AspNetUserId" hidden>

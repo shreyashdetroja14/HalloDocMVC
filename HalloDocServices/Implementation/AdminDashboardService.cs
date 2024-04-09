@@ -19,14 +19,16 @@ namespace HalloDocServices.Implementation
         private readonly IPhysicianRepository _physicianRepository;
         private readonly INotesAndLogsRepository _notesAndLogsRepository;
         private readonly ICommonRepository _commonRepository;
+        private readonly IVendorRepository _vendorRepository;
         private readonly IMailService _mailService;
 
-        public AdminDashboardService(IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IMailService mailService)
+        public AdminDashboardService(IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IVendorRepository vendorRepository, IMailService mailService)
         {
             _requestRepository = requestRepository;
             _physicianRepository = physicianRepository;
             _notesAndLogsRepository = notesAndLogsRepository;
             _commonRepository = commonRepository;
+            _vendorRepository = vendorRepository;
             _mailService = mailService;
         }
 
@@ -643,7 +645,7 @@ namespace HalloDocServices.Implementation
 
         public string GetProfessionListOptions()
         {
-            var healthProfessionTypes = _commonRepository.GetAllHealthProfessionTypes();
+            var healthProfessionTypes = _vendorRepository.GetAllHealthProfessionTypes();
 
             string options = "<option value=\"0\" selected>Select Profession</option>";
 
@@ -658,7 +660,7 @@ namespace HalloDocServices.Implementation
 
         public string GetVendorListOptions(int professionId)
         {
-            var healthProfessionals = _commonRepository.GetAllHealthProfessionals();
+            var healthProfessionals = _vendorRepository.GetAllHealthProfessionals();
             healthProfessionals = healthProfessionals.Where(x => x.ProfessionId == professionId).ToList();
 
             string options = "<option value=\"0\">Select Business</option>";
@@ -674,7 +676,7 @@ namespace HalloDocServices.Implementation
 
         public OrdersViewModel GetVendorDetails(int vendorId)
         {
-            var vendor = _commonRepository.GetVendorById(vendorId);
+            var vendor = _vendorRepository.GetVendorById(vendorId);
             OrdersViewModel VendorDetails = new OrdersViewModel();
             
             VendorDetails.VendorId = vendor.VendorId;
