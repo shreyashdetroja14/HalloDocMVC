@@ -22,16 +22,16 @@ namespace HalloDocServices.Implementation
         private readonly HalloDocContext _context;
         private readonly IUserRepository _userRepository;
         private readonly IRequestRepository _requestRepository;
-        
+        private readonly IPhysicianRepository _physicianRepository;
 
-        public LoginService(HalloDocContext context, IUserRepository userRepository, IRequestRepository requestRepository)
+        public LoginService(HalloDocContext context, IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository)
         {
             _context = context;
             _userRepository = userRepository;
             _requestRepository = requestRepository;
-           
+            _physicianRepository = physicianRepository;
         }
-        public AspNetUser CheckLogin(LoginViewModel LoginInfo)
+        public async Task<AspNetUser> CheckLogin(LoginViewModel LoginInfo)
         {
             //string id = "";
 
@@ -44,7 +44,18 @@ namespace HalloDocServices.Implementation
                 var hash = BCrypt.Net.BCrypt.HashPassword(LoginInfo.Password);
                 if (BCrypt.Net.BCrypt.Verify(LoginInfo.Password, aspnetuserFetched.PasswordHash))
                 {
-                    //id = aspnetuserFetched.Id;
+                    if (aspnetuserFetched.PhysicianAspNetUsers.Any())
+                    {
+                        var physician = aspnetuserFetched.PhysicianAspNetUsers.FirstOrDefault();
+                        var location = _physicianRepository.GetPhysicianLocationByPhysicianId(physician?.PhysicianId ?? 0);
+                        if(location.LocationId != 0)
+                        {
+                            location.Latitude = LoginInfo.Latitude; 
+                            location.Longitude = LoginInfo.Longitude;
+
+                            await _physicianRepository.UpdatePhysicianLocation(location);
+                        }
+                    }
                     
 
                     return aspnetuserFetched;

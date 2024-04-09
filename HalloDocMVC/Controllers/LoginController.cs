@@ -59,7 +59,7 @@ namespace HalloDocMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CheckLogin(LoginViewModel LoginInfo)
+        public async Task<IActionResult> CheckLogin(LoginViewModel LoginInfo)
         {
             if (!ModelState.IsValid)
             {
@@ -67,7 +67,7 @@ namespace HalloDocMVC.Controllers
                 return View("Index");
             }
 
-            var aspnetuser = _loginService.CheckLogin(LoginInfo);
+            var aspnetuser = await _loginService.CheckLogin(LoginInfo);
 
             if (aspnetuser.Id == null)
             {
@@ -80,7 +80,7 @@ namespace HalloDocMVC.Controllers
 
             string role = aspnetuser.AspNetUserRoles.FirstOrDefault()?.Role.Name??"";
 
-            if (role == "admin")
+            if (role == "admin" || role == "physician")
             {
                 return RedirectToAction("Index", "AdminDashboard");
             } 

@@ -13,7 +13,7 @@ using System.Dynamic;
 
 namespace HalloDocMVC.Controllers
 {
-    [CustomAuthorize("admin")]
+    [CustomAuthorize("admin", "physician")]
     public class AdminDashboardController : Controller
     {
         private readonly IAdminDashboardService _adminDashboardService;

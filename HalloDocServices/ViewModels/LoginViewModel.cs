@@ -10,5 +10,9 @@ namespace HalloDocServices.ViewModels
 
         [Required(ErrorMessage = "Please Enter Password")]
         public string Password { get; set; } = null!;
+
+        public decimal? Latitude { get; set; }
+
+        public decimal? Longitude { get; set; }
     }
 }

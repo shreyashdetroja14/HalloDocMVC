@@ -10,7 +10,7 @@ namespace HalloDocServices.Interface
 {
     public interface ILoginService
     {
-        AspNetUser CheckLogin(LoginViewModel LoginInfo);
+        Task<AspNetUser> CheckLogin(LoginViewModel LoginInfo);
 
         Task<string> CreateAccount(CreateAccountViewModel Credentials);
 

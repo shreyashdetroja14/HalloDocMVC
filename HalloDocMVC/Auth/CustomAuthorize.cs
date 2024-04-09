@@ -9,11 +9,11 @@ namespace HalloDocMVC.Auth
     [AttributeUsage(AttributeTargets.All)]
     public class CustomAuthorize : Attribute, IAuthorizationFilter
     {
-        private readonly string _role;
+        private readonly string[] _roles;
 
-        public CustomAuthorize(string role)
+        public CustomAuthorize(params string[] roles)
         {
-            _role = role;
+            _roles = roles;
         }
         /*private readonly IList<string> _role;
 
@@ -62,10 +62,25 @@ namespace HalloDocMVC.Auth
                 return;
             }
 
-            if(string.IsNullOrWhiteSpace(_role) ||roleClaim.Value != _role)
+            bool isAuthorized = false;
+            foreach (var role in _roles)
+            {
+                if (roleClaim.Value == role)
+                {
+                    isAuthorized = true;
+                    break;
+                }
+            }
+
+            if (!isAuthorized)
             {
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Home", action = "AccessDenied" }));
             }
+
+            /*if(string.IsNullOrWhiteSpace(_role) ||roleClaim.Value != _role)
+            {
+                context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Home", action = "AccessDenied" }));
+            }*/
         }
     }
 }

@@ -31,10 +31,7 @@
         </div>
     </div>
 
-    @if (IsSectionDefined("AddScript"))
-    {
-        @RenderSection("AddScript", required: false)
-    }
+    
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -45,7 +42,13 @@
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/theme.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+
+    @if (IsSectionDefined("AddScript"))
+    {
+        @RenderSection("AddScript", required: false)
+    }
+
+    @* @await RenderSectionAsync("Scripts", required: false) *@
 </body>
 </html>
 

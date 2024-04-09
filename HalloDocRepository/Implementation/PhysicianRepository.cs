@@ -121,6 +121,20 @@ namespace HalloDocRepository.Implementation
 
             return physicianLocation;
         }
+
+        public PhysicianLocation GetPhysicianLocationByPhysicianId(int physicianId)
+        {
+            var location = _context.PhysicianLocations.FirstOrDefault(x => x.PhysicianId == physicianId);
+            return location ?? new PhysicianLocation();
+        }
+
+        public async Task<PhysicianLocation> UpdatePhysicianLocation(PhysicianLocation physicianLocation)
+        {
+            _context.PhysicianLocations.Update(physicianLocation);
+            await _context.SaveChangesAsync();
+
+            return physicianLocation;
+        }
         #endregion
     }
 }

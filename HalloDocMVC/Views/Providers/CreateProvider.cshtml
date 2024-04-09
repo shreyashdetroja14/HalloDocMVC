@@ -441,19 +441,13 @@
     @*GET LATITUDE LONGITUDE FROM ADDRESS*@
     @*SUBMIT FORM*@
 
-    <script type="text/javascript" async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARrk6kY-nnnSpReeWotnQxCAo_MoI4qbU"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARrk6kY-nnnSpReeWotnQxCAo_MoI4qbU"></script>
 
     <script>
-        $('#create-btn').click(async function(event){
+        $('#create-btn').click(function(event){
             event.preventDefault();
             console.log('btn clicked');
 
-            await setLatLong();
-
-            $('#create-form').submit();
-        });
-
-        async function setLatLong(){
             var geocoder = new google.maps.Geocoder();
             const address = $('#Address1').val() + ' ' + $('#City').val() + ' ' + $('#region-list').find('option:selected').text() + ' ' + $('#ZipCode').val();
             console.log(address);
@@ -467,9 +461,14 @@
 
                     console.log($('#Latitude').val());
                     console.log($('#Longitude').val());
+                    
+                    $('#create-form').submit();
                 }
             });
-        }
+
+        });
+
+        
     </script>
 }
 

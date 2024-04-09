@@ -45,6 +45,10 @@ namespace HalloDocRepository.Interface
 
         Task<PhysicianLocation> CreatePhysicianLocation(PhysicianLocation physicianLocation);
 
+        PhysicianLocation GetPhysicianLocationByPhysicianId(int physicianId);
+
+        Task<PhysicianLocation> UpdatePhysicianLocation(PhysicianLocation physicianLocation);
+
         #endregion
     }
 }

@@ -15,7 +15,9 @@
     </a>
     <h1 class="mb-4 mt-2 h2 text-center">Login To Your Account</h1>
     <p class="text-center text-danger fw-bold">@ViewBag.Message</p>   
-    <form class="d-flex flex-column" asp-action="CheckLogin" asp-controller="Login">
+    <form class="d-flex flex-column" asp-action="CheckLogin" asp-controller="Login" id="login-form">
+        <input type="number" asp-for="Latitude" id="Latitude" hidden/>
+        <input type="number" asp-for="Longitude" id="Longitude" hidden />
         <div class="form-floating mb-4">
             <input asp-for="Email" type="text" class="form-control transparent" id="Email" placeholder="name@example.com">
             <label for="Email">Email</label>
@@ -29,7 +31,7 @@
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 
-        <input type="submit" class="btn btn-info rounded-3 text-white fw-bold w-100 py-3 mb-4" value="Submit">
+        <button type="button" class="btn btn-info rounded-3 text-white fw-bold w-100 py-3 mb-4" id="submit-btn">Submit</button>
         <a asp-area="" asp-controller="Login" asp-action="ForgotPassword" class="align-self-center forgot-pass text-info fw-bold">
             Forgot
             Password?
@@ -40,14 +42,29 @@
 
 @section AddScript
 {
-    @*<script type="text/javascript">
-        function preventBack() {
-            window.history.forward();
-        }
-        setTimeout("preventBack()", 0);
-        window.onunload = function () {
-            null
-        };
-    </script>*@
+    <script>
+        $('#submit-btn').click(function (event) {
+            event.preventDefault();
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    $('#Latitude').val(latitude);
+                    $('#Longitude').val(longitude);
+
+                    console.log($('#Latitude').val());
+                    console.log($('#Longitude').val());
+
+                    $('#login-form').submit();
+
+                    //console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                });
+            } else {
+                console.log("Geolocation is not supported by this browser.");
+            }
+        });
+    </script>
 }
 
