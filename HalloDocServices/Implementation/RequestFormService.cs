@@ -3,6 +3,7 @@ using HalloDocRepository.Interface;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -74,8 +75,9 @@ namespace HalloDocServices.Implementation
             userNew.City = prvm.City;
             userNew.State = prvm.State;
             userNew.ZipCode = prvm.ZipCode;
+            userNew.RegionId = prvm.RegionId;
 
-            userNew.RegionId = GetRegionIdByState(prvm.State??"");
+            //userNew.RegionId = GetRegionIdByState(prvm.State??"");
 
             if (prvm.DOB != null)
             {
@@ -117,12 +119,13 @@ namespace HalloDocServices.Implementation
             requestClientNew.City = PatientInfo.City;
             requestClientNew.State = PatientInfo.State;
             requestClientNew.ZipCode = PatientInfo.ZipCode;
+            requestClientNew.RegionId = PatientInfo.RegionId;
 
-            int regionid = GetRegionIdByState(requestClientNew.State ?? "");
+            /*int regionid = GetRegionIdByState(requestClientNew.State ?? "");
             if(regionid != 0)
             {
                 requestClientNew.RegionId = regionid;
-            }
+            }*/
 
             return requestClientNew;
         }
@@ -168,6 +171,17 @@ namespace HalloDocServices.Implementation
 
         }
         #endregion
+
+        public List<SelectListItem> GetRegionList()
+        {
+            List<SelectListItem> RegionList = _commonRepository.GetAllRegions().Select(x => new SelectListItem
+            {
+                Value = x.RegionId.ToString(),
+                Text = x.Name
+            }).ToList();
+
+            return RegionList;
+        }
 
         public async Task<bool> CheckUser(string email)
         {
@@ -356,6 +370,7 @@ namespace HalloDocServices.Implementation
             crvm.PatientInfo.City = crvm.ConciergeCity;
             crvm.PatientInfo.State = crvm.ConciergeState;
             crvm.PatientInfo.ZipCode = crvm.ConciergeZipCode;
+            crvm.PatientInfo.RegionId = crvm.ConciergeRegionId;
 
             var requestClientNew = CreateRequestClient(crvm.PatientInfo, requestNew);
 

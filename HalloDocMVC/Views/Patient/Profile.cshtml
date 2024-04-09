@@ -83,13 +83,22 @@
                     </div>
                 </div>
                 <div class="col-sm-6">
+                    <div class="mb-3">
+                        <select asp-for="RegionId" id="region-list" class="form-select p-3" asp-items="@Model.RegionList">
+                            <option value="" selected>Select State</option>
+                        </select>
+                        <span asp-validation-for="RegionId" class="text-danger"></span>
+                        <input type="text" asp-for="State" id="State" hidden />
+                    </div>
+                </div>
+                @* <div class="col-sm-6">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="State" class="form-control" id="State"
                                placeholder="State">
                         <label asp-for="State">State</label>
                         <span asp-validation-for="State" class="text-danger"></span>
                     </div>
-                </div>
+                </div> *@
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="ZipCode" class="form-control" id="ZipCode"
@@ -128,11 +137,14 @@
         const submitBtn = document.querySelector('input[type="submit"]');
         const cancelBtn = document.querySelector('input[type="reset"]');
         const inputTags = document.querySelectorAll('input');
+        const regionList = document.querySelector('#region-list');
         const emailInp = document.querySelector('input[type="email"]');
 
         inputTags.forEach(input => {
             input.readOnly = true;
         })
+
+        regionList.disabled = true;
 
         editBtn.addEventListener('click', () => {
             editBtn.classList.add('d-none');
@@ -141,6 +153,8 @@
             inputTags.forEach(input => {
                 input.readOnly = false;
             })
+
+            regionList.disabled = false;
 
             emailInp.readOnly = true;
         })
@@ -152,8 +166,19 @@
             inputTags.forEach(input => {
                 input.readOnly = true;
             })
+
+            regionList.disabled = true;
         })
 
+    </script>
+    <script>
+        const dateInput = document.querySelector('#DOB');
+        dateInput.max = new Date().toISOString().split("T")[0];
+
+        $('#region-list').change(function () {
+            const state = $('#region-list').find('option:selected').text();
+            $('#State').val(state);
+        })
     </script>
 }
 

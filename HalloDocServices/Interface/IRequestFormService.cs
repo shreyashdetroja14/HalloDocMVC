@@ -1,4 +1,5 @@
 ﻿using HalloDocServices.ViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,8 @@ namespace HalloDocServices.Interface
 {
     public interface IRequestFormService
     {
+        List<SelectListItem> GetRegionList();
+
         Task<bool> CheckUser(string email);
 
         Task<bool> SendMail(string receiver, string subject, string message);

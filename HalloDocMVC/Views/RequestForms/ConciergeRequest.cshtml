@@ -107,13 +107,22 @@
                     </div>
                 </div>
                 <div class="col-sm-6">
+                    <div class="mb-3">
+                        <select asp-for="ConciergeRegionId" id="region-list" class="form-select p-3" asp-items="@ViewBag.RegionList">
+                            <option value="" selected>Select State</option>
+                        </select>
+                        <span asp-validation-for="ConciergeRegionId" class="text-danger"></span>
+                        <input type="text" asp-for="ConciergeState" id="State" hidden />
+                    </div>
+                </div>
+                @* <div class="col-sm-6">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="ConciergeState" class="form-control" id="ConciergeState" 
                                placeholder="City">
                         <label asp-for="ConciergeState">State</label>
                         <span asp-validation-for="ConciergeState" class="text-danger"></span>
                     </div>
-                </div>
+                </div> *@
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="ConciergeZipCode" class="form-control" id="ConciergeZipCode"
@@ -152,7 +161,7 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="date" asp-for="PatientInfo.DOB" class="form-control" id="PatientInfo.DOB"
+                        <input type="date" asp-for="PatientInfo.DOB" class="form-control" id="DOB"
                                placeholder="DOB">
                         <label asp-for="PatientInfo.DOB">Date Of Birth</label>
                     </div>
@@ -226,6 +235,15 @@
         $(window).on('load', function () {
             $('#myModal').modal('show');
         });
+    </script>
+    <script>
+        const dateInput = document.querySelector('#DOB');
+        dateInput.max = new Date().toISOString().split("T")[0];
+
+        $('#region-list').change(function () {
+            const state = $('#region-list').find('option:selected').text();
+            $('#State').val(state);
+        })
     </script>
 }
 

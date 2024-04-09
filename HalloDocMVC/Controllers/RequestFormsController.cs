@@ -27,6 +27,7 @@ namespace HalloDocMVC.Controllers
         }
         public IActionResult PatientRequest()
         {
+            ViewBag.RegionList = _requestFormService.GetRegionList();
             return View();
         }
         [HttpPost]
@@ -59,6 +60,7 @@ namespace HalloDocMVC.Controllers
 
         public IActionResult FamilyRequest()
         {
+            ViewBag.RegionList = _requestFormService.GetRegionList();
             return View();
         }
 
@@ -92,6 +94,7 @@ namespace HalloDocMVC.Controllers
 
         public IActionResult ConciergeRequest()
         {
+            ViewBag.RegionList = _requestFormService.GetRegionList();
             return View();
         }
 
@@ -126,6 +129,7 @@ namespace HalloDocMVC.Controllers
 
         public IActionResult BusinessRequest()
         {
+            ViewBag.RegionList = _requestFormService.GetRegionList();
             return View();
         }
 

@@ -110,17 +110,26 @@
                         <input type="text" asp-for="City" class="form-control" id="City"
                                placeholder="City">
                         <label asp-for="City">City</label>
-                        <span asp-validation-for="City"></span>
+                        <span asp-validation-for="City" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
+                    <div class="mb-3">
+                        <select asp-for="RegionId" id="region-list" class="form-select p-3" asp-items="@ViewBag.RegionList">
+                            <option value="" selected>Select State</option>
+                        </select>
+                        <span asp-validation-for="RegionId" class="text-danger"></span>
+                        <input type="text" asp-for="State" id="State" hidden />
+                    </div>
+                </div>
+                @* <div class="col-sm-6">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="State" class="form-control" id="State"
                                placeholder="State">
                         <label asp-for="State">State</label>
                         <span asp-validation-for="State" class="text-danger"></span>
                     </div>
-                </div>
+                </div> *@
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="ZipCode" class="form-control" id="ZipCode"
@@ -237,5 +246,10 @@
     <script>
         const dateInput = document.querySelector('#DOB');
         dateInput.max = new Date().toISOString().split("T")[0];
+
+        $('#region-list').change(function () {
+            const state = $('#region-list').find('option:selected').text();
+            $('#State').val(state);
+        })
     </script>
 }

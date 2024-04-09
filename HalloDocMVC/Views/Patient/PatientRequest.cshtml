@@ -51,7 +51,7 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="date" asp-for="PatientInfo.DOB" class="form-control" id="dob" placeholder="DOB">
+                        <input type="date" asp-for="PatientInfo.DOB" class="form-control" id="DOB" placeholder="DOB">
                         <label asp-for="PatientInfo.DOB">Date Of Birth</label>
                     </div>
                 </div>
@@ -95,13 +95,22 @@
                     </div>
                 </div>
                 <div class="col-sm-6">
+                    <div class="mb-3">
+                        <select asp-for="PatientInfo.RegionId" id="region-list" class="form-select p-3" asp-items="@ViewBag.RegionList">
+                            <option value="" selected>Select State</option>
+                        </select>
+                        <span asp-validation-for="PatientInfo.RegionId" class="text-danger"></span>
+                        <input type="text" asp-for="PatientInfo.State" id="State" hidden />
+                    </div>
+                </div>
+                @* <div class="col-sm-6">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="PatientInfo.State" class="form-control" id="state"
                                placeholder="State">
                         <label asp-for="PatientInfo.State">State</label>
                         <span asp-validation-for="PatientInfo.State" class="text-danger"></span>
                     </div>
-                </div>
+                </div> *@
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="PatientInfo.ZipCode" class="form-control" id="zipcode"
@@ -171,7 +180,9 @@
     <script>
         const phoneInputField = document.querySelector("#phone");
         const phoneInput = window.intlTelInput(phoneInputField, {
-            preferredCountries: ["us", "in", "au", "de"],
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
@@ -190,6 +201,15 @@
             }
             fileChosen.textContent = fileChosen.textContent.slice(0, fileChosen.textContent.length - 2);
 
+        })
+    </script>
+    <script>
+        const dateInput = document.querySelector('#DOB');
+        dateInput.max = new Date().toISOString().split("T")[0];
+
+        $('#region-list').change(function () {
+            const state = $('#region-list').find('option:selected').text();
+            $('#State').val(state);
         })
     </script>
 }

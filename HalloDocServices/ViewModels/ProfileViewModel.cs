@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace HalloDocServices.ViewModels
 {
@@ -27,9 +28,14 @@ namespace HalloDocServices.ViewModels
 
         public string? City { get; set; }
 
-        [Required(ErrorMessage = "Region/State is required")]
-        [AllowedStates(ErrorMessage = "Invalid state.")]
+        /*[Required(ErrorMessage = "Region/State is required")]
+        [AllowedStates(ErrorMessage = "Invalid state.")]*/
         public string? State { get; set; }
+
+        [Required(ErrorMessage = "Please Select a Region")]
+        public int RegionId { get; set; }
+
+        public List<SelectListItem> RegionList { get; set; } = new List<SelectListItem>();
 
         [RegularExpression(@"^\d{6}$", ErrorMessage = "Please enter a valid 6-digit zip code.")]
         public string? ZipCode { get; set; }

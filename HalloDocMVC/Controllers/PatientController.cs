@@ -172,6 +172,8 @@ namespace HalloDocMVC.Controllers
             FamilyRequestViewModel frvm = new FamilyRequestViewModel();
             frvm.PatientInfo = PatientInfo;
 
+            ViewBag.RegionList = _patientService.GetRegionList();
+
             // Send data to view
             //ViewBag.Fullname = userFetched?.FirstName + " " + userFetched?.LastName;
             ViewBag.UserId = UserId;
@@ -202,6 +204,8 @@ namespace HalloDocMVC.Controllers
         {
             ViewBag.UserId = UserId;
             ViewBag.RequestType = 3;
+
+            ViewBag.RegionList = _patientService.GetRegionList();
 
             return View("~/Views/Patient/PatientRequest.cshtml");
         }

@@ -4,6 +4,7 @@ using HalloDocRepository.Interface;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
@@ -24,6 +25,17 @@ namespace HalloDocServices.Implementation
             _physicianRepository = physicianRepository;
             _commonRepository = commonRepository;
             _notesAndLogsRepository = notesAndLogsRepository;
+        }
+
+        public List<SelectListItem> GetRegionList()
+        {
+            List<SelectListItem> RegionList = _commonRepository.GetAllRegions().Select(x => new SelectListItem
+            {
+                Value = x.RegionId.ToString(),
+                Text = x.Name
+            }).ToList();
+
+            return RegionList;
         }
 
         public async Task<int> CheckUser(string id)
@@ -180,6 +192,13 @@ namespace HalloDocServices.Implementation
             ProfileDetails.City = userFetched.City;
             ProfileDetails.State = userFetched.State;
             ProfileDetails.ZipCode = userFetched.ZipCode;
+            ProfileDetails.RegionId = userFetched.RegionId ?? 0;
+
+            ProfileDetails.RegionList = _commonRepository.GetAllRegions().Select(x => new SelectListItem
+            {
+                Value = x.RegionId.ToString(),
+                Text = x.Name,
+            }).ToList();
 
             return ProfileDetails;
         }
@@ -210,6 +229,7 @@ namespace HalloDocServices.Implementation
                 userFetched.City = ProfileDetails.City;
                 userFetched.State = ProfileDetails.State;
                 userFetched.ZipCode = ProfileDetails.ZipCode;
+                userFetched.RegionId = ProfileDetails.RegionId;
 
                 await _userRepository.UpdateUser(userFetched);
             }
@@ -314,8 +334,9 @@ namespace HalloDocServices.Implementation
             userNew.City = prvm.City;
             userNew.State = prvm.State;
             userNew.ZipCode = prvm.ZipCode;
+            userNew.RegionId = prvm.RegionId;
 
-            userNew.RegionId = GetRegionIdByState(prvm.State??"");
+            /*userNew.RegionId = GetRegionIdByState(prvm.State??"");*/
 
             if (prvm.DOB != null)
             {
@@ -356,8 +377,9 @@ namespace HalloDocServices.Implementation
             requestClientNew.City = PatientInfo.City;
             requestClientNew.State = PatientInfo.State;
             requestClientNew.ZipCode = PatientInfo.ZipCode;
+            requestClientNew.RegionId = PatientInfo.RegionId;
 
-            requestClientNew.RegionId = GetRegionIdByState(requestClientNew.State ?? "");
+            /*requestClientNew.RegionId = GetRegionIdByState(requestClientNew.State ?? "");*/
 
             return requestClientNew;
         }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace HalloDocServices.ViewModels
 {
@@ -26,9 +27,14 @@ namespace HalloDocServices.ViewModels
         [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "City name can only contain letters, spaces, hyphens, and apostrophes.")]
         public string ConciergeCity { get; set; } = null!;
 
-        [Required(ErrorMessage = "Please Enter State")]
-        [AllowedStates(ErrorMessage = "Invalid state.")]
+        /*[Required(ErrorMessage = "Please Enter State")]
+        [AllowedStates(ErrorMessage = "Invalid state.")]*/
         public string ConciergeState { get; set; } = null!;
+
+        [Required(ErrorMessage = "Please Select A Region")]
+        public int ConciergeRegionId { get; set; }
+
+        public List<SelectListItem> ConciergeRegionList { get; set; } = new List<SelectListItem>();
 
         [Required(ErrorMessage = "Please Enter Zipcode")]
         [RegularExpression(@"^\d{6}$", ErrorMessage = "Please enter a valid 6-digit zip code.")]

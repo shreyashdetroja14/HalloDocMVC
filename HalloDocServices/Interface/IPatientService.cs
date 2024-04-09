@@ -1,6 +1,7 @@
 ﻿using HalloDocEntities.Models;
 using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace HalloDocServices.Interface
 {
     public interface IPatientService
     {
+        List<SelectListItem> GetRegionList();
+
         Task<int> CheckUser(string id);
 
         Task<List<DashboardRequestViewModel>> GetRequestList(int userId);
