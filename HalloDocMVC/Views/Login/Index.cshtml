@@ -59,10 +59,21 @@
 
                     $('#login-form').submit();
 
-                    //console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                }, function (error) {
+                    console.error("Geolocation error:", error.message);
+
+                    $('#Latitude').val(''); 
+                    $('#Longitude').val(''); 
+
+                    $('#login-form').submit(); 
                 });
             } else {
                 console.log("Geolocation is not supported by this browser.");
+
+                $('#Latitude').val(''); 
+                $('#Longitude').val(''); 
+
+                $('#login-form').submit();
             }
         });
     </script>
