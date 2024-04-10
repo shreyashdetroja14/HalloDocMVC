@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace HalloDocServices.ViewModels.AdminViewModels
 {
-    public class PaginatedListViewModel
+    public class PaginatedListViewModel<T>
     {
         public PagerViewModel PagerData { get; set; } = new PagerViewModel();
 
-        public List<RequestRowViewModel> RequestRows { get; set; } = new List<RequestRowViewModel>();
+        public List<T> DataRows { get; set; } = new List<T>();
     }
 }

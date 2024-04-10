@@ -15,7 +15,12 @@
         }
 
     .h6{
-        margin-bottom: 0;   }
+        margin-bottom: 0;   
+    }
+
+    .page-item.active{
+        border: 0 !important;
+    }
 
     @@media screen and (max-width: 991px) {
         th, 
@@ -45,6 +50,7 @@
 
             <div class="recordsSection bg-white rounded-3 custom-shadow">
                 <form class="container-fluid p-3" id="search-filters">
+                    <input type="number" asp-for="PageNumber" id="PageNumber" hidden />
                     <div class="row">
                         <div class="col-sm-6 col-lg-3">
                             <div class="mb-3">
@@ -138,6 +144,8 @@
                     type: 'POST',
                     success: function (data) {
                         $('#partial-container').html(data);
+
+                        partialEventListeners();
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         console.error("Error fetching data:", textStatus);
@@ -156,6 +164,19 @@
 
                 GetRecordsList();
             });
+
+            function partialEventListeners(){
+                $('.page-number').each(function(){
+                    $(this).click(function(event){
+                        const pageNumber = $(this).attr('data-page-number');
+                        console.log(pageNumber);
+
+                        $('#PageNumber').val(pageNumber);
+
+                        GetRecordsList();
+                    });
+                });
+            }
         });
     </script>
 }

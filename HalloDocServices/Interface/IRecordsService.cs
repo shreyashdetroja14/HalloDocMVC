@@ -9,6 +9,6 @@ namespace HalloDocServices.Interface
 {
     public interface IRecordsService
     {
-        List<RecordRowViewModel> GetRecordsList(SearchRecordsViewModel SearchFilter);
+        PaginatedListViewModel<RecordRowViewModel> GetRecordsList(SearchRecordsViewModel SearchFilter);
     }
 }

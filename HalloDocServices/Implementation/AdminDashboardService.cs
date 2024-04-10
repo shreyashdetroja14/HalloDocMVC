@@ -58,7 +58,7 @@ namespace HalloDocServices.Implementation
         }
         #endregion
 
-        public PaginatedListViewModel GetViewModelData(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int pageNumber)
+        public PaginatedListViewModel<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int pageNumber)
         {
             var requests = _requestRepository.GetAllIEnumerableRequests().AsQueryable();
 
@@ -164,9 +164,9 @@ namespace HalloDocServices.Implementation
                 }) ;
             }
 
-            PaginatedListViewModel PaginatedData = new PaginatedListViewModel();
+            PaginatedListViewModel<RequestRowViewModel> PaginatedData = new PaginatedListViewModel<RequestRowViewModel>();
             PaginatedData.PagerData = PagerData;
-            PaginatedData.RequestRows = requestRows;
+            PaginatedData.DataRows = requestRows;
 
             return PaginatedData;
         }

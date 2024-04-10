@@ -20,8 +20,16 @@ namespace HalloDocMVC.Controllers
         [HttpPost]
         public IActionResult GetRecordsList(SearchRecordsViewModel SearchFilters)
         {
-            List<RecordRowViewModel> RecordsList = _recordsService.GetRecordsList(SearchFilters);
-            return PartialView("_RecordsTablePartial", RecordsList);
+            if(SearchFilters.PageNumber <= 0)
+            {
+                SearchFilters.PageNumber = 1;
+            }
+
+            PaginatedListViewModel<RecordRowViewModel> PaginatedList = new PaginatedListViewModel<RecordRowViewModel>();
+            PaginatedList = _recordsService.GetRecordsList(SearchFilters);
+
+            ViewBag.PagerData = PaginatedList.PagerData;
+            return PartialView("_RecordsTablePartial", PaginatedList.DataRows);
         }
     }
 }

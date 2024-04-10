@@ -27,8 +27,8 @@ namespace HalloDocServices.ViewModels.AdminViewModels
             int totalPages = (int)Math.Ceiling((decimal)totalItems / (decimal)pageSize);
             int currentPage = page;
 
-            int startPage = currentPage - 5;
-            int endPage = currentPage + 4;
+            int startPage = currentPage - 2;
+            int endPage = currentPage + 2;
 
             if(startPage <= 0)
             {
@@ -38,9 +38,9 @@ namespace HalloDocServices.ViewModels.AdminViewModels
             if(endPage > totalPages)
             {
                 endPage = totalPages;
-                if(endPage > 10)
+                if(endPage > 5)
                 {
-                    startPage = endPage - 9;
+                    startPage = endPage - 4;
                 }
             }
             TotalItems = totalItems;

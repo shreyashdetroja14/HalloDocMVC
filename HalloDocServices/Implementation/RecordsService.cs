@@ -27,41 +27,8 @@ namespace HalloDocServices.Implementation
             _commonRepository = commonRepository;
         }
 
-        public List<RecordRowViewModel> GetRecordsList(SearchRecordsViewModel SearchFilter)
+        public PaginatedListViewModel<RecordRowViewModel> GetRecordsList(SearchRecordsViewModel SearchFilter)
         {
-            //var requests = _requestRepository.GetIQueryableRequests();
-
-            //List<RecordRowViewModel> RecordsList = new List<RecordRowViewModel>();
-
-            /*foreach (var request in requests)
-            {
-                RequestClient? requestClient = request.RequestClients.FirstOrDefault();
-                RequestStatusLog? closeCaseLog = request.RequestStatusLogs.FirstOrDefault(x => x.Status == (int)RequestStatus.Closed);
-                RequestNote? requestNote = request.RequestNotes.FirstOrDefault();
-                RequestStatusLog? cancelledLog = request.RequestStatusLogs.FirstOrDefault(x => x.Status == (int)RequestStatus.Cancelled);
-
-                RecordsList.Add(new RecordRowViewModel
-                {
-                    RequestId = request.RequestId,
-                    PatientName = requestClient?.FirstName + " " + requestClient?.LastName,
-                    DateOfService = DateOnly.FromDateTime(request.AcceptedDate ?? DateTime.Now).ToString("MM dd, yyyy"),
-                    CloseCaseDate = DateOnly.FromDateTime(closeCaseLog?.CreatedDate ?? DateTime.Now).ToString("MM dd, yyyy"),
-                    Email = requestClient?.Email,
-                    PhoneNumber = requestClient?.PhoneNumber,
-                    Address = requestClient?.Address,
-                    ZipCode = requestClient?.ZipCode,
-                    //map request status to dashboard request status
-                    RequestStatus = new CommonMethods().GetDashboardStatus(request.Status),
-                    PhysicianName = request.Physician?.FirstName + " " + request.Physician?.LastName,
-                    PhysicianNote = requestNote?.PhysicianNotes,
-                    //if phy id not null then cancelled by physician. get string after last ':' 
-                    CancelledByProviderNote = cancelledLog?.PhysicianId != null ? cancelledLog.Notes?.Substring(cancelledLog.Notes.LastIndexOf(':')) : null,
-                    AdminNote = requestNote?.AdminNotes,
-                    PatientNote = requestClient?.Notes,
-                    CancellationReason = request.CaseTag,
-
-                });
-            }*/
 
             var rawData = _requestRepository.GetIQueryableRequests();
 
@@ -108,6 +75,22 @@ namespace HalloDocServices.Implementation
                 rawData = rawData.Where(x => EF.Functions.ILike(x.RequestClients.FirstOrDefault().PhoneNumber, "%" + SearchFilter.PhoneNumber + "%"));
             }
 
+            //pagination data initialize
+
+            int requestCount = rawData.Count();
+            int pageNumber = SearchFilter.PageNumber;
+            int pageSize = 5;
+
+            PagerViewModel PagerData = new PagerViewModel(requestCount, pageNumber, pageSize);
+
+            //pagination query for db 
+
+            int rowsToSkip = (pageNumber - 1) * pageSize;
+
+            rawData = rawData.Skip(rowsToSkip).Take(pageSize);
+
+            //select query on query with filters
+
             var data = rawData.Select(request => new
             {
                 request,
@@ -119,6 +102,7 @@ namespace HalloDocServices.Implementation
             }).ToList();
 
             
+            //fill data in viewmodel for recordlist
 
             List<RecordRowViewModel> RecordsList = new List<RecordRowViewModel>();
 
@@ -148,8 +132,12 @@ namespace HalloDocServices.Implementation
             }
 
             RecordsList = RecordsList.OrderBy(x => x.RequestId).ToList();
-            
-            return RecordsList;
+
+            PaginatedListViewModel<RecordRowViewModel> PaginatedList = new PaginatedListViewModel<RecordRowViewModel>();
+            PaginatedList.PagerData = PagerData;
+            PaginatedList.DataRows = RecordsList;
+
+            return PaginatedList;
         }
     }
 }
