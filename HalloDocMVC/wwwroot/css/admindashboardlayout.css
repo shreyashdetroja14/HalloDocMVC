@@ -128,3 +128,21 @@
     padding: 5px !important;
     font-size: 16px !important;
 }
+
+.page-item.active {
+    border: 0 !important;
+}
+
+.page-link {
+    border: 1px solid #0dcaf0;
+}
+
+.page-item.active .page-link {
+    color: white !important;
+    background-color: #0dcaf0 !important;
+    border: 1px solid #0dcaf0;
+}
+
+.page-number {
+    color: #0dcaf0 !important;
+}

@@ -9,6 +9,9 @@ using System.Globalization;
 using System.IO.Compression;
 using System.Net.Mail;
 using System.Net;
+using HalloDocServices.Constants;
+using System.Data;
+using ClosedXML.Excel;
 
 
 namespace HalloDocServices.Implementation
@@ -942,6 +945,105 @@ namespace HalloDocServices.Implementation
 
             bool isMailSent = await _mailService.SendMail(receivers, subject, body, false, new List<string>());
             return isMailSent;
+        }
+
+        public byte[] ExportToExcel(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int? pageNumber)
+        {
+            var requests = _requestRepository.GetAllIEnumerableRequests().AsQueryable();
+
+            int[] myArray = new CommonMethods().GetRequestStatus(requestStatus);
+
+            requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Include(x => x.RequestStatusLogs).Where(x => myArray.Contains(x.Status));
+
+
+            if (requestType != null)
+            {
+                requests = requests.Where(x => x.RequestTypeId == requestType);
+            }
+
+            if (searchPattern != null)
+            {
+                requests = requests.Where(x => EF.Functions.Like(x.RequestClients.FirstOrDefault().FirstName, "%" + searchPattern + "%"));
+            }
+
+            if (searchRegion != null)
+            {
+                requests = requests.Where(x => x.RequestClients.FirstOrDefault().RegionId == searchRegion);
+            }
+
+            if(pageNumber != null)
+            {
+                int requestCount = requests.Count();
+                int pageSize = 5;
+                if (pageNumber <= 0)
+                {
+                    pageNumber = 1;
+                }
+
+                int requestToSkip = ((pageNumber ?? 1) - 1) * pageSize;
+
+                requests = requests.Skip(requestToSkip).Take(pageSize);
+            }
+
+            var requestData = requests.ToList();
+
+            var fileName = "requests.xlsx";
+
+            DataTable dataTable = new DataTable("Requests");
+
+            dataTable.Columns.AddRange(new DataColumn[]
+            {
+                new DataColumn("RequestId"),
+                new DataColumn("Patient Name"),
+                new DataColumn("Date of Birth"),
+                new DataColumn("Requestor"),
+                new DataColumn("Requested Date"),
+                new DataColumn("Physician Name"),
+                new DataColumn("Date of Service"),
+                new DataColumn("Phone Number"),
+                new DataColumn("Address"),
+                new DataColumn("Note"),
+
+            });
+
+            foreach(var row in requestData)
+            {
+                int requestId = row.RequestId;
+                string patientName = row.RequestClients.FirstOrDefault()?.FirstName + " " + row.RequestClients.FirstOrDefault()?.LastName;
+
+                RequestClient requestClient = row.RequestClients.FirstOrDefault() ?? new RequestClient();
+                string DOB = "";
+                if (requestClient.IntDate.HasValue && requestClient.IntYear.HasValue && requestClient.StrMonth != null)
+                {
+                    DateTime monthDateTime = DateTime.ParseExact(requestClient.StrMonth, "MMMM", CultureInfo.InvariantCulture);
+                    int month = monthDateTime.Month;
+                    DateOnly date = new DateOnly((int)requestClient.IntYear, month, requestClient.IntDate.Value);
+                    DOB = date.ToString("yyyy-MM-dd");
+                }
+
+                string requestor = row.FirstName + " " + row.LastName;
+                string requestDate = row.CreatedDate.ToString();
+                string physicianName = row.Physician?.FirstName + " " + row.Physician?.LastName;
+                string dateOfService = row.AcceptedDate.ToString() ?? "";
+                string phoneNumber = row.RequestClients.FirstOrDefault()?.PhoneNumber ?? "";
+                string address = row.RequestClients.FirstOrDefault()?.Address ?? "";
+                string note = row.RequestStatusLogs.FirstOrDefault()?.Notes ?? "";
+
+                dataTable.Rows.Add(requestId, patientName, DOB, requestor, requestDate, physicianName, dateOfService, phoneNumber, address, note);
+
+                
+            }
+
+            using(XLWorkbook wb = new XLWorkbook())
+            {
+                wb.Worksheets.Add(dataTable);
+                using(MemoryStream stream = new MemoryStream())
+                {
+                    wb.SaveAs(stream);
+
+                    return stream.ToArray();
+                }
+            }
         }
     }
 }

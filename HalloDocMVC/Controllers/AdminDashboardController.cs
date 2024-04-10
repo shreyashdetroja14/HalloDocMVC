@@ -426,18 +426,11 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult ExportAll(int requestStatus)
+        public IActionResult Export(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int? pageNumber)
         {
-            bool isExported = false;
-            if (isExported)
-            {
-                TempData["SuccessMessage"] = "Data Exported Successfully.";
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "Unable to Export The Data.";    
-            }
-            return Json(new { result = "Redirect", url = Url.Action("Index", "AdminDashboard") });
+            var excelFile = _adminDashboardService.ExportToExcel(requestStatus, requestType, searchPattern, searchRegion, pageNumber);
+            
+            return File(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "requests.xlsx");
         }
     }
 }

@@ -73,5 +73,7 @@ namespace HalloDocServices.Interface
         Task<bool> UpdateEncounterForm(EncounterFormViewModel EncounterFormDetails);
 
         Task<bool> SendLink(string receiverEmail);
+
+        byte[] ExportToExcel(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int? pageNumber);
     }
 }

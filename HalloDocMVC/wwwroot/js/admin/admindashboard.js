@@ -614,17 +614,69 @@ function addEventListnersForPartial() {
 
 const exportAllBtn = document.querySelector('#export-all');
 exportAllBtn.addEventListener('click',async () => {
-    const url = `/AdminDashboard/ExportAll/?requestStatus=${urlparams.requestStatus}`;
+    const url = `/AdminDashboard/Export/?requestStatus=${urlparams.requestStatus}`;
     try {
         console.log(urlparams.requestStatus);
         console.log(url)
         const response = await fetch(url);
 
-        const json = await response.json();
+        console.log(response);
 
-        if (json.result == 'Redirect') {
-            window.location = json.url;
-        }
+        const blob = await response.blob(); // Convert response to blob
+
+        // Create download link
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(blob);
+        downloadLink.download = 'requests.xlsx';
+
+        // Trigger download
+        downloadLink.click();
+
+        // Clean up
+        window.URL.revokeObjectURL(downloadLink.href);
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+
+const exportBtn = document.querySelector('#export-btn');
+exportBtn.addEventListener('click', async () => {
+
+    let url = `/AdminDashBoard/Export?requestStatus=${urlparams.requestStatus}`;
+
+    if (urlparams.requestType) {
+        url += `&requestType=${urlparams.requestType}`;
+    }
+
+    if (urlparams.searchPattern) {
+        url += `&searchPattern=${encodeURIComponent(urlparams.searchPattern)}`;
+    }
+
+    if (urlparams.searchRegion) {
+        url += `&searchRegion=${encodeURIComponent(urlparams.searchRegion)}`;
+    }
+
+    url += `&pageNumber=${encodeURIComponent(urlparams.pageNumber)}`;
+    try {
+        //console.log(urlparams.requestStatus);
+        console.log(url)
+        const response = await fetch(url);
+
+        console.log(response);
+
+        const blob = await response.blob(); // Convert response to blob
+
+        // Create download link
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(blob);
+        downloadLink.download = 'requests.xlsx';
+
+        // Trigger download
+        downloadLink.click();
+
+        // Clean up
+        window.URL.revokeObjectURL(downloadLink.href);
     }
     catch (error) {
         console.log(error);
