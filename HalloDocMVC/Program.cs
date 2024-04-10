@@ -34,6 +34,7 @@ builder.Services.AddScoped<IProvidersService, ProvidersService>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IAccessService, AccessService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
+builder.Services.AddScoped<IRecordsService, RecordsService>();
 
 
 var app = builder.Build();

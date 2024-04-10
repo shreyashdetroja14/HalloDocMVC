@@ -59,4 +59,40 @@ namespace HalloDocServices.Constants
         Unavailable = 0,
         Available = 1
     }
+
+    public enum RequestTypes
+    {
+        Business = 1,
+        Patient = 2,
+        Family = 3,
+        Concierge = 4
+    }
+
+    public enum DashboardRequestStatus
+    {
+        New = 1,
+        Pending = 2,
+        Active = 3,
+        Conclude = 4,
+        ToClose = 5,
+        Unpaid = 6,
+        Clear = 7,
+        Blocked = 8,
+    }
+
+    public enum RequestStatus
+    {
+        Unassigned = 1,
+        Accepted = 2,
+        Cancelled = 3,
+        MDEnRoute = 4,
+        MDONSite = 5,
+        Conclude = 6,
+        CancelledByPatient = 7,
+        Closed = 8,
+        Unpaid = 9,
+        Clear = 10,
+        Blocked = 11,
+
+    }
 }

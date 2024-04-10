@@ -37,6 +37,11 @@ namespace HalloDocRepository.Implementation
             return requests;
         }
 
+        public IQueryable<Request> GetIQueryableRequests()
+        {
+            return _context.Requests.AsQueryable();
+        }
+
         public IEnumerable<Request> GetAllIEnumerableRequests()
         {
             var requests =  _context.Requests.AsEnumerable();

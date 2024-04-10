@@ -453,6 +453,8 @@
 
             GetEventResources();
 
+            // view shift modal data ajax call function
+
             function ViewShift(eventId){
                 $.ajax({
                     url: '/Providers/ViewShift',
@@ -564,6 +566,9 @@
                 }
                 console.log('form submitted');
             });
+
+
+            // event listners for view shift partial 
 
             function viewShiftEventListeners(){
 

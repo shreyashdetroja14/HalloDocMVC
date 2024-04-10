@@ -221,3 +221,7 @@ tr p{
 .dropdown-menu{
     font-size: 16px;
 }
+
+.accordion-button{
+    font-size: 14px;
+}

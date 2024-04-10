@@ -44,8 +44,17 @@
                     <li><a class="dropdown-item" asp-action="UserAccess" asp-controller="Access">User Access</a></li>
                 </ul>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Records</a>
+            <li class="nav-item dropdown">
+                <a class="records nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                    Records
+                </a>
+                <ul class="dropdown-menu w-100">
+                    <li><a class="dropdown-item" asp-action="SearchRecords" asp-controller="Records">Search Records</a></li>
+                    <li><a class="dropdown-item" asp-action="EmailLogs" asp-controller="Records">Email Logs</a></li>
+                    <li><a class="dropdown-item" asp-action="SMSLogs" asp-controller="Records">SMS Logs</a></li>
+                    <li><a class="dropdown-item" asp-action="PatientHistory" asp-controller="Records">Patient History</a></li>
+                    <li><a class="dropdown-item" asp-action="BlockedHistory" asp-controller="Records">Blocked History</a></li>
+                </ul>
             </li>
         </ul>
         @*<form class="d-flex mt-3" role="search">
@@ -88,8 +97,17 @@
             <li><a class="dropdown-item" asp-action="UserAccess" asp-controller="Access">User Access</a></li>
         </ul>
     </li>
-    <li class="nav-item" role="presentation">
-        <a class="nav-link" href="#">Records</a>
+    <li class="nav-item dropdown">
+        <a class="records nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+            Records
+        </a>
+        <ul class="dropdown-menu w-100">
+            <li><a class="dropdown-item" asp-action="SearchRecords" asp-controller="Records">Search Records</a></li>
+            <li><a class="dropdown-item" asp-action="EmailLogs" asp-controller="Records">Email Logs</a></li>
+            <li><a class="dropdown-item" asp-action="SMSLogs" asp-controller="Records">SMS Logs</a></li>
+            <li><a class="dropdown-item" asp-action="PatientHistory" asp-controller="Records">Patient History</a></li>
+            <li><a class="dropdown-item" asp-action="BlockedHistory" asp-controller="Records">Blocked History</a></li>
+        </ul>
     </li>
 </ul>
 

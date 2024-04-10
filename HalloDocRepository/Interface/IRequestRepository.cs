@@ -28,6 +28,8 @@ namespace HalloDocRepository.Interface
 
         Task<List<Request>> GetAllRequests();
 
+        IQueryable<Request> GetIQueryableRequests();
+
         IEnumerable<Request> GetAllIEnumerableRequests();
 
         Task<bool> UpdateRequests(List<Request> requests);
