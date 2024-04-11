@@ -28,10 +28,10 @@
                     @(Model.RequestType == 4 ? "Concierge" : "")
                 </span>
             </div>
-            <a class="btn back-btn">
+            <button class="btn back-btn" onclick="window.history.back()">
                 <img src="/images/backIcon.svg" alt="">
                 Back
-            </a>
+            </button>
         </div>
         <form asp-action="ViewCase" class="bg-white p-4  request-form">
             <input type="number" asp-for="RequestId" hidden>

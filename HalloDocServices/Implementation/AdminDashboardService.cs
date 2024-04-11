@@ -96,7 +96,7 @@ namespace HalloDocServices.Implementation
                     break;
             }
 
-            requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Include(x => x.RequestStatusLogs).Where(x => myarray.Contains(x.Status));
+            requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Include(x => x.RequestStatusLogs).Where(x => x.IsDeleted != true && myarray.Contains(x.Status));
 
 
             if (requestType != null)

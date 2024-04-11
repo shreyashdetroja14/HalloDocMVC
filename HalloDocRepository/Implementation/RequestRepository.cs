@@ -174,43 +174,43 @@ namespace HalloDocRepository.Implementation
 
         public async Task<int> GetNewRequestCount()
         {
-            int count = await _context.Requests.Where(x => x.Status == 1).CountAsync();
+            int count = await _context.Requests.Where(x => x.IsDeleted != true && x.Status == 1).CountAsync();
             return count;
         }
 
         public async Task<int> GetPendingRequestCount()
         {
-            int count = await _context.Requests.Where(x => x.Status == 2).CountAsync();
+            int count = await _context.Requests.Where(x => x.IsDeleted != true && x.Status == 2).CountAsync();
             return count;
         }
 
         public async Task<int> GetActiveRequestCount()
         {
-            int count = await _context.Requests.Where(x => x.Status == 4 || x.Status == 5).CountAsync();
+            int count = await _context.Requests.Where(x => x.IsDeleted != true && (x.Status == 4 || x.Status == 5)).CountAsync();
             return count;
         }
 
         public async Task<int> GetConcludeRequestCount()
         {
-            int count = await _context.Requests.Where(x => x.Status == 6).CountAsync();
+            int count = await _context.Requests.Where(x => x.IsDeleted != true && x.Status == 6).CountAsync();
             return count;
         }
 
         public async Task<int> GetToCloseRequestCount()
         {
-            int count = await _context.Requests.Where(x => x.Status == 3 || x.Status == 7 || x.Status == 8).CountAsync();
+            int count = await _context.Requests.Where(x => x.IsDeleted != true && (x.Status == 3 || x.Status == 7 || x.Status == 8)).CountAsync();
             return count;
         }
 
         public async Task<int> GetUnpaidRequestCount()
         {
-            int count = await _context.Requests.Where(x => x.Status == 9).CountAsync();
+            int count = await _context.Requests.Where(x => x.IsDeleted != true && x.Status == 9).CountAsync();
             return count;
         }
 
         public async Task<int> GetClearedRequestCount()
         {
-            int count = await _context.Requests.Where(x => x.Status == 10).CountAsync();
+            int count = await _context.Requests.Where(x => x.IsDeleted != true && x.Status == 10).CountAsync();
             return count;
         }
 
@@ -234,6 +234,8 @@ namespace HalloDocRepository.Implementation
             return blockRequest;
         }
 
+
+
         public List<RequestWiseFile> GetRequestWiseFilesByFileIds(List<int> fileIds)
         {
             var requestwisefiles = _context.RequestWiseFiles.Where(x => fileIds.Contains(x.RequestWiseFileId)).ToList();
@@ -252,6 +254,13 @@ namespace HalloDocRepository.Implementation
         {
             _context.UpdateRange(requestWiseFiles);
             await _context.SaveChangesAsync();
+        }
+
+        public IQueryable<BlockRequest> GetIQueryableBlockedRequests()
+        {
+            return _context.BlockRequests.AsQueryable();
+
+
         }
     }
 }

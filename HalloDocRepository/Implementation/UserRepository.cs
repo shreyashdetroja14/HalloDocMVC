@@ -120,6 +120,11 @@ namespace HalloDocRepository.Implementation
             return user;
         }
 
+        public IQueryable<User> GetIQueryableUsers()
+        {
+            return _context.Users.AsQueryable();
+        }
+
         public async Task<AspNetUserRole> CreateAspNetUserRole(AspNetUserRole aspnetuserrole)
         {
             _context.Add(aspnetuserrole);

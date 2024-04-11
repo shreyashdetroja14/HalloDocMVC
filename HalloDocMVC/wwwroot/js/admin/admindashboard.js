@@ -39,14 +39,16 @@ const urlparams = {
 //on document ready, call partial view
 
 document.addEventListener("DOMContentLoaded", async () => {
-    //let requestStatus = 1;
+    let requestStatus = 1;
     if (localStorage.status) {
         urlparams.requestStatus = localStorage.status;
     }
     else {
         localStorage.status = requestStatus;
+        urlparams.requestStatus = requestStatus;
     }
     console.log('localstorage value: ', urlparams.requestStatus);
+    console.log('reqstatus value: ', requestStatus);
 
     addActiveTabClass(localStorage.status);
     await GetPartialViewData(urlparams);

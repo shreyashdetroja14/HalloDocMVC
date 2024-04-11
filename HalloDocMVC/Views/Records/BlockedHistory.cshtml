@@ -1,0 +1,138 @@
+﻿@using HalloDocServices.Constants;
+
+@{
+    ViewData["Title"] = "Blocked History";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+<style>
+    tr {
+        vertical-align: middle;
+    }
+
+        tr p {
+            margin: 0;
+        }
+
+    .h6 {
+        margin-bottom: 0;
+    }
+
+    @@media screen and (max-width: 991px) {
+        th,
+        td {
+            white-space: nowrap;
+        }
+    }
+
+</style>
+
+@model HalloDocServices.ViewModels.AdminViewModels.SearchRecordsViewModel
+
+<div class="main">
+    <partial name="_NavbarLinks">
+
+        <div class="container-fluid p-4">
+
+            <h2 class="mb-4">Blocked History</h2>
+
+            <div class="recordsSection bg-white rounded-3 custom-shadow">
+                <form class="container-fluid p-3" id="search-filters">
+                    <input type="number" asp-for="PageNumber" id="PageNumber" hidden />
+                    <div class="row">
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="PatientName" class="form-control" id="PatientName"
+                                       placeholder="Patient Name">
+                                <label asp-for="PatientName">Patient Name</label>
+                                <span asp-validation-for="PatientName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="form-floating mb-3">
+                                <input type="date" asp-for="CreatedDate" class="form-control" id="CreatedDate" placeholder="Created Date">
+                                <label for="CreatedDate">Created Date</label>
+                                <span class="text-danger" asp-validation-for="CreatedDate"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="Email" class="form-control" id="Email"
+                                       placeholder="Email">
+                                <label asp-for="Email">Email</label>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="PhoneNumber" class="form-control" id="PhoneNumber"
+                                       placeholder="PhoneNumber">
+                                <label asp-for="PhoneNumber">Phone Number</label>
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <input type="reset" value="Clear" id="reset-btn" class="btn btn-outline-info me-2" />
+                        <button type="button" id="search-btn" class="btn btn-info text-white">Search</button>
+                    </div>
+
+                </form>
+
+                <div id="partial-container">
+                </div>
+            </div>
+
+        </div>
+
+</div>
+
+@section AddScript
+    {
+    <script>
+        $('document').ready(function () {
+            function GetBlockedList() {
+                var formData = $('#search-filters').serialize();
+
+                $.ajax({
+                    url: '/Records/GetBlockedList',
+                    data: formData,
+                    type: 'POST',
+                    success: function (data) {
+                        $('#partial-container').html(data);
+
+                        partialEventListeners();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error fetching data:", textStatus);
+                        if (errorThrown) {
+                            console.error("Specific error:", errorThrown);
+                        }
+                        console.error("HTTP status code:", jqXHR.status);
+                    }
+                });
+            }
+
+            GetBlockedList();
+
+            $('#search-btn').click(function (event) {
+                event.preventDefault();
+
+                GetBlockedList();
+            });
+
+            function partialEventListeners() {
+                $('.page-number').each(function () {
+                    $(this).click(function (event) {
+                        const pageNumber = $(this).attr('data-page-number');
+                        console.log(pageNumber);
+
+                        $('#PageNumber').val(pageNumber);
+
+                        GetBlockedList();
+                    });
+                });
+            }
+        });
+    </script>
+}

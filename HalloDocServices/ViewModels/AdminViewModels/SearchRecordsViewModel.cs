@@ -12,11 +12,17 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public string? PatientName { get; set; }
 
+        public string? FirstName { get; set; }
+
+        public string? LastName { get; set; }
+
         public int? RequestType { get; set; }
 
         public string? FromDateOfService { get; set; }
 
         public string? ToDateOfService { get; set; }
+
+        public string? CreatedDate { get; set; }
 
         public string? ProviderName { get; set; }
 

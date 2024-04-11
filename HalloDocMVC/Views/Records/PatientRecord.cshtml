@@ -1,0 +1,99 @@
+﻿@using HalloDocServices.Constants;
+
+@{
+    ViewData["Title"] = "Patient Record";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+<style>
+    tr {
+        vertical-align: middle;
+    }
+
+        tr p {
+            margin: 0;
+        }
+
+    .h6 {
+        margin-bottom: 0;
+    }
+
+    @@media screen and (max-width: 991px) {
+        th,
+        td {
+            white-space: nowrap;
+        }
+    }
+
+</style>
+
+@model HalloDocServices.ViewModels.AdminViewModels.PatientRowViewModel
+
+<div class="main">
+    <partial name="_NavbarLinks">
+
+        <div class="container-fluid p-4">
+
+            <div class="heading d-flex justify-content-between align-items-center mb-3">
+                <h1 class="h2 mb-3">Patient Record</h1>
+                <button class="btn back-btn" onclick="window.history.back()">
+                    <img src="~/images/backIcon.svg" alt="">
+                    Back
+                </button>
+            </div>
+
+            <div class="recordsSection bg-white rounded-3 custom-shadow">
+                <input type="number" asp-for="UserId" id="UserId" hidden />
+                <div id="partial-container" class="pt-3">
+                </div>
+            </div>
+
+        </div>
+
+</div>
+
+@section AddScript
+{
+    <script>
+        let page = 1;
+
+        $('document').ready(function () {
+            function GetPatientRecordList(page) {
+                var formData = $('#search-filters').serialize();
+
+                $.ajax({
+                    url: '/Records/GetPatientRecordList',
+                    data: {
+                        userId: $('#UserId').val(),
+                        pageNumber: page,
+                    },
+                    type: 'GET',
+                    success: function (data) {
+                        $('#partial-container').html(data);
+
+                        partialEventListeners();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error fetching data:", textStatus);
+                        if (errorThrown) {
+                            console.error("Specific error:", errorThrown);
+                        }
+                        console.error("HTTP status code:", jqXHR.status);
+                    }
+                });
+            }
+
+            GetPatientRecordList(page);
+
+            function partialEventListeners() {
+                $('.page-number').each(function () {
+                    $(this).click(function (event) {
+                        const page = $(this).attr('data-page-number');
+
+                        GetPatientRecordList(page);
+                    });
+                });
+            }
+        });
+    </script>
+}

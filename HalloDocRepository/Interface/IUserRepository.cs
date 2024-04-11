@@ -47,6 +47,8 @@ namespace HalloDocRepository.Interface
 
         Task<User> UpdateUser(User user);
 
+        IQueryable<User> GetIQueryableUsers();
+
 
         // Concierge
 

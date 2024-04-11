@@ -18,9 +18,6 @@
         margin-bottom: 0;   
     }
 
-    
-
-
     @@media screen and (max-width: 991px) {
         th, 
         td {
@@ -39,7 +36,7 @@
 
             <div class="back mb-4 d-flex justify-content-between">
                 <h2>Search Records</h2>
-                <button class="btn btn-info text-white d-flex align-items-center">
+                <button class="btn btn-info text-white d-flex align-items-center" id="export-btn">
                     <span class="material-symbols-outlined border-circle text-white">
                         share_windows
                     </span>
@@ -132,6 +129,8 @@
 
 @section AddScript
 {
+    <partial name="_ToastMessageScriptsPartial" />
+
     <script>
         $('document').ready(function(){
             function GetRecordsList(){
@@ -162,6 +161,62 @@
                 event.preventDefault();
 
                 GetRecordsList();
+            });
+
+            $('#export-btn').click(async function () {
+
+                const searchFilters = $('#search-filters').serialize();
+
+                try {
+                    const response = await fetch('/Records/ExportRecords', {
+                        method: 'POST',
+                        body: searchFilters,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded' // For form data
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Error fetching data: ${response.statusText}`);
+                    }
+
+                    const data = await response.blob();
+                    console.log(data);
+
+                    // Download logic using the Blob
+                    const url = window.URL.createObjectURL(data);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'records.xlsx';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+
+                //var formData = $('#search-filters').serialize();
+
+                //$.ajax({
+                //    url: '/Records/ExportRecords',
+                //    data: formData,
+                //    type: 'POST',
+                //    dataType: 'blob',
+                //    success: function (data) {
+                //        console.log(data);
+
+                //    },
+                //    error: function (jqXHR, textStatus, errorThrown) {
+                //        console.error("Error fetching data:", textStatus);
+                //        if (errorThrown) {
+                //            console.error("Specific error:", errorThrown);
+                //        }
+                //        console.error("HTTP status code:", jqXHR.status);
+                //    }
+                //});
+                
             });
 
             function partialEventListeners(){

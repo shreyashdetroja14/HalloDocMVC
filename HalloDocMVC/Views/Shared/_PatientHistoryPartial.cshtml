@@ -1,0 +1,142 @@
+﻿@using HalloDocServices.ViewModels.AdminViewModels;
+
+@model List<HalloDocServices.ViewModels.AdminViewModels.PatientRowViewModel>
+
+@{
+    var Pager = new PagerViewModel();
+    int pageNumber = 0;
+
+    if (ViewBag.PagerData != null)
+    {
+        Pager = ViewBag.PagerData;
+        pageNumber = Pager.CurrentPage;
+    }
+}
+
+<div class="records-table table-responsive d-none d-md-block">
+    <table class="table mb-0">
+        <thead style="background-color: #FAF9F6;">
+            <tr class="providerslistheader">
+                <th scope="col" class="p-3">First Name</th>
+                <th scope="col" class="p-3">Last Name</th>
+                <th scope="col" class="py-3">Email</th>
+                <th scope="col" class="py-3">Phone Number</th>
+                <th scope="col" class="py-3">Address</th>
+                <th scope="col" class="py-3 text-center" style="min-width:7rem">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="record-row">
+                    <td class="p-3">
+                        @item.FirstName
+                    </td>
+                    <td class="py-3">
+                        @item.LastName
+                    </td>
+                    <td class="py-3">
+                        @item.Email
+                    </td>
+                    <td class="py-3">
+                        @item.PhoneNumber
+                    </td>
+                    <td class="py-3">
+                        @item.Address
+                    </td>
+                    <td class="py-3 text-center">
+                        <a asp-action="PatientRecord" asp-route-userId="@item.UserId" class="btn btn-outline-info">
+                            Explore
+                        </a>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+<div class="records-mobile d-md-none ">
+    <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
+        @foreach (var item in Model)
+        {
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed d-flex flex-column align-items-start" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#patient-@item.UserId">
+                        <span class="h6 mb-3">@(item.FirstName + " " + item.LastName)</span>
+                        <span>@item.PhoneNumber</span>
+                    </button>
+                </h2>
+                <div id="patient-@item.UserId" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+
+                        <div class="mb-2 mb-sm-3 d-flex align-items-center">
+                            <span class="material-symbols-outlined border-circle text-info me-1">
+                                mail
+                            </span>
+                            <span class="me-2">Email: </span>
+                            <span class="h6">@item.Email</span>
+                        </div>
+
+                        <div class="mb-2 mb-sm-3 d-flex align-items-center">
+                            <span class="material-symbols-outlined border-circle text-info me-1">
+                                call
+                            </span>
+                            <span class="me-2">Phone Number: </span>
+                            <span class="h6">@item.PhoneNumber</span>
+                        </div>
+
+                        <div class="mb-2 mb-sm-3 d-flex align-items-center">
+                            <span class="material-symbols-outlined border-circle text-info me-1">
+                                location_on
+                            </span>
+                            <span class="me-2">Address: </span>
+                            <span class="h6">@item.Address</span>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <a asp-action="PatientRecord" asp-route-userId="@item.UserId" class="btn btn-outline-info">
+                                Explore
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div>
+    @if (Pager.TotalPages > 0)
+    {
+        <ul class="pagination py-3 justify-content-center flex-wrap">
+
+            @if (Pager.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link page-number page-first" data-page-number="1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link page-number page-previous" data-page-number="@(Pager.CurrentPage - 1)">Prev</a>
+                </li>
+            }
+
+            @for (var pg = Pager.StartPage; pg <= Pager.EndPage; pg++)
+            {
+                <li class="page-item @(pg == Pager.CurrentPage ? "active" : "")">
+                    <a class="page-link page-number" data-page-number="@pg">@pg</a>
+                </li>
+            }
+
+            @if (Pager.CurrentPage < Pager.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link page-number page-next" data-page-number="@(Pager.CurrentPage + 1)">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link page-number page-last" data-page-number="@Pager.TotalPages">Last</a>
+                </li>
+            }
+        </ul>
+    }
+</div>

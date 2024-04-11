@@ -100,6 +100,12 @@
     align-items: center;
 }*/
 
+
+
+.btn-outline-info:hover{
+    color: #fff !important;
+}
+
 .btn-check:focus + .btn-info, .btn-info:focus {
     box-shadow: none;
 }
@@ -110,7 +116,6 @@
 
 .dropdown-item:hover, .dropdown-item:focus {
     color: #0dcaf0;
-    font-weight: bold;
     background-color: #0dcaf025;
 }
 
@@ -133,8 +138,18 @@
     border: 0 !important;
 }
 
+.page-item:hover{
+    cursor: pointer;
+}
+
 .page-link {
     border: 1px solid #0dcaf0;
+}
+
+.page-link:hover{
+    background-color: #0dcaf0;
+    color: white !important;
+    border-color: #0dcaf0;
 }
 
 .page-item.active .page-link {
