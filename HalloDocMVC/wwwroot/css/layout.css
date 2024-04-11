@@ -52,6 +52,14 @@ body {
     color: #636363;
 }
 
+.updated {
+    font-size: 16px;
+    font-weight: bold;
+    opacity: 1 !important;
+    min-width: 345px !important;
+    /*height: 60px !important;*/
+}
+
 @media screen and (max-width: 575px) {
     .logo-div {
         /* margin-top: 35px; */

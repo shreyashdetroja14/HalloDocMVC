@@ -241,7 +241,7 @@ namespace HalloDocMVC.Controllers
             }
 
             AgreementViewModel AgreementInfo = new AgreementViewModel();
-            AgreementInfo.RequestId = decryptedRequestId;
+            AgreementInfo.RId = (int)decryptedRequestId;
             AgreementInfo = await _patientService.GetAgreementViewModelData(AgreementInfo);
             return View(AgreementInfo);
         }
@@ -252,10 +252,15 @@ namespace HalloDocMVC.Controllers
             bool isAgreementAccepted = await _patientService.AcceptAgreement(AgreementInfo);
             if(isAgreementAccepted)
             {
-                ViewBag.AcceptedMessage = "Agreement Accepted Successfully. You can close this window.";
+                TempData["SuccessMessage"] = "Agreement Accepted Successfully";
+                return RedirectToAction("Index", "Login");
+            }
+            else
+            {
+                ViewBag.ErrorMessage = "Some Error Occured";
+                return View("Agreement", AgreementInfo);
             }
 
-            return View("Agreement", AgreementInfo);
         }
 
         [HttpPost]
@@ -264,10 +269,15 @@ namespace HalloDocMVC.Controllers
             bool isAgreementCancelled = await _patientService.CancelAgreement(CancelAgreementInfo);
             if (isAgreementCancelled)
             {
-                ViewBag.CancelMessage = "Agreement Cancelled Successfully. You can close this window.";
+                TempData["SuccessMessage"] = "Agreement Cancelled Successfully";
+                return RedirectToAction("Index", "Login");
             }
+            else
+            {
+                ViewBag.ErrorMessage = "Some Error Occured";
+                return View("Agreement", CancelAgreementInfo);
 
-            return View("Agreement", CancelAgreementInfo);
+            }
         }
     }
 }

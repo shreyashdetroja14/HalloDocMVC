@@ -18,7 +18,7 @@ namespace HalloDocServices.Implementation
             _configuration = configuration;
         }
 
-        public async Task<bool> SendMail(List<string> receiver, string subject, string body, bool isHtml, List<string>? filesToSend)
+        public async Task<bool> SendMail(List<string> receiver, string subject, string body, bool isHtml, List<string>? filesToSend = null)
         {
             try
             {

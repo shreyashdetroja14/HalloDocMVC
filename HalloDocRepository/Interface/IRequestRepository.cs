@@ -96,5 +96,9 @@ namespace HalloDocRepository.Interface
         Task<BlockRequest> CreateBlockRequest(BlockRequest blockRequest);
 
         IQueryable<BlockRequest> GetIQueryableBlockedRequests();
+
+        BlockRequest GetBlockRequestById(int blockRequestId);
+
+        Task<BlockRequest> UpdateBlockRequest(BlockRequest blockRequest);
     }
 }

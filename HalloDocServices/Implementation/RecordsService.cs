@@ -216,15 +216,22 @@ namespace HalloDocServices.Implementation
             }
         }
 
-        public async Task<bool> DeleteRecord(int requestId)
+        public async Task<bool> DeleteRecord(int requestId, int adminId)
         {
             var request = await _requestRepository.GetRequestByRequestId(requestId);
-
             if(request == null) return false;
 
             request.IsDeleted = true;
-
             await _requestRepository.UpdateRequest(request);
+
+            RequestStatusLog log = new RequestStatusLog();
+            log.RequestId = request.RequestId;
+            log.Status = request.Status;
+            log.AdminId = adminId;
+            log.Notes = "Admin deleted the request on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+            log.CreatedDate = DateTime.Now;
+
+            await _notesAndLogsRepository.AddRequestStatusLog(log);
 
             return true;
         }
@@ -344,7 +351,7 @@ namespace HalloDocServices.Implementation
 
         public PaginatedListViewModel<PatientRowViewModel> GetBlockedList(SearchRecordsViewModel SearchFilter)
         {
-            var data = _requestRepository.GetIQueryableBlockedRequests();
+            var data = _requestRepository.GetIQueryableBlockedRequests().Where(x => x.IsActive == true);
 
             if (SearchFilter.PatientName != null)
             {
@@ -415,6 +422,34 @@ namespace HalloDocServices.Implementation
             PaginatedList.DataRows = BlockedList;
 
             return PaginatedList;
+        }
+
+        public async Task<bool> UnblockRequest(int blockRequestId, int adminId)
+        {
+            BlockRequest blockRequest = _requestRepository.GetBlockRequestById(blockRequestId);
+            Request request = await _requestRepository.GetRequestByRequestId(blockRequest.RequestId);
+            
+            if(blockRequest.BlockRequestId == 0 || request.RequestId == 0)
+            {
+                return false;
+            }
+
+            blockRequest.IsActive = false;
+            await _requestRepository.UpdateBlockRequest(blockRequest);
+
+            request.Status = (int)RequestStatus.Unassigned;
+            await _requestRepository.UpdateRequest(request);
+
+            RequestStatusLog log = new RequestStatusLog();
+            log.RequestId = request.RequestId;
+            log.Status = request.Status;
+            log.AdminId = adminId;
+            log.Notes = "Admin unblocked the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+            log.CreatedDate = DateTime.Now;
+
+            await _notesAndLogsRepository.AddRequestStatusLog(log);
+
+            return true;
         }
     }
 }

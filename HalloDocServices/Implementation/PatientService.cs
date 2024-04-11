@@ -523,59 +523,73 @@ namespace HalloDocServices.Implementation
 
         public async Task<bool> AcceptAgreement(AgreementViewModel AgreementInfo)
         {
-            var requestFetched = await _requestRepository.GetRequestByRequestId(AgreementInfo.RequestId);
-            if (requestFetched != null)
+            var requestFetched = await _requestRepository.GetRequestByRequestId(AgreementInfo.RId);
+            if (requestFetched == null)
             {
-                requestFetched.Status = 4;
-
-                await _requestRepository.UpdateRequest(requestFetched);
-
-                RequestStatusLog log = new RequestStatusLog();
-                log.RequestId = requestFetched.RequestId;
-                log.Status = requestFetched.Status;
-                log.Notes = "Patient accepted the agreement on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
-                log.CreatedDate = DateTime.Now;
-
-                await _notesAndLogsRepository.AddRequestStatusLog(log);
+                return false;
             }
+
+            if (requestFetched.Status == 4)
+            {
+                return false;
+            }
+            requestFetched.Status = 4;
+
+            await _requestRepository.UpdateRequest(requestFetched);
+
+            RequestStatusLog log = new RequestStatusLog();
+            log.RequestId = requestFetched.RequestId;
+            log.Status = requestFetched.Status;
+            log.Notes = "Patient accepted the agreement on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+            log.CreatedDate = DateTime.Now;
+
+            await _notesAndLogsRepository.AddRequestStatusLog(log);
 
             return true;
         }
 
         public async Task<bool> CancelAgreement(AgreementViewModel CancelAgreementInfo)
         {
-            var requestFetched = await _requestRepository.GetRequestByRequestId(CancelAgreementInfo.RequestId);
-            if (requestFetched != null)
+            var requestFetched = await _requestRepository.GetRequestByRequestId(CancelAgreementInfo.RId);
+            if (requestFetched == null)
             {
-                requestFetched.Status = 7;
-
-                await _requestRepository.UpdateRequest(requestFetched);
-
-                RequestStatusLog log = new RequestStatusLog();
-                log.RequestId = requestFetched.RequestId;
-                log.Status = requestFetched.Status;
-                log.Notes = "Patient cancelled the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + CancelAgreementInfo.CancellationReason;
-                log.CreatedDate = DateTime.Now;
-
-                await _notesAndLogsRepository.AddRequestStatusLog(log);
+                return false;
             }
+
+            if (requestFetched.Status == 7)
+            {
+                return false;
+            }
+            requestFetched.Status = 7;
+
+            await _requestRepository.UpdateRequest(requestFetched);
+
+            RequestStatusLog log = new RequestStatusLog();
+            log.RequestId = requestFetched.RequestId;
+            log.Status = requestFetched.Status;
+            log.Notes = "Patient cancelled the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + CancelAgreementInfo.CancellationReason;
+            log.CreatedDate = DateTime.Now;
+
+            await _notesAndLogsRepository.AddRequestStatusLog(log);
 
             return true;
         }
 
         public async Task<AgreementViewModel> GetAgreementViewModelData(AgreementViewModel AgreementInfo)
         {
-            var requestFetched = await _requestRepository.GetRequestByRequestId(AgreementInfo.RequestId);
+            var requestFetched = await _requestRepository.GetRequestByRequestId(AgreementInfo.RId);
             if (requestFetched != null)
             {
-                if(requestFetched.Status == 7 || requestFetched.Status == 4)
+                if(requestFetched.Status != 2)
                 {
                     AgreementInfo.IsAgreementFilled = true;
                     return AgreementInfo;
                 }
 
+                AgreementInfo.RId = requestFetched.RequestId;
                 AgreementInfo.RequestStatus = requestFetched.Status;
-                var requestClientFetched = await _requestRepository.GetRequestClientByRequestId(AgreementInfo.RequestId);
+                AgreementInfo.ConfirmationNumber = requestFetched.ConfirmationNumber;
+                var requestClientFetched = await _requestRepository.GetRequestClientByRequestId(AgreementInfo.RId);
                 if (requestClientFetched != null)
                 {
                     AgreementInfo.PatientFullName = requestClientFetched.FirstName + " " + requestClientFetched.LastName;

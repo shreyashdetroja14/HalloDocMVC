@@ -262,5 +262,18 @@ namespace HalloDocRepository.Implementation
 
 
         }
+
+        public BlockRequest GetBlockRequestById(int blockRequestId)
+        {
+            return _context.BlockRequests.FirstOrDefault(x => x.BlockRequestId == blockRequestId) ?? new BlockRequest();
+        }
+
+        public async Task<BlockRequest> UpdateBlockRequest(BlockRequest blockRequest)
+        {
+            _context.BlockRequests.Update(blockRequest);
+            await _context.SaveChangesAsync();
+
+            return blockRequest;
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace HalloDocServices.Interface
     {
         PaginatedListViewModel<RecordRowViewModel> GetRecordsList(SearchRecordsViewModel SearchFilter);
 
-        Task<bool> DeleteRecord(int requestId);
+        Task<bool> DeleteRecord(int requestId, int adminId);
 
         byte[] ExportToExcel(SearchRecordsViewModel SearchFilter);
 
@@ -20,5 +20,7 @@ namespace HalloDocServices.Interface
         PaginatedListViewModel<PatientRowViewModel> GetPatientRecordList(int userId, int pageNumber);
 
         PaginatedListViewModel<PatientRowViewModel> GetBlockedList(SearchRecordsViewModel SearchFilter);
+
+        Task<bool> UnblockRequest(int blockRequestId, int adminId);
     }
 }

@@ -8,11 +8,13 @@ namespace HalloDocServices.ViewModels
 {
     public class AgreementViewModel
     {
-        public int RequestId { get; set; }
+        public int RId { get; set; }
 
         public int? RequestStatus { get; set; }
 
         public string? PatientFullName { get; set; }
+
+        public string? ConfirmationNumber { get; set; }
 
         public bool? IsAgreementFilled { get; set; }
 

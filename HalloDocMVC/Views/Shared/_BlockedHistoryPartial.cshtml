@@ -46,10 +46,10 @@
                         @item.BlockedReason
                     </td>
                     <td class="py-3">
-                        <input type="checkbox" checked="@(item.IsActive != null && item.IsActive == true? "true" : "false")"/>
+                        <input type="checkbox" class="form-check-input" checked="@(item.IsActive != null && item.IsActive == true? "true" : "false")" disabled/>
                     </td>
                     <td class="py-3 text-center">
-                        <a asp-action="Unblock" asp-route-userId="@item.BlockedRequestId" class="btn btn-outline-info">
+                        <a asp-action="Unblock" asp-route-blockRequestId="@item.BlockedRequestId" class="btn btn-outline-info">
                             Unblock
                         </a>
                     </td>
@@ -107,7 +107,7 @@
                         </div>
 
                         <div class="d-flex justify-content-end">
-                            <a asp-action="Unblock" asp-route-userId="@item.BlockedRequestId" class="btn btn-outline-info">
+                            <a asp-action="Unblock" asp-route-blockRequestId="@item.BlockedRequestId" class="btn btn-outline-info">
                                 Unblock
                             </a>
                         </div>

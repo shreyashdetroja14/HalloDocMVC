@@ -735,6 +735,9 @@ namespace HalloDocServices.Implementation
 
         public async Task<bool> SendAgreementViaMail(SendAgreementViewModel SendAgreementInfo)
         {
+            Request request = await _requestRepository.GetRequestByRequestId(SendAgreementInfo.RequestId);
+
+            if(request == null) { return false; }
 
             var mail = "tatva.dotnet.shreyashdetroja@outlook.com";
             var password = "Dotnet_tatvasoft@14";
@@ -752,8 +755,9 @@ namespace HalloDocServices.Implementation
 
             string EncryptedRequestId = Encode(SendAgreementInfo.RequestId.ToString());
             string url = "http://localhost:5059/Patient/Agreement?requestId=" + EncryptedRequestId;
-            string message = "Click on the link to view the service agreement: " + url ;
+            string message = "Click on the link to view the service agreement for Request - " + request.ConfirmationNumber + " on HalloDoc Platform: " + url ;
 
+            //string message = "hello";
             string receiver = SendAgreementInfo.Email ?? "";
 
             string senderDisplayName = "HalloDoc Admin";
@@ -770,12 +774,8 @@ namespace HalloDocServices.Implementation
                 await client.SendMailAsync(mailMessage);
             }
 
-            var requestFetched = await _requestRepository.GetRequestByRequestId(SendAgreementInfo.RequestId);
-            if(requestFetched != null)
-            {
-                requestFetched.IsAgreementSent = true;
-                await _requestRepository.UpdateRequest(requestFetched);
-            }
+            request.IsAgreementSent = true;
+            await _requestRepository.UpdateRequest(request);
 
             return true;
         }

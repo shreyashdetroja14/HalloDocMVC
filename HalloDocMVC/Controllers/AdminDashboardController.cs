@@ -343,7 +343,11 @@ namespace HalloDocMVC.Controllers
             bool isAgreementSent = await _adminDashboardService.SendAgreementViaMail(SendAgreementInfo);
             if (isAgreementSent)
             {
-
+                TempData["SuccessMessage"] = "Agreement Sent Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Send Provider.";
             }
             return RedirectToAction("Index");
         }

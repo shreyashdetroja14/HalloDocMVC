@@ -1,19 +1,48 @@
-﻿using HalloDocServices.Implementation;
+﻿using HalloDocEntities.Models;
+using HalloDocServices.Implementation;
 using HalloDocServices.Interface;
+using HalloDocServices.ViewModels;
 using HalloDocServices.ViewModels.AdminViewModels;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Core.Types;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace HalloDocMVC.Controllers
 {
     public class RecordsController : Controller
     {
+        private readonly IJwtService _jwtService;
         private readonly IRecordsService _recordsService;
 
-        public RecordsController(IRecordsService recordsService)
+        public RecordsController(IJwtService jwtService, IRecordsService recordsService)
         {
+            _jwtService = jwtService;
             _recordsService = recordsService;
         }
+
+        #region JWT TOKEN DATA
+
+        public ClaimsData GetClaimsData()
+        {
+            ClaimsData claimsData = new ClaimsData();
+
+            string token = Request.Cookies["jwt"] ?? "";
+
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                claimsData.AspNetUserId = jwtToken.Claims.FirstOrDefault(x => x.Type == "aspnetuserId")?.Value;
+                claimsData.Email = jwtToken?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+                claimsData.AspNetUserRole = jwtToken?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+                claimsData.Username = jwtToken?.Claims.FirstOrDefault(x => x.Type == "username")?.Value;
+                claimsData.Id = int.Parse(jwtToken?.Claims.FirstOrDefault(x => x.Type == "id")?.Value ?? "");
+            }
+
+            return claimsData;
+        }
+
+        #endregion
+
         public IActionResult SearchRecords()
         {
             return View();
@@ -36,7 +65,7 @@ namespace HalloDocMVC.Controllers
 
         public async Task<IActionResult> DeleteRecord(int requestId)
         {
-            bool idRecordDeleted = await _recordsService.DeleteRecord(requestId);
+            bool idRecordDeleted = await _recordsService.DeleteRecord(requestId, GetClaimsData().Id);
             if (idRecordDeleted)
             {
                 TempData["SuccessMessage"] = "Record Deleted Successfully.";
@@ -115,6 +144,21 @@ namespace HalloDocMVC.Controllers
 
             ViewBag.PagerData = PaginatedList.PagerData;
             return PartialView("_BlockedHistoryPartial", PaginatedList.DataRows);
+        }
+
+        public async Task<IActionResult> Unblock(int blockRequestId)
+        {
+            bool isRequestUnblocked = await _recordsService.UnblockRequest(blockRequestId, GetClaimsData().Id);
+            if (isRequestUnblocked)
+            {
+                TempData["SuccessMessage"] = "Request Unblocked Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Unblock Request.";
+            }
+
+            return RedirectToAction("BlockedHistory");
         }
     }
 }

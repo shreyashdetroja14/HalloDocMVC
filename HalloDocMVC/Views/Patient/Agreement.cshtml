@@ -41,47 +41,57 @@
             <h3 class="text-center text-danger">@ViewBag.CancelMessage</h3>
         }
 
-        @if (Model.IsAgreementFilled == true)
+        @if (ViewBag.ErrorMessage != null)
         {
-            <h3 class="text-center text-warning">You have already filled the agreement form.</h3>
+            <p>@ViewBag.ErrorMessage</p>
         }
         else
         {
-            <p class="fs-5 mb-4">
-                To provide best medical services, we cannot determine the cost right away. If you agree to our service, so we will provide care and follow-up until all care is completed. So with these points, if you like us to provide care to you click on 'Agree' and we'll get started immediately. If you don not agree simply click 'Cancel'.
-            </p>
-            <div class="d-flex justify-content-center">
-                <form asp-action="AcceptAgreement">
-                    <input type="number" asp-for="RequestId" hidden />
-                    <input type="submit" value="Agree" class="btn btn-success px-3">
-                </form>
-                <button class="btn btn-outline-danger ms-4 px-3" data-bs-toggle="modal" data-bs-target="#patient-cancel-modal">Cancel</button>
-            </div>
+            @if (Model.IsAgreementFilled == true)
+            {
+                <h3 class="text-center text-warning">You have already filled the agreement form.</h3>
+            }
+            else
+            {
+                <p class="fs-5 mb-4">
+                    Agreement For Request: @Model.ConfirmationNumber
+                </p>
+                <p class="fs-5 mb-4">
+                    To provide best medical services, we cannot determine the cost right away. If you agree to our service, so we will provide care and follow-up until all care is completed. So with these points, if you like us to provide care to you click on 'Agree' and we'll get started immediately. If you don not agree simply click 'Cancel'.
+                </p>
+                <div class="d-flex justify-content-center">
+                    <form asp-action="AcceptAgreement">
+                        <input type="number" asp-for="RId" id="RequestId" hidden />
+                        <input type="submit" value="Agree" class="btn btn-success px-3">
+                    </form>
+                    <button class="btn btn-outline-danger ms-4 px-3" data-bs-toggle="modal" data-bs-target="#patient-cancel-modal">Cancel</button>
+                </div>
 
-            <div class="modal fade" data-bs-backdrop="static" id="patient-cancel-modal" tabindex="-1">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content rounded-3">
-                        <div class="modal-header fw-bold bg-info text-white">
-                            <h1 class="modal-title fs-5 " id="modaltitle">Confirm Cancellation </h1>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Test Test</p>
-                            <form asp-action="CancelAgreement">
-                                <input type="number" asp-for="RequestId" hidden />
-                                <div class="form-floating mb-3">
-                                    <textarea asp-for="CancellationReason" class="form-control" placeholder="Reason to block" id="" style="height: 150px"></textarea>
-                                    <label>Please provide a brief explanation for your cancellation.</label>
-                                </div>
-                                <div class="d-flex justify-content-end">
-                                    <input type="submit" value="Confirm" class="btn btn-info text-white" />
-                                    <button type="button" class="btn btn-outline-info ms-3" data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                            </form>
+                <div class="modal fade" data-bs-backdrop="static" id="patient-cancel-modal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content rounded-3">
+                            <div class="modal-header fw-bold bg-info text-white">
+                                <h1 class="modal-title fs-5 " id="modaltitle">Confirm Cancellation </h1>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Test Test</p>
+                                <form asp-action="CancelAgreement">
+                                    <input type="number" asp-for="RId" hidden />
+                                    <div class="form-floating mb-3">
+                                        <textarea asp-for="CancellationReason" class="form-control" placeholder="Reason to block" id="" style="height: 150px"></textarea>
+                                        <label>Please provide a brief explanation for your cancellation.</label>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <input type="submit" value="Confirm" class="btn btn-info text-white" />
+                                        <button type="button" class="btn btn-outline-info ms-3" data-bs-dismiss="modal">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
         }
 
 
@@ -91,6 +101,12 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const inp = document.querySelector('#RequestId');
+        if(inp)
+            console.log('req id is: ', inp.value);
+    </script>
 
 </body>
 </html>
