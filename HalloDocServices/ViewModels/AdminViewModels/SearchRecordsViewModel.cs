@@ -30,6 +30,12 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public string? PhoneNumber { get; set;}
 
+        public int? AccountType { get; set; }
+
+        public string? ReceiverName { get; set; }
+
+        public string? SentDate { get; set; }
+
         public int PageNumber { get; set; }
     }
 }

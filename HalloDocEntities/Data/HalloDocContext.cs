@@ -34,6 +34,8 @@ public partial class HalloDocContext : DbContext
 
     public virtual DbSet<Concierge> Concierges { get; set; }
 
+    public virtual DbSet<EmailLog> EmailLogs { get; set; }
+
     public virtual DbSet<EncounterForm> EncounterForms { get; set; }
 
     public virtual DbSet<HealthProfessionType> HealthProfessionTypes { get; set; }
@@ -75,6 +77,8 @@ public partial class HalloDocContext : DbContext
     public virtual DbSet<ShiftDetail> ShiftDetails { get; set; }
 
     public virtual DbSet<ShiftDetailRegion> ShiftDetailRegions { get; set; }
+
+    public virtual DbSet<SmsLog> SmsLogs { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -170,6 +174,19 @@ public partial class HalloDocContext : DbContext
             entity.HasOne(d => d.Region).WithMany(p => p.Concierges)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_region");
+        });
+
+        modelBuilder.Entity<EmailLog>(entity =>
+        {
+            entity.HasKey(e => e.EmailLogId).HasName("email_log_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.Admin).WithMany(p => p.EmailLogs).HasConstraintName("fk_admin");
+
+            entity.HasOne(d => d.Physician).WithMany(p => p.EmailLogs).HasConstraintName("fk_physician");
+
+            entity.HasOne(d => d.Request).WithMany(p => p.EmailLogs).HasConstraintName("fk_request");
         });
 
         modelBuilder.Entity<EncounterForm>(entity =>
@@ -408,6 +425,19 @@ public partial class HalloDocContext : DbContext
             entity.HasOne(d => d.ShiftDetail).WithMany(p => p.ShiftDetailRegions)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_shift_detail");
+        });
+
+        modelBuilder.Entity<SmsLog>(entity =>
+        {
+            entity.HasKey(e => e.SmsLogId).HasName("sms_log_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.Admin).WithMany(p => p.SmsLogs).HasConstraintName("fk_admin");
+
+            entity.HasOne(d => d.Physician).WithMany(p => p.SmsLogs).HasConstraintName("fk_physician");
+
+            entity.HasOne(d => d.Request).WithMany(p => p.SmsLogs).HasConstraintName("fk_request");
         });
 
         modelBuilder.Entity<User>(entity =>

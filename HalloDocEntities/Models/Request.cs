@@ -113,6 +113,9 @@ public partial class Request
     public virtual ICollection<BlockRequest> BlockRequests { get; set; } = new List<BlockRequest>();
 
     [InverseProperty("Request")]
+    public virtual ICollection<EmailLog> EmailLogs { get; set; } = new List<EmailLog>();
+
+    [InverseProperty("Request")]
     public virtual ICollection<EncounterForm> EncounterForms { get; set; } = new List<EncounterForm>();
 
     [InverseProperty("Request")]
@@ -140,6 +143,9 @@ public partial class Request
 
     [InverseProperty("Request")]
     public virtual ICollection<RequestWiseFile> RequestWiseFiles { get; set; } = new List<RequestWiseFile>();
+
+    [InverseProperty("Request")]
+    public virtual ICollection<SmsLog> SmsLogs { get; set; } = new List<SmsLog>();
 
     [ForeignKey("UserId")]
     [InverseProperty("Requests")]

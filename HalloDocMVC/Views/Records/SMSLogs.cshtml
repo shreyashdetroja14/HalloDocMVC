@@ -1,0 +1,160 @@
+﻿@using HalloDocServices.Constants;
+
+@{
+    ViewData["Title"] = "SMS Logs";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+<style>
+    tr {
+        vertical-align: middle;
+    }
+
+        tr p {
+            margin: 0;
+        }
+
+    .h6 {
+        margin-bottom: 0;
+    }
+
+    @@media screen and (max-width: 991px) {
+        th,
+        td {
+            white-space: nowrap;
+        }
+    }
+
+</style>
+
+@model HalloDocServices.ViewModels.AdminViewModels.SearchRecordsViewModel
+
+<div class="main">
+    <partial name="_NavbarLinks">
+
+        <div class="container-fluid p-4">
+
+            <h2 class="mb-4">SMS Logs</h2>
+
+            <div class="recordsSection bg-white rounded-3 custom-shadow">
+                <form class="container-fluid p-3" id="search-filters">
+                    <input type="number" asp-for="PageNumber" id="PageNumber" hidden />
+                    <div class="row">
+
+                        <div class="col-sm-6 col-md-4 col-lg-2">
+                            <div class="form-floating mb-3">
+                                <select asp-for="AccountType" id="account-list" class="form-select" asp-items="@Html.GetEnumSelectList<AccountType>()">
+                                    <option value="" selected>All</option>
+                                </select>
+                                <label asp-for="AccountType">Search By Role</label>
+                                <span asp-validation-for="RequestStatus" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-4 col-lg-2">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="ReceiverName" class="form-control" id="ReceiverName"
+                                       placeholder="Receiver Name">
+                                <label asp-for="ReceiverName">Receiver Name</label>
+                                <span asp-validation-for="ReceiverName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-4 col-lg-2">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="PhoneNumber" class="form-control" id="PhoneNumber"
+                                       placeholder="Phone Number">
+                                <label asp-for="PhoneNumber">Phone Number</label>
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-4 col-lg-2">
+                            <div class="form-floating mb-3">
+                                <input type="date" asp-for="CreatedDate" class="form-control" id="CreatedDate" placeholder="Created Date">
+                                <label for="CreatedDate">Created Date</label>
+                                <span class="text-danger" asp-validation-for="CreatedDate"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-4 col-lg-2">
+                            <div class="form-floating mb-3">
+                                <input type="date" asp-for="SentDate" class="form-control" id="SentDate" placeholder="Sent Date">
+                                <label for="SentDate">Sent Date</label>
+                                <span class="text-danger" asp-validation-for="SentDate"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-4 col-lg-2">
+                            <div class="mb-3">
+                                <input type="reset" value="Clear" id="reset-btn" class="btn btn-outline-info me-2" />
+                                <button type="button" id="search-btn" class="btn btn-info text-white">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="col-sm-6 col-md-4 col-lg-2">
+                    <div class="d-flex justify-content-end">
+                    <input type="reset" value="Clear" id="reset-btn" class="btn btn-outline-info me-2" />
+                    <button type="button" id="search-btn" class="btn btn-info text-white">Search</button>
+                    </div>
+                    </div>*@
+
+
+                </form>
+
+                <div id="partial-container">
+                </div>
+            </div>
+
+        </div>
+
+</div>
+
+@section AddScript
+    {
+    <script>
+        $('document').ready(function () {
+            function GetSMSLogs() {
+                var formData = $('#search-filters').serialize();
+
+                $.ajax({
+                    url: '/Records/GetSMSLogs',
+                    data: formData,
+                    type: 'POST',
+                    success: function (data) {
+                        $('#partial-container').html(data);
+
+                        partialEventListeners();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error fetching data:", textStatus);
+                        if (errorThrown) {
+                            console.error("Specific error:", errorThrown);
+                        }
+                        console.error("HTTP status code:", jqXHR.status);
+                    }
+                });
+            }
+
+            GetSMSLogs();
+
+            $('#search-btn').click(function (event) {
+                event.preventDefault();
+
+                GetSMSLogs();
+            });
+
+            function partialEventListeners() {
+                $('.page-number').each(function () {
+                    $(this).click(function (event) {
+                        const pageNumber = $(this).attr('data-page-number');
+                        console.log(pageNumber);
+
+                        $('#PageNumber').val(pageNumber);
+
+                        GetSMSLogs();
+                    });
+                });
+            }
+        });
+    </script>
+}

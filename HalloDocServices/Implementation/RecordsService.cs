@@ -22,13 +22,15 @@ namespace HalloDocServices.Implementation
         private readonly IUserRepository _userRepository;
         private readonly INotesAndLogsRepository _notesAndLogsRepository;
         private readonly ICommonRepository _commonRepository;
+        private readonly IEmailSMSLogRepository _emailSMSLogRepository;
 
-        public RecordsService(IRequestRepository requestRepository, IUserRepository userRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository)
+        public RecordsService(IRequestRepository requestRepository, IUserRepository userRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IEmailSMSLogRepository emailSMSLogRepository)
         {
             _requestRepository = requestRepository;
             _userRepository = userRepository;
             _notesAndLogsRepository = notesAndLogsRepository;
             _commonRepository = commonRepository;
+            _emailSMSLogRepository = emailSMSLogRepository;
         }
 
         public IQueryable<Request> FilterRequests(SearchRecordsViewModel SearchFilter)
@@ -450,6 +452,144 @@ namespace HalloDocServices.Implementation
             await _notesAndLogsRepository.AddRequestStatusLog(log);
 
             return true;
+        }
+
+        public PaginatedListViewModel<LogRowViewModel> GetEmailLogs(SearchRecordsViewModel SearchFilter)
+        {
+            var emailLogs = _emailSMSLogRepository.GetIqueryableEmailLogs();
+
+            if(SearchFilter.AccountType != null)
+            {
+                emailLogs = emailLogs.Where(x => x.RoleId == SearchFilter.AccountType);
+            }
+
+            if(SearchFilter.ReceiverName != null)
+            {
+                emailLogs.Where(x => EF.Functions.ILike(x.RecipientName ?? "", "%" + SearchFilter.ReceiverName + "%"));
+            }
+
+            if(SearchFilter.Email != null)
+            {
+                emailLogs = emailLogs.Where(x => EF.Functions.ILike(x.EmailId, "%" + SearchFilter.Email + "%"));
+            }
+
+            if(SearchFilter.CreatedDate != null)
+            {
+                DateTime createdDate = DateTime.ParseExact(SearchFilter.CreatedDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                emailLogs = emailLogs.Where(x => DateOnly.FromDateTime(x.CreatedDate) == DateOnly.FromDateTime(createdDate));
+            }
+            
+            if(SearchFilter.SentDate != null)
+            {
+                DateTime sentDate = DateTime.ParseExact(SearchFilter.SentDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                emailLogs = emailLogs.Where(x => DateOnly.FromDateTime(x.SentDate ?? DateTime.Now) == DateOnly.FromDateTime(sentDate));
+            }   
+
+            //pagination data initialize
+
+            int requestCount = emailLogs.Count();
+            int pageNumber = SearchFilter.PageNumber;
+            int pageSize = 5;
+
+            PagerViewModel PagerData = new PagerViewModel(requestCount, pageNumber, pageSize);
+
+            //pagination query for db 
+
+            int rowsToSkip = (pageNumber - 1) * pageSize;
+
+            emailLogs = emailLogs.Skip(rowsToSkip).Take(pageSize);
+
+            List<LogRowViewModel> EmailLogList = emailLogs.Select(x => new LogRowViewModel
+            {
+                RecipientName = x.RecipientName,
+                Action = x.Action.ToString(),
+                RoleName = ((AccountType)(x.RoleId ?? 0)).ToString(),
+                Email = x.EmailId,
+                CreatedDate = x.CreatedDate.ToString(),
+                SentDate = x.SentDate != null ? x.SentDate.ToString() : DateTime.Now.ToString(),
+                IsSent = x.IsEmailSent ?? false,
+                SentTries = x.SentTries,
+                ConfirmationNumber = x.Request != null ? x.Request.ConfirmationNumber : "",
+                IsEmailLog = true,
+                IsSMSLog = false,
+            }).ToList();
+
+
+
+            PaginatedListViewModel<LogRowViewModel> PaginatedList = new PaginatedListViewModel<LogRowViewModel>();
+            PaginatedList.PagerData = PagerData;
+            PaginatedList.DataRows = EmailLogList;
+
+            return PaginatedList;
+        }
+
+        public PaginatedListViewModel<LogRowViewModel> GetSMSLogs(SearchRecordsViewModel SearchFilter)
+        {
+            var smsLogs = _emailSMSLogRepository.GetIqueryableSmsLogs();
+
+            if (SearchFilter.AccountType != null)
+            {
+                smsLogs = smsLogs.Where(x => x.RoleId == SearchFilter.AccountType);
+            }
+
+            if (SearchFilter.ReceiverName != null)
+            {
+                smsLogs.Where(x => EF.Functions.ILike(x.RecipientName ?? "", "%" + SearchFilter.ReceiverName + "%"));
+            }
+
+            if (SearchFilter.PhoneNumber != null)
+            {
+                smsLogs = smsLogs.Where(x => EF.Functions.ILike(x.MobileNumber, "%" + SearchFilter.PhoneNumber + "%"));
+            }
+
+            if (SearchFilter.CreatedDate != null)
+            {
+                DateTime createdDate = DateTime.ParseExact(SearchFilter.CreatedDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                smsLogs = smsLogs.Where(x => DateOnly.FromDateTime(x.CreatedDate) == DateOnly.FromDateTime(createdDate));
+            }
+
+            if (SearchFilter.SentDate != null)
+            {
+                DateTime sentDate = DateTime.ParseExact(SearchFilter.SentDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                smsLogs = smsLogs.Where(x => DateOnly.FromDateTime(x.SentDate ?? DateTime.Now) == DateOnly.FromDateTime(sentDate));
+            }
+
+            //pagination data initialize
+
+            int requestCount = smsLogs.Count();
+            int pageNumber = SearchFilter.PageNumber;
+            int pageSize = 5;
+
+            PagerViewModel PagerData = new PagerViewModel(requestCount, pageNumber, pageSize);
+
+            //pagination query for db 
+
+            int rowsToSkip = (pageNumber - 1) * pageSize;
+
+            smsLogs = smsLogs.Skip(rowsToSkip).Take(pageSize);
+
+            List<LogRowViewModel> EmailLogList = smsLogs.Select(x => new LogRowViewModel
+            {
+                RecipientName = x.RequestId != null ? x.Request.RequestClients.FirstOrDefault().FirstName + " " + x.Request.RequestClients.FirstOrDefault().LastName : x.Physician.FirstName + " " + x.Physician.LastName,
+                Action = x.Action.ToString(),
+                RoleName = ((AccountType)(x.RoleId ?? 0)).ToString(),
+                PhoneNumber = x.MobileNumber,
+                CreatedDate = x.CreatedDate.ToString(),
+                SentDate = x.SentDate != null ? x.SentDate.ToString() : DateTime.Now.ToString(),
+                IsSent = x.IsSmsSent ?? false,
+                SentTries = x.SentTries,
+                ConfirmationNumber = x.Request != null ? x.Request.ConfirmationNumber : "",
+                IsEmailLog = false,
+                IsSMSLog = true,
+            }).ToList();
+
+
+
+            PaginatedListViewModel<LogRowViewModel> PaginatedList = new PaginatedListViewModel<LogRowViewModel>();
+            PaginatedList.PagerData = PagerData;
+            PaginatedList.DataRows = EmailLogList;
+
+            return PaginatedList;
         }
     }
 }

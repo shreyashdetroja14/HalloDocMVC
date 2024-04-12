@@ -22,5 +22,9 @@ namespace HalloDocServices.Interface
         PaginatedListViewModel<PatientRowViewModel> GetBlockedList(SearchRecordsViewModel SearchFilter);
 
         Task<bool> UnblockRequest(int blockRequestId, int adminId);
+
+        PaginatedListViewModel<LogRowViewModel> GetEmailLogs(SearchRecordsViewModel SearchFilter);
+
+        PaginatedListViewModel<LogRowViewModel> GetSMSLogs(SearchRecordsViewModel SearchFilter);
     }
 }

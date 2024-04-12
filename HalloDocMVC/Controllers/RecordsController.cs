@@ -160,5 +160,45 @@ namespace HalloDocMVC.Controllers
 
             return RedirectToAction("BlockedHistory");
         }
+
+        public IActionResult EmailLogs()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult GetEmailLogs(SearchRecordsViewModel SearchFilters)
+        {
+            if (SearchFilters.PageNumber <= 0)
+            {
+                SearchFilters.PageNumber = 1;
+            }
+
+            PaginatedListViewModel<LogRowViewModel> PaginatedList = new PaginatedListViewModel<LogRowViewModel>();
+            PaginatedList = _recordsService.GetEmailLogs(SearchFilters);
+
+            ViewBag.PagerData = PaginatedList.PagerData;
+            return PartialView("_EmailSMSLogPartial", PaginatedList.DataRows);
+        }
+        
+        public IActionResult SMSLogs()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult GetSMSLogs(SearchRecordsViewModel SearchFilters)
+        {
+            if (SearchFilters.PageNumber <= 0)
+            {
+                SearchFilters.PageNumber = 1;
+            }
+
+            PaginatedListViewModel<LogRowViewModel> PaginatedList = new PaginatedListViewModel<LogRowViewModel>();
+            PaginatedList = _recordsService.GetSMSLogs(SearchFilters);
+
+            ViewBag.PagerData = PaginatedList.PagerData;
+            return PartialView("_EmailSMSLogPartial", PaginatedList.DataRows);
+        }
     }
 }

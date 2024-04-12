@@ -22,6 +22,7 @@ builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
+builder.Services.AddScoped<IEmailSMSLogRepository, EmailSMSLogRepository>();
 
 
 builder.Services.AddScoped<ILoginService, LoginService>();

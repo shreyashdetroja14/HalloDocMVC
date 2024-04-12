@@ -987,8 +987,6 @@ namespace HalloDocServices.Implementation
 
             var requestData = requests.ToList();
 
-            var fileName = "requests.xlsx";
-
             DataTable dataTable = new DataTable("Requests");
 
             dataTable.Columns.AddRange(new DataColumn[]

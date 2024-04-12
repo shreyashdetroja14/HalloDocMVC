@@ -46,15 +46,23 @@ namespace HalloDocMVC.Controllers
 
             if (!ModelState.IsValid)
             {
+                ViewBag.RegionList = _requestFormService.GetRegionList();
                 return View(prvm);
             }
 
             bool isrequestcreated = await _requestFormService.CreatePatientRequest(prvm);
-            if (isrequestcreated)
+            if(isrequestcreated)
             {
+                TempData["SuccessMessage"] = "Request Created Successfully.";
                 return RedirectToAction("SubmitRequest");
             }
-            return RedirectToAction("Index", "Home");
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Create Request.";
+                return RedirectToAction("PatientRequest");
+            }
+
+            
             
         }
 
@@ -70,6 +78,7 @@ namespace HalloDocMVC.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ViewBag.RegionList = _requestFormService.GetRegionList();
                 return View(frvm);
             }
 
@@ -85,11 +94,16 @@ namespace HalloDocMVC.Controllers
             }
 
             bool isrequestcreated = await _requestFormService.CreateFamilyRequest(frvm);
-            if (isrequestcreated)
+            if(isrequestcreated)
             {
+                TempData["SuccessMessage"] = "Request Created Successfully.";
                 return RedirectToAction("SubmitRequest");
             }
-            return RedirectToAction("Index", "Home");
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Create Request.";
+                return RedirectToAction("FamilyRequest");
+            }
         }
 
         public IActionResult ConciergeRequest()
@@ -104,9 +118,10 @@ namespace HalloDocMVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("~/Views/Home/Index.cshtml");
+                ViewBag.RegionList = _requestFormService.GetRegionList();
+                return View(crvm);
             }
-            
+
             bool isUserExists = await _requestFormService.CheckUser(crvm.PatientInfo.Email);
             if (!isUserExists)
             {
@@ -121,9 +136,14 @@ namespace HalloDocMVC.Controllers
             bool isrequestcreated = await _requestFormService.CreateConciergeRequest(crvm);
             if (isrequestcreated)
             {
+                TempData["SuccessMessage"] = "Request Created Successfully.";
                 return RedirectToAction("SubmitRequest");
             }
-            return RedirectToAction("Index", "Home");
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Create Request.";
+                return RedirectToAction("ConciergeRequest");
+            }
 
         }
 
@@ -139,6 +159,7 @@ namespace HalloDocMVC.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ViewBag.RegionList = _requestFormService.GetRegionList();
                 return View("~/Views/Home/Index.cshtml");
             }
             bool isUserExists = await _requestFormService.CheckUser(brvm.PatientInfo.Email);
@@ -155,10 +176,15 @@ namespace HalloDocMVC.Controllers
             bool isrequestcreated = await _requestFormService.CreateBusinessRequest(brvm);
             if (isrequestcreated)
             {
+                TempData["SuccessMessage"] = "Request Created Successfully.";
                 return RedirectToAction("SubmitRequest");
             }
-            return RedirectToAction("Index", "Home");
-            
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Create Request.";
+                return RedirectToAction("BusinessRequest");
+            }
+
         }
 
 

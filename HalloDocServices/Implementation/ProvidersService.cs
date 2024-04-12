@@ -448,6 +448,12 @@ namespace HalloDocServices.Implementation
 
         public async Task<bool> CreateProvider(EditProviderViewModel ProviderInfo)
         {
+            var aspnetuserFetched = await _userRepository.GetAspNetUserByEmail(ProviderInfo.Email);
+            if(aspnetuserFetched != null)
+            {
+                return false;
+            }
+
             var aspnetuserNew = new AspNetUser();
 
             aspnetuserNew.Id = Guid.NewGuid().ToString();

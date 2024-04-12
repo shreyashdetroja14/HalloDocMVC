@@ -57,7 +57,7 @@ namespace HalloDocServices.ViewModels
         public IEnumerable<IFormFile>? MultipleFiles { get; set; }
     }
 
-    public class AllowedStatesAttribute : ValidationAttribute
+    /*public class AllowedStatesAttribute : ValidationAttribute
     {
         private readonly string[] _allowedStates = { "Gujarat", "Maharashtra", "Madhya Pradesh", "Uttar Pradesh", "Rajasthan" };
 
@@ -74,6 +74,6 @@ namespace HalloDocServices.ViewModels
 
             return ValidationResult.Success;
         }
-    }
+    }*/
 
 }

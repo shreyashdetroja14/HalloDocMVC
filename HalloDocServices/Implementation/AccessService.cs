@@ -207,6 +207,13 @@ namespace HalloDocServices.Implementation
 
         public async Task<bool> CreateAdmin(AdminProfileViewModel AdminDetails)
         {
+            var aspnetuserFetched = await _userRepository.GetAspNetUserByEmail(AdminDetails.Email);
+
+            if (aspnetuserFetched != null)
+            {
+                return false;
+            }
+
             var aspnetuserNew = new AspNetUser();
 
             aspnetuserNew.Id = Guid.NewGuid().ToString();
