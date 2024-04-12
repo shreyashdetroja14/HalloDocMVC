@@ -14,11 +14,11 @@
             </div>
             <div class="modal-body">
                 <p>Patient Name: <span class="text-info fw-bold">@Model.PatientFullName</span></p>
-                <form asp-action="CancelCase">
+                <form asp-action="CancelCase" id="cancel-case-form" class="needs-validation" novalidate>
                     <input type="number" asp-for="@Model.RequestId" hidden/>
                     <div class="mb-3">
-                        <select asp-for="CaseTagId" class="form-select">
-                            <option selected>Select Reason</option>
+                        <select asp-for="CaseTagId" class="form-select p-3" required>
+                            <option value="" selected>Select Reason</option>
                             @for(int i = 0; i < Model.CaseTagIds?.Count(); i++)
                             {
                                 @if(Model.CaseTags?[i] != null)
@@ -27,13 +27,20 @@
                                 }
                             }
                         </select>
+                        <div class="invalid-feedback">
+                            Please select a case tag.
+                        </div>
                     </div>
                     <div class="form-floating mb-3">
-                        <textarea asp-for="@Model.AdminCancellationNote" class="form-control" placeholder="Cancellation notes" id="" style="height: 100px"></textarea>
-                        <label>Provide Additional Notes</label>
+                        <textarea asp-for="AdminCancellationNote" class="form-control" placeholder="Cancellation notes" id="" style="height: 100px" required></textarea>
+                        <label asp-for="AdminCancellationNote">Provide Additional Notes</label>
+                        <div class="invalid-feedback">
+                            Please enter cancellation reason.
+                        </div>
                     </div>
                     <div class="d-flex justify-content-end">
-                        <input type="submit" value="Confirm" class="btn btn-info text-white" />
+                        <input type="submit" value="Confirm" class="btn btn-info text-white" id="cancel-case-submit" />
+                        @*<button type="button" class="btn btn-info text-white" id="cancel-case-submit">Confirm</button>*@
                         <button type="button" class="btn btn-outline-info ms-3" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </form>
@@ -41,6 +48,7 @@
         </div>
     </div>
 </div>
+
 
 
 

@@ -17,11 +17,11 @@
             </div>
             <div class="modal-body">
                 <p class="fs-6 text-secondary">To assign this request, search and select another Physician.</p>
-                <form asp-action="@(Model.IsTransferRequest == true ? "TransferRequest" : "AssignCase")" class="shadow-none">
+                <form asp-action="@(Model.IsTransferRequest == true ? "TransferRequest" : "AssignCase")" class="shadow-none needs-validation" novalidate>
                     <input type="number" asp-for="RequestId" hidden />
                     <div class="form-floating mb-3">
-                        <select asp-for="RegionId" class="form-select region-select">
-                            <option value="0" selected>All Regions</option>
+                        <select asp-for="RegionId" class="form-select region-select" required>
+                            <option value="" selected>All Regions</option>
                             @if(Model.RegionList != null)
                             {
                                 @foreach (var region in Model.RegionList)
@@ -39,10 +39,13 @@
 
                         </select>
                         <label asp-for="RegionId">Narrow Search By Region</label>
+                        <div class="invalid-feedback">
+                            Please select a region.
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <select asp-for="PhysicianId" class="form-select physician-select">
-                            <option selected>Select Physician</option>
+                        <select asp-for="PhysicianId" class="form-select physician-select p-3" required>
+                            <option value="" selected>Select Physician</option>
                             @if(Model.PhysicianList != null)
                             {
                                 @foreach (var physician in Model.PhysicianList)
@@ -51,6 +54,9 @@
                                 }
                             }
                         </select>
+                        <div class="invalid-feedback">
+                            Please select a physician.
+                        </div>
                     </div>
                     <div class="form-floating mb-3">
                         <textarea asp-for="@Model.Description" class="form-control" placeholder="Description" id="" style="height: 100px"></textarea>

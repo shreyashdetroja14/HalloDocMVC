@@ -120,10 +120,20 @@ namespace HalloDocMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> CancelCase(CancelCaseViewModel CancelCase)
         {
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Model State Not Valid.";
+                return RedirectToAction("Index");
+            }
+
             bool isCaseCancelled = await _adminDashboardService.CancelCase(CancelCase);
             if(isCaseCancelled)
             {
-                
+                TempData["SuccessMessage"] = "Case Cancelled Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Cancel Case.";
             }
 
             return RedirectToAction("Index");

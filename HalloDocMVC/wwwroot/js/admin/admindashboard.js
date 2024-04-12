@@ -166,6 +166,26 @@ async function GetCancelCaseModalData(requestId) {
             const cancelCaseModalHtml = await response.text();
             const modalContainer = document.getElementById('modal-container');
             modalContainer.innerHTML = cancelCaseModalHtml;
+
+            (function () {
+                'use strict'
+
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.querySelectorAll('.needs-validation')
+
+                // Loop over them and prevent submission
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })()
         }
     }
     catch (error) {
@@ -193,6 +213,26 @@ async function GetAssignCaseModalData(requestId, isTransferRequest = null, regio
             const assignCaseModalHtml = await response.text();
             const modalContainer = document.getElementById('modal-container');
             modalContainer.innerHTML = assignCaseModalHtml;
+
+            (function () {
+                'use strict'
+
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.querySelectorAll('.needs-validation')
+
+                // Loop over them and prevent submission
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })()
 
             const myModal = new bootstrap.Modal('#assign-case-modal')
             myModal.show();
