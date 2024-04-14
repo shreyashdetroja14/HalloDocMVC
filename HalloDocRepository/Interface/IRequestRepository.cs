@@ -52,13 +52,13 @@ namespace HalloDocRepository.Interface
 
         Task<List<Request>> GetRequestsByEmail(string email);
 
-        Task<int> GetNewRequestCount();
+        Task<int> GetNewRequestCount(int? physicianId = null);
 
-        Task<int> GetPendingRequestCount();
+        Task<int> GetPendingRequestCount(int? physicianId = null);
 
-        Task<int> GetActiveRequestCount();
+        Task<int> GetActiveRequestCount(int? physicianId = null);
 
-        Task<int> GetConcludeRequestCount();
+        Task<int> GetConcludeRequestCount(int? physicianId = null);
 
         Task<int> GetToCloseRequestCount();
 

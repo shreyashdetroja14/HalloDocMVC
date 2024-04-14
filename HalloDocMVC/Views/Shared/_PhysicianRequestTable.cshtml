@@ -1,0 +1,364 @@
+﻿@using HalloDocServices.ViewModels.AdminViewModels
+
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model List<HalloDocServices.ViewModels.AdminViewModels.RequestRowViewModel>
+
+
+@{
+    var status = Model.FirstOrDefault()?.DashboardRequestStatus;
+    if (status == null)
+    {
+        status = 1;
+    }
+
+    var Pager = new PagerViewModel();
+    int pageNumber = 0;
+
+    if (ViewBag.PagerData != null)
+    {
+        Pager = ViewBag.PagerData;
+        pageNumber = Pager.CurrentPage;
+    }
+}
+
+<div class="requests-desktop table-responsive-xxl d-none d-md-block mb-3">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col" style="min-width: 12rem">Name</th>
+                <th scope="col" style="min-width: 12rem">Phone</th>
+                <th scope="col" style="min-width: 7rem">Address</th>
+                @if(status == 3)
+                {
+                    <th scope="col" style="min-width: 10rem">Status</th>
+                }
+                <th scope="col" style="min-width: 7rem">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in Model)
+            {
+                <tr class="@(request.RequestType == 1?"bg-business":"") @(request.RequestType == 2?"bg-patient":"") @(request.RequestType == 3?"bg-family":"") @(request.RequestType == 4?"bg-concierge":"") ">
+                    <td>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>@request.PatientFullName</span>
+                            <button class="btn p-1">
+                                <i class="material-symbols-outlined">
+                                    mail
+                                </i>
+                            </button>
+                        </div>
+                    </td>
+
+                    <td>
+                        @if (request.PatientPhoneNumber != null)
+                        {
+                            <button class="btn border border-dark d-flex align-items-center">
+                                @*<img src="~/images/callIcon.svg" />*@
+                                <i class="material-symbols-outlined fs-6 me-2">
+                                    call
+                                </i>
+                                @request.PatientPhoneNumber
+                            </button>
+                            <p>(Patient)</p>
+                        }
+                        @if (request.SecondPhoneNumber != null && request.RequestType != 2)
+                        {
+                            <button class="btn border border-dark d-flex align-items-center">
+                                <i class="material-symbols-outlined fs-6 me-2">
+                                    call
+                                </i>
+                                @request.SecondPhoneNumber
+                            </button>
+                            <p>(Family)</p>
+                        }
+                    </td>
+
+                    <td>@request.Address</td>
+
+                    @if (status == 3)
+                    {
+                        <td>
+                            @if(request.CallType != "0")
+                            {
+                                <button class="btn btn-info text-white">@request.CallType</button>
+                            }
+                            @* <button class="btn btn-info text-white">House Call</button> *@
+                        </td>
+                    }
+
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn border border-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                Actions
+                            </button>
+                            <ul class="dropdown-menu">
+                                @if (status == 4)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-action="ConcludeCare" asp-route-requestId="@request.RequestId">
+                                            <i class="bi bi-list-check pe-3"></i>Conclude Care
+                                        </a>
+                                    </li>
+                                }
+
+                                @if (status == 1)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-action="AcceptCase" asp-route-requestId="@request.RequestId">
+                                            <i class="bi bi-card-list pe-3"></i>Accept
+                                        </a>
+                                    </li>
+                                }
+                                <li>
+                                    <a class="dropdown-item" asp-route="ViewCase" asp-route-requestId="@request.RequestId">
+                                        <i class="bi bi-journal-album pe-3"></i>View Case
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-action="ViewNotes" asp-route-requestId="@request.RequestId">
+                                        <i class="bi bi-card-list pe-3"></i>View Notes
+                                    </a>
+                                </li>
+                                
+                                @if (status == 2)
+                                {
+                                    <li>
+                                        <a class="dropdown-item send-agreement-btn" style="cursor: pointer" data-request-id="@request.RequestId">
+                                            <i class="bi bi-file-text pe-3"></i>Agreement
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item assign-case-btn" style="cursor: pointer" data-request-id="@request.RequestId" data-is-transfer-request="true">
+                                            <i class="bi bi-file-medical pe-3"></i>Transfer
+                                        </a>
+                                    </li>
+                                }
+                                
+                                @if (status != 1)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-action="ViewUploads" asp-route-requestId="@request.RequestId">
+                                            <i class="bi bi-file-earmark-arrow-up pe-3"></i>View Uploads
+                                        </a>
+                                    </li>
+                                }
+                                
+                                @if (status == 3)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Orders" asp-route-requestId="@request.RequestId">
+                                            <i class="bi bi-list-check pe-3"></i>Orders
+                                        </a>
+                                    </li>
+                                }
+
+                                @if (status == 3 || status == 4)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-action="EncounterForm" asp-route-requestId="@request.RequestId">
+                                            <i class="bi bi-file-medical pe-3"></i>Encounter
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@*<div id="modal-container">
+
+</div>*@
+
+
+
+<div class="requests-mobile d-md-none mb-3">
+    <div class="accordion" id="accordionPanelsStayOpenExample">
+        @foreach (var request in Model)
+        {
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button flex-column align-items-start" type="button" data-bs-toggle="collapse" data-bs-target="#item-@request.RequestId">
+                        <div class="w-100 d-flex justify-content-between">
+                            <p>@request.PatientFullName</p>
+                            <p>
+                                <i class="bi bi-circle-fill" 
+                                style="color:@(request.RequestType == 1 ? "#ffb3cc" : "")
+                                @(request.RequestType == 2 ? "#00b33c" : "")
+                                @(request.RequestType == 3 ? "#ff9933" : "")
+                                @(request.RequestType == 4 ? "#66a3ff" : "")"></i>
+
+                                @(request.RequestType == 1 ? "Business" : "")
+                                @(request.RequestType == 2 ? "Patient" : "")
+                                @(request.RequestType == 3 ? "Family" : "")
+                                @(request.RequestType == 4 ? "Concierge" : "")
+                            </p>
+                        </div>
+                        <div class="w-50">
+                            <p>@request.Address</p>
+                        </div>
+                        
+                    </button>
+                </h2>
+                <div id="item-@request.RequestId" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <div class="mb-2">
+                            <img src="~/images/calendarIcon.svg" />
+                            <span>Date of birth: </span>
+                            <span>@request.DateOfBirth</span>
+                        </div>
+                        <div class="mb-2">
+                            <img src="~/images/mailboxIconBlue.svg" />
+                            <span>Email: </span>
+                            <span>@request.PatientEmail</span>
+                        </div>
+                        <div class="mb-2">
+                            <div class="mb-2">
+                                <img src="~/images/callIconBlue.svg" />
+                                <span>Patient: </span>
+                                <span>@request.PatientPhoneNumber</span>
+                            </div>
+                            @if (request.SecondPhoneNumber != null && request.RequestType != 2)
+                            {
+                                <div>
+                                    <img src="~/images/callIconBlue.svg" />
+                                    <span>
+                                        @(request.RequestType == 1 ? "Business: " : "")
+                                        @(request.RequestType == 3 ? "Family: " : "")
+                                        @(request.RequestType == 4 ? "Concierge: " : "")
+                                    </span>
+                                    <span>@request.SecondPhoneNumber</span>
+                                </div>
+                            }
+                        </div>
+                        
+                        <div class="row mb-3">
+                            @if (status == 4)
+                            {
+                                <div class="col-6">
+                                    <a asp-action="ConcludeCare" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">
+                                        Conclude Care
+                                    </a>
+                                </div>
+                            }
+
+                            @if (status == 1)
+                            {
+                                <div class="col-6">
+                                    <a asp-action="AcceptCase" asp-route-requestId="@request.RequestId" class="btn btn-info rounded-pill mb-2 w-75">
+                                        Accept
+                                    </a>
+                                </div>
+                            }
+                            <div class="col-6">
+                                <a asp-route="ViewCase" asp-route-requestId="@request.RequestId" class="btn bg-white border border-3 rounded-pill mb-2 w-75">
+                                    View Case
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a asp-action="ViewNotes" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">
+                                    View Notes
+                                </a>
+                            </div>
+
+                            @if (status == 2)
+                            {
+                                <div class="col-6">
+                                    <button class="btn btn-warning rounded-pill mb-2 w-75 send-agreement-btn" data-request-id="@request.RequestId">
+                                        Agreement
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-info rounded-pill mb-2 w-75 assign-case-btn" data-request-id="@request.RequestId" data-is-transfer-request="true">
+                                        Transfer
+                                    </button>
+                                </div>
+                            }
+
+                            @if (status != 1)
+                            {
+                                <div class="col-6">
+                                    <a asp-action="ViewUploads" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">
+                                        View Uploads
+                                    </a>
+                                </div>
+                            }
+
+                            @if (status == 3)
+                            {
+                                <div class="col-6">
+                                    <a asp-action="Orders" asp-route-requestId="@request.RequestId" class="btn btn-warning rounded-pill mb-2 w-75">
+                                        Orders
+                                    </a>
+                                </div>
+                            }
+
+                            @if (status == 3 || status == 4)
+                            {
+                                <div class="col-6">
+                                    <button class="btn btn-success rounded-pill mb-2 w-75">
+                                        Encounter
+                                    </button>
+                                </div>
+                            }
+                            
+                            <div class="col-6">
+                                <button class="btn btn-success rounded-pill mb-2 w-75">
+                                    Email
+                                </button>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+
+<div>
+    @if (Pager.TotalPages > 0)
+    {
+        <ul class="pagination justify-content-end">
+
+            @if (Pager.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link page-number page-first" data-page-number="1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link page-number page-previous" data-page-number="@(Pager.CurrentPage - 1)">Previous</a>
+                </li>
+            }
+
+            @for (var pg = Pager.StartPage; pg <= Pager.EndPage; pg++)
+            {
+                <li class="page-item @(pg == Pager.CurrentPage ? "active" : "")">
+                    <a class="page-link page-number" data-page-number="@pg">@pg</a>
+                </li>
+            }
+
+            @if (Pager.CurrentPage < Pager.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link page-number page-next" data-page-number="@(Pager.CurrentPage + 1)">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link page-number page-last" data-page-number="@Pager.TotalPages">Last</a>
+                </li>
+            }
+
+
+        </ul>
+    }
+</div>

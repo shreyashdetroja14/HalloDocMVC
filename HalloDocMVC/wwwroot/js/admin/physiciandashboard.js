@@ -17,9 +17,9 @@ const newBtn = document.querySelector('.new-btn');
 const pendingBtn = document.querySelector('.pending-btn');
 const activeBtn = document.querySelector('.active-btn');
 const concludeBtn = document.querySelector('.conclude-btn');
-const toCloseBtn = document.querySelector('.to-close-btn');
+/*const toCloseBtn = document.querySelector('.to-close-btn');
 const unpaidBtn = document.querySelector('.unpaid-btn');
-
+*/
 const triangles = document.querySelectorAll('.triangle');
 
 const requestStatusNameSpan = document.querySelector('#request-status-name');
@@ -28,7 +28,7 @@ const requestStatusNameSpan = document.querySelector('#request-status-name');
 //url parameters for filters
 
 const urlparams = {
-    requestStatus: localStorage.status,
+    requestStatus: localStorage.physicianReqStatus,
     requestType: null,
     searchPattern: null,
     searchRegion: null,
@@ -40,17 +40,17 @@ const urlparams = {
 
 document.addEventListener("DOMContentLoaded", async () => {
     let requestStatus = 1;
-    if (localStorage.status) {
-        urlparams.requestStatus = localStorage.status;
+    if (localStorage.physicianReqStatus) {
+        urlparams.requestStatus = localStorage.physicianReqStatus;
     }
     else {
-        localStorage.status = requestStatus;
+        localStorage.physicianReqStatus = requestStatus;
         urlparams.requestStatus = requestStatus;
     }
     console.log('localstorage value: ', urlparams.requestStatus);
     console.log('reqstatus value: ', requestStatus);
 
-    addActiveTabClass(localStorage.status);
+    addActiveTabClass(localStorage.physicianReqStatus);
     await GetPartialViewData(urlparams);
     console.log("DOM is loaded and ready!");
 });
@@ -377,7 +377,7 @@ function addActiveTabClass() {
         triangle = triangles[3];
         requestStatusNameSpan.textContent = "(Conclude)";
     }
-    else if (urlparams.requestStatus == 5) {
+    /*else if (urlparams.requestStatus == 5) {
         button = toCloseBtn;
         triangle = triangles[4];
         requestStatusNameSpan.textContent = "(To Close)";
@@ -386,7 +386,7 @@ function addActiveTabClass() {
         button = unpaidBtn;
         triangle = triangles[5];
         requestStatusNameSpan.textContent = "(Unpaid)";
-    }
+    }*/
 
     button.classList.add('active-tab');
     triangle.classList.add('visible');
@@ -396,7 +396,7 @@ function addActiveTabClass() {
 //request status buttons event listeners
 
 newBtn.addEventListener('click', async () => {
-    localStorage.status = 1;
+    localStorage.physicianReqStatus = 1;
     urlparams.requestStatus = 1;
     urlparams.pageNumber = 1;
 
@@ -408,7 +408,7 @@ newBtn.addEventListener('click', async () => {
 
 
 pendingBtn.addEventListener('click', async () => {
-    localStorage.status = 2;
+    localStorage.physicianReqStatus = 2;
     urlparams.requestStatus = 2;
     urlparams.pageNumber = 1;
 
@@ -419,7 +419,7 @@ pendingBtn.addEventListener('click', async () => {
 
 
 activeBtn.addEventListener('click', async () => {
-    localStorage.status = 3;
+    localStorage.physicianReqStatus = 3;
     urlparams.requestStatus = 3;
     urlparams.pageNumber = 1;
 
@@ -430,7 +430,7 @@ activeBtn.addEventListener('click', async () => {
 
 
 concludeBtn.addEventListener('click', async () => {
-    localStorage.status = 4;
+    localStorage.physicianReqStatus = 4;
     urlparams.requestStatus = 4;
     urlparams.pageNumber = 1;
 
@@ -440,8 +440,8 @@ concludeBtn.addEventListener('click', async () => {
 });
 
 
-toCloseBtn.addEventListener('click', async () => {
-    localStorage.status = 5;
+/*toCloseBtn.addEventListener('click', async () => {
+    localStorage.physicianReqStatus = 5;
     urlparams.requestStatus = 5;
     urlparams.pageNumber = 1;
 
@@ -452,14 +452,14 @@ toCloseBtn.addEventListener('click', async () => {
 
 
 unpaidBtn.addEventListener('click', async () => {
-    localStorage.status = 6;
+    localStorage.physicianReqStatus = 6;
     urlparams.requestStatus = 6;
     urlparams.pageNumber = 1;
 
     removeActiveTabClass();
     addActiveTabClass();
     await GetPartialViewData(urlparams);
-});
+});*/
 
 
 // request type buttons
@@ -654,8 +654,8 @@ function addEventListnersForPartial() {
 }
 
 
-const exportAllBtn = document.querySelector('#export-all');
-exportAllBtn.addEventListener('click',async () => {
+/*const exportAllBtn = document.querySelector('#export-all');
+exportAllBtn.addEventListener('click', async () => {
     const url = `/AdminDashboard/Export/?requestStatus=${urlparams.requestStatus}`;
     try {
         console.log(urlparams.requestStatus);
@@ -723,4 +723,4 @@ exportBtn.addEventListener('click', async () => {
     catch (error) {
         console.log(error);
     }
-});
+});*/

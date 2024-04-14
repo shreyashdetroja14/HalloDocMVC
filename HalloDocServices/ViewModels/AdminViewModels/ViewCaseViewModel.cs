@@ -34,6 +34,6 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public string? Room { get; set; }
 
-
+        public bool IsPhysician { get; set; }
     }
 }

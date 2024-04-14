@@ -172,27 +172,27 @@ namespace HalloDocRepository.Implementation
             return true;
         }
 
-        public async Task<int> GetNewRequestCount()
+        public async Task<int> GetNewRequestCount(int? physicianId = null)
         {
-            int count = await _context.Requests.Where(x => x.IsDeleted != true && x.Status == 1).CountAsync();
+            int count = await _context.Requests.Where(x => (physicianId == null || x.PhysicianId == physicianId) && x.IsDeleted != true && (x.Status == 1)).CountAsync();
             return count;
         }
 
-        public async Task<int> GetPendingRequestCount()
+        public async Task<int> GetPendingRequestCount(int? physicianId = null)
         {
-            int count = await _context.Requests.Where(x => x.IsDeleted != true && x.Status == 2).CountAsync();
+            int count = await _context.Requests.Where(x => (physicianId == null || x.PhysicianId == physicianId) && x.IsDeleted != true && (x.Status == 2)).CountAsync();
             return count;
         }
 
-        public async Task<int> GetActiveRequestCount()
+        public async Task<int> GetActiveRequestCount(int? physicianId = null)
         {
-            int count = await _context.Requests.Where(x => x.IsDeleted != true && (x.Status == 4 || x.Status == 5)).CountAsync();
+            int count = await _context.Requests.Where(x => (physicianId == null || x.PhysicianId == physicianId) && x.IsDeleted != true && (x.Status == 4 || x.Status == 5)).CountAsync();
             return count;
         }
 
-        public async Task<int> GetConcludeRequestCount()
+        public async Task<int> GetConcludeRequestCount(int? physicianId = null)
         {
-            int count = await _context.Requests.Where(x => x.IsDeleted != true && x.Status == 6).CountAsync();
+            int count = await _context.Requests.Where(x => (physicianId == null || x.PhysicianId == physicianId) && x.IsDeleted != true && (x.Status == 6)).CountAsync();
             return count;
         }
 

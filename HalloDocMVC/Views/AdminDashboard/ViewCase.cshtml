@@ -80,12 +80,11 @@
                             <label asp-for="Email">Email</label>
                         </div>
                     </div>
-                    @if(Model.Status != 1)
+                    @if(Model.Status != 1 && Model.IsPhysician != true)
                     {
                         <div class="col-sm-6">
                             <button type="button" class="btn btn-outline-info py-3 px-4" id="editbtn">Edit</button>
-                            <span class="text-success">@ViewBag?.Success</span>
-                            <span class="text-danger">@ViewBag?.Failure</span>
+                            
                         </div>
                     }
 
@@ -120,7 +119,7 @@
             </div>
 
             <div class="submit mb-4 d-flex justify-content-end">
-                @if(Model.Status == 1)
+                @if(Model.Status == 1 && Model.IsPhysician != true)
                 {
                     <button type="button" class="btn btn-info py-2 px-3 me-3 text-white assign-case-btn" data-request-id="@Model.RequestId">
                         Assign Case
@@ -145,6 +144,10 @@
 
 
 @section AddScript{
+
+    <partial name="_ToastMessageScriptsPartial" />
+
+
     <script>
         const phoneInputField = document.querySelector("#PhoneNumber");
         const phoneInput = window.intlTelInput(phoneInputField, {

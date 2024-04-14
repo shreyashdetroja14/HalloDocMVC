@@ -14,7 +14,7 @@ using System.Security.Claims;
 
 namespace HalloDocMVC.Controllers
 {
-    [CustomAuthorize("admin", "physician")]
+    
     public class AdminDashboardController : Controller
     {
         private readonly IAdminDashboardService _adminDashboardService;
@@ -50,54 +50,116 @@ namespace HalloDocMVC.Controllers
 
         #endregion
 
+
+        
+        [Route("Dashboard", Name = "Dashboard")]
+
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> Index(int? requestStatus)
         {
+            ClaimsData claimsData = GetClaimsData();
+
             AdminDashboardViewModel viewModel = new AdminDashboardViewModel();
             int reqStatus;
             reqStatus = requestStatus?? 1;
             
+            if(claimsData.AspNetUserRole == "physician")
+            {
+                viewModel = await _adminDashboardService.GetViewModelData(reqStatus, claimsData.Id);
+                return View("~/Views/AdminDashboard/PhysicianDashboard.cshtml", viewModel);
+            }
+
             viewModel = await _adminDashboardService.GetViewModelData(reqStatus);
-
-
             return View(viewModel);
+            
+
         }
 
+
+        [Route("FetchRequests", Name = "FetchRequests")]
+
+        [CustomAuthorize("admin", "physician")]
         public IActionResult FetchRequests(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int pageNumber = 1)
         {
+            ClaimsData claimsData = GetClaimsData();
+
             PaginatedListViewModel<RequestRowViewModel> PaginatedList = new PaginatedListViewModel<RequestRowViewModel>();
 
-            PaginatedList = _adminDashboardService.GetViewModelData(requestStatus, requestType, searchPattern, searchRegion, pageNumber);
+            if(claimsData.AspNetUserRole == "physician")
+            {
+                PaginatedList = _adminDashboardService.GetViewModelData(requestStatus, requestType, searchPattern, searchRegion, pageNumber, physicianId: claimsData.Id);
+                ViewBag.PagerData = PaginatedList.PagerData;
+                return PartialView("_PhysicianRequestTable", PaginatedList.DataRows);
+            }
+            else
+            {
+                PaginatedList = _adminDashboardService.GetViewModelData(requestStatus, requestType, searchPattern, searchRegion, pageNumber);
+                ViewBag.PagerData = PaginatedList.PagerData;
+                return PartialView("_RequestTable", PaginatedList.DataRows);
+            }
 
-            ViewBag.PagerData = PaginatedList.PagerData;
-            return PartialView("_RequestTable", PaginatedList.DataRows);
+
+            
         }
 
+
+        [Route("Physician/AcceptCase", Name = "AcceptCase")]
+
+        [CustomAuthorize("physician")]
+        public async Task<IActionResult> AcceptCase(int requestId)
+        {
+            ClaimsData claimsData = GetClaimsData();
+            int physicianId = claimsData.Id;
+            string createdBy = claimsData.AspNetUserId ?? "";
+
+            bool isCaseAccepted = await _adminDashboardService.AcceptCase(requestId);
+            if (isCaseAccepted)
+            {
+                TempData["SuccessMessage"] = "Case Accepted Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Accept Case.";
+            }
+
+            return RedirectToRoute("PhysicianDashboard");
+        }
+
+
+        [Route("Dashboard/ViewCase", Name = "ViewCase")]
+
+        [CustomAuthorize("admin", "physician")]
         public IActionResult ViewCase(int requestId) 
-        { 
+        {
+            ClaimsData claimsData = GetClaimsData();
+
             ViewCaseViewModel CaseInfo = new ViewCaseViewModel();
             CaseInfo.RequestId = requestId;
-
+            CaseInfo.IsPhysician = claimsData.AspNetUserRole == "physician" ? true : false;
+            
             CaseInfo =  _adminDashboardService.GetViewCaseViewModelData(CaseInfo);
-
 
             return View(CaseInfo); 
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("Dashboard/ViewCase", Name = "EditViewCase")]
+
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> ViewCase (ViewCaseViewModel CaseInfo)
         {
             bool isInfoUpdated = await _adminDashboardService.UpdateViewCaseInfo(CaseInfo);
 
-            if (isInfoUpdated) 
+            if (isInfoUpdated)
             {
-                ViewBag.Success = "Case Updated";
+                TempData["SuccessMessage"] = "Case Info Updated Successfully.";
             }
             else
             {
-                ViewBag.Failure = "Unable to update details";
+                TempData["ErrorMessage"] = "Failed To Update Case Case.";
             }
-            return View(CaseInfo);
+            return RedirectToRoute("ViewCase", new { requestId = CaseInfo.RequestId });
         }
 
         public async Task<IActionResult> ViewNotes(int requestId)

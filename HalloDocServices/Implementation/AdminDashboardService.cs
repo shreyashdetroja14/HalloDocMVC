@@ -14,6 +14,7 @@ using System.Data;
 using ClosedXML.Excel;
 using HalloDocRepository.Implementation;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Formats.Asn1;
 
 
 namespace HalloDocServices.Implementation
@@ -39,16 +40,52 @@ namespace HalloDocServices.Implementation
             _mailService = mailService;
         }
 
-        public async Task<AdminDashboardViewModel> GetViewModelData(int requestStatus)
+        public async Task<AdminDashboardViewModel> GetViewModelData(int requestStatus, int? physicianId = null)
         {
             AdminDashboardViewModel viewModel = new AdminDashboardViewModel();
             viewModel.RequestStatus = requestStatus;
-            viewModel.NewRequestCount = await _requestRepository.GetNewRequestCount();
-            viewModel.PendingRequestCount = await _requestRepository.GetPendingRequestCount();
-            viewModel.ActiveRequestCount = await _requestRepository.GetActiveRequestCount();
-            viewModel.ConcludeRequestCount = await _requestRepository.GetConcludeRequestCount();
+            viewModel.NewRequestCount = await _requestRepository.GetNewRequestCount(physicianId);
+            viewModel.PendingRequestCount = await _requestRepository.GetPendingRequestCount(physicianId);
+            viewModel.ActiveRequestCount = await _requestRepository.GetActiveRequestCount(physicianId);
+            viewModel.ConcludeRequestCount = await _requestRepository.GetConcludeRequestCount(physicianId);
             viewModel.ToCloseRequestCount = await _requestRepository.GetToCloseRequestCount();
             viewModel.UnpaidRequestCount = await _requestRepository.GetUnpaidRequestCount();
+
+            var regions = _commonRepository.GetAllRegions();
+
+            foreach(var region in regions)
+            {
+                viewModel.RegionList.Add(new SelectListItem
+                {
+                    Value = region.RegionId.ToString(),
+                    Text = region.Name
+                });
+            }
+
+            return viewModel;
+        }
+
+        public async Task<AdminDashboardViewModel> GetPhysicianViewModelData(int requestStatus, int physicianId)
+        {
+            AdminDashboardViewModel viewModel = new AdminDashboardViewModel();
+            viewModel.RequestStatus = requestStatus;
+
+            viewModel.NewRequestCount = _requestRepository.GetIQueryableRequests().Where(x => x.PhysicianId == physicianId && x.Status == ((short)RequestStatus.Unassigned)).Count();
+            viewModel.PendingRequestCount = _requestRepository.GetIQueryableRequests().Where(x => x.PhysicianId == physicianId && x.Status == ((short)RequestStatus.Accepted)).Count();
+            viewModel.ActiveRequestCount = _requestRepository.GetIQueryableRequests().Where(x => x.PhysicianId == physicianId && (x.Status == ((short)RequestStatus.MDEnRoute) || x.Status == ((short)RequestStatus.MDONSite))).Count();
+            viewModel.ConcludeRequestCount = _requestRepository.GetIQueryableRequests().Where(x => x.PhysicianId == physicianId && x.Status == ((short)RequestStatus.Conclude)).Count();
+
+            var regions = _commonRepository.GetAllRegions();
+
+            foreach (var region in regions)
+            {
+                viewModel.RegionList.Add(new SelectListItem
+                {
+                    Value = region.RegionId.ToString(),
+                    Text = region.Name
+                });
+            }
+
             return viewModel;
         }
 
@@ -65,9 +102,11 @@ namespace HalloDocServices.Implementation
         }
         #endregion
 
-        public PaginatedListViewModel<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int pageNumber)
+        public PaginatedListViewModel<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int pageNumber, int? physicianId = null)
         {
             var requests = _requestRepository.GetAllIEnumerableRequests().AsQueryable();
+
+            requests = requests.Where(x => physicianId == null || x.PhysicianId == physicianId);
 
             int[] myarray = new int[3];
             switch (requestStatus)
@@ -167,7 +206,7 @@ namespace HalloDocServices.Implementation
                     Address = requestClient?.Address,
                     Region = requestClient?.RegionId,
                     Notes = notes,
-
+                    CallType = ((CallType)(request.CallType ?? 0)).ToString(),
                 });
             }
 
@@ -176,6 +215,26 @@ namespace HalloDocServices.Implementation
             PaginatedData.DataRows = requestRows;
 
             return PaginatedData;
+        }
+
+        public async Task<bool> AcceptCase(int requestId)
+        {
+            Request request = await _requestRepository.GetRequestByRequestId(requestId);
+            if (request == null) { return false; }
+
+            request.Status = (short)RequestStatus.Accepted;
+            await _requestRepository.UpdateRequest(request);
+
+            RequestStatusLog log = new RequestStatusLog();
+            log.RequestId = requestId;
+            log.Status = request.Status;
+            log.PhysicianId = request.PhysicianId;
+            log.Notes = "Physician accepted the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+            log.CreatedDate = DateTime.Now;
+
+            await _notesAndLogsRepository.AddRequestStatusLog(log);
+
+            return true;
         }
 
         public ViewCaseViewModel GetViewCaseViewModelData(ViewCaseViewModel CaseInfo)
@@ -229,7 +288,7 @@ namespace HalloDocServices.Implementation
 
         public async Task<bool> UpdateViewCaseInfo(ViewCaseViewModel CaseInfo)
         {
-            var requestClient = await _requestRepository.GetRequestClientByRequestId(CaseInfo.RequestId);
+            RequestClient requestClient = await _requestRepository.GetRequestClientByRequestId(CaseInfo.RequestId);
             if (requestClient == null)
             {
                 return false;
@@ -401,15 +460,21 @@ namespace HalloDocServices.Implementation
             var physicianFetched = _physicianRepository.GetPhysicianByPhysicianId(AssignCase.PhysicianId ?? 0);
 
             requestFetched.PhysicianId = AssignCase.PhysicianId;
-            requestFetched.Status = 2;
+            requestFetched.Status = 1;
 
             await _requestRepository.UpdateRequest(requestFetched);
+
+            List<string> receiver = new List<string>();
+            receiver.Add(physicianFetched.Email);
+            string subject = "New Case Assignment";
+            string message = "You have been assigned a new case. " + "Confirmation number: " + requestFetched.ConfirmationNumber;
+            await _mailService.SendMail(receiver, subject, message, isHtml: false);
 
             RequestStatusLog log = new RequestStatusLog();
             log.RequestId = AssignCase.RequestId;
             log.Status = requestFetched.Status;
             log.AdminId = AssignCase.AdminId ?? 1;
-            log.Notes = "Admin assigned the case to DR. " + physicianFetched.FirstName + " " + physicianFetched.LastName + "on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + AssignCase.Description;
+            log.Notes = "Admin assigned the case to DR. " + physicianFetched.FirstName + " " + physicianFetched.LastName + " on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + AssignCase.Description;
             log.CreatedDate = DateTime.Now;
 
             await _notesAndLogsRepository.AddRequestStatusLog(log);

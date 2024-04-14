@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -23,6 +24,8 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public int? ToCloseRequestCount { get; set; }
 
         public int? UnpaidRequestCount { get; set; }
+
+        public List<SelectListItem> RegionList { get; set; } = new List<SelectListItem>();
 
         [Required(ErrorMessage = "Please Enter Email Address")]
         [RegularExpression(@"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}))$", ErrorMessage = "Please enter a valid email address. (e.g., user@example.com)")]

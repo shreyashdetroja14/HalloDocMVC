@@ -13,9 +13,11 @@ namespace HalloDocServices.Interface
 {
     public interface IAdminDashboardService
     {
-        Task<AdminDashboardViewModel> GetViewModelData(int requestStatus);
+        Task<AdminDashboardViewModel> GetViewModelData(int requestStatus, int? physicianId = null);
 
-        PaginatedListViewModel<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int pageNumber);
+        PaginatedListViewModel<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int pageNumber, int? physicianId = null);
+
+        Task<bool> AcceptCase(int requestId);
 
         ViewCaseViewModel GetViewCaseViewModelData(ViewCaseViewModel CaseInfo);
 

@@ -95,4 +95,11 @@ namespace HalloDocServices.Constants
         Blocked = 11,
 
     }
+
+    public enum CallType
+    {
+        HouseCall = 1,
+        Consult = 2,
+        Virtual = 3
+    }
 }

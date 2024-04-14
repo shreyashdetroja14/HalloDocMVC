@@ -45,15 +45,16 @@ namespace HalloDocMVC.Controllers
                 
                 if (roleclaim?.Value == "admin")
                 {
-                    return RedirectToAction("Index", "AdminDashboard");
+                    return RedirectToRoute("Dashboard");
+                }
+                else if (roleclaim?.Value == "physician")
+                {
+                    return RedirectToRoute("Dashboard");
                 }
                 else if (roleclaim?.Value == "patient")
                 {
-                    
                     return RedirectToAction("Dashboard", "Patient");
                 }
-
-                return RedirectToAction("Index");
             }
 
             return View();
@@ -82,10 +83,15 @@ namespace HalloDocMVC.Controllers
 
             string role = aspnetuser.AspNetUserRoles.FirstOrDefault()?.Role.Name??"";
 
-            if (role == "admin" || role == "physician")
+            if (role == "admin")
             {
-                return RedirectToAction("Index", "AdminDashboard");
-            } 
+                //return RedirectToAction("Index", "AdminDashboard");
+                return RedirectToRoute("Dashboard");
+            }
+            else if(role == "physician")
+            {
+                return RedirectToRoute("Dashboard");
+            }
             else if(role == "patient")
             {
                 return RedirectToAction("Dashboard", "Patient", new { id = aspnetuser.Id });
