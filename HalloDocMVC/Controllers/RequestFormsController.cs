@@ -12,13 +12,13 @@ namespace HalloDocMVC.Controllers
 {
     public class RequestFormsController : Controller
     {
-        private readonly HalloDocContext _context;
         private readonly IRequestFormService _requestFormService;
+        private readonly IJwtService _jwtService;
 
-        public RequestFormsController(HalloDocContext context, IRequestFormService requestFormService)
+        public RequestFormsController(IRequestFormService requestFormService, IJwtService jwtService)
         {
-            _context = context;
             _requestFormService = requestFormService;
+            _jwtService = jwtService;
         }
 
         public IActionResult SubmitRequest()
@@ -85,12 +85,8 @@ namespace HalloDocMVC.Controllers
             bool isUserExists = await _requestFormService.CheckUser(frvm.PatientInfo.Email);
             if (!isUserExists)
             {
-                var receiver = frvm.PatientInfo.Email;
-
-                var subject = "Create Account from HalloDoc@Admin";
-                var message = "Tap on link to create account on HalloDoc: http://localhost:5059/Login/CreateAccount";
-
-                await _requestFormService.SendMail(receiver, subject, message);
+                frvm.PatientInfo.EmailToken = _jwtService.GenerateEmailToken(frvm.PatientInfo.Email, isExpireable: false);
+                await _requestFormService.SendMail(frvm.PatientInfo);
             }
 
             bool isrequestcreated = await _requestFormService.CreateFamilyRequest(frvm);
@@ -125,12 +121,8 @@ namespace HalloDocMVC.Controllers
             bool isUserExists = await _requestFormService.CheckUser(crvm.PatientInfo.Email);
             if (!isUserExists)
             {
-                var receiver = crvm.PatientInfo.Email;
-
-                var subject = "Create Account from HalloDoc@Admin";
-                var message = "Tap on link to create account on HalloDoc: http://localhost:5059/Login/CreateAccount";
-
-                await _requestFormService.SendMail(receiver, subject, message);
+                crvm.PatientInfo.EmailToken = _jwtService.GenerateEmailToken(crvm.PatientInfo.Email, isExpireable: false);
+                await _requestFormService.SendMail(crvm.PatientInfo);
             }
 
             bool isrequestcreated = await _requestFormService.CreateConciergeRequest(crvm);
@@ -165,12 +157,8 @@ namespace HalloDocMVC.Controllers
             bool isUserExists = await _requestFormService.CheckUser(brvm.PatientInfo.Email);
             if (!isUserExists)
             {
-                var receiver = brvm.PatientInfo.Email;
-
-                var subject = "Create Account from HalloDoc@Admin";
-                var message = "Tap on link to create account on HalloDoc: http://localhost:5059/Login/CreateAccount";
-
-                await _requestFormService.SendMail(receiver, subject, message);
+                brvm.PatientInfo.EmailToken = _jwtService.GenerateEmailToken(brvm.PatientInfo.Email, isExpireable: false);
+                await _requestFormService.SendMail(brvm.PatientInfo);
             }
 
             bool isrequestcreated = await _requestFormService.CreateBusinessRequest(brvm);

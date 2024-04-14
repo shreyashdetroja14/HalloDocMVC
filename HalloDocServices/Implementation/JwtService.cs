@@ -101,5 +101,27 @@ namespace HalloDocServices.Implementation
                 return false;
             }
         }
+
+        public string GenerateEmailToken(string email, bool isExpireable)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, email)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? ""));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expires = isExpireable ? DateTime.UtcNow.AddHours(1) : DateTime.MaxValue;
+
+            var token = new JwtSecurityToken(
+                _configuration["Jwt:Issuer"],
+                _configuration["Jwt:Audience"],
+                claims,
+                expires: expires,
+                signingCredentials: creds
+                );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
 }

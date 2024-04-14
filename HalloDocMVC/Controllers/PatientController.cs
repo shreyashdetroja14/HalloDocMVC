@@ -222,6 +222,8 @@ namespace HalloDocMVC.Controllers
                 return View("~/Views/Patient/PatientRequest.cshtml", frvm);
             }
 
+            //frvm.PatientInfo.EmailToken = _jwtService.GenerateEmailToken(frvm.PatientInfo.Email, isExpireable: false);
+
             await _patientService.CreateFamilyRequest(frvm, UserId);
 
             return RedirectToAction("GoToDashboard", new { UserId });

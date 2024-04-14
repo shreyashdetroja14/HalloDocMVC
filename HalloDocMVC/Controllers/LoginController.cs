@@ -5,6 +5,8 @@ using HalloDocServices.Interface;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Newtonsoft.Json.Linq;
+using HalloDocServices.Implementation;
 
 namespace HalloDocMVC.Controllers
 {
@@ -111,12 +113,8 @@ namespace HalloDocMVC.Controllers
                 return View();
             }
 
-            var receiver = Info.Email;
-
-            var subject = "Reset Password from HalloDoc@Admin";
-            var message = "Tap on link to reset password: http://localhost:5059/Login/ResetPassword";
-
-            await _loginService.SendMail(receiver, subject, message);
+            Info.EmailToken = _jwtService.GenerateEmailToken(Info.Email, isExpireable: true);
+            await _loginService.SendMail(Info);
 
             ViewBag.Message = "We have sent you a mail on your email address. Please reset your password from that link.";
             return View();
@@ -124,16 +122,19 @@ namespace HalloDocMVC.Controllers
 
         public IActionResult CreateAccount(string emailtoken)
         {
-            
-            CreateAccountViewModel Credentials = new CreateAccountViewModel();
-            //string? email = decrypt(emailtoken);
-            string email = emailtoken ?? "";
-            if(email == "")
+            if (_jwtService.ValidateToken(emailtoken, out JwtSecurityToken jwtToken))
             {
-                return NotFound();
+                Response.Cookies.Append("emailToken", emailtoken);
+                string email = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value.ToString() ?? "";
+
+                CreateAccountViewModel Credentials = new CreateAccountViewModel();
+                Credentials.Email = email;
+                return View(Credentials);
             }
-            Credentials.Email = email;
-            return View(Credentials);
+
+            return NotFound();
+
+            
         }
 
         [HttpPost]
@@ -170,16 +171,19 @@ namespace HalloDocMVC.Controllers
             }
         }
 
-        public async Task<IActionResult> ResetPassword(string email, string token)
+        public IActionResult ResetPassword(string emailtoken)
         {
-            bool isTokenValid = await _loginService.ValidateToken(token);
-            if (!isTokenValid)
+            if (_jwtService.ValidateToken(emailtoken, out JwtSecurityToken jwtToken))
             {
-                return NotFound();
+                Response.Cookies.Append("emailToken", emailtoken);
+                string email = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value.ToString() ?? "";
+
+                CreateAccountViewModel Credentials = new CreateAccountViewModel();
+                Credentials.Email = email;
+                return View(Credentials);
             }
-            CreateAccountViewModel Credentials = new CreateAccountViewModel();
-            Credentials.Email = email;
-            return View(Credentials);
+
+            return NotFound();
         }
 
         [HttpPost]

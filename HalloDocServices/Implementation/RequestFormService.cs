@@ -22,12 +22,14 @@ namespace HalloDocServices.Implementation
         private readonly IUserRepository _userRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly ICommonRepository _commonRepository;
+        private readonly IMailService _mailService;
 
-        public RequestFormService(IUserRepository userRepository, IRequestRepository requestRepository, ICommonRepository commonRepository) 
+        public RequestFormService(IUserRepository userRepository, IRequestRepository requestRepository, ICommonRepository commonRepository, IMailService mailService) 
         { 
             _userRepository = userRepository;
             _requestRepository = requestRepository;
             _commonRepository = commonRepository;
+            _mailService = mailService;
         }
 
         #region LocalMethods
@@ -206,28 +208,17 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
-        public async Task<bool> SendMail(string receiver, string subject, string message)
+        public async Task<bool> SendMail(PatientRequestViewModel PatientInfo)
         {
-            var mail = "tatva.dotnet.shreyashdetroja@outlook.com";
-            var password = "Dotnet_tatvasoft@14";
+            List<string> receiver = new List<string>();
+            receiver.Add(PatientInfo.Email);
 
-            //var aspnetuserFetched = await _userRepository.GetAspNetUserByEmail(receiver);
+            string subject = "Create Account from HalloDoc@Admin";
+            string body = "Tap on link to create account on HalloDoc: http://localhost:5059/Login/CreateAccount" + "?emailtoken=" + PatientInfo.EmailToken;
 
-            //string? encryptedEmail = encrypt(receiver);
-            string mailbody = message + "?emailtoken=" + receiver;
+            bool isMailSent = await _mailService.SendMail(receiver, subject, body, isHtml: false);
 
-            var client = new SmtpClient("smtp.office365.com")
-            {
-                Port = 587,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(mail, password)
-            };
-
-            await client.SendMailAsync(new MailMessage(from: mail, to: receiver, subject, mailbody));
-
-            return true;
+            return isMailSent;
         }
 
         public async Task<bool> ValidateToken(string token)

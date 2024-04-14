@@ -36,7 +36,7 @@ namespace HalloDocServices.Implementation
                     Credentials = new NetworkCredential(mail, password)
                 };
 
-                string senderDisplayName = "HalloDoc Admin";
+                string senderDisplayName = "HalloDoc Platform";
                 //string receiverDisplayName = receiver.First();
 
                 //MailAddress senderMailAddress = new MailAddress(mail ?? "", senderDisplayName);

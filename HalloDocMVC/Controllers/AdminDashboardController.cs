@@ -10,6 +10,7 @@ using NuGet.Common;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
 using System.Dynamic;
+using System.Security.Claims;
 
 namespace HalloDocMVC.Controllers
 {
@@ -26,6 +27,28 @@ namespace HalloDocMVC.Controllers
             _patientService = patientService;
             _jwtService = jwtService;
         }
+
+        #region JWT TOKEN DATA
+
+        public ClaimsData GetClaimsData()
+        {
+            ClaimsData claimsData = new ClaimsData();
+
+            string token = Request.Cookies["jwt"] ?? "";
+
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                claimsData.AspNetUserId = jwtToken.Claims.FirstOrDefault(x => x.Type == "aspnetuserId")?.Value;
+                claimsData.Email = jwtToken?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+                claimsData.AspNetUserRole = jwtToken?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+                claimsData.Username = jwtToken?.Claims.FirstOrDefault(x => x.Type == "username")?.Value;
+                claimsData.Id = int.Parse(jwtToken?.Claims.FirstOrDefault(x => x.Type == "id")?.Value ?? "");
+            }
+
+            return claimsData;
+        }
+
+        #endregion
 
         public async Task<IActionResult> Index(int? requestStatus)
         {
@@ -90,7 +113,7 @@ namespace HalloDocMVC.Controllers
             bool isNoteAdded = false;
             if (vnvm.AdminNotesInput != null)
             {
-                isNoteAdded = await _adminDashboardService.AddAdminNote(vnvm.RequestId ?? 0, vnvm.AdminNotesInput);
+                isNoteAdded = await _adminDashboardService.AddAdminNote(vnvm.RequestId ?? 0, vnvm.AdminNotesInput, GetClaimsData().AspNetUserId ?? "");
             }
             if(isNoteAdded)
             {
@@ -357,7 +380,7 @@ namespace HalloDocMVC.Controllers
             }
             else
             {
-                TempData["ErrorMessage"] = "Failed To Send Provider.";
+                TempData["ErrorMessage"] = "Failed To Send Agreement.";
             }
             return RedirectToAction("Index");
         }
@@ -445,6 +468,46 @@ namespace HalloDocMVC.Controllers
             var excelFile = _adminDashboardService.ExportToExcel(requestStatus, requestType, searchPattern, searchRegion, pageNumber);
             
             return File(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "requests.xlsx");
+        }
+
+        public IActionResult CreateRequest()
+        {
+            PatientRequestViewModel PatientInfo = new PatientRequestViewModel();
+            ViewBag.RegionList = _adminDashboardService.GetRegionList();
+            PatientInfo.CreatorRole = GetClaimsData().AspNetUserRole;
+            return View(PatientInfo);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateRequest(PatientRequestViewModel PatientInfo)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.RegionList = _adminDashboardService.GetRegionList();
+                return View(PatientInfo);
+            }
+
+            var claimsData = GetClaimsData();
+
+            PatientInfo.CreatedBy = claimsData.Id;
+            PatientInfo.CreatorRole = claimsData.AspNetUserRole;
+            PatientInfo.CreatorAspId = claimsData.AspNetUserId;
+            
+
+            PatientInfo.EmailToken = _jwtService.GenerateEmailToken(PatientInfo.Email, isExpireable: false);
+
+            bool isRequestCreated = await _adminDashboardService.CreateRequest(PatientInfo);
+            if (isRequestCreated)
+            {
+                TempData["SuccessMessage"] = "Request Created Successfully.";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to Create Request.";
+                return RedirectToAction("CreateRequest");
+            }
+            
         }
     }
 }

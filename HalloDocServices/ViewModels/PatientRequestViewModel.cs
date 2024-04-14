@@ -6,7 +6,7 @@ namespace HalloDocServices.ViewModels
 {
     public class PatientRequestViewModel
     {
-
+        
         public string? Symptoms { get; set; }
 
         [Required(ErrorMessage = "Please Enter First Name")]
@@ -20,6 +20,8 @@ namespace HalloDocServices.ViewModels
         [Required(ErrorMessage = "Please Enter Email Address")]
         [RegularExpression(@"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}))$", ErrorMessage = "Please enter a valid email address. (e.g., user@example.com)")]
         public string Email { get; set; } = null!;
+
+        public string? EmailToken { get; set; }
 
 
         [RegularExpression(@"^0?[6789]\d{9}$", ErrorMessage = "Please enter a valid Indian phone number (e.g., 01234567890 or 9876543210)")]
@@ -55,6 +57,14 @@ namespace HalloDocServices.ViewModels
         public string? File { get; set; }
 
         public IEnumerable<IFormFile>? MultipleFiles { get; set; }
+
+        public string? Notes { get; set; }
+
+        public int CreatedBy { get; set; }
+
+        public string? CreatorAspId { get; set; }
+
+        public string? CreatorRole { get; set; }
     }
 
     /*public class AllowedStatesAttribute : ValidationAttribute

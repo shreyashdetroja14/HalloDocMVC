@@ -2,6 +2,7 @@
 using HalloDocServices.ViewModels;
 using HalloDocServices.ViewModels.AdminViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace HalloDocServices.Interface
 
         Task<ViewNotesViewModel> GetViewNotesViewModelData(int requestId);
 
-        Task<bool> AddAdminNote(int requestId, string AdminNotesInput);
+        Task<bool> AddAdminNote(int requestId, string AdminNotesInput, string createdBy);
 
         CancelCaseViewModel GetCancelCaseViewModelData(CancelCaseViewModel CancelCase);
 
@@ -75,5 +76,10 @@ namespace HalloDocServices.Interface
         Task<bool> SendLink(string receiverEmail);
 
         byte[] ExportToExcel(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int? pageNumber);
+
+        List<SelectListItem> GetRegionList();
+
+        Task<bool> CreateRequest(PatientRequestViewModel PatientInfo);
+
     }
 }

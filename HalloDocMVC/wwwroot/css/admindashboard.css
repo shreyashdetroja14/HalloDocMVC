@@ -32,7 +32,8 @@
 
 .new-btn {
     color: #0d6efd;
-    background-color: #0d6efd40;
+    /*background-color: #0d6efd40;*/
+    background-color: #c2dbfe;
     border: 1px solid #0d6efd;
 }
 
@@ -51,7 +52,8 @@
 
 .pending-btn {
     color: #0dcaf0;
-    background-color: #0dcaf025;
+    /*background-color: #0dcaf025;*/
+    background-color: #dcf7fd;
     border: 1px solid #0dcaf0;
 }
 
@@ -70,7 +72,8 @@
 
 .active-btn {
     color: #198754;
-    background-color: #19875440;
+    /*background-color: #19875440;*/
+    background-color: #c5e1d4;
     border: 1px solid #198754;
 }
 
@@ -88,7 +91,8 @@
 
 .conclude-btn {
     color: #d63384;
-    background-color: #d6338440;
+    /*background-color: #d6338440;*/
+    background-color: #f5cce0;
     border: 1px solid #d63384;
 }
 
@@ -106,7 +110,8 @@
 
 .to-close-btn {
     color: #6610f2;
-    background-color: #6610f240;
+    /*background-color: #6610f240;*/
+    background-color: #d9c3fc;
     border: 1px solid #6610f2;
 }
 
@@ -126,7 +131,8 @@
     /*color: #6f42c1;
     background-color: #6f42c140;*/
     color: #dc3545;
-    background-color: #dc354540;
+    /*background-color: #dc354540;*/
+    background-color: #f6ccd0;
     border: 1px solid #dc3545;
 }
 
@@ -161,27 +167,23 @@
 
 
 .bg-patient {
-    /*background-color: #00b33c;*/
-    /*color: #198754;*/
-    background-color: #19875440;
-    
+    /*background-color: #19875440;*/
+    background-color: #c5e1d4;
 }
 
 .bg-family {
-    /*background-color: #ff9933;*/
-    background-color: #fd7e1440;
-    
+    /*background-color: #fd7e1440;*/
+    background-color: #fedfc4;
 }
 
 .bg-business {
-    /*background-color: #ffb3cc;*/
-    background-color: #d6338440;
-    
+    /*background-color: #d6338440;*/
+    background-color: #f5cce0;
 }
 
 .bg-concierge {
-    /*background-color: #66a3ff;*/
-    background-color: #0d6efd40;
+    /*background-color: #0d6efd40;*/
+    background-color: #c2dbfe;
 }
 
 

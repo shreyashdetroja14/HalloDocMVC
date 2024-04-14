@@ -8,6 +8,6 @@ namespace HalloDocServices.Interface
 {
     public interface IMailService
     {
-        Task<bool> SendMail(List<string> receiver, string subject, string body, bool isHtml, List<string>? filesToSend);
+        Task<bool> SendMail(List<string> receiver, string subject, string body, bool isHtml, List<string>? filesToSend = null);
     }
 }

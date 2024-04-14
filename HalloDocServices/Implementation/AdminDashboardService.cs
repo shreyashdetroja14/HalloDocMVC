@@ -12,12 +12,15 @@ using System.Net;
 using HalloDocServices.Constants;
 using System.Data;
 using ClosedXML.Excel;
+using HalloDocRepository.Implementation;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 
 namespace HalloDocServices.Implementation
 {
     public class AdminDashboardService : IAdminDashboardService
     {
+        private readonly IUserRepository _userRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly IPhysicianRepository _physicianRepository;
         private readonly INotesAndLogsRepository _notesAndLogsRepository;
@@ -25,8 +28,9 @@ namespace HalloDocServices.Implementation
         private readonly IVendorRepository _vendorRepository;
         private readonly IMailService _mailService;
 
-        public AdminDashboardService(IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IVendorRepository vendorRepository, IMailService mailService)
+        public AdminDashboardService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IVendorRepository vendorRepository, IMailService mailService)
         {
+            _userRepository = userRepository;
             _requestRepository = requestRepository;
             _physicianRepository = physicianRepository;
             _notesAndLogsRepository = notesAndLogsRepository;
@@ -104,12 +108,12 @@ namespace HalloDocServices.Implementation
                 requests = requests.Where(x => x.RequestTypeId == requestType);
             }
 
-            if(searchPattern != null)
+            if (searchPattern != null)
             {
                 requests = requests.Where(x => EF.Functions.Like(x.RequestClients.FirstOrDefault().FirstName, "%" + searchPattern + "%"));
             }
 
-            if(searchRegion != null)
+            if (searchRegion != null)
             {
                 requests = requests.Where(x => x.RequestClients.FirstOrDefault().RegionId == searchRegion);
             }
@@ -132,14 +136,14 @@ namespace HalloDocServices.Implementation
             foreach (var request in requests)
             {
                 RequestClient? requestClient = request.RequestClients.FirstOrDefault();
-                int date = requestClient?.IntDate??0;
+                int date = requestClient?.IntDate ?? 0;
                 int year = requestClient?.IntYear ?? 0;
                 string month = requestClient?.StrMonth ?? "";
 
                 List<string> notes = new List<string>();
-                foreach(var log in request.RequestStatusLogs)
+                foreach (var log in request.RequestStatusLogs)
                 {
-                    if(log.Notes != null)
+                    if (log.Notes != null)
                     {
                         notes.Add(log.Notes);
                     }
@@ -164,7 +168,7 @@ namespace HalloDocServices.Implementation
                     Region = requestClient?.RegionId,
                     Notes = notes,
 
-                }) ;
+                });
             }
 
             PaginatedListViewModel<RequestRowViewModel> PaginatedData = new PaginatedListViewModel<RequestRowViewModel>();
@@ -176,13 +180,13 @@ namespace HalloDocServices.Implementation
 
         public ViewCaseViewModel GetViewCaseViewModelData(ViewCaseViewModel CaseInfo)
         {
-             
+
 
             var requestFetched = _requestRepository.GetIQueryableRequestByRequestId(CaseInfo.RequestId);
 
             var request = requestFetched.Include(x => x.RequestClients).Include(x => x.RequestBusinesses).Include(x => x.RequestBusinesses).ThenInclude(x => x.Business).FirstOrDefault();
 
-            if(request  != null)
+            if (request != null)
             {
                 var requestClient = request?.RequestClients.FirstOrDefault();
                 var businessName = request?.RequestBusinesses.FirstOrDefault()?.Business.Name;
@@ -200,7 +204,7 @@ namespace HalloDocServices.Implementation
 
                     if (requestClient?.IntDate.HasValue ?? false && requestClient.IntYear.HasValue && requestClient.StrMonth != null)
                     {
-                        DateTime monthDateTime = DateTime.ParseExact(requestClient.StrMonth??"", "MMMM", CultureInfo.InvariantCulture);
+                        DateTime monthDateTime = DateTime.ParseExact(requestClient.StrMonth ?? "", "MMMM", CultureInfo.InvariantCulture);
                         int month = monthDateTime.Month;
                         DateOnly date = new DateOnly((int)(requestClient.IntYear ?? 0), month, requestClient.IntDate.Value);
                         CaseInfo.DOB = date.ToString("yyyy-MM-dd");
@@ -226,7 +230,7 @@ namespace HalloDocServices.Implementation
         public async Task<bool> UpdateViewCaseInfo(ViewCaseViewModel CaseInfo)
         {
             var requestClient = await _requestRepository.GetRequestClientByRequestId(CaseInfo.RequestId);
-            if(requestClient == null) 
+            if (requestClient == null)
             {
                 return false;
             }
@@ -253,9 +257,9 @@ namespace HalloDocServices.Implementation
             ViewNotes.AdminNotes = requestNotes?.AdminNotes;
             ViewNotes.PhysicianNotes = requestNotes?.PhysicianNotes;
             List<string> transfernotes = new List<string>();
-            foreach(var log in requestStatusLogs)
+            foreach (var log in requestStatusLogs)
             {
-                if(log.Notes != null)
+                if (log.Notes != null)
                 {
                     if (log.Status == 3)
                     {
@@ -275,9 +279,9 @@ namespace HalloDocServices.Implementation
                         int index = log.Notes.LastIndexOf("-");
                         ViewNotes.PatientCancellationNotes = log.Notes.Substring(index + 2);
                     }
-                    
+
                     transfernotes.Add(log.Notes);
-                    
+
                 }
             }
             ViewNotes.TransferNotes = transfernotes;
@@ -285,7 +289,7 @@ namespace HalloDocServices.Implementation
             return ViewNotes;
         }
 
-        public async Task<bool> AddAdminNote(int requestId, string AdminNotesInput)
+        public async Task<bool> AddAdminNote(int requestId, string AdminNotesInput, string createdBy)
         {
             var requestNote = await _notesAndLogsRepository.GetNoteByRequestId(requestId);
             if (requestNote == null)
@@ -294,7 +298,7 @@ namespace HalloDocServices.Implementation
 
                 note.AdminNotes = AdminNotesInput;
                 note.RequestId = requestId;
-                note.CreatedBy = "sd";
+                note.CreatedBy = createdBy;
                 note.CreatedDate = DateTime.Now;
 
                 await _notesAndLogsRepository.AddRequestNote(note);
@@ -304,6 +308,8 @@ namespace HalloDocServices.Implementation
             else
             {
                 requestNote.AdminNotes = AdminNotesInput;
+                requestNote.ModifiedDate = DateTime.Now;
+                requestNote.ModifiedBy = createdBy;
 
                 await _notesAndLogsRepository.UpdateRequestNote(requestNote);
 
@@ -321,10 +327,10 @@ namespace HalloDocServices.Implementation
 
             var CaseTags = _commonRepository.GetAllCaseTags();
 
-            foreach(var tag in CaseTags)
+            foreach (var tag in CaseTags)
             {
-                if(tag == null) continue;
-                if(tag.Name != null)
+                if (tag == null) continue;
+                if (tag.Name != null)
                 {
                     CancelCase.CaseTags.Add(tag.Name);
                 }
@@ -340,7 +346,7 @@ namespace HalloDocServices.Implementation
         public async Task<bool> CancelCase(CancelCaseViewModel CancelCase)
         {
             var requestFetched = await _requestRepository.GetRequestByRequestId(CancelCase.RequestId);
-            if(requestFetched != null)
+            if (requestFetched != null)
             {
                 requestFetched.Status = 3;
                 requestFetched.CaseTag = CancelCase.CaseTagId.ToString();
@@ -350,13 +356,13 @@ namespace HalloDocServices.Implementation
                 RequestStatusLog log = new RequestStatusLog();
                 log.RequestId = CancelCase.RequestId;
                 log.Status = requestFetched.Status;
-                log.AdminId = CancelCase.AdminId??1;
+                log.AdminId = CancelCase.AdminId ?? 1;
                 log.Notes = "Admin cancelled the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + CancelCase.AdminCancellationNote;
                 log.CreatedDate = DateTime.Now;
 
                 await _notesAndLogsRepository.AddRequestStatusLog(log);
             }
-            
+
             return true;
         }
 
@@ -365,7 +371,7 @@ namespace HalloDocServices.Implementation
             var regions = _commonRepository.GetAllRegions();
             var physicians = _physicianRepository.GetAllPhysicians();
 
-            if(AssignCase.RegionId != 0)
+            if (AssignCase.RegionId != 0)
             {
                 physicians = physicians.Where(x => x.RegionId == AssignCase.RegionId).ToList();
             }
@@ -378,9 +384,9 @@ namespace HalloDocServices.Implementation
                 RegionList.Add(region.RegionId, region.Name);
             }
 
-            foreach(var physician in physicians)
+            foreach (var physician in physicians)
             {
-                PhysicianList.Add(physician.PhysicianId, physician.FirstName +  " " + physician.LastName);
+                PhysicianList.Add(physician.PhysicianId, physician.FirstName + " " + physician.LastName);
             }
 
             AssignCase.RegionList = RegionList;
@@ -436,7 +442,7 @@ namespace HalloDocServices.Implementation
         public async Task<BlockRequestViewModel> GetBlockRequestViewModelData(BlockRequestViewModel BlockRequest)
         {
             var requestClient = await _requestRepository.GetRequestClientByRequestId(BlockRequest.RequestId ?? 0);
-            if(requestClient != null)
+            if (requestClient != null)
             {
                 BlockRequest.PatientFullName = requestClient.FirstName + " " + requestClient.LastName;
             }
@@ -457,7 +463,7 @@ namespace HalloDocServices.Implementation
             var requestClientFetched = await _requestRepository.GetRequestClientByRequestId(requestFetched.RequestId);
 
             BlockRequest blockRequest = new BlockRequest();
-            if(requestClientFetched != null)
+            if (requestClientFetched != null)
             {
                 blockRequest.PhoneNumber = requestClientFetched.PhoneNumber;
                 blockRequest.Email = requestClientFetched.Email;
@@ -473,7 +479,7 @@ namespace HalloDocServices.Implementation
             log.RequestId = requestFetched.RequestId;
             log.Status = requestFetched.Status;
             log.AdminId = BlockRequest.AdminId ?? 1;
-            log.Notes = "Admin blocked the case on "  + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + BlockRequest.Description;
+            log.Notes = "Admin blocked the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + BlockRequest.Description;
             log.CreatedDate = DateTime.Now;
 
             await _notesAndLogsRepository.AddRequestStatusLog(log);
@@ -500,7 +506,7 @@ namespace HalloDocServices.Implementation
             ViewUploads.PatientFullName = requestClient?.FirstName + " " + requestClient?.LastName;
 
             List<RequestFileViewModel> requestfilelist = new List<RequestFileViewModel>();
-            if(requestwisefiles != null)
+            if (requestwisefiles != null)
             {
                 foreach (var file in requestwisefiles)
                 {
@@ -556,7 +562,7 @@ namespace HalloDocServices.Implementation
             }
             await _requestRepository.CreateRequestWiseFiles(requestWiseFiles);
         }
-        
+
 
         public async Task<DownloadedFile> DownloadFile(int fileId)
         {
@@ -567,8 +573,8 @@ namespace HalloDocServices.Implementation
             var bytes = System.IO.File.ReadAllBytes(path);
             var newfilename = Path.GetFileName(path);
 
-            DownloadedFile dloadFileData = new DownloadedFile() 
-            { 
+            DownloadedFile dloadFileData = new DownloadedFile()
+            {
                 RequestId = requestFileData?.RequestId ?? 0,
                 FileId = fileId,
                 Data = bytes,
@@ -599,7 +605,7 @@ namespace HalloDocServices.Implementation
                     }
                 });
             }
-                
+
             return ms.ToArray();
         }
 
@@ -618,7 +624,7 @@ namespace HalloDocServices.Implementation
         {
             var files = _requestRepository.GetRequestWiseFilesByFileIds(fileIds);
 
-            foreach(var file in files)
+            foreach (var file in files)
             {
                 file.IsDeleted = true;
             }
@@ -681,7 +687,7 @@ namespace HalloDocServices.Implementation
         {
             var vendor = _vendorRepository.GetVendorById(vendorId);
             OrdersViewModel VendorDetails = new OrdersViewModel();
-            
+
             VendorDetails.VendorId = vendor.VendorId;
             VendorDetails.BusinessContact = vendor.BusinessContact;
             VendorDetails.Email = vendor.Email;
@@ -737,54 +743,38 @@ namespace HalloDocServices.Implementation
         {
             Request request = await _requestRepository.GetRequestByRequestId(SendAgreementInfo.RequestId);
 
-            if(request == null) { return false; }
-
-            var mail = "tatva.dotnet.shreyashdetroja@outlook.com";
-            var password = "Dotnet_tatvasoft@14";
-
-            var client = new SmtpClient("smtp.office365.com")
-            {
-                Port = 587,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(mail, password)
-            };
+            if (request == null) { return false; }
 
             string subject = "Service Agreement from HalloDoc@Admin";
 
             string EncryptedRequestId = Encode(SendAgreementInfo.RequestId.ToString());
             string url = "http://localhost:5059/Patient/Agreement?requestId=" + EncryptedRequestId;
-            string message = "Click on the link to view the service agreement for Request - " + request.ConfirmationNumber + " on HalloDoc Platform: " + url ;
+            string message = "Click on the link to view the service agreement for Request - " + request.ConfirmationNumber + " on HalloDoc Platform: " + url;
 
-            //string message = "hello";
-            string receiver = SendAgreementInfo.Email ?? "";
+            List<string> receiver = new List<string>();
+            receiver.Add(SendAgreementInfo.Email ?? "");
 
-            string senderDisplayName = "HalloDoc Admin";
-            string receiverDisplayName = "";
+            bool isMailSent = await _mailService.SendMail(receiver, subject, message, isHtml: false);
 
-            MailAddress senderMailAddress = new MailAddress(mail, senderDisplayName);
-            MailAddress receiverMailAddress = new MailAddress(receiver, receiverDisplayName);
-
-            using (var mailMessage = new MailMessage(senderMailAddress, receiverMailAddress))
+            if (isMailSent)
             {
-                mailMessage.Subject = subject;
-                mailMessage.Body = message;
+                request.IsAgreementSent = true;
+                await _requestRepository.UpdateRequest(request);
 
-                await client.SendMailAsync(mailMessage);
+                return true;
+            }
+            else
+            {
+                return false;
             }
 
-            request.IsAgreementSent = true;
-            await _requestRepository.UpdateRequest(request);
-
-            return true;
         }
 
         public async Task<SendAgreementViewModel> GetSendAgreementViewModelData(SendAgreementViewModel SendAgreementInfo)
         {
             var requestClientFetched = await _requestRepository.GetRequestClientByRequestId(SendAgreementInfo.RequestId);
             var requestFetched = await _requestRepository.GetRequestByRequestId(SendAgreementInfo.RequestId);
-            if(requestClientFetched  != null && requestFetched != null)
+            if (requestClientFetched != null && requestFetched != null)
             {
                 SendAgreementInfo.RequestType = requestFetched.RequestTypeId;
                 SendAgreementInfo.Email = requestClientFetched.Email;
@@ -798,7 +788,7 @@ namespace HalloDocServices.Implementation
         public async Task<bool> CloseCase(int requestId, int adminId)
         {
             var requestFetched = await _requestRepository.GetRequestByRequestId(requestId);
-            if(requestFetched != null)
+            if (requestFetched != null)
             {
                 requestFetched.Status = 9;
 
@@ -820,7 +810,7 @@ namespace HalloDocServices.Implementation
         public EncounterFormViewModel GetEncounterFormViewModelData(EncounterFormViewModel EncounterFormDetails)
         {
             var encounterFormFetched = _commonRepository.GetEncounterFormByRequestId(EncounterFormDetails.RequestId);
-            if(encounterFormFetched?.RequestId != null)
+            if (encounterFormFetched?.RequestId != null)
             {
                 EncounterFormDetails.EncounterFormId = encounterFormFetched.EncounterFormId;
                 EncounterFormDetails.RequestId = encounterFormFetched.RequestId;
@@ -890,13 +880,13 @@ namespace HalloDocServices.Implementation
                     encounterFormToUpdate.IntDate = dateTime.Day;
                 }
 
-                if(EncounterFormDetails.ServiceDate != null)
+                if (EncounterFormDetails.ServiceDate != null)
                 {
                     encounterFormToUpdate.ServiceDate = DateTime.ParseExact(EncounterFormDetails.ServiceDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
                 }
 
                 encounterFormToUpdate.PhoneNumber = EncounterFormDetails.PhoneNumber;
-                encounterFormToUpdate.Email = EncounterFormDetails.Email;   
+                encounterFormToUpdate.Email = EncounterFormDetails.Email;
                 encounterFormToUpdate.PresentIllnessHistory = EncounterFormDetails.PresentIllnessHistory;
                 encounterFormToUpdate.MedicalHistory = EncounterFormDetails.MedicalHistory;
                 encounterFormToUpdate.Medications = EncounterFormDetails.Medications;
@@ -921,7 +911,7 @@ namespace HalloDocServices.Implementation
                 encounterFormToUpdate.MedicationsDispensed = EncounterFormDetails.MedicationsDispensed;
                 encounterFormToUpdate.Procedures = EncounterFormDetails.Procedures;
                 encounterFormToUpdate.FollowUp = EncounterFormDetails.FollowUp;
-                
+
                 await _commonRepository.UpdateEncounterForm(encounterFormToUpdate);
 
                 return true;
@@ -971,7 +961,7 @@ namespace HalloDocServices.Implementation
                 requests = requests.Where(x => x.RequestClients.FirstOrDefault().RegionId == searchRegion);
             }
 
-            if(pageNumber != null)
+            if (pageNumber != null)
             {
                 int requestCount = requests.Count();
                 int pageSize = 5;
@@ -1004,7 +994,7 @@ namespace HalloDocServices.Implementation
 
             });
 
-            foreach(var row in requestData)
+            foreach (var row in requestData)
             {
                 int requestId = row.RequestId;
                 string patientName = row.RequestClients.FirstOrDefault()?.FirstName + " " + row.RequestClients.FirstOrDefault()?.LastName;
@@ -1029,19 +1019,137 @@ namespace HalloDocServices.Implementation
 
                 dataTable.Rows.Add(requestId, patientName, DOB, requestor, requestDate, physicianName, dateOfService, phoneNumber, address, note);
 
-                
+
             }
 
-            using(XLWorkbook wb = new XLWorkbook())
+            using (XLWorkbook wb = new XLWorkbook())
             {
                 wb.Worksheets.Add(dataTable);
-                using(MemoryStream stream = new MemoryStream())
+                using (MemoryStream stream = new MemoryStream())
                 {
                     wb.SaveAs(stream);
 
                     return stream.ToArray();
                 }
             }
+        }
+
+        public List<SelectListItem> GetRegionList()
+        {
+            List<SelectListItem> RegionList = _commonRepository.GetAllRegions().Select(x => new SelectListItem
+            {
+                Value = x.RegionId.ToString(),
+                Text = x.Name
+            }).ToList();
+
+            return RegionList;
+        }
+
+        #region CONFIRMATION NUMBER
+        string GenerateConfirmationNumber(DateTime createdate, string lastname, string firstname, string state)
+        {
+            string datePart = createdate.ToString("yyMMdd");
+            string lastNamePart = (lastname?.Length >= 2 ? lastname?.Substring(0, 2) : lastname?.PadRight(2, 'X')) ?? "XX";
+            string firstNamePart = firstname.Length >= 2 ? firstname.Substring(0, 2) : firstname.PadRight(2, 'X');
+            string regionAbbr = state?.Substring(0, 2) ?? "ZZ";
+            int count = _requestRepository.GetTotalRequestCountByDate(DateOnly.FromDateTime(createdate)) + 1;
+
+            string confirmationNumber = $"{regionAbbr}{datePart}{lastNamePart}{firstNamePart}{count:D4}";
+
+            return confirmationNumber.ToUpper();
+        }
+        #endregion
+
+        #region CREATE REQUEST CLIENT 
+
+        public RequestClient CreateRequestClient(PatientRequestViewModel PatientInfo, Request requestNew)
+        {
+            var requestClientNew = new RequestClient();
+            requestClientNew.RequestId = requestNew.RequestId;
+            requestClientNew.FirstName = PatientInfo.FirstName;
+            requestClientNew.LastName = PatientInfo.LastName;
+            requestClientNew.PhoneNumber = PatientInfo.PhoneNumber;
+            requestClientNew.Location = PatientInfo.Room;
+            requestClientNew.Address = PatientInfo.Street + ", " + PatientInfo.City + ", " + PatientInfo.State + ", " + PatientInfo.ZipCode;
+            requestClientNew.NotiMobile = PatientInfo.PhoneNumber;
+            requestClientNew.NotiEmail = PatientInfo.Email;
+            requestClientNew.Notes = PatientInfo.Symptoms;
+            requestClientNew.Email = PatientInfo.Email;
+
+            if (PatientInfo.DOB != null)
+            {
+                DateTime dateTime = DateTime.ParseExact(PatientInfo.DOB, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                requestClientNew.IntYear = dateTime.Year;
+                requestClientNew.StrMonth = dateTime.ToString("MMMM");
+                requestClientNew.IntDate = dateTime.Day;
+            }
+
+            requestClientNew.Street = PatientInfo.Street;
+            requestClientNew.City = PatientInfo.City;
+            requestClientNew.State = PatientInfo.State;
+            requestClientNew.ZipCode = PatientInfo.ZipCode;
+            requestClientNew.RegionId = PatientInfo.RegionId;
+
+            return requestClientNew;
+        }
+
+        #endregion
+
+        public async Task<bool> CreateRequest(PatientRequestViewModel PatientInfo)
+        {
+            var aspnetuser = await _userRepository.GetAspNetUserByEmail(PatientInfo.Email);
+            if (aspnetuser == null)
+            {
+                List<string> receiver = new List<string>();
+                receiver.Add(PatientInfo.Email);
+
+                string subject = "Create Account from HalloDoc@Admin";
+                string body = "Tap on link to create account on HalloDoc: http://localhost:5059/Login/CreateAccount" + "?emailtoken=" + PatientInfo.EmailToken;
+
+                await _mailService.SendMail(receiver, subject, body, isHtml: false);
+            }
+
+            var userFetched = await _userRepository.GetUserByEmail(PatientInfo.Email);
+
+            var requestNew = new Request();
+
+            requestNew.RequestTypeId = 2;
+            requestNew.UserId = userFetched?.UserId;
+            requestNew.FirstName = PatientInfo.FirstName;
+            requestNew.LastName = PatientInfo.LastName;
+            requestNew.PhoneNumber = PatientInfo.PhoneNumber;
+            requestNew.Email = PatientInfo.Email;
+            requestNew.Status = PatientInfo.CreatorRole == "physician" ? (short)(RequestStatus.Accepted) : (short)(RequestStatus.Unassigned);
+            requestNew.PhysicianId = PatientInfo.CreatorRole == "physician" ? PatientInfo.CreatedBy : null;
+            requestNew.CreatedDate = DateTime.Now;
+            requestNew.IsUrgentEmailSent = false;
+            requestNew.PatientAccountId = aspnetuser?.Id;
+            requestNew.CreatedUserId = userFetched?.UserId;
+
+            requestNew.ConfirmationNumber = GenerateConfirmationNumber(requestNew.CreatedDate, PatientInfo.LastName ?? "", PatientInfo.FirstName, PatientInfo.State ?? "");
+
+            requestNew = await _requestRepository.CreateRequest(requestNew);
+
+            var requestClientNew = CreateRequestClient(PatientInfo, requestNew);
+
+            await _requestRepository.CreateRequestClient(requestClientNew);
+
+            if (PatientInfo.Notes != null)
+            {
+                RequestNote note = new RequestNote();
+
+                note.AdminNotes = PatientInfo.CreatorRole == "admin" ? PatientInfo.Notes : null;
+                note.PhysicianNotes = PatientInfo.CreatorRole == "physician" ? PatientInfo.Notes : null;
+                note.RequestId = requestNew.RequestId;
+                note.CreatedBy = PatientInfo.CreatorAspId ?? "";
+                note.CreatedDate = DateTime.Now;
+
+                await _notesAndLogsRepository.AddRequestNote(note);
+
+                return true;
+            }
+
+            return true;
         }
     }
 }

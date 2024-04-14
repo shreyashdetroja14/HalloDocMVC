@@ -32,6 +32,7 @@ namespace HalloDocRepository.Implementation
 
         public async Task<AspNetUser> CreateAspNetUser(AspNetUser aspnetuser)
         {
+            aspnetuser.Email = aspnetuser.Email?.ToLower();
             _context.AspNetUsers.Add(aspnetuser);
             await _context.SaveChangesAsync();
 

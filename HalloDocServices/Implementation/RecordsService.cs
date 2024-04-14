@@ -501,6 +501,7 @@ namespace HalloDocServices.Implementation
 
             List<LogRowViewModel> EmailLogList = emailLogs.Select(x => new LogRowViewModel
             {
+                EmailLogId = x.EmailLogId,
                 RecipientName = x.RecipientName,
                 Action = x.Action.ToString(),
                 RoleName = ((AccountType)(x.RoleId ?? 0)).ToString(),
@@ -570,6 +571,7 @@ namespace HalloDocServices.Implementation
 
             List<LogRowViewModel> EmailLogList = smsLogs.Select(x => new LogRowViewModel
             {
+                SMSLogId = x.SmsLogId,
                 RecipientName = x.RequestId != null ? x.Request.RequestClients.FirstOrDefault().FirstName + " " + x.Request.RequestClients.FirstOrDefault().LastName : x.Physician.FirstName + " " + x.Physician.LastName,
                 Action = x.Action.ToString(),
                 RoleName = ((AccountType)(x.RoleId ?? 0)).ToString(),

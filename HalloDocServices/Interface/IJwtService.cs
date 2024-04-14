@@ -13,5 +13,7 @@ namespace HalloDocServices.Interface
         string GenerateJwtToken(AspNetUser aspNetUser);
 
         bool ValidateToken(string token, out JwtSecurityToken jwtSecurityToken);
+
+        string GenerateEmailToken(string email, bool isExpireable);
     }
 }
