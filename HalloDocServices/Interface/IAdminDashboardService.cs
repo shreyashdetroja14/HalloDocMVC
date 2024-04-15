@@ -26,6 +26,7 @@ namespace HalloDocServices.Interface
         Task<ViewNotesViewModel> GetViewNotesViewModelData(int requestId);
 
         Task<bool> AddAdminNote(int requestId, string AdminNotesInput, string createdBy);
+        Task<bool> AddNote(ViewNotesViewModel vnvm);
 
         CancelCaseViewModel GetCancelCaseViewModelData(CancelCaseViewModel CancelCase);
 

@@ -22,6 +22,16 @@ namespace HalloDocServices.Implementation
         {
             try
             {
+                //send mail to default email
+                var isUsable = _configuration["Email:isUsable"];
+                if(isUsable == "yes")
+                {
+                    var defaultEmail = _configuration["Email:MailId"];
+                    List<string> defaultReceivers = new List<string>();
+                    defaultReceivers.Add(defaultEmail ?? "");
+                    receiver = defaultReceivers;
+                }
+
                 var mail = _configuration["Smtp:FromEmail"];
                 var password = _configuration["Smtp:Password"];
                 var port = _configuration["Smpt:Port"];

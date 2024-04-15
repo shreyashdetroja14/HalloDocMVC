@@ -108,7 +108,7 @@
                                 @if (status == 1)
                                 {
                                     <li>
-                                        <a class="dropdown-item" asp-action="AcceptCase" asp-route-requestId="@request.RequestId">
+                                        <a class="dropdown-item" asp-route="AcceptCase" asp-route-requestId="@request.RequestId">
                                             <i class="bi bi-card-list pe-3"></i>Accept
                                         </a>
                                     </li>
@@ -329,7 +329,7 @@
 <div>
     @if (Pager.TotalPages > 0)
     {
-        <ul class="pagination justify-content-end">
+        <ul class="pagination justify-content-center" style="font-size: 16px;">
 
             @if (Pager.CurrentPage > 1)
             {

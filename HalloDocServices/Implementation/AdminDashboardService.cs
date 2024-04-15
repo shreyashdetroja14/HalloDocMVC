@@ -15,6 +15,8 @@ using ClosedXML.Excel;
 using HalloDocRepository.Implementation;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Formats.Asn1;
+using DocumentFormat.OpenXml.Office2016.Excel;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 
 namespace HalloDocServices.Implementation
@@ -369,6 +371,52 @@ namespace HalloDocServices.Implementation
                 requestNote.AdminNotes = AdminNotesInput;
                 requestNote.ModifiedDate = DateTime.Now;
                 requestNote.ModifiedBy = createdBy;
+
+                await _notesAndLogsRepository.UpdateRequestNote(requestNote);
+
+                return true;
+            }
+        }
+
+        public async Task<bool> AddNote(ViewNotesViewModel vnvm)
+        {
+            if(vnvm.RequestId == 0)
+            {
+                return false;
+            }
+            var requestNote = await _notesAndLogsRepository.GetNoteByRequestId(vnvm.RequestId);
+            if (requestNote == null)
+            {
+                RequestNote note = new RequestNote();
+
+                if (vnvm.IsPhysician)
+                {
+                    note.PhysicianNotes = vnvm.PhysicianNotesInput;
+                }
+                else
+                {
+                    note.AdminNotes = vnvm.AdminNotesInput;
+                }
+                note.RequestId = vnvm.RequestId;
+                note.CreatedBy = vnvm.CreatedBy ?? "";
+                note.CreatedDate = DateTime.Now;
+
+                await _notesAndLogsRepository.AddRequestNote(note);
+
+                return true;
+            }
+            else
+            {
+                if (vnvm.IsPhysician)
+                {
+                    requestNote.PhysicianNotes = vnvm.PhysicianNotesInput;
+                }
+                else
+                {
+                    requestNote.AdminNotes = vnvm.AdminNotesInput;
+                }
+                requestNote.ModifiedDate = DateTime.Now;
+                requestNote.ModifiedBy = vnvm.CreatedBy;
 
                 await _notesAndLogsRepository.UpdateRequestNote(requestNote);
 
@@ -1211,7 +1259,18 @@ namespace HalloDocServices.Implementation
 
                 await _notesAndLogsRepository.AddRequestNote(note);
 
-                return true;
+            }
+
+            if(PatientInfo.CreatorRole == "physician")
+            {
+                RequestStatusLog log = new RequestStatusLog();
+                log.RequestId = requestNew.RequestId;
+                log.Status = requestNew.Status;
+                log.PhysicianId = requestNew.PhysicianId;
+                log.Notes = "Physician accepted the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+                log.CreatedDate = DateTime.Now;
+
+                await _notesAndLogsRepository.AddRequestStatusLog(log);
             }
 
             return true;

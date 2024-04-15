@@ -122,7 +122,7 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Accept Case.";
             }
 
-            return RedirectToRoute("PhysicianDashboard");
+            return RedirectToRoute("Dashboard");
         }
 
 
@@ -141,6 +141,7 @@ namespace HalloDocMVC.Controllers
 
             return View(CaseInfo); 
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -162,24 +163,56 @@ namespace HalloDocMVC.Controllers
             return RedirectToRoute("ViewCase", new { requestId = CaseInfo.RequestId });
         }
 
+
+        [Route("Dashboard/ViewNotes", Name = "ViewNotes")]
+
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> ViewNotes(int requestId)
         {
+            ClaimsData claimsData = GetClaimsData();
+
             ViewNotesViewModel ViewNotes = new ViewNotesViewModel();
             ViewNotes = await _adminDashboardService.GetViewNotesViewModelData(requestId);
+            
+            ViewNotes.RequestId = requestId;
+            ViewNotes.IsPhysician = claimsData.AspNetUserRole == "physician" ? true : false;
+
             return View(ViewNotes);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        [Route("Dashboard/ViewNotes", Name = "EditViewNotes")]
+
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> ViewNotes(ViewNotesViewModel vnvm)
         {
-            bool isNoteAdded = false;
+            ClaimsData claimsData = GetClaimsData();
+
+            vnvm.CreatedBy = claimsData.AspNetUserId;
+            vnvm.IsPhysician = claimsData.AspNetUserRole == "physician" ? true : false;
+
+            bool isNoteAdded = await _adminDashboardService.AddNote(vnvm);
+            if (isNoteAdded)
+            {
+                TempData["SuccessMessage"] = "Note Added Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Add Note.";
+            }
+
+            return RedirectToRoute("ViewNotes", new { requestId = vnvm.RequestId });
+
+            /*bool isNoteAdded = false;
             if (vnvm.AdminNotesInput != null)
             {
                 isNoteAdded = await _adminDashboardService.AddAdminNote(vnvm.RequestId ?? 0, vnvm.AdminNotesInput, GetClaimsData().AspNetUserId ?? "");
             }
             if(isNoteAdded)
             {
-                /*return RedirectToAction("ViewNotes", new { requestId });*/
+                *//*return RedirectToAction("ViewNotes", new { requestId });*//*
                 ViewNotesViewModel ViewNotes = new ViewNotesViewModel();
                 ViewNotes = await _adminDashboardService.GetViewNotesViewModelData(vnvm.RequestId ?? 0);
                 return View(ViewNotes);
@@ -187,7 +220,7 @@ namespace HalloDocMVC.Controllers
             else
             {
                 return View(vnvm.AdminNotesInput);
-            }
+            }*/
         }
 
         public IActionResult CancelCase(int requestId)
@@ -241,7 +274,11 @@ namespace HalloDocMVC.Controllers
             bool isCaseAssigned = await _adminDashboardService.AssignCase(AssignCase);
             if (isCaseAssigned)
             {
-
+                TempData["SuccessMessage"] = "Case Assigned Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Assign Case.";
             }
 
             return RedirectToAction("Index");
@@ -532,6 +569,10 @@ namespace HalloDocMVC.Controllers
             return File(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "requests.xlsx");
         }
 
+
+        [Route("Dashboard/CreateRequest", Name = "CreateRequest")]
+
+        [CustomAuthorize("admin", "physician")]
         public IActionResult CreateRequest()
         {
             PatientRequestViewModel PatientInfo = new PatientRequestViewModel();
@@ -540,6 +581,9 @@ namespace HalloDocMVC.Controllers
             return View(PatientInfo);
         }
 
+        [Route("Dashboard/CreateRequest", Name = "CreateRequestPost")]
+
+        [CustomAuthorize("admin", "physician")]
         [HttpPost]
         public async Task<IActionResult> CreateRequest(PatientRequestViewModel PatientInfo)
         {
@@ -562,12 +606,12 @@ namespace HalloDocMVC.Controllers
             if (isRequestCreated)
             {
                 TempData["SuccessMessage"] = "Request Created Successfully.";
-                return RedirectToAction("Index");
+                return RedirectToRoute("Dashboard");
             }
             else
             {
                 TempData["ErrorMessage"] = "Unable to Create Request.";
-                return RedirectToAction("CreateRequest");
+                return RedirectToRoute("CreateRequest");
             }
             
         }

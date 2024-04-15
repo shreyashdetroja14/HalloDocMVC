@@ -145,6 +145,7 @@
 
 .page-link {
     border: 1px solid #0dcaf0;
+    background-color: transparent;
 }
 
 .page-link:hover{
