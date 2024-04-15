@@ -18,12 +18,14 @@
     <div class="container p-4">
         <div class="heading d-flex justify-content-between align-items-center mb-3">
             <h1 class="h2 mb-3">Encounter Form</h1>
-            <a class="btn back-btn">
-                <img src="~/images/backIcon.svg" alt="">
-                Back
-            </a>
+            <button class="btn back-btn d-flex align-items-center" onclick="window.history.back()">
+                <span class="material-symbols-outlined text-info fs-6">
+                    arrow_back_ios
+                </span>
+                <span>Back</span>
+            </button>
         </div>
-        <form asp-action="EncounterForm" class="bg-white p-4  request-form rounded-0 shadow-none">
+        <form asp-route="EncounterForm" id="encounter-form" class="bg-white p-4  request-form rounded-0 shadow-none">
             <h1 class="text-info text-center mb-3">Medical Report-Confidential</h1>
             <input type="number" asp-for="RequestId" hidden>
             <input type="number" asp-for="EncounterFormId" hidden>
@@ -33,7 +35,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="FirstName" class="form-control" id="FirstName"
-                               placeholder="First Name" readonly>
+                               placeholder="First Name"  >
                         <label asp-for="FirstName">First Name</label>
                     </div>
                 </div>
@@ -41,7 +43,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="LastName" class="form-control" id="LastName"
-                               placeholder="Last Name" readonly>
+                               placeholder="Last Name"  >
                         <label asp-for="LastName">Last Name</label>
                     </div>
                 </div>
@@ -49,33 +51,33 @@
                 <div class="col-12">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="Location" class="form-control" id="Location"
-                               placeholder="Location" readonly>
+                               placeholder="Location"  >
                         <label asp-for="Location">Location</label>
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
-                        <input type="date" asp-for="DOB" class="form-control" id="DOB" placeholder="DOB" readonly>
+                        <input type="date" asp-for="DOB" class="form-control" id="DOB" placeholder="DOB"  >
                         <label asp-for="DOB">Date Of Birth</label>
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
-                        <input type="date" asp-for="ServiceDate" class="form-control" id="ServiceDate" placeholder="ServiceDate" readonly>
+                        <input type="date" asp-for="ServiceDate" class="form-control" id="ServiceDate" placeholder="ServiceDate"  >
                         <label asp-for="ServiceDate">ServiceDate</label>
                     </div>
                 </div>
 
                 <div class="col-md-6 pb-3">
-                    <input type="tel" asp-for="PhoneNumber" class="form-control w-100" id="PhoneNumber" readonly />
+                    <input type="tel" asp-for="PhoneNumber" class="form-control w-100" id="PhoneNumber"   />
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <input type="email" asp-for="Email" class="form-control" id="Email"
-                               placeholder="abc@xyz.pqr" autocomplete="off" readonly>
+                               placeholder="abc@xyz.pqr" autocomplete="off"  >
                         <label asp-for="Email">Email</label>
                     </div>
                 </div>
@@ -83,7 +85,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="PresentIllnessHistory" class="form-control" placeholder="PresentIllnessHistory" id="PresentIllnessHistory"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="PresentIllnessHistory">History of present illness or injury</label>
                     </div>
                 </div>
@@ -91,7 +93,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="MedicalHistory" class="form-control" placeholder="MedicalHistory" id="MedicalHistory"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="MedicalHistory">Medical History</label>
                     </div>
                 </div>
@@ -99,7 +101,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="Medications" class="form-control" placeholder="Medications" id="Medications"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="Medications">Medications</label>
                     </div>
                 </div>
@@ -107,7 +109,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="Allergies" class="form-control" placeholder="Allergies" id="Allergies"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="Allergies">Allergies</label>
                     </div>
                 </div>
@@ -115,7 +117,7 @@
                 <div class="col-md-4">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="Temperature" class="form-control" id="Temperature"
-                               placeholder="Temperature" readonly>
+                               placeholder="Temperature"  >
                         <label asp-for="Temperature">Temperature</label>
                     </div>
                 </div>
@@ -123,7 +125,7 @@
                 <div class="col-md-4">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="RespirationRate" class="form-control" id="RespirationRate"
-                               placeholder="RespirationRate" readonly>
+                               placeholder="RespirationRate"  >
                         <label asp-for="RespirationRate">RR</label>
                     </div>
                 </div>
@@ -131,7 +133,7 @@
                 <div class="col-md-4">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="HeartRate" class="form-control" id="HeartRate"
-                               placeholder="HeartRate" readonly>
+                               placeholder="HeartRate"  >
                         <label asp-for="HeartRate">HR</label>
                     </div>
                 </div>
@@ -139,7 +141,7 @@
                 <div class="col-6 col-lg-2">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="BloodPressureSystolic" class="form-control" id="BloodPressureSystolic"
-                               placeholder="BloodPressureSystolic" readonly>
+                               placeholder="BloodPressureSystolic"  >
                         <label asp-for="BloodPressureSystolic">BP(Systolic)</label>
                     </div>
                 </div>
@@ -147,7 +149,7 @@
                 <div class="col-6 col-lg-2">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="BloodPressureDiastolic" class="form-control" id="BloodPressureDiastolic"
-                               placeholder="BloodPressureDiastolic" readonly>
+                               placeholder="BloodPressureDiastolic"  >
                         <label asp-for="BloodPressureDiastolic">BP(Diastolic)</label>
                     </div>
                 </div>
@@ -155,7 +157,7 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="OxygenLevel" class="form-control" id="OxygenLevel"
-                               placeholder="OxygenLevel" readonly>
+                               placeholder="OxygenLevel"  >
                         <label asp-for="OxygenLevel">O2</label>
                     </div>
                 </div>
@@ -163,7 +165,7 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="Pain" class="form-control" id="Pain"
-                               placeholder="Pain" readonly>
+                               placeholder="Pain"  >
                         <label asp-for="Pain">Pain</label>
                     </div>
                 </div>
@@ -171,7 +173,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="Heent" class="form-control" placeholder="Heent" id="Heent"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="Heent">HEENT</label>
                     </div>
                 </div>
@@ -179,7 +181,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="Cardiovascular" class="form-control" placeholder="Cardiovascular" id="Cardiovascular"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="Cardiovascular">CV</label>
                     </div>
                 </div>
@@ -187,7 +189,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="Chest" class="form-control" placeholder="Chest" id="Chest"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="Chest">Chest</label>
                     </div>
                 </div>
@@ -195,7 +197,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="Abdomen" class="form-control" placeholder="Abdomen" id="Abdomen"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="Abdomen">ABD</label>
                     </div>
                 </div>
@@ -203,7 +205,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="Extremities" class="form-control" placeholder="Extremities" id="Extremities"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="Extremities">Extr</label>
                     </div>
                 </div>
@@ -211,7 +213,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="Skin" class="form-control" placeholder="Skin" id="Skin"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="Skin">Skin</label>
                     </div>
                 </div>
@@ -219,7 +221,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="Neuro" class="form-control" placeholder="Neuro" id="Neuro"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="Neuro">Neuro</label>
                     </div>
                 </div>
@@ -227,7 +229,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="Other" class="form-control" placeholder="Other" id="Other"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="Other">Other</label>
                     </div>
                 </div>
@@ -235,7 +237,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="Diagnosis" class="form-control" placeholder="Diagnosis" id="Diagnosis"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="Diagnosis">Diagnosis</label>
                     </div>
                 </div>
@@ -243,7 +245,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="TreatmentPlan" class="form-control" placeholder="TreatmentPlan" id="TreatmentPlan"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="TreatmentPlan">Treatment Plan</label>
                     </div>
                 </div>
@@ -251,7 +253,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="MedicationsDispensed" class="form-control" placeholder="MedicationsDispensed" id="MedicationsDispensed"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="MedicationsDispensed">Medications Dispensed</label>
                     </div>
                 </div>
@@ -259,7 +261,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <textarea asp-for="Procedures" class="form-control" placeholder="Procedures" id="Procedures"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="Procedures">Procedures</label>
                     </div>
                 </div>
@@ -267,7 +269,7 @@
                 <div class="col-12">
                     <div class="form-floating mb-3">
                         <textarea asp-for="FollowUp" class="form-control" placeholder="FollowUp" id="FollowUp"
-                                  style="height: 100px" readonly></textarea>
+                                  style="height: 100px"  ></textarea>
                         <label asp-for="FollowUp">Follow Up</label>
                     </div>
                 </div>
@@ -275,11 +277,30 @@
             </div>
 
 
-            <div class="submit mb-4 d-flex justify-content-end">
-                <button type="button" class="btn btn-outline-info py-2 px-3 ms-3" id="editbtn">Edit</button>
-                <input type="submit" value="Save Changes" id="save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
-                <input type="reset" value="Cancel" class="btn cancelbtn btn-outline-info py-2 px-3 ms-3 d-none">
-            </div>
+            @if(Model.EncounterFormId != 0)
+            {
+                <div class="submit mb-4 d-flex justify-content-end flex-wrap">
+                    @if (Model.IsPhysician && Model.IsFinalized != true)
+                    {
+                        <button type="button" id="save" class="btn btn-info py-2 px-3 ms-2 mb-2 text-white">Save Changes</button>
+                        <button type="button" id="finalize" class="btn btn-primary py-2 px-3 ms-2 mb-2 text-white">Finalize</button>
+                        <input type="reset" value="Cancel" class="btn cancelbtn btn-outline-info py-2 px-3 ms-2 mb-2">
+                    }
+                    else if(Model.IsPhysician == false)
+                    {
+                        <button type="button" id="save-admin" class="btn btn-info py-2 px-3 ms-3 text-white">Save Changes</button>
+                        <input type="reset" value="Cancel" class="btn cancelbtn btn-outline-info py-2 px-3 ms-3">
+                    }
+
+                </div>
+
+                @if (Model.IsPhysician == true && Model.IsFinalized == true)
+                {
+                    <div class="text-center">
+                        <h4 class="text-warning">Encounter Form has been finalized.</h4>
+                    </div>
+                }
+            }
 
         </form>
 
@@ -291,65 +312,36 @@
 
 
 @section AddScript{
+    <partial name="_ToastMessageScriptsPartial" />
+
     <script>
         const phoneInputField = document.querySelector("#PhoneNumber");
         const phoneInput = window.intlTelInput(phoneInputField, {
-            preferredCountries: ["us", "in", "au", "de"],
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
     </script>
     <script>
-        const editBtn = document.querySelector('#editbtn');
-        const saveBtn = document.querySelector('#save');
-        const cancelBtn = document.querySelector('input[type="reset"]');
-
-        const emailInp = document.querySelector('input[type="email"]');
-        const phoneInp = document.querySelector('input[type="tel"]');
-
-        const inputTags = document.querySelectorAll('input');
-        const textareaTags = document.querySelectorAll('textarea');
-
-        //document.addEventListener('DOMContentLoaded', () => {
-        //    inputTags.forEach(input => {
-        //        input.readOnly = true;
-        //    });
-        //});
-
-        if (editBtn !== null) {
-            editBtn.addEventListener('click', () => {
-                editBtn.classList.add('d-none');
-
-                saveBtn.classList.remove('d-none');
-                cancelBtn.classList.remove('d-none');
-
-                inputTags.forEach(input => {
-                    input.readOnly = false;
-                })
-
-                textareaTags.forEach(textarea => {
-                    textarea.readOnly = false;
-                })
-            });
-        }
-
-        cancelBtn.addEventListener('click', () => {
-            saveBtn.classList.add('d-none');
-            cancelBtn.classList.add('d-none');
-
-            editBtn.classList.remove('d-none');
-
-            inputTags.forEach(input => {
-                input.readOnly = true;
-            })
-
-            textareaTags.forEach(textarea => {
-                textarea.readOnly = true;
-            })
-        })
-
-
-
+        $('#finalize').click(function () {
+            $('#encounter-form').attr('action', '/Physician/Finalize');
+            $('#encounter-form').attr('method', 'post');
+            $('#encounter-form').submit();
+        });
+        
+        $('#save').click(function () {
+            $('#encounter-form').attr('action', '/Dashboard/EncounterForm');
+            $('#encounter-form').attr('method', 'post');
+            $('#encounter-form').submit();
+        });
+        
+        $('#save-admin').click(function () {
+            $('#encounter-form').attr('action', '/Dashboard/EncounterForm');
+            $('#encounter-form').attr('method', 'post');
+            $('#encounter-form').submit();
+        });
     </script>
 }
 

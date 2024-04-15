@@ -1,0 +1,37 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@using HalloDocServices.Constants
+
+@model HalloDocServices.ViewModels.AdminViewModels.CareTypeViewModel
+
+<div class="modal fade" data-bs-backdrop="static" id="care-type-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3">
+            <div class="modal-header fw-bold bg-info text-white">
+                <h1 class="modal-title fs-5 " id="modaltitle">Select Type of Care</h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="CareType">
+                    <input type="number" asp-for="@Model.RequestId" hidden />
+                    <div class="d-flex justify-content-center mb-3">
+                        <input type="radio" class="btn-check" name="CareType" id="@((CareType.HouseCall).ToString())" value="@((int)CareType.HouseCall)" autocomplete="off" >
+                        <label class="btn btn-outline-info" for="@((CareType.HouseCall).ToString())">@((CareType.HouseCall).ToString())</label>
+
+                        <input type="radio" class="btn-check" name="CareType" id="@((CareType.Consult).ToString())" value="@((int)CareType.Consult)" autocomplete="off">
+                        <label class="btn btn-outline-info ms-3" for="@((CareType.Consult).ToString())">@((CareType.Consult).ToString())</label>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <input type="submit" value="Save" class="btn btn-info text-white" />
+                        <button type="button" class="btn btn-outline-info ms-3" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

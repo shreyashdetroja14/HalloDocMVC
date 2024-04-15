@@ -81,5 +81,9 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public bool? IsFinalized { get; set; }
 
         public DateTime? FinalizedDate { get; set; }
+
+        public bool IsPhysician { get; set; }
+
+        public string? UserRole { get; set; }
     }
 }

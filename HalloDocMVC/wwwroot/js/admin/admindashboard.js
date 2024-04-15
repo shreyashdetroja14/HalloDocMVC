@@ -321,7 +321,7 @@ async function GetSendAgreementModalData(requestId) {
         const isCookieValid = await ValidateCookie();
         if (isCookieValid) {
 
-            let url = `/AdminDashBoard/SendAgreement?requestId=${requestId}`;
+            let url = `/DashBoard/SendAgreement?requestId=${requestId}`;
 
             const response = await fetch(url);
 

@@ -55,7 +55,7 @@ namespace HalloDocServices.Implementation
 
             var regions = _commonRepository.GetAllRegions();
 
-            foreach(var region in regions)
+            foreach (var region in regions)
             {
                 viewModel.RegionList.Add(new SelectListItem
                 {
@@ -208,7 +208,7 @@ namespace HalloDocServices.Implementation
                     Address = requestClient?.Address,
                     Region = requestClient?.RegionId,
                     Notes = notes,
-                    CallType = ((CallType)(request.CallType ?? 0)).ToString(),
+                    CallType = ((CareType)(request.CallType ?? 0)).ToString(),
                 });
             }
 
@@ -380,7 +380,7 @@ namespace HalloDocServices.Implementation
 
         public async Task<bool> AddNote(ViewNotesViewModel vnvm)
         {
-            if(vnvm.RequestId == 0)
+            if (vnvm.RequestId == 0)
             {
                 return false;
             }
@@ -552,6 +552,30 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
+        public async Task<bool> TransferToAdmin(TransferToAdminViewModel TransferData)
+        {
+            Request request = await _requestRepository.GetRequestByRequestId(TransferData.RequestId);
+            if (request == null)
+            {
+                return false;
+            }
+            request.Status = (short)(RequestStatus.Unassigned);
+            request.PhysicianId = null;
+
+            await _requestRepository.UpdateRequest(request);
+
+            RequestStatusLog log = new RequestStatusLog();
+            log.RequestId = TransferData.RequestId;
+            log.Status = request.Status;
+            log.PhysicianId = TransferData.PhysicianId;
+            log.Notes = "Physician transferred the case back to admin on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + TransferData.Description;
+            log.CreatedDate = DateTime.Now;
+
+            await _notesAndLogsRepository.AddRequestStatusLog(log);
+
+            return true;
+        }
+
         public async Task<BlockRequestViewModel> GetBlockRequestViewModelData(BlockRequestViewModel BlockRequest)
         {
             var requestClient = await _requestRepository.GetRequestClientByRequestId(BlockRequest.RequestId ?? 0);
@@ -617,6 +641,7 @@ namespace HalloDocServices.Implementation
 
             ViewUploads.RequestClientId = requestClient?.RequestClientId;
             ViewUploads.PatientFullName = requestClient?.FirstName + " " + requestClient?.LastName;
+            ViewUploads.ConfirmationNumber = request?.ConfirmationNumber;
 
             List<RequestFileViewModel> requestfilelist = new List<RequestFileViewModel>();
             if (requestwisefiles != null)
@@ -750,11 +775,12 @@ namespace HalloDocServices.Implementation
         public async Task<bool> SendMailWithAttachments(DownloadRequest requestData)
         {
             var files = _requestRepository.GetRequestWiseFilesByFileIds(requestData.SelectedValues);
+            var request = await _requestRepository.GetRequestByRequestId(requestData.RequestId);
             var fileNames = files.Select(x => x.FileName).ToList();
 
-            string subject = "Case Files for Request: " + requestData.RequestId + " from HalloDoc@Admin";
+            string subject = "Case Files for Request: " + request.ConfirmationNumber + " from HalloDoc@Admin";
 
-            string body = "Find the case files for Request: " + requestData.RequestId + " in the attachments below.";
+            string body = "Find the case files for Request: " + request.ConfirmationNumber + " in the attachments below.";
 
             List<string> receivers = new List<string>
                 {
@@ -763,6 +789,24 @@ namespace HalloDocServices.Implementation
 
             bool isMailSent = await _mailService.SendMail(receivers, subject, body, false, fileNames);
             return isMailSent;
+        }
+
+        public OrdersViewModel GetOrdersViewModel(int requestId)
+        {
+            OrdersViewModel OrderDetails = new OrdersViewModel();
+
+            var healthProfessionTypes = _vendorRepository.GetAllHealthProfessionTypes();
+
+            foreach (var type in healthProfessionTypes)
+            {
+                OrderDetails.ProfessionList.Add(new SelectListItem
+                {
+                    Value = type.HealthProfessionId.ToString(),
+                    Text = type.ProfessionName
+                });
+            }
+
+            return OrderDetails;
         }
 
         public string GetProfessionListOptions()
@@ -920,6 +964,65 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
+        public async Task<bool> SelectCareType(CareTypeViewModel CareTypeData)
+        {
+            Request request = await _requestRepository.GetRequestByRequestId(CareTypeData.RequestId);
+            if (request == null)
+            {
+                return false;
+            }
+
+            request.CallType = (short)CareTypeData.CareType;
+
+            if (CareTypeData.CareType == (int)CareType.HouseCall)
+            {
+                request.Status = (short)(RequestStatus.MDONSite);
+
+                RequestStatusLog log = new RequestStatusLog();
+                log.RequestId = request.RequestId;
+                log.Status = request.Status;
+                log.PhysicianId = CareTypeData.PhysicianId;
+                log.Notes = "Physician selected the house care as " + ((CareType)(CareTypeData.CareType)).ToString() + " on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+                log.CreatedDate = DateTime.Now;
+
+                await _notesAndLogsRepository.AddRequestStatusLog(log);
+            }
+            else if (CareTypeData.CareType == (int)CareType.Consult)
+            {
+                request.Status = (short)(RequestStatus.Conclude);
+
+                RequestStatusLog log = new RequestStatusLog();
+                log.RequestId = request.RequestId;
+                log.Status = request.Status;
+                log.PhysicianId = CareTypeData.PhysicianId;
+                log.Notes = "Physician selected the house care as " + ((CareType)(CareTypeData.CareType)).ToString() + " on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+                log.CreatedDate = DateTime.Now;
+
+                await _notesAndLogsRepository.AddRequestStatusLog(log);
+            }
+
+            await _requestRepository.UpdateRequest(request);
+
+            RequestClient requestClient = await _requestRepository.GetRequestClientByRequestId(request.RequestId);
+
+            EncounterForm encounterForm = new EncounterForm();
+            encounterForm.RequestId = request.RequestId;
+            encounterForm.ServiceDate = request.AcceptedDate;
+            encounterForm.FirstName = requestClient.FirstName;
+            encounterForm.LastName = requestClient.LastName;
+            encounterForm.StrMonth = requestClient.StrMonth;
+            encounterForm.IntDate = requestClient.IntDate;
+            encounterForm.IntYear = requestClient.IntYear;
+            encounterForm.Email = requestClient.Email;
+            encounterForm.PhoneNumber = requestClient.PhoneNumber;
+            encounterForm.CreatedDate = DateTime.Now;
+            encounterForm.IsFinalized = false;
+
+            encounterForm = await _commonRepository.CreateEncounterForm(encounterForm);
+
+            return true;
+        }
+
         public EncounterFormViewModel GetEncounterFormViewModelData(EncounterFormViewModel EncounterFormDetails)
         {
             var encounterFormFetched = _commonRepository.GetEncounterFormByRequestId(EncounterFormDetails.RequestId);
@@ -939,7 +1042,8 @@ namespace HalloDocServices.Implementation
                     EncounterFormDetails.DOB = date.ToString("yyyy-MM-dd");
                 }
 
-                EncounterFormDetails.ServiceDate = encounterFormFetched.ServiceDate.ToString();
+
+                EncounterFormDetails.ServiceDate = DateOnly.FromDateTime(encounterFormFetched.ServiceDate ?? DateTime.Now).ToString("yyyy-MM-dd");
                 EncounterFormDetails.PhoneNumber = encounterFormFetched.PhoneNumber;
                 EncounterFormDetails.Email = encounterFormFetched.Email ?? "";
                 EncounterFormDetails.PresentIllnessHistory = encounterFormFetched.PresentIllnessHistory;
@@ -970,6 +1074,7 @@ namespace HalloDocServices.Implementation
                 EncounterFormDetails.ModifiedDate = encounterFormFetched.ModifiedDate;
                 EncounterFormDetails.IsFinalized = encounterFormFetched.IsFinalized;
                 EncounterFormDetails.FinalizedDate = encounterFormFetched.FinalizedDate;
+                EncounterFormDetails.IsPhysician = EncounterFormDetails.UserRole == "physician" ? true : false;
 
             }
             return EncounterFormDetails;
@@ -979,59 +1084,101 @@ namespace HalloDocServices.Implementation
         {
             var encounterFormToUpdate = _commonRepository.GetEncounterFormByRequestId(EncounterFormDetails.RequestId);
 
-            if (encounterFormToUpdate != null)
+            if (encounterFormToUpdate == null)
             {
-                encounterFormToUpdate.FirstName = EncounterFormDetails.FirstName;
-                encounterFormToUpdate.LastName = EncounterFormDetails.LastName;
-                encounterFormToUpdate.Location = EncounterFormDetails.Location;
-
-                if (EncounterFormDetails.DOB != null)
-                {
-                    DateTime dateTime = DateTime.ParseExact(EncounterFormDetails.DOB, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-                    encounterFormToUpdate.IntYear = dateTime.Year;
-                    encounterFormToUpdate.StrMonth = dateTime.ToString("MMMM");
-                    encounterFormToUpdate.IntDate = dateTime.Day;
-                }
-
-                if (EncounterFormDetails.ServiceDate != null)
-                {
-                    encounterFormToUpdate.ServiceDate = DateTime.ParseExact(EncounterFormDetails.ServiceDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-                }
-
-                encounterFormToUpdate.PhoneNumber = EncounterFormDetails.PhoneNumber;
-                encounterFormToUpdate.Email = EncounterFormDetails.Email;
-                encounterFormToUpdate.PresentIllnessHistory = EncounterFormDetails.PresentIllnessHistory;
-                encounterFormToUpdate.MedicalHistory = EncounterFormDetails.MedicalHistory;
-                encounterFormToUpdate.Medications = EncounterFormDetails.Medications;
-                encounterFormToUpdate.Allergies = EncounterFormDetails.Allergies;
-                encounterFormToUpdate.Temperature = EncounterFormDetails.Temperature;
-                encounterFormToUpdate.HeartRate = EncounterFormDetails.HeartRate;
-                encounterFormToUpdate.RespirationRate = EncounterFormDetails.RespirationRate;
-                encounterFormToUpdate.BloodPressureSystolic = EncounterFormDetails.BloodPressureSystolic;
-                encounterFormToUpdate.BloodPressureDiastolic = EncounterFormDetails.BloodPressureDiastolic;
-                encounterFormToUpdate.OxygenLevel = EncounterFormDetails.OxygenLevel;
-                encounterFormToUpdate.Pain = EncounterFormDetails.Pain;
-                encounterFormToUpdate.Heent = EncounterFormDetails.Heent;
-                encounterFormToUpdate.Cardiovascular = EncounterFormDetails.Cardiovascular;
-                encounterFormToUpdate.Chest = EncounterFormDetails.Chest;
-                encounterFormToUpdate.Abdomen = EncounterFormDetails.Abdomen;
-                encounterFormToUpdate.Extremities = EncounterFormDetails.Extremities;
-                encounterFormToUpdate.Skin = EncounterFormDetails.Skin;
-                encounterFormToUpdate.Neuro = EncounterFormDetails.Neuro;
-                encounterFormToUpdate.Other = EncounterFormDetails.Other;
-                encounterFormToUpdate.Diagnosis = EncounterFormDetails.Diagnosis;
-                encounterFormToUpdate.TreatmentPlan = EncounterFormDetails.TreatmentPlan;
-                encounterFormToUpdate.MedicationsDispensed = EncounterFormDetails.MedicationsDispensed;
-                encounterFormToUpdate.Procedures = EncounterFormDetails.Procedures;
-                encounterFormToUpdate.FollowUp = EncounterFormDetails.FollowUp;
-
-                await _commonRepository.UpdateEncounterForm(encounterFormToUpdate);
-
-                return true;
+                return false;
             }
 
-            return false;
+            encounterFormToUpdate.FirstName = EncounterFormDetails.FirstName;
+            encounterFormToUpdate.LastName = EncounterFormDetails.LastName;
+            encounterFormToUpdate.Location = EncounterFormDetails.Location;
 
+            if (EncounterFormDetails.DOB != null)
+            {
+                DateTime dateTime = DateTime.ParseExact(EncounterFormDetails.DOB, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                encounterFormToUpdate.IntYear = dateTime.Year;
+                encounterFormToUpdate.StrMonth = dateTime.ToString("MMMM");
+                encounterFormToUpdate.IntDate = dateTime.Day;
+            }
+
+            if (EncounterFormDetails.ServiceDate != null)
+            {
+                encounterFormToUpdate.ServiceDate = DateTime.ParseExact(EncounterFormDetails.ServiceDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            }
+
+            encounterFormToUpdate.PhoneNumber = EncounterFormDetails.PhoneNumber;
+            encounterFormToUpdate.Email = EncounterFormDetails.Email;
+            encounterFormToUpdate.PresentIllnessHistory = EncounterFormDetails.PresentIllnessHistory;
+            encounterFormToUpdate.MedicalHistory = EncounterFormDetails.MedicalHistory;
+            encounterFormToUpdate.Medications = EncounterFormDetails.Medications;
+            encounterFormToUpdate.Allergies = EncounterFormDetails.Allergies;
+            encounterFormToUpdate.Temperature = EncounterFormDetails.Temperature;
+            encounterFormToUpdate.HeartRate = EncounterFormDetails.HeartRate;
+            encounterFormToUpdate.RespirationRate = EncounterFormDetails.RespirationRate;
+            encounterFormToUpdate.BloodPressureSystolic = EncounterFormDetails.BloodPressureSystolic;
+            encounterFormToUpdate.BloodPressureDiastolic = EncounterFormDetails.BloodPressureDiastolic;
+            encounterFormToUpdate.OxygenLevel = EncounterFormDetails.OxygenLevel;
+            encounterFormToUpdate.Pain = EncounterFormDetails.Pain;
+            encounterFormToUpdate.Heent = EncounterFormDetails.Heent;
+            encounterFormToUpdate.Cardiovascular = EncounterFormDetails.Cardiovascular;
+            encounterFormToUpdate.Chest = EncounterFormDetails.Chest;
+            encounterFormToUpdate.Abdomen = EncounterFormDetails.Abdomen;
+            encounterFormToUpdate.Extremities = EncounterFormDetails.Extremities;
+            encounterFormToUpdate.Skin = EncounterFormDetails.Skin;
+            encounterFormToUpdate.Neuro = EncounterFormDetails.Neuro;
+            encounterFormToUpdate.Other = EncounterFormDetails.Other;
+            encounterFormToUpdate.Diagnosis = EncounterFormDetails.Diagnosis;
+            encounterFormToUpdate.TreatmentPlan = EncounterFormDetails.TreatmentPlan;
+            encounterFormToUpdate.MedicationsDispensed = EncounterFormDetails.MedicationsDispensed;
+            encounterFormToUpdate.Procedures = EncounterFormDetails.Procedures;
+            encounterFormToUpdate.FollowUp = EncounterFormDetails.FollowUp;
+
+            await _commonRepository.UpdateEncounterForm(encounterFormToUpdate);
+
+            return true;
+
+        }
+
+        public async Task<bool> Finalize(EncounterFormViewModel EncounterFormDetails)
+        {
+            var encounterFormToUpdate = _commonRepository.GetEncounterFormByRequestId(EncounterFormDetails.RequestId);
+
+            if (encounterFormToUpdate == null)
+            {
+                return false;
+            }
+
+            encounterFormToUpdate.IsFinalized = true;
+            encounterFormToUpdate.FinalizedDate = DateTime.Now;
+
+            await _commonRepository.UpdateEncounterForm(encounterFormToUpdate);
+
+            return true;
+        }
+
+        public async Task<bool> HouseCall(int requestId, int physicianId)
+        {
+            Request request = await _requestRepository.GetRequestByRequestId(requestId);
+
+            if(request.RequestId == 0)
+            {
+                return false;
+            }
+
+            request.Status = (short)(RequestStatus.Conclude);
+
+            await _requestRepository.UpdateRequest(request);
+
+            RequestStatusLog log = new RequestStatusLog();
+            log.RequestId = request.RequestId;
+            log.Status = request.Status;
+            log.PhysicianId = physicianId;
+            log.Notes = "Physician concluded the request on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+            log.CreatedDate = DateTime.Now;
+
+            await _notesAndLogsRepository.AddRequestStatusLog(log);
+
+            return true;
         }
 
         public async Task<bool> SendLink(string receiverEmail)
@@ -1261,7 +1408,7 @@ namespace HalloDocServices.Implementation
 
             }
 
-            if(PatientInfo.CreatorRole == "physician")
+            if (PatientInfo.CreatorRole == "physician")
             {
                 RequestStatusLog log = new RequestStatusLog();
                 log.RequestId = requestNew.RequestId;

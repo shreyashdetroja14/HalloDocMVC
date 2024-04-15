@@ -19,26 +19,30 @@
 
         <div class="container back p-0 pb-4 d-flex justify-content-between">
             <h2>Send Orders</h2>
-            <a class="btn back-btn">
-                <img src="/images/backIcon.svg" alt="">
-                Back
-            </a>
+            <button class="btn back-btn d-flex align-items-center" onclick="window.history.back()">
+                <span class="material-symbols-outlined text-info fs-6">
+                    arrow_back_ios
+                </span>
+                <span>Back</span>
+            </button>
         </div>
         <form asp-action="SendOrder" class="container bg-white p-4 request-form">
             <input type="number" asp-for="RequestId" hidden>
             <div class="row">
                 <div class="col-sm-6">
                     <div class=" mb-3">
-                        <select asp-for="ProfessionId" id="profession-list" class="form-select p-3">
-
+                        <select asp-for="ProfessionId" id="profession-list" class="form-select p-3" asp-items="@Model.ProfessionList">
+                            <option value="">Select Profession</option>
                         </select>
+                        <span asp-validation-for="ProfessionId"class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class=" mb-3">
                         <select asp-for="VendorId" id="vendor-list" class="form-select p-3">
-                            <option value="0" selected>Select Business</option>
+                            <option value="" selected>Select Business</option>
                         </select>
+                        <span asp-validation-for="VendorId"class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -46,6 +50,7 @@
                         <input type="text" asp-for="BusinessContact" class="form-control" id="BusinessContact"
                                placeholder="BusinessContact" >
                         <label asp-for="BusinessContact">Business Contact</label>
+                        <span asp-validation-for="BusinessContact"class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -53,6 +58,7 @@
                         <input type="email" asp-for="Email" class="form-control" id="Email"
                                placeholder="abc@xyz.pqr" autocomplete="off" >
                         <label asp-for="Email">Email</label>
+                        <span asp-validation-for="Email"class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -60,6 +66,7 @@
                         <input type="text" asp-for="FaxNumber" class="form-control" id="FaxNumber"
                                placeholder="Fax Number" autocomplete="off">
                         <label asp-for="FaxNumber">Fax Number</label>
+                        <span asp-validation-for="FaxNumber"class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-12">
@@ -78,6 +85,7 @@
                             <option value="3">Three</option>
                         </select>
                         <label asp-for="NumberOfRefills">Number of Refills</label>
+                        <span asp-validation-for="NumberOfRefills"class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -92,7 +100,8 @@
 </div>
 
 @section AddScript{
-    
+    <partial name="_ToastMessageScriptsPartial" />
+
     <script>
         const professionList = document.querySelector('#profession-list');
         const vendorList = document.querySelector('#vendor-list');
@@ -129,17 +138,19 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            console.log(professionList);
+        professionList.addEventListener('change', async () => {
+            console.log(vendorList);
 
-            const requestId = @Model.RequestId;
+            const professionId = parseInt(professionList.value);
+            console.log(professionId);
+            console.log(typeof professionId)
 
-            const isCookieValid = await ValidateCookie();
-            console.log(isCookieValid);
+            try {
+                const isCookieValid = await ValidateCookie();
+                console.log(isCookieValid);
 
-            if (isCookieValid) {
-                let url = `/AdminDashBoard/GetProfessionList?requestId=${requestId}`;
-                try {
+                if (isCookieValid) {
+                    let url = `/AdminDashBoard/GetVendorList?professionId=${professionId}`;
                     const response = await fetch(url);
 
                     if (!response.ok) {
@@ -152,86 +163,50 @@
 
                     console.log(data);
 
-                    professionList.innerHTML = data;
+                    vendorList.innerHTML = data;
 
-                    professionList.addEventListener('change', async () => {
-                        console.log(vendorList);
-
-                        const professionId = parseInt(professionList.value);
-                        console.log(professionId);
-                        console.log(typeof professionId)
-
-                        try {
-                            const isCookieValid = await ValidateCookie();
-                            console.log(isCookieValid);
-
-                            if (isCookieValid) {
-                                let url = `/AdminDashBoard/GetVendorList?professionId=${professionId}`;
-                                const response = await fetch(url);
-
-                                if (!response.ok) {
-                                    throw new Error(`HTTP error! status: ${response.status}`);
-                                }
-
-                                console.log(response);
-
-                                const data = await response.text();
-
-                                console.log(data);
-
-                                vendorList.innerHTML = data;
-
-                                document.getElementById('BusinessContact').value = '';
-                                document.getElementById('Email').value = '';
-                                document.getElementById('FaxNumber').value = '';
-                            }
-                        }
-                        catch (error) {
-                            console.error('Error fetching partial view:', error);
-                            // Handle the error gracefully, e.g., display an error message to the user
-                        }
-                    });
-
-
-                    vendorList.addEventListener('change', async () => {
-                        const vendorId = parseInt(vendorList.value);
-                        console.log(vendorId);
-
-                        try {
-
-                            const isCookieValid = await ValidateCookie();
-                            console.log(isCookieValid);
-
-                            if (isCookieValid) {
-                                let url = `/AdminDashBoard/GetVendorDetails?vendorId=${vendorId}`;
-                                const response = await fetch(url);
-
-                                if (!response.ok) {
-                                    throw new Error(`HTTP error! status: ${response.status}`);
-                                }
-
-                                console.log(response);
-
-                                const data = await response.json();
-
-                                console.log(data);
-
-                                document.getElementById('BusinessContact').value = data.businessContact;
-                                document.getElementById('Email').value = data.email;
-                                document.getElementById('FaxNumber').value = data.faxNumber;
-                            }
-                            
-                        }
-                        catch (error) {
-                            console.error('Error fetching partial view:', error);
-                            // Handle the error gracefully, e.g., display an error message to the user
-                        }
-                    });
+                    document.getElementById('BusinessContact').value = '';
+                    document.getElementById('Email').value = '';
+                    document.getElementById('FaxNumber').value = '';
                 }
-                catch (error) {
-                    console.error('Error fetching partial view:', error);
-                    // Handle the error gracefully, e.g., display an error message to the user
+            }
+            catch (error) {
+                console.error('Error fetching partial view:', error);
+                // Handle the error gracefully, e.g., display an error message to the user
+            }
+        });
+
+        vendorList.addEventListener('change', async () => {
+            const vendorId = parseInt(vendorList.value);
+            console.log(vendorId);
+
+            try {
+
+                const isCookieValid = await ValidateCookie();
+                console.log(isCookieValid);
+
+                if (isCookieValid) {
+                    let url = `/AdminDashBoard/GetVendorDetails?vendorId=${vendorId}`;
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    console.log(response);
+
+                    const data = await response.json();
+
+                    console.log(data);
+
+                    document.getElementById('BusinessContact').value = data.businessContact;
+                    document.getElementById('Email').value = data.email;
+                    document.getElementById('FaxNumber').value = data.faxNumber;
                 }
+
+            }
+            catch (error) {
+                console.error('Error fetching partial view:', error);
             }
         });
 

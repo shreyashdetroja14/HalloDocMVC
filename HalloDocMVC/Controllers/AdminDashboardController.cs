@@ -204,23 +204,6 @@ namespace HalloDocMVC.Controllers
             }
 
             return RedirectToRoute("ViewNotes", new { requestId = vnvm.RequestId });
-
-            /*bool isNoteAdded = false;
-            if (vnvm.AdminNotesInput != null)
-            {
-                isNoteAdded = await _adminDashboardService.AddAdminNote(vnvm.RequestId ?? 0, vnvm.AdminNotesInput, GetClaimsData().AspNetUserId ?? "");
-            }
-            if(isNoteAdded)
-            {
-                *//*return RedirectToAction("ViewNotes", new { requestId });*//*
-                ViewNotesViewModel ViewNotes = new ViewNotesViewModel();
-                ViewNotes = await _adminDashboardService.GetViewNotesViewModelData(vnvm.RequestId ?? 0);
-                return View(ViewNotes);
-            }
-            else
-            {
-                return View(vnvm.AdminNotesInput);
-            }*/
         }
 
         public IActionResult CancelCase(int requestId)
@@ -254,7 +237,7 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Cancel Case.";
             }
 
-            return RedirectToAction("Index");
+            return RedirectToRoute("Dashboard");
         }
 
         public IActionResult AssignCase(int requestId, bool? isTransferRequest, int regionId)
@@ -292,6 +275,38 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
+        [Route("Physician/TransferToAdmin", Name = "TransferToAdmin")]
+        [CustomAuthorize("physician")]
+        public IActionResult TransferToAdmin(int requestId)
+        {
+            TransferToAdminViewModel TransferData = new TransferToAdminViewModel();
+            //TransferData = _adminDashboardService.GetTransferToAdminData(BlockRequest);
+            TransferData.RequestId = requestId;
+
+            return PartialView("_TransferToAdminModal", TransferData);
+        }
+
+        [HttpPost]
+        [Route("Physician/TransferToAdmin", Name = "TransferToAdmin")]
+        [CustomAuthorize("physician")]
+        public async Task<IActionResult> TransferToAdmin(TransferToAdminViewModel TransferData)
+        {
+            ClaimsData claimsData = GetClaimsData();
+            TransferData.PhysicianId = claimsData.Id;
+
+            bool isRequestTransferred = await _adminDashboardService.TransferToAdmin(TransferData);
+            if (isRequestTransferred)
+            {
+                TempData["SuccessMessage"] = "Request Transferred Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Transfer Request.";
+            }
+
+            return RedirectToRoute("Dashboard");
+        }
+
         public async Task<IActionResult> BlockRequest(int requestId) 
         {
             BlockRequestViewModel BlockRequest = new BlockRequestViewModel(); 
@@ -307,13 +322,20 @@ namespace HalloDocMVC.Controllers
             bool isReuqestBlocked = await _adminDashboardService.BlockRequest(BlockRequest);
             if (isReuqestBlocked)
             {
-
+                TempData["SuccessMessage"] = "Request Blocked Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Block Request.";
             }
 
-            //return View("Index", "AdminDashboard");
             return RedirectToAction("Index");
         }
 
+
+        [Route("Dashboard/ViewUploads", Name = "ViewUploads")]
+
+        [CustomAuthorize("admin", "physician")]
         public IActionResult ViewUploads(int requestId)
         {
             ViewDocumentsViewModel ViewUploads = new ViewDocumentsViewModel();
@@ -325,6 +347,10 @@ namespace HalloDocMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+
+        [Route("Dashboard/UploadRequestFile", Name = "UploadRequestFile")]
+
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> UploadRequestFile(IEnumerable<IFormFile>? MultipleFiles, int requestId)
         {
 
@@ -335,6 +361,10 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("ViewUploads", new { requestId });
         }
 
+
+        [Route("Dashboard/DownloadFile", Name = "DownloadFile")]
+
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> DownloadFile(int fileId)
         {
             var downloadedFile = await _adminDashboardService.DownloadFile(fileId);
@@ -345,11 +375,15 @@ namespace HalloDocMVC.Controllers
             }
             else
             {
-                return RedirectToAction("ViewUploads", new { requestId = downloadedFile?.RequestId});
+                return RedirectToRoute("ViewUploads", new { requestId = downloadedFile?.RequestId});
             }
         }
 
+
         [HttpPost]
+        [Route("Dashboard/DownloadAll", Name = "DownloadAll")]
+
+        [CustomAuthorize("admin", "physician")]
         public IActionResult DownloadMultipleFiles([FromBody] DownloadRequest requestData)
         {
 
@@ -363,27 +397,50 @@ namespace HalloDocMVC.Controllers
                 return File(zipdata, "application/zip", "download.zip");
             }
 
-            return RedirectToAction("ViewUploads", new { requestId });
+            return RedirectToRoute("ViewUploads", new { requestId });
         }
 
+
+        [Route("Dashboard/DeleteFile", Name = "DeleteFile")]
+
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> DeleteFile(int fileId)
         {
             var deletedFile = await _adminDashboardService.DeleteFile(fileId);
 
-            return RedirectToAction("ViewUploads", new { requestId = deletedFile?.RequestId });
+            return RedirectToRoute("ViewUploads", new { requestId = deletedFile?.RequestId });
         }
 
+
         [HttpPost]
+        [Route("Dashboard/DeleteAll", Name = "DeleteAll")]
+
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> DeleteMultipleFiles([FromBody] DownloadRequest requestData)
         {
             List<int> selectedValues = requestData.SelectedValues;
             int requestId = requestData.RequestId;
 
-            await _adminDashboardService.DeleteSelectedFiles(selectedValues, requestId);
+            bool isFileDeleted = await _adminDashboardService.DeleteSelectedFiles(selectedValues, requestId);
+            if (isFileDeleted)
+            {
+                TempData["SuccessMessage"] = "Files Deleted Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Delete Files.";
+            }
 
-            return RedirectToAction("ViewUploads", new { requestId });
+            string url = "/Dashboard/ViewUploads?requestId=" + requestData.RequestId.ToString();
+            return Content(url);
+            //return RedirectToRoute("ViewUploads", new { requestId });
         }
 
+
+        [HttpPost]
+        [Route("Dashboard/SendMail", Name = "SendMail")]
+
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> SendFilesViaEmail([FromBody] DownloadRequest requestData)
         {
             //var deletedFile = await _adminDashboardService.DeleteFile(fileId);
@@ -397,16 +454,23 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Send Mail. Try Again.";
             }
 
-            string url = "/AdminDashboard/ViewUploads?requestId=" + requestData.RequestId.ToString();
-            return Content("");
+            string url = "/Dashboard/ViewUploads?requestId=" + requestData.RequestId.ToString();
+            return Content(url);
 
             //return RedirectToAction("ViewUploads", new { requestId = requestData?.RequestId });
         }
 
+
+        [Route("Dashboard/Orders", Name = "Orders")]
+
+        [CustomAuthorize("admin", "physician")]
         public IActionResult Orders(int requestId)
         {
             OrdersViewModel OrderPageDetails = new OrdersViewModel();
+            OrderPageDetails = _adminDashboardService.GetOrdersViewModel(requestId);
+
             OrderPageDetails.RequestId = requestId;
+
             return View(OrderPageDetails);
         }
 
@@ -431,15 +495,23 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("Dashboard/Orders", Name = "OrdersPost")]
+
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> SendOrder(OrdersViewModel Order)
         {
             bool isOrderSent = await _adminDashboardService.SendOrder(Order);
             if (isOrderSent)
             {
-
+                TempData["SuccessMessage"] = "Order Sent Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Send Order.";
             }
 
-            return RedirectToAction("Orders", new {requestId = Order.RequestId});
+            return RedirectToRoute("Orders", new {requestId = Order.RequestId});
         }
 
         public IActionResult ClearCase(int requestId)
@@ -460,6 +532,9 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
+        [Route("Dashboard/SendAgreement", Name = "SendAgreement")]
+
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> SendAgreement(int requestId)
         {
             SendAgreementViewModel SendAgreementInfo = new SendAgreementViewModel();
@@ -470,6 +545,9 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [Route("Dashboard/SendAgreement", Name = "SendAgreementPost")]
+
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> SendAgreement(SendAgreementViewModel SendAgreementInfo)
         {
             bool isAgreementSent = await _adminDashboardService.SendAgreementViaMail(SendAgreementInfo);
@@ -481,7 +559,7 @@ namespace HalloDocMVC.Controllers
             {
                 TempData["ErrorMessage"] = "Failed To Send Agreement.";
             }
-            return RedirectToAction("Index");
+            return RedirectToRoute("Dashboard");
         }
 
         public IActionResult CloseCase(int requestId)
@@ -525,10 +603,52 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
+
+        [Route("Physician/CareType", Name = "CareType")]
+
+        [CustomAuthorize("physician")]
+        public IActionResult CareType(int requestId)
+        {
+            CareTypeViewModel CareTypeData = new CareTypeViewModel();
+            CareTypeData.RequestId = requestId;
+
+            return PartialView("_CareTypeModal", CareTypeData);
+        }
+
+
+        [HttpPost]
+        [Route("Physician/CareType", Name = "CareTypePost")]
+
+        [CustomAuthorize("physician")]
+        public async Task<IActionResult> CareType(CareTypeViewModel CareTypeData)
+        {
+            ClaimsData claimsData = GetClaimsData();
+            CareTypeData.PhysicianId = claimsData.Id;
+
+            bool isCareTypeSelected = await _adminDashboardService.SelectCareType(CareTypeData);
+            if (isCareTypeSelected)
+            {
+                TempData["SuccessMessage"] = "Care Type Selected Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Select Care Type.";
+            }
+            return RedirectToRoute("Dashboard");
+
+        }
+
+
+        [Route("Dashboard/EncounterForm", Name = "EncounterForm")]
+
+        [CustomAuthorize("admin", "physician")]
         public IActionResult EncounterForm(int requestId)
         {
+            ClaimsData claimsData = GetClaimsData();
+
             EncounterFormViewModel EncounterFormDetails = new EncounterFormViewModel();
             EncounterFormDetails.RequestId = requestId;
+            EncounterFormDetails.UserRole = claimsData.AspNetUserRole;
 
             EncounterFormDetails = _adminDashboardService.GetEncounterFormViewModelData(EncounterFormDetails); 
 
@@ -536,15 +656,61 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [Route("Dashboard/EncounterForm", Name = "EncounterFormPost")]
+
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> EncounterForm(EncounterFormViewModel EncounterFormDetails)
         {
             bool isEncounterFormUpdated = await _adminDashboardService.UpdateEncounterForm(EncounterFormDetails);
-            if (isEncounterFormUpdated) 
+            if (isEncounterFormUpdated)
             {
-
+                TempData["SuccessMessage"] = "Encounter Form Updated Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to Update Encounter Form.";
             }
 
-            return View(EncounterFormDetails);
+            return RedirectToRoute("EncounterForm", new { EncounterFormDetails.RequestId });
+        }
+
+        [HttpPost]
+        [Route("Physician/Finalize", Name = "Finalize")]
+
+        [CustomAuthorize("physician")]
+        public async Task<IActionResult> Finalize(EncounterFormViewModel EncounterFormDetails)
+        {
+            bool isFinalized = await _adminDashboardService.Finalize(EncounterFormDetails);
+            if (isFinalized)
+            {
+                TempData["SuccessMessage"] = "Encounter Form Finalized Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to Finalize Encounter Form.";
+            }
+            return RedirectToRoute("Dashboard");
+        }
+
+
+        [Route("Physician/HouseCall", Name = "HouseCall")]
+
+        [CustomAuthorize("physician")]
+        public async Task<IActionResult> HouseCall(int requestId)
+        {
+            ClaimsData claimsData = GetClaimsData();
+            int physicianId = claimsData.Id;
+
+            bool isConcluded = await _adminDashboardService.HouseCall(requestId, physicianId);
+            if (isConcluded)
+            {
+                TempData["SuccessMessage"] = "Request Concluded Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to Conclude Request.";
+            }
+            return RedirectToRoute("Dashboard");
         }
 
         [HttpPost]

@@ -96,7 +96,7 @@ namespace HalloDocServices.Constants
 
     }
 
-    public enum CallType
+    public enum CareType
     {
         HouseCall = 1,
         Consult = 2,

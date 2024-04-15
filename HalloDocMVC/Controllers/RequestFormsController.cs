@@ -40,6 +40,7 @@ namespace HalloDocMVC.Controllers
                 if (!isUserExist)
                 {
                     ViewBag.Msg = "Please Enter And Confirm Password";
+                    ViewBag.RegionList = _requestFormService.GetRegionList();
                     return View(prvm);
                 }
             }

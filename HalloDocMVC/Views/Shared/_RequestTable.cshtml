@@ -248,25 +248,25 @@
                                 @if (status != 1)
                                 {
                                     <li>
-                                        <a class="dropdown-item" asp-action="ViewUploads" asp-route-requestId="@request.RequestId">
+                                        <a class="dropdown-item" asp-route="ViewUploads" asp-route-requestId="@request.RequestId">
                                             <i class="bi bi-file-earmark-arrow-up pe-3"></i>View Uploads
                                         </a>
                                     </li>
                                 }
                                 @if (status == 3 || status == 4 || status == 5)
                                 {
-                                    <li>
+                                    @*<li>
                                         <a class="dropdown-item" href="#">
                                             <i class="bi bi-card-list pe-3"></i>Doctor Notes
                                         </a>
-                                    </li>
+                                    </li>*@
                                     <li>
-                                        <a class="dropdown-item" asp-action="EncounterForm" asp-route-requestId="@request.RequestId">
+                                        <a class="dropdown-item" asp-route="EncounterForm" asp-route-requestId="@request.RequestId">
                                             <i class="bi bi-file-medical pe-3"></i>Encounter
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" asp-action="Orders" asp-route-requestId="@request.RequestId">
+                                        <a class="dropdown-item" asp-route="Orders" asp-route-requestId="@request.RequestId">
                                             <i class="bi bi-list-check pe-3"></i>Orders
 
                                         </a>
@@ -482,17 +482,21 @@
                             </div>
                             @if (status != 1)
                             {
-                                <div class="col-6"><a asp-action="ViewUploads" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">View Uploads</a></div>
+                                <div class="col-6"><a asp-route="ViewUploads" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">View Uploads</a></div>
                             }
                             @if (status == 3 || status == 4 || status == 5)
                             {
-                                <div class="col-6"><button class="btn btn-secondary rounded-pill mb-2 w-75">Doctor Notes</button></div>
+                                @*<div class="col-6"><button class="btn btn-secondary rounded-pill mb-2 w-75">Doctor Notes</button></div>*@
                                 <div class="col-6">
-                                    <a asp-action="Orders" asp-route-requestId="@request.RequestId" class="btn btn-warning rounded-pill mb-2 w-75">
+                                    <a asp-route="Orders" asp-route-requestId="@request.RequestId" class="btn btn-warning rounded-pill mb-2 w-75">
                                         Orders
                                     </a>
                                 </div>
-                                <div class="col-6"><button class="btn btn-success rounded-pill mb-2 w-75">Encounter</button></div>
+                                <div class="col-6">
+                                    <a asp-route="EncounterForm" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">
+                                        Encounter
+                                    </a>
+                                </div>
                             }
                             @*@if (status == 3 || status == 4)
                             {
@@ -535,7 +539,7 @@
 <div>
     @if(Pager.TotalPages > 0)
     {
-        <ul class="pagination justify-content-center" style="font-size: 14px;">
+        <ul class="pagination justify-content-center" >
 
             @if (Pager.CurrentPage > 1)
             {

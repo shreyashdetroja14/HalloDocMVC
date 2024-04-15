@@ -13,9 +13,11 @@
     <div class="container p-4">
         <div class="heading d-flex justify-content-between align-items-center mb-3">
             <h1 class="h2 mb-3">Documents</h1>
-            <button class="btn back-btn" onclick="window.history.back()">
-                <img src="~/images/backIcon.svg" alt="">
-                Back
+            <button class="btn back-btn d-flex align-items-center" onclick="window.history.back()">
+                <span class="material-symbols-outlined text-info fs-6">
+                    arrow_back_ios
+                </span>
+                <span>Back</span>
             </button>
         </div>
         <div class="filesSection bg-white rounded-3 shadow">
@@ -33,7 +35,7 @@
 
                         <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
                                for="MultipleFiles">
-                            <span class="px-3 py-2" id="filename">Select File</span>
+                            <span class="px-3 py-2" id="filename" style="overflow-x: hidden;">Select File</span>
                             <button type="submit" class="btn btn-info p-3 text-white fw-bold rounded-0">
                                 <img src="~/images/uploadIcon.svg" class="me-2" alt="">Upload
                             </button>
@@ -272,7 +274,7 @@
 
                 try {
                     
-                    const response = await fetch('/AdminDashboard/DownloadMultipleFiles', {
+                    const response = await fetch('/Dashboard/DownloadAll', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -352,7 +354,7 @@
 
                 try {
 
-                    const response = await fetch('/AdminDashboard/DeleteMultipleFiles', {
+                    const response = await fetch('/Dashboard/DeleteAll', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -368,14 +370,9 @@
                     } 
                     console.log(response);
 
-                    const newUrl = response.url || "";
+                    const url = await response.text();
 
-                    if (newUrl) {
-                        console.log('Loading new URL:', newUrl);
-                        window.location.href = newUrl;
-                    } else {
-                        console.warn('No URL found in response');
-                    }
+                    window.location.href = url;
 
                     console.log('deleted successfully');
 
@@ -430,7 +427,7 @@
 
             try {
 
-                const response = await fetch('/AdminDashboard/SendFilesViaEmail', {
+                const response = await fetch('/Dashboard/SendMail', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

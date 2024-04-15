@@ -147,170 +147,6 @@ async function GetPartialViewData(urlparams) {
 }
 
 
-// cancel case modal data ajax call
-
-async function GetCancelCaseModalData(requestId) {
-
-    try {
-
-        const isCookieValid = await ValidateCookie();
-        if (isCookieValid) {
-
-            let url = `/AdminDashBoard/CancelCase?requestId=${requestId}`;
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const cancelCaseModalHtml = await response.text();
-            const modalContainer = document.getElementById('modal-container');
-            modalContainer.innerHTML = cancelCaseModalHtml;
-
-            (function () {
-                'use strict'
-
-                // Fetch all the forms we want to apply custom Bootstrap validation styles to
-                var forms = document.querySelectorAll('.needs-validation')
-
-                // Loop over them and prevent submission
-                Array.prototype.slice.call(forms)
-                    .forEach(function (form) {
-                        form.addEventListener('submit', function (event) {
-                            if (!form.checkValidity()) {
-                                event.preventDefault()
-                                event.stopPropagation()
-                            }
-
-                            form.classList.add('was-validated')
-                        }, false)
-                    })
-            })()
-        }
-    }
-    catch (error) {
-        console.error('Error fetching partial view:', error);
-    }
-}
-
-
-//assign case modal data ajax call
-
-async function GetAssignCaseModalData(requestId, isTransferRequest = null, regionId = 0) {
-
-    try {
-
-        const isCookieValid = await ValidateCookie();
-        if (isCookieValid) {
-
-            let url = `/AdminDashBoard/AssignCase?requestId=${requestId}&isTransferRequest=${isTransferRequest}&regionId=${regionId}`;
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const assignCaseModalHtml = await response.text();
-            const modalContainer = document.getElementById('modal-container');
-            modalContainer.innerHTML = assignCaseModalHtml;
-
-            (function () {
-                'use strict'
-
-                // Fetch all the forms we want to apply custom Bootstrap validation styles to
-                var forms = document.querySelectorAll('.needs-validation')
-
-                // Loop over them and prevent submission
-                Array.prototype.slice.call(forms)
-                    .forEach(function (form) {
-                        form.addEventListener('submit', function (event) {
-                            if (!form.checkValidity()) {
-                                event.preventDefault()
-                                event.stopPropagation()
-                            }
-
-                            form.classList.add('was-validated')
-                        }, false)
-                    })
-            })()
-
-            const myModal = new bootstrap.Modal('#assign-case-modal')
-            myModal.show();
-
-            const regionSelectList = document.querySelector('.region-select');
-            regionSelectList.addEventListener('change', async () => {
-                const regionId = regionSelectList.value;
-                console.log('region value:: ', regionId);
-                console.log('request id:: ', requestId);
-                console.log('transfer req:: ', isTransferRequest);
-
-                myModal.hide();
-                await GetAssignCaseModalData(requestId, isTransferRequest, regionId);
-            });
-        }
-
-
-    }
-    catch (error) {
-        console.error('Error fetching partial view:', error);
-    }
-}
-
-
-// block request modal data ajax call
-
-async function GetBlockRequestModalData(requestId) {
-
-    try {
-
-        const isCookieValid = await ValidateCookie();
-        if (isCookieValid) {
-
-            let url = `/AdminDashBoard/BlockRequest?requestId=${requestId}`;
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const blockRequestModalHtml = await response.text();
-            const modalContainer = document.getElementById('modal-container');
-            modalContainer.innerHTML = blockRequestModalHtml;
-        }
-
-    }
-    catch (error) {
-        console.error('Error fetching partial view:', error);
-    }
-}
-
-
-// block case modal data ajax call
-
-async function GetClearCaseModalData(requestId) {
-
-    try {
-
-        const isCookieValid = await ValidateCookie();
-        if (isCookieValid) {
-            let url = `/AdminDashBoard/ClearCase?requestId=${requestId}`;
-
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const clearCaseModalHtml = await response.text();
-            const modalContainer = document.getElementById('modal-container');
-            modalContainer.innerHTML = clearCaseModalHtml;
-        }
-    }
-    catch (error) {
-        console.error('Error fetching partial view:', error);
-    }
-}
-
 
 //send agreement modal data ajax call
 
@@ -321,7 +157,7 @@ async function GetSendAgreementModalData(requestId) {
         const isCookieValid = await ValidateCookie();
         if (isCookieValid) {
 
-            let url = `/AdminDashBoard/SendAgreement?requestId=${requestId}`;
+            let url = `/DashBoard/SendAgreement?requestId=${requestId}`;
 
             const response = await fetch(url);
 
@@ -332,6 +168,58 @@ async function GetSendAgreementModalData(requestId) {
             const sendAgreementModalHtml = await response.text();
             const modalContainer = document.getElementById('modal-container');
             modalContainer.innerHTML = sendAgreementModalHtml;
+
+        }
+    }
+    catch (error) {
+        console.error('Error fetching partial view:', error);
+    }
+}
+
+async function GetTransferRequestModalData(requestId) {
+
+    try {
+
+        const isCookieValid = await ValidateCookie();
+        if (isCookieValid) {
+
+            let url = `/Physician/TransferToAdmin?requestId=${requestId}`;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const transferRequestModalHtml = await response.text();
+            const modalContainer = document.getElementById('modal-container');
+            modalContainer.innerHTML = transferRequestModalHtml;
+
+        }
+    }
+    catch (error) {
+        console.error('Error fetching partial view:', error);
+    }
+}
+
+async function GetCareTypeModalData(requestId) {
+
+    try {
+
+        const isCookieValid = await ValidateCookie();
+        if (isCookieValid) {
+
+            let url = `/Physician/CareType?requestId=${requestId}`;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const careTypeModalHtml = await response.text();
+            const modalContainer = document.getElementById('modal-container');
+            modalContainer.innerHTML = careTypeModalHtml;
 
         }
     }
@@ -377,16 +265,7 @@ function addActiveTabClass() {
         triangle = triangles[3];
         requestStatusNameSpan.textContent = "(Conclude)";
     }
-    /*else if (urlparams.requestStatus == 5) {
-        button = toCloseBtn;
-        triangle = triangles[4];
-        requestStatusNameSpan.textContent = "(To Close)";
-    }
-    else if (urlparams.requestStatus == 6) {
-        button = unpaidBtn;
-        triangle = triangles[5];
-        requestStatusNameSpan.textContent = "(Unpaid)";
-    }*/
+    
 
     button.classList.add('active-tab');
     triangle.classList.add('visible');
@@ -438,28 +317,6 @@ concludeBtn.addEventListener('click', async () => {
     addActiveTabClass();
     await GetPartialViewData(urlparams);
 });
-
-
-/*toCloseBtn.addEventListener('click', async () => {
-    localStorage.physicianReqStatus = 5;
-    urlparams.requestStatus = 5;
-    urlparams.pageNumber = 1;
-
-    removeActiveTabClass();
-    addActiveTabClass();
-    await GetPartialViewData(urlparams);
-});
-
-
-unpaidBtn.addEventListener('click', async () => {
-    localStorage.physicianReqStatus = 6;
-    urlparams.requestStatus = 6;
-    urlparams.pageNumber = 1;
-
-    removeActiveTabClass();
-    addActiveTabClass();
-    await GetPartialViewData(urlparams);
-});*/
 
 
 // request type buttons
@@ -564,11 +421,9 @@ selectList.addEventListener('change', async () => {
 
 function addEventListnersForPartial() {
 
-    const cancelCaseBtn = document.querySelectorAll('.cancel-case-btn');
-    const assignCaseBtn = document.querySelectorAll('.assign-case-btn');
-    const blockRequestBtn = document.querySelectorAll('.block-request-btn');
-    const clearCaseBtn = document.querySelectorAll('.clear-case-btn');
     const sendAgreementBtn = document.querySelectorAll('.send-agreement-btn');
+    const transferRequestBtn = document.querySelectorAll('.transfer-case-btn');
+    const careTypeBtn = document.querySelectorAll('.care-type-btn');
     const pageNumberLinks = document.querySelectorAll('.page-number');
     //const nextPageLink = document.querySelector('page-next');
 
@@ -583,60 +438,6 @@ function addEventListnersForPartial() {
         });
     });
 
-    if (cancelCaseBtn !== null) {
-        cancelCaseBtn.forEach(item => {
-            item.addEventListener('click', async (event) => {
-                const requestId = event.target.dataset.requestId;
-                console.log(requestId);
-
-                await GetCancelCaseModalData(requestId);
-
-                const myModal = new bootstrap.Modal('#cancel-case-modal')
-                myModal.show();
-            });
-        });
-    }
-
-    if (assignCaseBtn !== null) {
-        assignCaseBtn.forEach(item => {
-            item.addEventListener('click', async (event) => {
-                const requestId = event.target.dataset.requestId;
-                const isTransferRequest = event.target.dataset.isTransferRequest;
-                console.log(requestId);
-                console.log(isTransferRequest);
-
-                await GetAssignCaseModalData(requestId, isTransferRequest);
-            })
-        })
-    }
-
-    if (blockRequestBtn !== null) {
-        blockRequestBtn.forEach(item => {
-            item.addEventListener('click', async (event) => {
-                const requestId = event.target.dataset.requestId;
-                console.log(requestId);
-
-                await GetBlockRequestModalData(requestId);
-
-                const myModal = new bootstrap.Modal('#block-request-modal');
-                myModal.show();
-            });
-        });
-    }
-
-    if (clearCaseBtn !== null) {
-        clearCaseBtn.forEach(item => {
-            item.addEventListener('click', async (event) => {
-                const requestId = event.target.dataset.requestId;
-                console.log(requestId);
-
-                await GetClearCaseModalData(requestId);
-
-                const myModal = new bootstrap.Modal('#clear-case-modal');
-                myModal.show();
-            });
-        });
-    }
 
     if (sendAgreementBtn !== null) {
         sendAgreementBtn.forEach(item => {
@@ -651,76 +452,34 @@ function addEventListnersForPartial() {
             });
         });
     }
+
+    if (transferRequestBtn !== null) {
+        transferRequestBtn.forEach(item => {
+            item.addEventListener('click', async (event) => {
+                const requestId = event.target.dataset.requestId;
+                console.log(requestId);
+
+                await GetTransferRequestModalData(requestId);
+
+                const myModal = new bootstrap.Modal('#transfer-request-modal');
+                myModal.show();
+            });
+        });
+    }
+
+    if (careTypeBtn !== null) {
+        careTypeBtn.forEach(item => {
+            item.addEventListener('click', async (event) => {
+                const requestId = event.target.dataset.requestId;
+                console.log(requestId);
+
+                await GetCareTypeModalData(requestId);
+
+                const myModal = new bootstrap.Modal('#care-type-modal');
+                myModal.show();
+            });
+        });
+    }
 }
 
 
-/*const exportAllBtn = document.querySelector('#export-all');
-exportAllBtn.addEventListener('click', async () => {
-    const url = `/AdminDashboard/Export/?requestStatus=${urlparams.requestStatus}`;
-    try {
-        console.log(urlparams.requestStatus);
-        console.log(url)
-        const response = await fetch(url);
-
-        console.log(response);
-
-        const blob = await response.blob(); // Convert response to blob
-
-        // Create download link
-        const downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(blob);
-        downloadLink.download = 'requests.xlsx';
-
-        // Trigger download
-        downloadLink.click();
-
-        // Clean up
-        window.URL.revokeObjectURL(downloadLink.href);
-    }
-    catch (error) {
-        console.log(error);
-    }
-});
-
-const exportBtn = document.querySelector('#export-btn');
-exportBtn.addEventListener('click', async () => {
-
-    let url = `/AdminDashBoard/Export?requestStatus=${urlparams.requestStatus}`;
-
-    if (urlparams.requestType) {
-        url += `&requestType=${urlparams.requestType}`;
-    }
-
-    if (urlparams.searchPattern) {
-        url += `&searchPattern=${encodeURIComponent(urlparams.searchPattern)}`;
-    }
-
-    if (urlparams.searchRegion) {
-        url += `&searchRegion=${encodeURIComponent(urlparams.searchRegion)}`;
-    }
-
-    url += `&pageNumber=${encodeURIComponent(urlparams.pageNumber)}`;
-    try {
-        //console.log(urlparams.requestStatus);
-        console.log(url)
-        const response = await fetch(url);
-
-        console.log(response);
-
-        const blob = await response.blob(); // Convert response to blob
-
-        // Create download link
-        const downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(blob);
-        downloadLink.download = 'requests.xlsx';
-
-        // Trigger download
-        downloadLink.click();
-
-        // Clean up
-        window.URL.revokeObjectURL(downloadLink.href);
-    }
-    catch (error) {
-        console.log(error);
-    }
-});*/

@@ -243,3 +243,7 @@ tr p{
         border: 1px solid #ced4da;
         box-shadow: none;
     }
+
+.btn-check:active + .btn-outline-info, .btn-check:checked + .btn-outline-info, .btn-outline-info.active, .btn-outline-info.dropdown-toggle.show, .btn-outline-info:active{
+    color: #fff !important;
+}

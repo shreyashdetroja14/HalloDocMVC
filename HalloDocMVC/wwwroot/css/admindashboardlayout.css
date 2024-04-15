@@ -101,7 +101,10 @@
     align-items: center;
 }*/
 
-
+.btn{
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
 
 .btn-outline-info:hover{
     color: #fff !important;

@@ -38,6 +38,10 @@ namespace HalloDocServices.Interface
 
         Task<bool> TransferRequest(AssignCaseViewModel TransferRequest);
 
+        //TransferToAdminViewModel GetTransferToAdminData(int requestId);
+
+        Task<bool> TransferToAdmin(TransferToAdminViewModel TransferData);
+
         Task<BlockRequestViewModel> GetBlockRequestViewModelData(BlockRequestViewModel BlockRequest);
 
         Task<bool> BlockRequest(BlockRequestViewModel BlockRequest);
@@ -56,6 +60,8 @@ namespace HalloDocServices.Interface
 
         Task<bool> SendMailWithAttachments(DownloadRequest requestData);
 
+        OrdersViewModel GetOrdersViewModel(int requestId);
+
         string GetProfessionListOptions();
 
         string GetVendorListOptions(int professionId);
@@ -72,9 +78,15 @@ namespace HalloDocServices.Interface
 
         Task<bool> CloseCase(int requestId, int adminId);
 
+        Task<bool> SelectCareType(CareTypeViewModel CareTypeData);
+
         EncounterFormViewModel GetEncounterFormViewModelData(EncounterFormViewModel EncounterFormDetails);
 
         Task<bool> UpdateEncounterForm(EncounterFormViewModel EncounterFormDetails);
+
+        Task<bool> Finalize(EncounterFormViewModel EncounterFormDetails);
+
+        Task<bool> HouseCall(int requestId, int physicianId);
 
         Task<bool> SendLink(string receiverEmail);
 

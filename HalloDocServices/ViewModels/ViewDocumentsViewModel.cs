@@ -10,6 +10,8 @@ namespace HalloDocServices.ViewModels
 
         public string? PatientFullName { get; set; }
 
+        public string? ConfirmationNumber{ get; set; }
+
         public IEnumerable<IFormFile>? MultipleFiles { get; set; }
 
         public List<RequestFileViewModel> FileInfo { get; set; } = null!;
