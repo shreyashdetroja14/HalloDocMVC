@@ -26,6 +26,7 @@ namespace HalloDocServices.Interface
         Task<ViewNotesViewModel> GetViewNotesViewModelData(int requestId);
 
         Task<bool> AddAdminNote(int requestId, string AdminNotesInput, string createdBy);
+
         Task<bool> AddNote(ViewNotesViewModel vnvm);
 
         CancelCaseViewModel GetCancelCaseViewModelData(CancelCaseViewModel CancelCase);
@@ -87,6 +88,10 @@ namespace HalloDocServices.Interface
         Task<bool> Finalize(EncounterFormViewModel EncounterFormDetails);
 
         Task<bool> HouseCall(int requestId, int physicianId);
+
+        ConcludeCareViewModel GetConcludeCareViewModel(ConcludeCareViewModel ConcludeCareData);
+
+        //Task<bool> ConcludeCare(ConcludeCareViewModel ConcludeCareData);
 
         Task<bool> SendLink(string receiverEmail);
 

@@ -713,6 +713,37 @@ namespace HalloDocMVC.Controllers
             return RedirectToRoute("Dashboard");
         }
 
+        [Route("Physician/ConcludeCare", Name = "ConcludeCare")]
+
+        [CustomAuthorize("physician")]
+        public IActionResult ConcludeCare(int requestId)
+        {
+            ConcludeCareViewModel ConcludeCareData = new ConcludeCareViewModel();
+            ConcludeCareData.RequestId = requestId;
+
+            ConcludeCareData = _adminDashboardService.GetConcludeCareViewModel(ConcludeCareData);
+            return View(ConcludeCareData);
+        }
+
+        [HttpPost]
+        [Route("Physician/ConcludeCare", Name = "ConcludeCarePost")]
+
+        [CustomAuthorize("physician")]
+        public async Task<IActionResult> ConcludeCare(ConcludeCareViewModel ConcludeCareData)
+        {
+            bool isCareConcluded = true;
+            //bool isCareConcluded = await _adminDashboardService.ConcludeCare(ConcludeCareData);
+            if (isCareConcluded)
+            {
+                TempData["SuccessMessage"] = "Care Concluded Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to Conclude Care.";
+            }
+            return RedirectToRoute("Dashboard");
+        }
+
         [HttpPost]
         public async Task<IActionResult> SendLink(AdminDashboardViewModel EmailData)
         {

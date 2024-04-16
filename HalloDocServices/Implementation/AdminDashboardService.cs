@@ -1181,6 +1181,49 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
+        public ConcludeCareViewModel GetConcludeCareViewModel(ConcludeCareViewModel ConcludeCareData)
+        {
+            var requestFetched = _requestRepository.GetIQueryableRequestByRequestId(ConcludeCareData.RequestId);
+
+            requestFetched = requestFetched.Include(x => x.RequestWiseFiles).Include(x => x.RequestClients);
+
+            var data = requestFetched.FirstOrDefault()?.RequestWiseFiles;
+            var requestwisefiles = data?.AsQueryable().Include(x => x.Admin).Include(x => x.Physician).Where(x => x.IsDeleted == false || x.IsDeleted == null).ToList();
+
+            var requestClient = requestFetched.FirstOrDefault()?.RequestClients.FirstOrDefault();
+
+            var request = requestFetched.FirstOrDefault();
+
+            ConcludeCareData.RequestClientId = requestClient?.RequestClientId;
+            ConcludeCareData.PatientFullName = requestClient?.FirstName + " " + requestClient?.LastName;
+            ConcludeCareData.ConfirmationNumber = request?.ConfirmationNumber;
+
+            List<RequestFileViewModel> requestfilelist = new List<RequestFileViewModel>();
+            if (requestwisefiles != null)
+            {
+                foreach (var file in requestwisefiles)
+                {
+                    requestfilelist.Add(new RequestFileViewModel
+                    {
+                        FileId = file.RequestWiseFileId,
+                        FileName = Path.GetFileName(file.FileName),
+                        Uploader = (file.AdminId != null ? file.Admin?.FirstName : (file.PhysicianId != null ? file.Physician?.FirstName : request?.FirstName)),
+                        UploadDate = DateOnly.FromDateTime(file.CreatedDate),
+                        FilePath = file.FileName
+                    });
+                }
+            }
+
+            ConcludeCareData.FileInfo = requestfilelist;
+
+            return ConcludeCareData;
+        }
+
+        /*public async Task<bool> ConcludeCare(ConcludeCareViewModel ConcludeCareData)
+        {
+
+        }*/
+
         public async Task<bool> SendLink(string receiverEmail)
         {
             string subject = "Get Medical Assistance @HalloDoc";

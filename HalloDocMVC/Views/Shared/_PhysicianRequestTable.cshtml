@@ -98,7 +98,7 @@
                                 @if (status == 4)
                                 {
                                     <li>
-                                        <a class="dropdown-item" asp-action="ConcludeCare" asp-route-requestId="@request.RequestId">
+                                        <a class="dropdown-item" asp-route="ConcludeCare" asp-route-requestId="@request.RequestId">
                                             <i class="bi bi-list-check pe-3"></i>Conclude Care
                                         </a>
                                     </li>
@@ -256,7 +256,7 @@
                             @if (status == 4)
                             {
                                 <div class="col-6">
-                                    <a asp-action="ConcludeCare" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">
+                                    <a asp-route="ConcludeCare" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">
                                         Conclude Care
                                     </a>
                                 </div>
