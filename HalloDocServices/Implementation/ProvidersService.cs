@@ -376,7 +376,10 @@ namespace HalloDocServices.Implementation
 
             provider.BusinessName = ProfileInfo.BusinessName;
             provider.BusinessWebsite = ProfileInfo.BusinessWebsite;
-            provider.AdminNotes = ProfileInfo.AdminNotes;
+            if(ProfileInfo.AdminNotes != null)
+            {
+                provider.AdminNotes = ProfileInfo.AdminNotes;
+            }
 
             string photoFileName = UploadFilesToServer(ProfileInfo.Photo, 6, ProfileInfo.ProviderId);
             if (photoFileName != string.Empty)

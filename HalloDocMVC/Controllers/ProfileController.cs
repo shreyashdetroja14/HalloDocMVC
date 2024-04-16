@@ -1,4 +1,5 @@
 ﻿using HalloDocMVC.Auth;
+using HalloDocServices.Constants;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using HalloDocServices.ViewModels.AdminViewModels;
@@ -8,38 +9,24 @@ using System.Security.Claims;
 
 namespace HalloDocMVC.Controllers
 {
-    [CustomAuthorize("admin")]
     public class ProfileController : Controller
     {
         private readonly IJwtService _jwtService;
         private readonly IProfileService _profileService;
+        private readonly IProvidersService _providersService;
 
-        public ProfileController(IJwtService jwtService, IProfileService profileService)
+        public ProfileController(IJwtService jwtService, IProfileService profileService, IProvidersService providersService)
         {
             _jwtService = jwtService;
             _profileService = profileService;
+            _providersService = providersService;
         }
 
-        public ClaimsData GetClaimsData()
-        {
-            ClaimsData claimsData = new ClaimsData();
-
-            string token = Request.Cookies["jwt"] ?? "";
-
-            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
-            {
-                claimsData.AspNetUserId = jwtToken.Claims.FirstOrDefault(x => x.Type == "aspnetuserId")?.Value;
-                claimsData.Email = jwtToken?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-                claimsData.AspNetUserRole = jwtToken?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
-                claimsData.Username = jwtToken?.Claims.FirstOrDefault(x => x.Type == "username")?.Value;
-            }
-
-            return claimsData;
-        }
-
+        [Route("Profile", Name = "Profile")]
+        [CustomAuthorize("admin", "physician")]
         public IActionResult Index()
         {
-            ClaimsData claimsData = GetClaimsData();
+            ClaimsData claimsData = _jwtService.GetClaimValues();
 
             if(claimsData.AspNetUserRole == "admin")
             {
@@ -49,14 +36,18 @@ namespace HalloDocMVC.Controllers
             }
             else
             {
-                /*PhysicianProfileViewModel PhysicianProfileDetails = _profileService.GetPhysicianProfileViewModelData(aspnetuserId);
-                return View(PhysicianProfileDetails);*/
+                EditProviderViewModel PhysicianProfileDetails = new EditProviderViewModel();
+                PhysicianProfileDetails.ProviderId = claimsData.Id;
+                PhysicianProfileDetails.IsAccessProvider = false;
+                PhysicianProfileDetails = _providersService.GetEditProviderViewModel(PhysicianProfileDetails);
 
-                return View();
+                return View("~/Views/Profile/PhysicianProfile.cshtml", PhysicianProfileDetails);
+
             }
         }
 
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> ResetPassword(AdminProfileViewModel AdminProfileDetails)
         {
 
@@ -81,6 +72,7 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> EditAccountInfo(AdminProfileViewModel AdminProfileDetails)
         {
 
@@ -99,6 +91,7 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> EditAdminInfo(AdminProfileViewModel AdminProfileDetails)
         {
             bool isAdminInfoUpdated = await _profileService.UpdateAdminInfo(AdminProfileDetails);
@@ -116,6 +109,7 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> EditBilling(AdminProfileViewModel AdminProfileDetails)
         {
             bool isBillingInfoUpdated = await _profileService.UpdateBillingInfo(AdminProfileDetails);
@@ -130,6 +124,49 @@ namespace HalloDocMVC.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [Route("Physician/ResetPassword", Name ="ResetPasswordPhysician")]
+        [CustomAuthorize("physician")]
+        public async Task<IActionResult> ResetPassword(EditProviderViewModel AccountInfo)
+        {
+
+            if (AccountInfo.Password == null)
+            {
+                TempData["ErrorMessage"] = "Unable to reset password";
+                return RedirectToRoute("Profile");
+            }
+
+            bool isPasswordReset = await _providersService.ResetPassword(AccountInfo);
+            if (isPasswordReset)
+            {
+                TempData["SuccessMessage"] = "Password has been reset successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to reset password";
+
+            }
+
+            return RedirectToRoute("Profile");
+        }
+
+        [HttpPost]
+        [Route("Physician/ProfileInfo", Name = "EditProfileInfoPhysician")]
+        [CustomAuthorize("physician")]
+        public async Task<IActionResult> EditProfileInfo(EditProviderViewModel ProfileInfo)
+        {
+            bool isInfoUpdated = await _providersService.EditProfileInfo(ProfileInfo);
+            if (isInfoUpdated)
+            {
+                TempData["SuccessMessage"] = "Profile Info Updated Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Update Profile Info.";
+            }
+            return RedirectToRoute("Profile");
         }
     }
 }

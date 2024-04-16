@@ -102,4 +102,10 @@ namespace HalloDocServices.Constants
         Consult = 2,
         Virtual = 3
     }
+ 
+    public enum UserType
+    {
+        admin = 1, 
+        physician = 2
+    }
 }

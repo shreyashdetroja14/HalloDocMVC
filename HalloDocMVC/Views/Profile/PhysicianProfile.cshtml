@@ -1,0 +1,581 @@
+﻿@using HalloDocServices.Constants;
+
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+@section AddStyles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <link href="@Url.Content("~/css/requestform.css")" rel="stylesheet" type="text/css" />
+    <style>
+
+
+    </style>
+}
+
+@model HalloDocServices.ViewModels.AdminViewModels.EditProviderViewModel
+
+<div class="main">
+
+    @*<partial name="_NavbarLinks">*@
+
+    <div class="container-xl p-4">
+        <div class=" back p-0 pb-4 d-flex justify-content-between">
+            <h2>Edit Physician</h2>
+            <button class="btn btn-outline-info d-flex align-items-center" onclick="window.history.back()">
+                <span class="material-symbols-outlined text-info fs-6">
+                    arrow_back_ios
+                </span>
+                <span>Back</span>
+            </button>
+        </div>
+
+        <div class=" rounded-3 custom-shadow" >
+            <form id="form-account-info" class="bg-white p-4 rounded-3 rounded-top">
+                <input type="number" asp-for="ProviderId" hidden>
+                <div class="info mb-4">
+                    <h4 class="mb-3">Account Information</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="Username" class="form-control account-info" id="Username"
+                                       placeholder="Username" readonly>
+                                <label asp-for="Username">Username</label>
+                                <span asp-validation-for="Username" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="password" asp-for="Password" class="form-control" id="Password"
+                                       placeholder="Password">
+                                <label asp-for="Password">Password</label>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="submit d-flex justify-content-end">
+                    <button type="button" id="reset-pass" class="btn btn-outline-info py-2 px-3 ms-3">Reset Password</button>
+                </div>
+            </form>
+
+            <form class="bg-white p-4 pt-0 ">
+                <div class="info mb-4">
+                    <h4 class="mb-3">Physician Information</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="FirstName" class="form-control physician-info" id="FirstName"
+                                       placeholder="FirstName" readonly>
+                                <label asp-for="FirstName">First Name</label>
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="LastName" class="form-control physician-info" id="LastName"
+                                       placeholder="LastName" readonly>
+                                <label asp-for="LastName">Last Name</label>
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="email" asp-for="Email" class="form-control physician-info" id="Email" placeholder="Email" readonly>
+                                <label asp-for="Email">Email</label>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 pb-3">
+                            <input type="tel" asp-for="PhoneNumber" class="form-control w-100 physician-info" id="PhoneNumber" readonly />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="MedicalLicense" class="form-control physician-info" id="MedicalLicense" placeholder="MedicalLicense" readonly>
+                                <label asp-for="MedicalLicense">Medical License</label>
+                                <span asp-validation-for="MedicalLicense" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="NPINumber" class="form-control physician-info" id="NPINumber" placeholder="NPINumber" readonly>
+                                <label asp-for="NPINumber">NPI Number</label>
+                                <span asp-validation-for="NPINumber" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 pb-3">
+                            @foreach (var state in Model.StateList)
+                            {
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input physician-info-checkbox"
+                                           type="checkbox"
+                                           value="@state.Value"
+                                           id="region-@state.Value"
+                                           name="ProviderRegions"
+                                           checked="@(Model.ProviderRegions.Contains(int.Parse(state.Value)) ? "true" : false)"
+                                           disabled>
+                                    <label class="form-check-label" for="region-@state.Value">
+                                        @state.Text
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+
+            <form  class="bg-white p-4 pt-0 ">
+                <div class="info mb-4">
+                    <h4 class="mb-3">Mailing & Billing Information</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="Address1" class="form-control billing-info" id="Address1"
+                                       placeholder="Address1" readonly>
+                                <label asp-for="Address1">Address 1</label>
+                                <span asp-validation-for="Address1" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="Address2" class="form-control billing-info" id="Address2"
+                                       placeholder="Address2" readonly>
+                                <label asp-for="Address2">Address 2</label>
+                                <span asp-validation-for="Address2" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="City" class="form-control billing-info" id="City" placeholder="City" readonly>
+                                <label asp-for="City">City</label>
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class=" mb-3">
+                                <select asp-for="RegionId" id="region-list" class="form-select p-3" asp-items="@Model.StateList" disabled>
+                                </select>
+                                <span asp-validation-for="RegionId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="ZipCode" class="form-control billing-info" id="ZipCode" placeholder="ZipCode" readonly>
+                                <label asp-for="ZipCode">ZipCode</label>
+                                <span asp-validation-for="ZipCode" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 pb-3">
+                            <input type="tel" asp-for="SecondPhoneNumber" class="form-control w-100 billing-info" id="SecondPhoneNumber" readonly />
+                            <span asp-validation-for="SecondPhoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+
+            <form asp-action="EditProfileInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none" enctype="multipart/form-data">
+                <input type="number" asp-for="ProviderId" hidden>
+                <div class="info mb-4">
+                    <h4 class="mb-3">Profile Information</h4>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="BusinessName" class="form-control profile-info" id="BusinessName"
+                                       placeholder="BusinessName" readonly>
+                                <label asp-for="BusinessName">Business Name</label>
+                                <span asp-validation-for="BusinessName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="BusinessWebsite" class="form-control profile-info" id="BusinessWebsite"
+                                       placeholder="BusinessWebsite" readonly>
+                                <label asp-for="BusinessWebsite">Business Website</label>
+                                <span asp-validation-for="BusinessWebsite" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="input-group mb-3">
+                                <input type="file" accept=".jpg,.jpeg,.png" asp-for="Photo" class="form-control px-3 py-2 file-upload profile-info-upload" id="Photo" disabled>
+
+                                <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
+                                       asp-for="Photo" >
+                                    <span class="px-3 py-2" id="photoSpan" style="overflow-x: hidden">Profile Photo</span>
+                                    <div class="btn btn-info p-3 text-white fw-bold rounded-0">
+                                        <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                @if (Model.PhotoPath != "")
+                                {
+                                    <img src="@Model.PhotoPath" class="border mb-3" style="width: 150px; height: 150px;" />
+                                }
+                                else
+                                {
+                                    <img src="~/images/doctor-profile.jpg" class="border mb-3" style="width: 150px; height: 150px;" />
+                                }
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+
+                            <div class="input-group mb-3">
+                                <input type="file" accept=".jpg,.jpeg,.png" asp-for="Signature" class="form-control px-3 py-2 file-upload profile-info-upload" id="Signature" disabled>
+
+                                <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
+                                       asp-for="Signature">
+                                    <span class="px-3 py-2" id="signatureSpan" style="overflow-x: hidden">Select File</span>
+                                    <div class="btn btn-info p-3 text-white fw-bold rounded-0">
+                                        <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
+                                    </div>
+                                </label>
+
+                            </div>
+                            <button type="button" class="btn btn-outline-info p-3 rounded-2 d-none" id="create-sign">Create signature</button>
+
+                            <div class="w-100 d-flex justify-content-evenly flex-column align-items-center flex-lg-row align-items-lg-start my-3">
+                                @if (Model.SignaturePath != null)
+                                {
+                                    <img src="@Model.SignaturePath" class="border mb-3 mb-lg-0" style="width: 150px; height: 150px;" />
+                                }
+                                <div class="signature-container d-flex flex-column align-items-center d-none">
+                                    <canvas id="signature-pad" class="border border-dark mb-3" width="150" height="150"></canvas>
+                                    <div>
+                                        <button type="button" id="clear-button" class="btn btn-outline-info">Clear</button>
+                                        <button type="button" id="save-button" class="btn btn-info text-white">Save</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="submit d-flex justify-content-end">
+                    <button type="button" id="profile-info-editbtn" class="btn btn-outline-info py-2 px-3 ms-3">Edit</button>
+                    <input type="submit" value="Save" id="profile-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
+                    <input type="reset" value="Cancel" id="profile-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">
+                </div>
+
+            </form>
+
+            <div class="p-4 pt-0 bg-white rounded-3 rounded-bottom">
+                @if (Model.IsContractorDoc)
+                {
+                    <div class="row">
+                        <div class="col-12 col-sm-6 mb-3">
+                            <div class="me-2">Independent Contractor Agreement</div>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/1.jpg" class="btn btn-info text-white">View</a>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.IsBackgroundDoc)
+                {
+                    <div class="row">
+                        <div class="col-12 col-sm-6 mb-3">
+                            <div class="me-2">Background Check</div>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/2.jpg" class="btn btn-info text-white">View</a>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.IsHippaDoc)
+                {
+                    <div class="row">
+                        <div class="col-12 col-sm-6 mb-3">
+                            <div class="me-2">HIPAA Compliance</div>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/3.jpg" class="btn btn-info text-white">View</a>
+                        </div>
+                    </div>
+                    
+                }
+
+                @if (Model.IsNonDisclosureDoc)
+                {
+                    <div class="row">
+                        <div class="col-12 col-sm-6 mb-3">
+                            <div class="me-2">Non-Disclosure Agreement</div>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/4.jpg" class="btn btn-info text-white">View</a>
+                        </div>
+                    </div>
+                }
+                
+                @if (Model.IsLicenseDoc)
+                {
+                    <div class="row">
+                        <div class="col-12 col-sm-6 mb-3">
+                            <div class="me-2">License Document</div>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/5.jpg" class="btn btn-info text-white">View</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section AddScript {
+
+    <partial name="_ToastMessageScriptsPartial" />
+
+    @*CANVAS SCRIPT*@
+
+    <script>
+        // Get the canvas element and clear and save buttons
+        const canvas = document.getElementById("signature-pad");
+        const clearButton = document.getElementById("clear-button");
+        const saveButton = document.getElementById("save-button");
+        const ctx = canvas.getContext("2d");
+        let drawing = false;
+        let prevX = 0;
+        let prevY = 0;
+
+        saveButton.disabled = true;
+
+        // Event listeners for drawing
+        canvas.addEventListener("mousedown", (e) => {
+            drawing = true;
+            prevX = e.clientX - canvas.getBoundingClientRect().left;
+            prevY = e.clientY - canvas.getBoundingClientRect().top;
+        });
+        canvas.addEventListener("mousemove", (e) => {
+            if (!drawing) return;
+            draw(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+
+            saveButton.disabled = false;
+        });
+        canvas.addEventListener("mouseup", () => {
+            drawing = false;
+        });
+        canvas.addEventListener("mouseleave", () => {
+            drawing = false;
+        });
+        // Function to draw on the canvas
+        function draw(x, y) {
+            ctx.beginPath();
+            ctx.strokeStyle = "#000";
+            ctx.lineWidth = 2;
+            ctx.lineJoin = "round";
+            ctx.moveTo(prevX, prevY);
+            ctx.lineTo(x, y);
+            ctx.closePath();
+            ctx.stroke();
+            prevX = x;
+            prevY = y;
+        }
+        // Event listener for the clear button
+        clearButton.addEventListener("click", () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            saveButton.disabled = false;
+            signatureInput.value = "";
+            saveButton.disabled = true;
+
+            var event = new Event('change');
+            signatureInput.dispatchEvent(event);
+        });
+        // Event listener for the save button
+        saveButton.addEventListener("click", async () => {
+            const dataURL = canvas.toDataURL("image/png");
+            console.log(dataURL);
+            const data = await fetch(dataURL);
+            const blob = await data.blob();
+            console.log('blob: ', blob);
+
+            const file = new File([blob], "signature.png", { type: "image/png" });
+            const container = new DataTransfer();
+            container.items.add(file);
+
+            signatureInput.files = container.files;
+
+            var event = new Event('change');
+            signatureInput.dispatchEvent(event);
+
+            saveButton.disabled = true;
+        });
+    </script>
+
+
+    @*PHONE NUMBER INPUT SCRIPT*@
+
+    <script>
+
+        const phoneInputField = document.querySelector("#PhoneNumber");
+        const phoneInput = window.intlTelInput(phoneInputField, {
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+        const phoneInputField2 = document.querySelector("#SecondPhoneNumber");
+        const phoneInput2 = window.intlTelInput(phoneInputField2, {
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+    </script>
+
+
+    @*EDIT BUTTONS SCRIPT*@
+
+    <script>
+
+        
+        const usernameInput = document.querySelector('#Username');
+        const passwordInput = document.querySelector('#Password');
+        
+
+        const resetPassBtn = $('#reset-pass');
+
+        resetPassBtn.click(function () {
+            $('#form-account-info').attr('action', '/Physician/ResetPassword');
+            $('#form-account-info').attr('method', 'post');
+            $('#form-account-info').submit();
+        });
+
+        const profileInfoEditBtn = document.querySelector('#profile-info-editbtn');
+        const profileInfoSubmitBtn = document.querySelector('#profile-info-save');
+        const profileInfoCancelBtn = document.querySelector('#profile-info-cancel');
+        const profileInfoUploads = document.querySelectorAll('.profile-info-upload');
+        const profileInfoUploadLables = document.querySelectorAll('.upload-label');
+        const createSignatureBtn = document.querySelector('#create-sign');
+        const signContainer = document.querySelector('.signature-container');
+
+
+        profileInfoEditBtn.addEventListener('click', () => {
+
+            profileInfoEditBtn.classList.add('d-none');
+
+            profileInfoSubmitBtn.classList.remove('d-none');
+            profileInfoCancelBtn.classList.remove('d-none');
+
+            
+
+            profileInfoUploads.forEach(input => {
+                input.disabled = false;
+            });
+
+            profileInfoUploadLables.forEach(label => {
+                label.classList.add('bg-white');
+            });
+
+            createSignatureBtn.classList.remove('d-none');
+        });
+
+        profileInfoCancelBtn.addEventListener('click', () => {
+
+            profileInfoSubmitBtn.classList.add('d-none');
+            profileInfoCancelBtn.classList.add('d-none');
+
+            profileInfoEditBtn.classList.remove('d-none');
+
+            profileInfoUploads.forEach(input => {
+                input.disabled = true;
+            });
+
+            profileInfoUploadLables.forEach(label => {
+                label.classList.remove('bg-white');
+            });
+
+            createSignatureBtn.classList.add('d-none');
+            signContainer.classList.add('d-none');
+
+        });
+
+        createSignatureBtn.addEventListener('click', () => {
+            signContainer.classList.remove('d-none');
+            createSignatureBtn.classList.add('d-none');
+        })
+    </script>
+
+
+    @*UPLOAD LABEL SCRIPT*@
+
+    <script>
+        const photoInput = document.getElementById('Photo');
+        const signatureInput = document.getElementById('Signature');
+        const photoSpan = document.getElementById('photoSpan');
+        const signatureSpan = document.getElementById('signatureSpan');
+
+        photoInput.addEventListener('change', (event) => {
+            const photoFile = event.target.files[0];
+            if (photoFile) {
+                photoSpan.textContent = photoFile.name;
+            } else {
+                photoSpan.textContent = "Profile Photo";
+            }
+        });
+
+        signatureInput.addEventListener('change', (event) => {
+            const signatureFile = event.target.files[0];
+            if (signatureFile) {
+                signatureSpan.textContent = signatureFile.name;
+            } else {
+                signatureSpan.textContent = "Select File";
+            }
+        });
+    </script>
+
+
+    @*ONBOARDING DOCS INPUT SCRIPT*@
+
+    <script>
+        const userNameInput = document.querySelector('#Username');
+        const userNameInput2 = document.querySelector('#Username2');
+        const firstNameInput = document.querySelector('#FirstName');
+        const lastNameInput = document.querySelector('#LastName');
+
+        function generateUsername() {
+            const firstName = firstNameInput.value.trim().toUpperCase();
+            const lastName = lastNameInput.value.trim().toUpperCase();
+
+            let firstNamePart = firstName.substring(0, 3);
+            let lastNamePart = lastName.substring(0, 3);
+
+            if (firstName.length < 3) {
+                firstNamePart = firstName;
+            }
+            if (lastName.length < 3) {
+                lastNamePart = lastName;
+            }
+
+            const username = `MD.${firstNamePart}.${lastNamePart}`;
+            userNameInput.value = username;
+        }
+
+
+
+        firstNameInput.addEventListener('keyup', generateUsername);
+        lastNameInput.addEventListener('keyup', generateUsername);
+
+
+
+    </script>
+}
+
