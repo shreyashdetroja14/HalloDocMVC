@@ -13,5 +13,9 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public List<SelectListItem> RegionList { get; set; } = new List<SelectListItem>();
 
         public CreateShiftViewModel CreateShiftData { get; set; } = new CreateShiftViewModel();
+
+        public int? PhysicianId { get; set; }
+
+        public bool IsPhysician { get; set; }
     }
 }
