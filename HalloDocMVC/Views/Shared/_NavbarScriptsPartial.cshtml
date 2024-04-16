@@ -2,7 +2,7 @@
     const url = window.location.href.toLowerCase();
     console.log(url);
 
-    if (url.includes('dashboard')) {
+    if (url.includes('dashboard') || url.includes('physician')) {
         const profileTabs = document.querySelectorAll('.dashboard');
         profileTabs.forEach(tab => {
             tab.classList.add('active');

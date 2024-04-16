@@ -27,6 +27,10 @@
     height: auto;
 }
 
+.nav-shadow {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.2) !important;
+}
+
 .back-btn {
     color: #0dcaf0;
     font-weight: bold;
@@ -109,6 +113,10 @@
 .btn-outline-info:hover{
     color: #fff !important;
 }
+
+    .btn-outline-info:hover .material-symbols-outlined {
+        color: #fff !important;
+    }
 
 .btn-check:focus + .btn-info, .btn-info:focus {
     box-shadow: none;

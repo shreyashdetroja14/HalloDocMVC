@@ -146,7 +146,7 @@ namespace HalloDocServices.Implementation
                                         Selected = (status == (provider?.Status != null ? ((Status)provider.Status) : null))
                                     }).ToList();*/
 
-            var rolesList = _roleRepository.GetAllRoles();
+            var rolesList = _roleRepository.GetAllRoles().Where(x => x.IsDeleted != true && x.AccountType == (short)(AccountType.Physician));
 
             EditProvider.RoleList.Add(new SelectListItem()
             {

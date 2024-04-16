@@ -15,7 +15,7 @@
 
 <div class="main">
     
-    <partial name="_NavbarLinks"></partial>
+    @*<partial name="_NavbarLinks">*@
     <div class="container p-4">
 
         <div class=" back p-0 pb-4 d-flex justify-content-between">
@@ -28,7 +28,7 @@
                     @(Model.RequestType == 4 ? "Concierge" : "")
                 </span>
             </div>
-            <button class="btn back-btn d-flex align-items-center" onclick="window.history.back()">
+            <button class="btn btn-outline-info d-flex align-items-center" onclick="window.history.back()">
                 <span class="material-symbols-outlined text-info fs-6">
                     arrow_back_ios
                 </span>
@@ -42,7 +42,7 @@
                 <h2 class="mb-3">Patient Information</h2>
                 <div>
                     <p class="text-secondary fs-6 m-0">Confirmation Number</p>
-                    <p class="h4 text-info mb-4">MD092723TETE0002</p>
+                    <p class="h4 text-info mb-4">@Model.ConfirmationNumber</p>
                 </div>
                 <div class="row">
                     <div class="col-12">

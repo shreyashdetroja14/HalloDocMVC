@@ -11,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
 using System.Dynamic;
 using System.Security.Claims;
+using HalloDocServices.Constants;
 
 namespace HalloDocMVC.Controllers
 {
@@ -30,7 +31,7 @@ namespace HalloDocMVC.Controllers
 
         #region JWT TOKEN DATA
 
-        public ClaimsData GetClaimsData()
+        /*public ClaimsData GetClaimsData()
         {
             ClaimsData claimsData = new ClaimsData();
 
@@ -42,22 +43,23 @@ namespace HalloDocMVC.Controllers
                 claimsData.Email = jwtToken?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
                 claimsData.AspNetUserRole = jwtToken?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
                 claimsData.Username = jwtToken?.Claims.FirstOrDefault(x => x.Type == "username")?.Value;
+                claimsData.RoleId = int.Parse(jwtToken?.Claims.FirstOrDefault(x => x.Type == "roleId")?.Value ?? "0");
                 claimsData.Id = int.Parse(jwtToken?.Claims.FirstOrDefault(x => x.Type == "id")?.Value ?? "");
             }
 
             return claimsData;
-        }
+        }*/
 
         #endregion
 
 
-        
+
         [Route("Dashboard", Name = "Dashboard")]
 
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> Index(int? requestStatus)
         {
-            ClaimsData claimsData = GetClaimsData();
+            ClaimsData claimsData = _jwtService.GetClaimValues();
 
             AdminDashboardViewModel viewModel = new AdminDashboardViewModel();
             int reqStatus;
@@ -66,10 +68,18 @@ namespace HalloDocMVC.Controllers
             if(claimsData.AspNetUserRole == "physician")
             {
                 viewModel = await _adminDashboardService.GetViewModelData(reqStatus, claimsData.Id);
+                viewModel.AspNetUserRole = claimsData.AspNetUserRole;
+                viewModel.AccountType = (int)(AccountType.Physician);
+                viewModel.Username = claimsData.Username;
+
                 return View("~/Views/AdminDashboard/PhysicianDashboard.cshtml", viewModel);
             }
 
             viewModel = await _adminDashboardService.GetViewModelData(reqStatus);
+            viewModel.AspNetUserRole = claimsData.AspNetUserRole;
+            viewModel.AccountType = (int)(AccountType.Physician);
+            viewModel.Username = claimsData.Username;
+
             return View(viewModel);
             
 
@@ -81,7 +91,7 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin", "physician")]
         public IActionResult FetchRequests(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int pageNumber = 1)
         {
-            ClaimsData claimsData = GetClaimsData();
+            ClaimsData claimsData = _jwtService.GetClaimValues();
 
             PaginatedListViewModel<RequestRowViewModel> PaginatedList = new PaginatedListViewModel<RequestRowViewModel>();
 
@@ -108,7 +118,7 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("physician")]
         public async Task<IActionResult> AcceptCase(int requestId)
         {
-            ClaimsData claimsData = GetClaimsData();
+            ClaimsData claimsData = _jwtService.GetClaimValues();
             int physicianId = claimsData.Id;
             string createdBy = claimsData.AspNetUserId ?? "";
 
@@ -131,7 +141,7 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin", "physician")]
         public IActionResult ViewCase(int requestId) 
         {
-            ClaimsData claimsData = GetClaimsData();
+            ClaimsData claimsData = _jwtService.GetClaimValues();
 
             ViewCaseViewModel CaseInfo = new ViewCaseViewModel();
             CaseInfo.RequestId = requestId;
@@ -169,7 +179,7 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> ViewNotes(int requestId)
         {
-            ClaimsData claimsData = GetClaimsData();
+            ClaimsData claimsData = _jwtService.GetClaimValues();
 
             ViewNotesViewModel ViewNotes = new ViewNotesViewModel();
             ViewNotes = await _adminDashboardService.GetViewNotesViewModelData(requestId);
@@ -188,7 +198,7 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> ViewNotes(ViewNotesViewModel vnvm)
         {
-            ClaimsData claimsData = GetClaimsData();
+            ClaimsData claimsData = _jwtService.GetClaimValues();
 
             vnvm.CreatedBy = claimsData.AspNetUserId;
             vnvm.IsPhysician = claimsData.AspNetUserRole == "physician" ? true : false;
@@ -291,7 +301,7 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("physician")]
         public async Task<IActionResult> TransferToAdmin(TransferToAdminViewModel TransferData)
         {
-            ClaimsData claimsData = GetClaimsData();
+            ClaimsData claimsData = _jwtService.GetClaimValues();
             TransferData.PhysicianId = claimsData.Id;
 
             bool isRequestTransferred = await _adminDashboardService.TransferToAdmin(TransferData);
@@ -622,7 +632,7 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("physician")]
         public async Task<IActionResult> CareType(CareTypeViewModel CareTypeData)
         {
-            ClaimsData claimsData = GetClaimsData();
+            ClaimsData claimsData = _jwtService.GetClaimValues();
             CareTypeData.PhysicianId = claimsData.Id;
 
             bool isCareTypeSelected = await _adminDashboardService.SelectCareType(CareTypeData);
@@ -644,7 +654,7 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin", "physician")]
         public IActionResult EncounterForm(int requestId)
         {
-            ClaimsData claimsData = GetClaimsData();
+            ClaimsData claimsData = _jwtService.GetClaimValues();
 
             EncounterFormViewModel EncounterFormDetails = new EncounterFormViewModel();
             EncounterFormDetails.RequestId = requestId;
@@ -698,7 +708,7 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("physician")]
         public async Task<IActionResult> HouseCall(int requestId)
         {
-            ClaimsData claimsData = GetClaimsData();
+            ClaimsData claimsData = _jwtService.GetClaimValues();
             int physicianId = claimsData.Id;
 
             bool isConcluded = await _adminDashboardService.HouseCall(requestId, physicianId);
@@ -731,8 +741,9 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("physician")]
         public async Task<IActionResult> ConcludeCare(ConcludeCareViewModel ConcludeCareData)
         {
-            bool isCareConcluded = true;
-            //bool isCareConcluded = await _adminDashboardService.ConcludeCare(ConcludeCareData);
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            ConcludeCareData.CreatedBy = claimsData.AspNetUserId;
+            bool isCareConcluded = await _adminDashboardService.ConcludeCare(ConcludeCareData);
             if (isCareConcluded)
             {
                 TempData["SuccessMessage"] = "Care Concluded Successfully.";
@@ -774,7 +785,7 @@ namespace HalloDocMVC.Controllers
         {
             PatientRequestViewModel PatientInfo = new PatientRequestViewModel();
             ViewBag.RegionList = _adminDashboardService.GetRegionList();
-            PatientInfo.CreatorRole = GetClaimsData().AspNetUserRole;
+            PatientInfo.CreatorRole = _jwtService.GetClaimValues().AspNetUserRole;
             return View(PatientInfo);
         }
 
@@ -790,7 +801,7 @@ namespace HalloDocMVC.Controllers
                 return View(PatientInfo);
             }
 
-            var claimsData = GetClaimsData();
+            var claimsData = _jwtService.GetClaimValues();
 
             PatientInfo.CreatedBy = claimsData.Id;
             PatientInfo.CreatorRole = claimsData.AspNetUserRole;

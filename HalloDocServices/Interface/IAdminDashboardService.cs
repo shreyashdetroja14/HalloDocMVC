@@ -91,7 +91,7 @@ namespace HalloDocServices.Interface
 
         ConcludeCareViewModel GetConcludeCareViewModel(ConcludeCareViewModel ConcludeCareData);
 
-        //Task<bool> ConcludeCare(ConcludeCareViewModel ConcludeCareData);
+        Task<bool> ConcludeCare(ConcludeCareViewModel ConcludeCareData);
 
         Task<bool> SendLink(string receiverEmail);
 

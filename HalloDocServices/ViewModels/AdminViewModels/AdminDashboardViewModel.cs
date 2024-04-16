@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace HalloDocServices.ViewModels.AdminViewModels
 {
-    public class AdminDashboardViewModel
+    public class AdminDashboardViewModel : BaseViewModel
     {
         public int? RequestStatus { get; set; }
 

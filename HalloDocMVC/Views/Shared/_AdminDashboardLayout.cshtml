@@ -1,6 +1,12 @@
-﻿﻿@*@{
-    string path = Context.Request.Path;
-}*@
+﻿@using HalloDocServices.ViewModels;
+
+@*@model HalloDocServices.ViewModels.BaseViewModel*@
+
+@inject HalloDocServices.Interface.IJwtService _jwtService
+
+@{
+    ClaimsData claimsData = _jwtService.GetClaimValues();
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -40,7 +46,7 @@
                     <div>
                         <span class="d-none d-md-inline">Welcome</span>
                         <span class="fw-bold d-none d-md-inline">
-                            Admin
+                            @claimsData.Username
                         </span>
                         <a asp-action="Logout" asp-controller="Login" class="logout btn btn-outline-info ms-2 d-none d-md-inline">Logout</a>
                         <a asp-action="Logout" asp-controller="Login" class="logout btn btn-outline-info p-2 d-md-none">
@@ -52,7 +58,144 @@
                     </div>
                 </div>
             </div>
-            @*<div class="navbar navbar-expand-md p-0"></div>*@
+            @*<partial name="_NavbarLinks">*@
+
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" style="font-size: 16px">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Welcome Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body d-md-none">
+                    @if (claimsData.AspNetUserRole == "admin")
+                    {
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                            <li class="nav-item">
+                                <a asp-action="Index" asp-controller="AdminDashboard" class="dashboard nav-link">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-action="ProviderLocation" asp-controller="Providers" class="nav-link location">Provider Location</a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-action="Index" asp-controller="Profile" class="myprofile nav-link">My Profile</a>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="providers nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                                    Providers
+                                </a>
+                                <ul class="dropdown-menu w-100">
+                                    <li><a class="dropdown-item" asp-action="Index" asp-controller="Providers">Provider</a></li>
+                                    <li><a class="dropdown-item" asp-action="Scheduling" asp-controller="Providers">Scheduling</a></li>
+                                    @*<li><a class="dropdown-item" href="#">Invoicing</a></li>*@
+                                </ul>
+                            </li>
+
+                            <li class="nav-item">
+                                <a asp-action="Index" asp-controller="Vendors" class="nav-link vendors">Partners</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="access nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                                    Access
+                                </a>
+                                <ul class="dropdown-menu w-100">
+                                    <li><a class="dropdown-item" asp-action="Accounts" asp-controller="Access">Account Access</a></li>
+                                    <li><a class="dropdown-item" asp-action="UserAccess" asp-controller="Access">User Access</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="records nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                                    Records
+                                </a>
+                                <ul class="dropdown-menu w-100">
+                                    <li><a class="dropdown-item" asp-action="SearchRecords" asp-controller="Records">Search Records</a></li>
+                                    <li><a class="dropdown-item" asp-action="EmailLogs" asp-controller="Records">Email Logs</a></li>
+                                    <li><a class="dropdown-item" asp-action="SMSLogs" asp-controller="Records">SMS Logs</a></li>
+                                    <li><a class="dropdown-item" asp-action="PatientHistory" asp-controller="Records">Patient History</a></li>
+                                    <li><a class="dropdown-item" asp-action="BlockedHistory" asp-controller="Records">Blocked History</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    }
+                    else if (claimsData.AspNetUserRole == "physician")
+                    {
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                            <li class="nav-item">
+                                <a asp-action="Index" asp-controller="AdminDashboard" class="dashboard nav-link">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-action="Index" asp-controller="Profile" class="myprofile nav-link">My Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-action="Scheduling" asp-controller="Providers" class="scheduling nav-link">My Schedule</a>
+                            </li>
+                        </ul>
+                    }
+
+                </div>
+            </div>
+
+
+            @if (claimsData.AspNetUserRole == "admin")
+            {
+                <ul class="nav nav-tabs border-0 mb-3 nav-shadow d-none d-md-flex bg-white" id="ex1" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a asp-action="Index" asp-controller="AdminDashboard" class="dashboard nav-link">Dashboard</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a asp-action="ProviderLocation" asp-controller="Providers" class="nav-link location">Provider Location</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a asp-action="Index" asp-controller="Profile" class="myprofile nav-link">My Profile</a>
+                    </li>
+                    <li class="nav-item dropdown" role="presentation">
+                        <a class="providers nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Providers
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" asp-action="Index" asp-controller="Providers">Provider</a></li>
+                            <li><a class="dropdown-item" asp-action="Scheduling" asp-controller="Providers">Scheduling</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a asp-action="Index" asp-controller="Vendors" class="nav-link vendors">Partners</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="access nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                            Access
+                        </a>
+                        <ul class="dropdown-menu w-100">
+                            <li><a class="dropdown-item" asp-action="Accounts" asp-controller="Access">Account Access</a></li>
+                            <li><a class="dropdown-item" asp-action="UserAccess" asp-controller="Access">User Access</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="records nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                            Records
+                        </a>
+                        <ul class="dropdown-menu w-100">
+                            <li><a class="dropdown-item" asp-action="SearchRecords" asp-controller="Records">Search Records</a></li>
+                            <li><a class="dropdown-item" asp-action="EmailLogs" asp-controller="Records">Email Logs</a></li>
+                            <li><a class="dropdown-item" asp-action="SMSLogs" asp-controller="Records">SMS Logs</a></li>
+                            <li><a class="dropdown-item" asp-action="PatientHistory" asp-controller="Records">Patient History</a></li>
+                            <li><a class="dropdown-item" asp-action="BlockedHistory" asp-controller="Records">Blocked History</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            }
+            else if (claimsData.AspNetUserRole == "physician")
+            {
+                <ul class="nav nav-tabs border-0 mb-3 nav-shadow d-none d-md-flex bg-white" id="ex1" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a asp-action="Index" asp-controller="AdminDashboard" class="dashboard nav-link">Dashboard</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a asp-action="Index" asp-controller="Profile" class="myprofile nav-link">My Profile</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a asp-action="Scheduling" asp-controller="Providers" class="scheduling nav-link">My Schedule</a>
+                    </li>
+                </ul>
+            }
         </div>
 
         @RenderBody()

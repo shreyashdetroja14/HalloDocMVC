@@ -252,9 +252,13 @@
                                 </label>
                             </div>
                             <div class="d-flex justify-content-center">
-                                @if (Model.PhotoPath != null)
+                                @if (Model.PhotoPath != "")
                                 {
                                     <img src="@Model.PhotoPath" class="border mb-3" style="width: 150px; height: 150px;" />
+                                }
+                                else
+                                {
+                                    <img src="~/images/doctor-profile.jpg" class="border mb-3" style="width: 150px; height: 150px;" />
                                 }
                             </div>
                         </div>
@@ -318,7 +322,7 @@
                         <div class="col-md-9 col-lg-8">
                             <div class="row">
                                 <div class="col-1 mb-3">
-                                    <input type="checkbox" class="form-check-input" id="ContractorDoc" checked="@Model.IsContractorDoc" />
+                                    <input type="checkbox" class="form-check-input" id="ContractorDoc" checked="@Model.IsContractorDoc" disabled/>
                                 </div>
                                 <div class="col-11 col-sm-6 mb-3">
                                     <label for="ContractorDoc" class="me-2">Independent Contractor Agreement</label>
@@ -342,7 +346,7 @@
                         <div class="col-md-9 col-lg-8">
                             <div class="row">
                                 <div class="col-1 mb-3">
-                                    <input type="checkbox" class="form-check-input" id="BackgroundDoc" checked="@Model.IsBackgroundDoc" />
+                                    <input type="checkbox" class="form-check-input" id="BackgroundDoc" checked="@Model.IsBackgroundDoc" disabled />
                                 </div>
                                 <div class="col-11 col-sm-6 mb-3">
                                     <label for="BackgroundDoc" class="me-2">Background Check</label>
@@ -365,7 +369,7 @@
                         <div class="col-md-9 col-lg-8">
                             <div class="row">
                                 <div class="col-1 mb-3">
-                                    <input type="checkbox" class="form-check-input me-2" id="HippaDoc" checked="@Model.IsHippaDoc" />
+                                    <input type="checkbox" class="form-check-input me-2" id="HippaDoc" checked="@Model.IsHippaDoc" disabled />
                                 </div>
                                 <div class="col-11 col-sm-6 mb-3">
                                     <label for="HippaDoc" class="me-2">HIPAA Compliance</label>
@@ -388,7 +392,7 @@
                         <div class="col-md-9 col-lg-8">
                             <div class="row">
                                 <div class="col-1 mb-3">
-                                    <input type="checkbox" class="form-check-input me-2" id="NonDisclosureDoc" checked="@Model.IsNonDisclosureDoc" />
+                                    <input type="checkbox" class="form-check-input me-2" id="NonDisclosureDoc" checked="@Model.IsNonDisclosureDoc" disabled />
                                 </div>
                                 <div class="col-11 col-sm-6 mb-3">
                                     <label for="NonDisclosureDoc" class="me-2">Non-Disclosure Agreement</label>
@@ -411,7 +415,7 @@
                         <div class="col-md-9 col-lg-8">
                             <div class="row">
                                 <div class="col-1 mb-3">
-                                    <input type="checkbox" class="form-check-input me-2" id="LicenseDoc" checked="@Model.IsLicenseDoc" />
+                                    <input type="checkbox" class="form-check-input me-2" id="LicenseDoc" checked="@Model.IsLicenseDoc" disabled />
                                 </div>
                                 <div class="col-11 col-sm-6 mb-3">
                                     <label for="LicenseDoc" class="me-2">License Document</label>

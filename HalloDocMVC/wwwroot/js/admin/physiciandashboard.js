@@ -1,6 +1,6 @@
 ﻿
 
-window.addEventListener("pageshow", function (event) {
+/*window.addEventListener("pageshow", function (event) {
     var historyTraversal = event.persisted ||
         (typeof window.performance != "undefined" &&
             window.performance.navigation.type === 2);
@@ -8,7 +8,7 @@ window.addEventListener("pageshow", function (event) {
         // Handle page restore.
         window.location.reload();
     }
-});
+});*/
 
 
 //status buttons

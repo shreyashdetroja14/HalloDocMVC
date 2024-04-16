@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace HalloDocServices.ViewModels.AdminViewModels
 {
-    public class ProviderLocationViewModel
+    public class ProviderLocationViewModel : BaseViewModel
     {
         public int LocationId { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using HalloDocEntities.Models;
+using HalloDocServices.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,5 +16,7 @@ namespace HalloDocServices.Interface
         bool ValidateToken(string token, out JwtSecurityToken jwtSecurityToken);
 
         string GenerateEmailToken(string email, bool isExpireable);
+
+        ClaimsData GetClaimValues();
     }
 }

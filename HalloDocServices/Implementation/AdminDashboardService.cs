@@ -324,7 +324,7 @@ namespace HalloDocServices.Implementation
                 {
                     if (log.Status == 3)
                     {
-                        int index = log.Notes.LastIndexOf("-");
+                        int index = log.Notes.LastIndexOf(":");
                         if (log.PhysicianId != null)
                         {
                             ViewNotes.PhysicianCancellationNotes = log.Notes.Substring(index + 2);
@@ -337,7 +337,7 @@ namespace HalloDocServices.Implementation
                     }
                     else if (log.Status == 7)
                     {
-                        int index = log.Notes.LastIndexOf("-");
+                        int index = log.Notes.LastIndexOf(":");
                         ViewNotes.PatientCancellationNotes = log.Notes.Substring(index + 2);
                     }
 
@@ -982,7 +982,7 @@ namespace HalloDocServices.Implementation
                 log.RequestId = request.RequestId;
                 log.Status = request.Status;
                 log.PhysicianId = CareTypeData.PhysicianId;
-                log.Notes = "Physician selected the house care as " + ((CareType)(CareTypeData.CareType)).ToString() + " on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+                log.Notes = "Physician selected the care type as " + ((CareType)(CareTypeData.CareType)).ToString() + " on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
                 log.CreatedDate = DateTime.Now;
 
                 await _notesAndLogsRepository.AddRequestStatusLog(log);
@@ -995,7 +995,7 @@ namespace HalloDocServices.Implementation
                 log.RequestId = request.RequestId;
                 log.Status = request.Status;
                 log.PhysicianId = CareTypeData.PhysicianId;
-                log.Notes = "Physician selected the house care as " + ((CareType)(CareTypeData.CareType)).ToString() + " on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+                log.Notes = "Physician selected the care type as " + ((CareType)(CareTypeData.CareType)).ToString() + " on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
                 log.CreatedDate = DateTime.Now;
 
                 await _notesAndLogsRepository.AddRequestStatusLog(log);
@@ -1160,7 +1160,7 @@ namespace HalloDocServices.Implementation
         {
             Request request = await _requestRepository.GetRequestByRequestId(requestId);
 
-            if(request.RequestId == 0)
+            if (request.RequestId == 0)
             {
                 return false;
             }
@@ -1185,7 +1185,7 @@ namespace HalloDocServices.Implementation
         {
             var requestFetched = _requestRepository.GetIQueryableRequestByRequestId(ConcludeCareData.RequestId);
 
-            requestFetched = requestFetched.Include(x => x.RequestWiseFiles).Include(x => x.RequestClients);
+            requestFetched = requestFetched.Include(x => x.RequestWiseFiles).Include(x => x.RequestClients).Include(x => x.EncounterForms);
 
             var data = requestFetched.FirstOrDefault()?.RequestWiseFiles;
             var requestwisefiles = data?.AsQueryable().Include(x => x.Admin).Include(x => x.Physician).Where(x => x.IsDeleted == false || x.IsDeleted == null).ToList();
@@ -1216,13 +1216,69 @@ namespace HalloDocServices.Implementation
 
             ConcludeCareData.FileInfo = requestfilelist;
 
+            var encounterForm = requestFetched.FirstOrDefault()?.EncounterForms.FirstOrDefault();
+            if (encounterForm != null)
+            {
+                ConcludeCareData.IsFinalized = encounterForm.IsFinalized ?? false;
+            }
+
+
             return ConcludeCareData;
         }
 
-        /*public async Task<bool> ConcludeCare(ConcludeCareViewModel ConcludeCareData)
+        public async Task<bool> ConcludeCare(ConcludeCareViewModel ConcludeCareData)
         {
+            Request request = await _requestRepository.GetRequestByRequestId(ConcludeCareData.RequestId);
 
-        }*/
+            if (request == null)
+            {
+                return false;
+            }
+
+            request.Status = (short)(RequestStatus.Closed);
+            request.IsCompletedByPhysician = true;
+
+            await _requestRepository.UpdateRequest(request);
+
+            if(ConcludeCareData.ProviderNotes != null)
+            {
+                var requestNote = await _notesAndLogsRepository.GetNoteByRequestId(request.RequestId);
+                if (requestNote == null)
+                {
+                    RequestNote note = new RequestNote();
+
+                    note.PhysicianNotes = ConcludeCareData.ProviderNotes;
+                    note.RequestId = request.RequestId;
+                    note.CreatedBy = ConcludeCareData.CreatedBy ?? "";
+                    note.CreatedDate = DateTime.Now;
+
+                    await _notesAndLogsRepository.AddRequestNote(note);
+
+                    return true;
+                }
+                else
+                {
+                    requestNote.PhysicianNotes = ConcludeCareData.ProviderNotes;
+                    requestNote.ModifiedDate = DateTime.Now;
+                    requestNote.ModifiedBy = ConcludeCareData.CreatedBy;
+
+                    await _notesAndLogsRepository.UpdateRequestNote(requestNote);
+
+                    return true;
+                }
+            }
+
+            RequestStatusLog log = new RequestStatusLog();
+            log.RequestId = request.RequestId;
+            log.Status = request.Status;
+            log.PhysicianId = request.PhysicianId;
+            log.Notes = "Physician concluded care and closed the request on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+            log.CreatedDate = DateTime.Now;
+
+            await _notesAndLogsRepository.AddRequestStatusLog(log);
+
+            return true;
+        }
 
         public async Task<bool> SendLink(string receiverEmail)
         {

@@ -175,6 +175,23 @@
     <partial name="_ToastMessageScriptsPartial" />
 
     <script>
+        $('document').ready(function(){
+            $('.selectlist').val("");
+
+            if ($('.selectlist').val() == 1) {
+                $('.create-admin').removeClass('d-none');
+                $('.create-physician').addClass('d-none');
+            }
+            else if ($('.selectlist').val() == 2) {
+                $('.create-admin').addClass('d-none');
+                $('.create-physician').removeClass('d-none');
+            }
+            else if ($('.selectlist').val() == 0) {
+                $('.create-admin').addClass('d-none');
+                $('.create-physician').addClass('d-none');
+            }
+        })
+
         $('.selectlist').change(function() {
             if ($('.selectlist').val() == 1){
                 $('.create-admin').removeClass('d-none');

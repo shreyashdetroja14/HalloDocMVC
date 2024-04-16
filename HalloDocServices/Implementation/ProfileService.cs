@@ -2,6 +2,7 @@
 using HalloDocEntities.Models;
 using HalloDocRepository.Implementation;
 using HalloDocRepository.Interface;
+using HalloDocServices.Constants;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels.AdminViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -48,7 +49,7 @@ namespace HalloDocServices.Implementation
                 AdminProfileDetails.Status = adminFetched?.Status;
                 AdminProfileDetails.RoleId = adminFetched?.RoleId;
 
-                var rolesList = _roleRepository.GetAllRoles();
+                var rolesList = _roleRepository.GetAllRoles().Where(x => x.IsDeleted != true && x.AccountType == (short)(AccountType.Admin));
 
                 AdminProfileDetails.RoleList.Add(new SelectListItem()
                 {

@@ -25,6 +25,8 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public List<RequestFileViewModel> FileInfo { get; set; } = null!;
 
+        public bool IsFinalized { get; set; }
 
+        public string? CreatedBy { get; set; }
     }
 }

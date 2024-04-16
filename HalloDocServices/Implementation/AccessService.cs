@@ -173,7 +173,7 @@ namespace HalloDocServices.Implementation
 
         public AdminProfileViewModel GetCreateAdminViewModel(AdminProfileViewModel AdminDetails)
         {
-            var rolesList = _roleRepository.GetAllRoles();
+            var rolesList = _roleRepository.GetAllRoles().Where(x => x.IsDeleted != true && x.AccountType == (short)(AccountType.Admin));
 
             AdminDetails.RoleList.Add(new SelectListItem()
             {

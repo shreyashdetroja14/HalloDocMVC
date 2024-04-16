@@ -18,7 +18,14 @@
         @foreach (var md in Model.AvailableMDs)
         {
             <div class="col-sm-6 col-md-4 d-flex mb-3">
-                <img src="@md.ProfilePhotoPath" class="img-fluid h-100 w-25 me-2 " />
+                @if(md.ProfilePhotoPath != "")
+                {
+                    <img src="@md.ProfilePhotoPath" class="img-fluid h-100 w-25 me-2 " />
+                }
+                else
+                {
+                    <img src="~/images/doctor-profile.jpg" class="img-fluid h-100 w-25 me-2 " />
+                }
                 <span>@md.FullName</span>
             </div>
         }

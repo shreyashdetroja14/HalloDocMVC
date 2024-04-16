@@ -24,12 +24,12 @@
 
 <div class="main">
 
-    <partial name="_NavbarLinks"></partial>
+    @*<partial name="_NavbarLinks"></partial>*@
 
     <div class="container-xl p-4">
         <div class="heading d-flex justify-content-between align-items-center mb-3">
             <h1 class="h2">Conclude Care</h1>
-            <button class="btn back-btn d-flex align-items-center" onclick="window.history.back()">
+            <button class="btn btn-outline-info d-flex align-items-center" onclick="window.history.back()">
                 <span class="material-symbols-outlined text-info fs-6">
                     arrow_back_ios
                 </span>
@@ -41,7 +41,10 @@
                 <p class="m-0">Patient Name</p>
                 <h2 class="h4 mb-4 d-flex flex-column flex-sm-row">
                     <span class="text-info">@Model.PatientFullName</span>
-                    <span class="fw-light">(@Model.ConfirmationNumber)</span>
+                    @if(Model.ConfirmationNumber != null)
+                    {
+                        <span class="fw-light">(@Model.ConfirmationNumber)</span>
+                    }
                 </h2>
                 <h4>Documents</h4>
             </div>
@@ -118,7 +121,7 @@
                 </div>
                 @if(Model.FileInfo.Count() == 0)
                 {
-                    <div class="text-center ">No Documents Found.</div>
+                    <div class="px-3">No Documents Found.</div>
                 }
             </div>
 
@@ -137,9 +140,18 @@
 
                 </div>
 
-                <div class="submit mb-4 d-flex justify-content-end">
-                    <input type="submit" value="Conclude Care" id="save" class="btn btn-info py-2 px-3 ms-3 text-white">
-                </div>
+                @if (Model.IsFinalized)
+                {
+                    <div class="submit mb-4 d-flex justify-content-end">
+                        <input type="submit" value="Conclude Care" id="save" class="btn btn-info py-2 px-3 ms-3 text-white">
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center">
+                        <h4 class="text-warning">Please finalize the encounter form to conclude care for this case.</h4>
+                    </div>
+                }
 
             </form>
 
@@ -151,47 +163,6 @@
 
 
 @section AddScript {
-    <script>
-        const phoneInputField = document.querySelector("#PhoneNumber");
-        const phoneInput = window.intlTelInput(phoneInputField, {
-            preferredCountries: ["us", "in", "au", "de"],
-            utilsScript:
-                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        });
-    </script>
-    <script>
-        const editBtn = document.querySelector('#editbtn');
-        const saveBtn = document.querySelector('#save');
-        const closeCaseBtn = document.querySelector('#close-case');
-        const cancelBtn = document.querySelector('input[type="reset"]');
-
-        const emailInp = document.querySelector('input[type="email"]');
-        const phoneInp = document.querySelector('input[type="tel"]');
-
-        if (editBtn !== null) {
-            editBtn.addEventListener('click', () => {
-                editBtn.classList.add('d-none');
-                closeCaseBtn.classList.add('d-none');
-                saveBtn.classList.remove('d-none');
-                cancelBtn.classList.remove('d-none');
-
-                emailInp.readOnly = false;
-                phoneInp.readOnly = false;
-            });
-        }
-
-        cancelBtn.addEventListener('click', () => {
-            saveBtn.classList.add('d-none');
-            cancelBtn.classList.add('d-none');
-            editBtn.classList.remove('d-none');
-            closeCaseBtn.classList.remove('d-none');
-
-            emailInp.readOnly = true;
-            phoneInp.readOnly = true;
-        })
-
-
-
-    </script>
+    
 }
 

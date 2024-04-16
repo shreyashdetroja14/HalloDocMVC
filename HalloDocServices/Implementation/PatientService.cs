@@ -567,7 +567,7 @@ namespace HalloDocServices.Implementation
             RequestStatusLog log = new RequestStatusLog();
             log.RequestId = requestFetched.RequestId;
             log.Status = requestFetched.Status;
-            log.Notes = "Patient cancelled the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " - " + CancelAgreementInfo.CancellationReason;
+            log.Notes = "Patient cancelled the case on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString() + " : " + CancelAgreementInfo.CancellationReason;
             log.CreatedDate = DateTime.Now;
 
             await _notesAndLogsRepository.AddRequestStatusLog(log);
