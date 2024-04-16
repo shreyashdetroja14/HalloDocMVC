@@ -547,9 +547,32 @@ namespace HalloDocServices.Implementation
 
         public SchedulingViewModel GetSchedulingViewModel(SchedulingViewModel SchedulingData)
         {
-            var regions = _commonRepository.GetAllRegions();
+            List<Region> regionList = new List<Region>();
+            if(SchedulingData.IsPhysician)
+            {
+                var physicianRegionIds = _physicianRepository.GetRegionsByPhysicianId(SchedulingData.PhysicianId ?? 0).Select(x => x.RegionId);
+                if(physicianRegionIds != null || physicianRegionIds?.Count() != 0)
+                {
+                    regionList = _commonRepository.GetAllRegions().Where(x => physicianRegionIds.Contains(x.RegionId)).ToList();
+                }
+            }
+            else
+            {
+                regionList = _commonRepository.GetAllRegions();
 
-            foreach (var region in regions)
+                var physicianList = _physicianRepository.GetAllPhysicians();
+
+                foreach (var physian in physicianList)
+                {
+                    SchedulingData.CreateShiftData.PhysicianList.Add(new SelectListItem()
+                    {
+                        Text = physian.FirstName + " " + physian.LastName,
+                        Value = physian.PhysicianId.ToString(),
+                    });
+                }
+            }
+
+            foreach (var region in regionList)
             {
                 SchedulingData.RegionList.Add(new SelectListItem()
                 {
@@ -561,17 +584,6 @@ namespace HalloDocServices.Implementation
                 {
                     Text = region.Name,
                     Value = region.RegionId.ToString(),
-                });
-            }
-
-            var physicianList = _physicianRepository.GetAllPhysicians();
-
-            foreach (var physian in physicianList)
-            {
-                SchedulingData.CreateShiftData.PhysicianList.Add(new SelectListItem()
-                {
-                    Text = physian.FirstName + " " + physian.LastName,
-                    Value = physian.PhysicianId.ToString(),
                 });
             }
 
@@ -731,7 +743,7 @@ namespace HalloDocServices.Implementation
                 RegionId = CreateShiftData.RegionId,
                 StartTime = CreateShiftData.StartTime,
                 EndTime = CreateShiftData.EndTime,
-                Status = (short)ShiftStatus.Approved,
+                Status = CreateShiftData.CreatorRole == "admin" ? (short)ShiftStatus.Approved : (short)ShiftStatus.Unapproved,
                 IsDeleted = false,
             });
 
@@ -755,7 +767,7 @@ namespace HalloDocServices.Implementation
                             RegionId = CreateShiftData.RegionId,
                             StartTime = CreateShiftData.StartTime,
                             EndTime = CreateShiftData.EndTime,
-                            Status = (short)ShiftStatus.Approved,
+                            Status = CreateShiftData.CreatorRole == "admin" ? (short)ShiftStatus.Approved : (short)ShiftStatus.Unapproved,
                             IsDeleted = false,
                         });
                     }
@@ -848,18 +860,18 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
-        public CalendarViewModel GetCalendarViewModel(int regionId)
+        public CalendarViewModel GetCalendarViewModel(int regionId, int? physicianId = null)
         {
             CalendarViewModel calendarData = new CalendarViewModel();
 
-            calendarData.Resources = _physicianRepository.GetIQueryablePhysicians().Where(x => x.PhysicianRegions.Where(x => regionId == 0 || x.RegionId == regionId).Any())
+            calendarData.Resources = _physicianRepository.GetIQueryablePhysicians().Where(x => (physicianId == null || x.PhysicianId == physicianId) && x.PhysicianRegions.Where(x => regionId == 0 || x.RegionId == regionId).Any())
                                                             .Select(x => new ResourceViewModel
                                                             {
                                                                 PhysicianId = x.PhysicianId,
                                                                 PhysicianName = x.FirstName + " " + x.LastName,
                                                             }).ToList();
 
-            calendarData.Events = _shiftRepository.GetShiftDetails().Where(x => x.IsDeleted == false && (regionId == 0 || x.RegionId == regionId)).Select(x => new EventViewModel
+            calendarData.Events = _shiftRepository.GetShiftDetails().Where(x => (physicianId == null || x.Shift.PhysicianId == physicianId) && x.IsDeleted == false && (regionId == 0 || x.RegionId == regionId)).Select(x => new EventViewModel
             {
                 ShiftDetailId = x.ShiftDetailId,
                 PhysicianId = x.Shift.PhysicianId,
@@ -913,6 +925,22 @@ namespace HalloDocServices.Implementation
                 ViewShiftData.EndTime = shiftDetail.EndTime;
                 ViewShiftData.CreatedBy = shiftDetail.Shift.CreatedBy;
 
+                if(DateOnly.FromDateTime(shiftDetail.ShiftDate) < DateOnly.FromDateTime(DateTime.Now))
+                {
+                    ViewShiftData.IsOldShift = true;
+                }
+                else if(DateOnly.FromDateTime(shiftDetail.ShiftDate) == DateOnly.FromDateTime(DateTime.Now))
+                {
+                    if(shiftDetail.StartTime < TimeOnly.FromDateTime(DateTime.Now))
+                    {
+                        ViewShiftData.IsOldShift = true;
+                    }
+                }
+                else
+                {
+                    ViewShiftData.IsOldShift = false;
+                }
+
             }
             return ViewShiftData;
             
@@ -929,6 +957,10 @@ namespace HalloDocServices.Implementation
             shiftDetail.ShiftDate = DateTime.ParseExact(EditShiftData.ShiftDate, "yyyy-MM-dd", CultureInfo.InvariantCulture); 
             shiftDetail.StartTime = EditShiftData.StartTime;
             shiftDetail.EndTime = EditShiftData.EndTime;
+            if(EditShiftData.CreatorRole == "physician")
+            {
+                shiftDetail.Status = (short)ShiftStatus.Unapproved;
+            }
 
             await _shiftRepository.UpdateShiftDetail(shiftDetail);
 

@@ -16,7 +16,9 @@
     <link href="https://unpkg.com/fullcalendar-scheduler@5.10.1/main.min.css" rel="stylesheet" />
 
     <style>
-
+        .btn-shadow{
+            box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.4);
+        }
     </style>
 }
 
@@ -24,18 +26,28 @@
     @*<partial name="_NavbarLinks">*@
 
         <div class="container-xl p-4">
+            <div class="d-flex justify-content-between align-items-center">
             <h2 class="mb-4">Scheduling</h2>
+            @if (Model.IsPhysician)
+            {
+                <button type="button" class="btn btn-info text-white btn-shadow" data-bs-toggle="modal" data-bs-target="#create-shift-modal">Create Shift</button>
+            }
+            </div>
 
+        @if(!Model.IsPhysician)
+        {
             <div class="search-area d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
                 <select class="form-select mb-3 mb-md-0" id="region-list" style="width: 270px;" asp-for="RegionId" asp-items="@Model.RegionList">
                     <option value="">All Regions</option>
                 </select>
                 <div class="d-flex">
-                    <a asp-action="MDsOnCall" class="btn btn-info text-white me-2" style="box-shadow:1px 1px 2px 1px rgba(0,0,0,0.4)">Providers On Call</a>
-                    <a asp-action="RequestedShifts" class="btn btn-info text-white me-2" style="box-shadow:1px 1px 2px 1px rgba(0,0,0,0.4)">Shifts For Review</a>
-                    <button type="button" class="btn btn-info text-white" style="box-shadow:1px 1px 2px 1px rgba(0,0,0,0.4)" data-bs-toggle="modal" data-bs-target="#create-shift-modal">Add Shift</button>
+                    <a asp-action="MDsOnCall" class="btn btn-info text-white me-2 btn-shadow">Providers On Call</a>
+                    <a asp-action="RequestedShifts" class="btn btn-info text-white me-2 btn-shadow">Shifts For Review</a>
+                    <button type="button" class="btn btn-info text-white btn-shadow" data-bs-toggle="modal" data-bs-target="#create-shift-modal">Add Shift</button>
                 </div>
             </div>
+        }
+        
 
             <h5 class="mb-3" id="calendar-title"></h5>
             <div class="d-flex justify-content-end mb-3">
@@ -60,12 +72,15 @@
                         arrow_forward
                     </span>
                 </div>
+            @if(!Model.IsPhysician)
+            {
                 <div>
                     <button id="day" class="btn btn-outline-info">Day</button>
                     <button id="week" class="btn btn-outline-info">Week</button>
                     <button id="month" class="btn btn-outline-info">Month</button>
                 </div>
-            </div>
+            }
+        </div>
             <div id="calendar" class=""></div>
 
         </div>
@@ -91,13 +106,20 @@
                         <span class="text-danger" asp-validation-for="CreateShiftData.RegionId"></span>
                     </div>
 
-                    <div class="form-floating mb-3">
-                        <select class="form-select selectlist" id="modal-physician-list" asp-for="CreateShiftData.PhysicianId" asp-items="CreateShiftData.PhysicianList">
-                            <option value="">Select Physician</option>
-                        </select>
-                        <label for="modal-physician-list">Physicians</label>
-                        <span class="text-danger" asp-validation-for="CreateShiftData.PhysicianId"></span>
-                    </div>
+                    @if (!Model.IsPhysician)
+                    {
+                        <div class="form-floating mb-3">
+                            <select class="form-select selectlist" id="modal-physician-list" asp-for="CreateShiftData.PhysicianId" asp-items="CreateShiftData.PhysicianList">
+                                <option value="">Select Physician</option>
+                            </select>
+                            <label for="modal-physician-list">Physicians</label>
+                            <span class="text-danger" asp-validation-for="CreateShiftData.PhysicianId"></span>
+                        </div>
+                    }
+                    @if (Model.IsPhysician)
+                    {
+                        <input type="number" asp-for="CreateShiftData.PhysicianId" hidden/>
+                    }
 
                     <div class="form-floating mb-3">
                         <input type="date" asp-for="CreateShiftData.ShiftDate" class="form-control" id="ShiftDate" placeholder="Shift Date" min="@(DateOnly.FromDateTime(DateTime.Now).ToString("yyyy-MM-dd"))">
@@ -285,7 +307,8 @@
                     $('#edit-shift').prop('disabled', true);
                     $('#viewTimeError').show();
                 } else {
-                    $('#create-shift').prop('disabled', false);
+                    $('#edit-shift').prop('disabled', false);
+                    console.log('save btn enabled');
                     $('#viewTimeError').hide();
                 }
                 console.log('func running')
@@ -552,7 +575,7 @@
                                     alertPlaceholder.append(wrapper);
                                 }
 
-                                appendAlert('Physician Unavailable during this time', 'danger');
+                                appendAlert('Physician unavailable during this time', 'danger');
                             }
                         },
                         error: function (jqXHR, textStatus, errorThrown) {

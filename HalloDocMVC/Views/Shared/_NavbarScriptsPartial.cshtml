@@ -20,39 +20,51 @@
         const providerTabs = document.querySelectorAll('.providers');
         providerTabs.forEach(tab => {
             tab.classList.add('active');
-        })
+        });
+    }
+
+    if (url.includes('scheduling')) {
+        const schedulingTabs = document.querySelectorAll('.scheduling');
+        schedulingTabs.forEach(tab => {
+            tab.classList.add('active');
+        });
+
+        const providerTabs = document.querySelectorAll('.providers');
+        providerTabs.forEach(tab => {
+            tab.classList.add('active');
+        });
     }
     
     if(url.includes('access')){
         const accessTabs = document.querySelectorAll('.access');
         accessTabs.forEach(tab => {
             tab.classList.add('active');
-        })
+        });
     }
     
     if(url.includes('vendors')){
         const vendorTabs = document.querySelectorAll('.vendors');
         vendorTabs.forEach(tab => {
             tab.classList.add('active');
-        })
+        });
     }
     
     if(url.includes('providerlocation')){
         const providerTabs = document.querySelectorAll('.providers');
         providerTabs.forEach(tab => {
             tab.classList.remove('active');
-        })
+        });
 
         const locationTabs = document.querySelectorAll('.location');
         locationTabs.forEach(tab => {
             tab.classList.add('active');
-        })
+        });
     }
 
     if (url.includes('records')) {
         const vendorTabs = document.querySelectorAll('.records');
         vendorTabs.forEach(tab => {
             tab.classList.add('active');
-        })
+        });
     }
 </script>

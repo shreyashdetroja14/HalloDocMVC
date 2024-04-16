@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace HalloDocMVC.Controllers
 {
-    [CustomAuthorize("admin")]
+    
     public class ProvidersController : Controller
     {
         private readonly IJwtService _jwtService;
@@ -26,7 +26,7 @@ namespace HalloDocMVC.Controllers
 
         #region JWT TOKEN DATA
 
-        public ClaimsData GetClaimsData()
+        /*public ClaimsData GetClaimsData()
         {
             ClaimsData claimsData = new ClaimsData();
 
@@ -43,12 +43,13 @@ namespace HalloDocMVC.Controllers
             }
 
             return claimsData;
-        }
+        }*/
 
         #endregion
 
         #region PROVIDERS LIST 
 
+        [CustomAuthorize("admin")]
         public IActionResult Index()
         {
             ProvidersViewModel Providers = new ProvidersViewModel();
@@ -57,6 +58,7 @@ namespace HalloDocMVC.Controllers
             return View(Providers);
         }
 
+        [CustomAuthorize("admin")]
         public IActionResult FetchProviders(int regionId)
         {
             List<ProviderRowViewModel> Providers = new List<ProviderRowViewModel>();
@@ -64,6 +66,7 @@ namespace HalloDocMVC.Controllers
             return PartialView("_ProvidersListPartial", Providers);
         }
 
+        [CustomAuthorize("admin")]
         public IActionResult ContactProvider(int providerId)
         {
             ContactProviderViewModel ContactProvider = new ContactProviderViewModel();
@@ -74,6 +77,7 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> ContactProvider(ContactProviderViewModel ContactProvider)
         {
             if (ContactProvider.CommunicationType == "email")
@@ -105,6 +109,7 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> StopNotifications(List<int> StopNotificationIds)
         {
             bool isNotiStatusUpdated = await _providersService.UpdateNotiStatus(StopNotificationIds);
@@ -124,6 +129,7 @@ namespace HalloDocMVC.Controllers
 
         #region EDIT PROVIDER
 
+        [CustomAuthorize("admin")]
         public IActionResult EditProvider(int providerId)
         {
             EditProviderViewModel ProviderInfo = new EditProviderViewModel();
@@ -136,6 +142,7 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> ResetPassword(EditProviderViewModel AccountInfo)
         {
 
@@ -160,6 +167,7 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> EditAccountInfo(EditProviderViewModel AccountInfo)
         {
             bool isInfoUpdated= await _providersService.EditAccountInfo(AccountInfo);
@@ -175,6 +183,7 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> EditPhysicianInfo(EditProviderViewModel PhysicianInfo)
         {
             bool isInfoUpdated = await _providersService.EditPhysicianInfo(PhysicianInfo);
@@ -190,6 +199,7 @@ namespace HalloDocMVC.Controllers
         }
         
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> EditBillingInfo(EditProviderViewModel BillingInfo)
         {
             bool isInfoUpdated = await _providersService.EditBillingInfo(BillingInfo);
@@ -205,6 +215,7 @@ namespace HalloDocMVC.Controllers
         }
         
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> EditProfileInfo(EditProviderViewModel ProfileInfo)
         {
             bool isInfoUpdated = await _providersService.EditProfileInfo(ProfileInfo);
@@ -220,6 +231,7 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> Onboarding(IFormFile UploadDoc, int docId, int providerId)
         {
 
@@ -236,6 +248,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("EditProvider", new { providerId });
         }
 
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> DeleteProvider(int providerId)
         {
             bool isProvDeleted = await _providersService.DeleteProvider(providerId);
@@ -255,6 +268,7 @@ namespace HalloDocMVC.Controllers
 
         #region CREATE PROVIDER
 
+        [CustomAuthorize("admin")]
         public IActionResult CreateProvider()
         {
             EditProviderViewModel ProviderInfo = new EditProviderViewModel();
@@ -265,9 +279,11 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> CreateProvider(EditProviderViewModel ProviderInfo)
          {
-            ProviderInfo.CreatedBy = GetClaimsData().AspNetUserId;
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            ProviderInfo.CreatedBy = claimsData.AspNetUserId;
 
             bool isProvCreated= await _providersService.CreateProvider(ProviderInfo);
             if (isProvCreated)
@@ -285,23 +301,47 @@ namespace HalloDocMVC.Controllers
         #endregion
 
         #region SCHEDULING PAGE
-
+        [Route("Scheduling", Name = "Scheduling")]
+        [CustomAuthorize("admin", "physician")]
         public IActionResult Scheduling()
         {
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+
             SchedulingViewModel SchedulingData = new SchedulingViewModel();
+            if(claimsData.AspNetUserRole == "physician")
+            {
+                SchedulingData.IsPhysician = true;
+                SchedulingData.PhysicianId = claimsData.Id;
+                SchedulingData.CreateShiftData.PhysicianId = claimsData.Id;
+            }
+            else
+            {
+                SchedulingData.IsPhysician = false;
+            }
             SchedulingData = _providersService.GetSchedulingViewModel(SchedulingData);
 
             return View(SchedulingData);
         }
 
+        [CustomAuthorize("admin", "physician")]
         public IActionResult GetEventResources(int regionId)
         {
-            CalendarViewModel calendarData = _providersService.GetCalendarViewModel(regionId);
+            CalendarViewModel calendarData = new CalendarViewModel();
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            if(claimsData.AspNetUserRole == "physician")
+            {
+                calendarData = _providersService.GetCalendarViewModel(regionId, claimsData.Id);
+            }
+            else
+            {
+                calendarData = _providersService.GetCalendarViewModel(regionId);
+            }
 
             return Json(calendarData);
         }
 
         [HttpPost]
+        [CustomAuthorize("admin", "physician")]
         public IActionResult CheckAvailableShift(CreateShiftViewModel CreateShiftData)
         {
             bool isShiftAvailable = _providersService.CheckAvailableShift(CreateShiftData);
@@ -310,9 +350,12 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> CreateShift(CreateShiftViewModel CreateShiftData)
         {
-            CreateShiftData.CreatedBy = GetClaimsData().AspNetUserId;
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            CreateShiftData.CreatedBy = claimsData.AspNetUserId ?? "";
+            CreateShiftData.CreatorRole = claimsData.AspNetUserRole;
             bool isShiftCreated = await _providersService.CreateShift(CreateShiftData);
             if (isShiftCreated)
             {
@@ -326,6 +369,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Scheduling");
         }
 
+        [CustomAuthorize("admin")]
         public IActionResult GetPhysicianSelectList(int regionId)
         {
             List<SelectListItem> physicianList = _providersService.GetPhysiciansByRegion(regionId);
@@ -333,19 +377,34 @@ namespace HalloDocMVC.Controllers
             return Json(physicianList);
         }
 
+        [CustomAuthorize("admin", "physician")]
         public IActionResult ViewShift(int shiftDetailId)
         {
+            ClaimsData claimsData = _jwtService.GetClaimValues();
 
             CreateShiftViewModel ViewShiftData = new CreateShiftViewModel();
             ViewShiftData.ShiftDetailId = shiftDetailId;
             ViewShiftData = _providersService.GetViewShiftViewModel(ViewShiftData);
 
+            if(claimsData.AspNetUserRole == "physician")
+            {
+                ViewShiftData.IsPhysician = true;
+            }
+            else
+            {
+                ViewShiftData.IsPhysician = false;
+            }
+
             return PartialView("_ViewShiftModal", ViewShiftData);
         }
 
         [HttpPost]
+        [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> EditShift(CreateShiftViewModel EditShiftData)
         {
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            EditShiftData.CreatorRole = claimsData.AspNetUserRole;
+
             bool isShiftEdited= await _providersService.EditShift(EditShiftData);
             if (isShiftEdited)
             {
@@ -359,6 +418,7 @@ namespace HalloDocMVC.Controllers
         }
         
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> ReturnShift(CreateShiftViewModel ReturnShiftData)
         {
             bool isShiftReturned= await _providersService.ReturnShift(ReturnShiftData);
@@ -374,6 +434,7 @@ namespace HalloDocMVC.Controllers
         }
         
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> DeleteShift(CreateShiftViewModel DeleteShiftData)
         {
             bool isShiftDeleted= await _providersService.DeleteShift(DeleteShiftData);
@@ -392,6 +453,7 @@ namespace HalloDocMVC.Controllers
 
         #region REQUESTED SHIFTS
 
+        [CustomAuthorize("admin")]
         public IActionResult RequestedShifts()
         {
             RequestedShiftViewModel RequestedShiftData = new RequestedShiftViewModel();
@@ -399,6 +461,7 @@ namespace HalloDocMVC.Controllers
             return View(RequestedShiftData);
         }
 
+        [CustomAuthorize("admin")]
         public IActionResult GetShiftsList(int regionId)
         {
             List<RequestShiftRowViewModel> shiftsList = _providersService.GetShiftsList(regionId);
@@ -407,9 +470,12 @@ namespace HalloDocMVC.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> ApproveShifts(List<int> shiftDetailIds)
         {
-            bool isShiftApproved = await _providersService.ApproveShifts(shiftDetailIds, GetClaimsData().AspNetUserId);
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+
+            bool isShiftApproved = await _providersService.ApproveShifts(shiftDetailIds, claimsData.AspNetUserId ?? "");
             if (isShiftApproved)
             {
                 TempData["SuccessMessage"] = "Shifts Approved Successfully.";
@@ -422,9 +488,12 @@ namespace HalloDocMVC.Controllers
         }
         
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> DeleteShifts(List<int> shiftDetailIds)
         {
-            bool isShiftDeleted = await _providersService.DeleteShifts(shiftDetailIds, GetClaimsData().AspNetUserId);
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+
+            bool isShiftDeleted = await _providersService.DeleteShifts(shiftDetailIds, claimsData.AspNetUserId ?? "");
             if (isShiftDeleted)
             {
                 TempData["SuccessMessage"] = "Shifts Deleted Successfully.";
@@ -440,6 +509,7 @@ namespace HalloDocMVC.Controllers
 
         #region MDS ON CALL
 
+        [CustomAuthorize("admin")]
         public IActionResult MDsOnCall()
         {
             MDsOnCallViewModel MDsOnCallData = new MDsOnCallViewModel();
@@ -448,6 +518,7 @@ namespace HalloDocMVC.Controllers
             return View(MDsOnCallData);
         }
 
+        [CustomAuthorize("admin")]
         public IActionResult GetMDsList(int regionId)
         {
             MDsListViewModel MDsList = _providersService.GetMDsList(regionId);
@@ -458,6 +529,7 @@ namespace HalloDocMVC.Controllers
 
         #region PROVIDER LOCATION
 
+        [CustomAuthorize("admin")]
         public IActionResult ProviderLocation()
         {
             List<ProviderLocationViewModel> ProviderLocations = _providersService.GetProviderLocations();

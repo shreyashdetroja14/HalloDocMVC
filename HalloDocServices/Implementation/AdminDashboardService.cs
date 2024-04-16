@@ -67,29 +67,7 @@ namespace HalloDocServices.Implementation
             return viewModel;
         }
 
-        public async Task<AdminDashboardViewModel> GetPhysicianViewModelData(int requestStatus, int physicianId)
-        {
-            AdminDashboardViewModel viewModel = new AdminDashboardViewModel();
-            viewModel.RequestStatus = requestStatus;
-
-            viewModel.NewRequestCount = _requestRepository.GetIQueryableRequests().Where(x => x.PhysicianId == physicianId && x.Status == ((short)RequestStatus.Unassigned)).Count();
-            viewModel.PendingRequestCount = _requestRepository.GetIQueryableRequests().Where(x => x.PhysicianId == physicianId && x.Status == ((short)RequestStatus.Accepted)).Count();
-            viewModel.ActiveRequestCount = _requestRepository.GetIQueryableRequests().Where(x => x.PhysicianId == physicianId && (x.Status == ((short)RequestStatus.MDEnRoute) || x.Status == ((short)RequestStatus.MDONSite))).Count();
-            viewModel.ConcludeRequestCount = _requestRepository.GetIQueryableRequests().Where(x => x.PhysicianId == physicianId && x.Status == ((short)RequestStatus.Conclude)).Count();
-
-            var regions = _commonRepository.GetAllRegions();
-
-            foreach (var region in regions)
-            {
-                viewModel.RegionList.Add(new SelectListItem
-                {
-                    Value = region.RegionId.ToString(),
-                    Text = region.Name
-                });
-            }
-
-            return viewModel;
-        }
+        
 
         #region Encode_Decode
         public string Encode(string encodeMe)

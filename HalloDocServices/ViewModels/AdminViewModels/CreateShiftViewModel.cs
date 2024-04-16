@@ -42,5 +42,11 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public string CreatedBy { get; set; } = string.Empty;
 
         public string ModifiedBy { get; set; } = string.Empty;
+
+        public string? CreatorRole { get; set; }
+
+        public bool IsPhysician { get; set; } 
+
+        public bool IsOldShift { get; set; } 
     }
 }

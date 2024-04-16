@@ -55,7 +55,7 @@ namespace HalloDocServices.Interface
 
         SchedulingViewModel GetSchedulingViewModel(SchedulingViewModel SchedulingData);
 
-        CalendarViewModel GetCalendarViewModel(int regionId);
+        CalendarViewModel GetCalendarViewModel(int regionId, int? physicianId = null);
 
         bool CheckAvailableShift(CreateShiftViewModel CreateShiftData);
 
