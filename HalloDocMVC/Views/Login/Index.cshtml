@@ -9,10 +9,16 @@
 @model HalloDocServices.ViewModels.LoginViewModel
 
 <div class="login-area w-100">
-    <a asp-area="" asp-controller="Home" asp-action="Index" class="btn back-btn">
+    @*<a asp-area="" asp-controller="Home" asp-action="Index" class="btn back-btn">
         <img src="~/images/backIcon.svg" alt="">
         Back
-    </a>
+    </a>*@
+    <button class="btn back-btn d-flex align-items-center" onclick="window.history.back()">
+        <span class="material-symbols-outlined text-info fs-6">
+            arrow_back_ios
+        </span>
+        <span>Back</span>
+    </button>
     <h1 class="mb-4 mt-2 h2 text-center">Login To Your Account</h1>
     <p class="text-center text-danger fw-bold">@ViewBag.Message</p>   
     <form class="d-flex flex-column" asp-action="CheckLogin" asp-controller="Login" id="login-form">

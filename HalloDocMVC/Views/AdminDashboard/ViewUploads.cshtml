@@ -188,23 +188,8 @@
 
 
 @section AddScript{
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <script>
+    <partial name="_ToastMessageScriptsPartial" />
 
-            toastr.success("@TempData["SuccessMessage"]");
-            
-        </script>
-    }
-
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <script>
-
-            toastr.error("@TempData["ErrorMessage"]");
-
-        </script>
-    }
     <script>
         const actualBtn = document.querySelector('#MultipleFiles');
 

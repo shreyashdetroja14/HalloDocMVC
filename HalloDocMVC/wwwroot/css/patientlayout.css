@@ -33,5 +33,17 @@
     border-bottom: 2px solid #0dcaf0 !important;
 }
 
+.btn {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+
+.btn-outline-info:hover {
+    color: #fff !important;
+}
+
+    .btn-outline-info:hover .material-symbols-outlined {
+        color: #fff !important;
+    }
 
 

@@ -34,10 +34,16 @@
 
 <div class="main p-4">
     <div class="back pb-4 d-flex justify-content-end">
-        <a asp-area="" asp-controller="RequestForms" asp-action="SubmitRequest" class="btn back-btn">
+        @*<a asp-area="" asp-controller="RequestForms" asp-action="SubmitRequest" class="btn back-btn">
             <img src="~/images/backIcon.svg" alt="">
             Back
-        </a>
+        </a>*@
+        <button class="btn btn-outline-info d-flex align-items-center" onclick="window.history.back()">
+            <span class="material-symbols-outlined text-info fs-6">
+                arrow_back_ios
+            </span>
+            <span>Back</span>
+        </button>
     </div>
 
     <form asp-action="ConciergeRequest" class="container bg-white p-4 request-form">
@@ -210,6 +216,8 @@
 </div>
 
 @section AddScript{
+    <partial name="_ToastMessageScriptsPartial" />
+
     <script>
         const phoneInputField = document.querySelector("#ConciergePhoneNumber");
         const ptphoneInputField = document.querySelector("#PhoneNumber");

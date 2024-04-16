@@ -5,16 +5,23 @@
 
 @section AddStyles {
     <link href="@Url.Content("~/css/submitrequest.css")" rel="stylesheet" type="text/css" />
+    
 }
 
 <div class="d-flex flex-column justify-content-center align-items-center">
     <div class="heading ms-auto d-flex justify-content-evenly align-items-center">
         <div class="empty"></div>
         <h1 class="mb-4">I am a...</h1>
-        <a asp-area="" asp-controller="Home" asp-action="Index" class="btn back-btn">
+        @*<a asp-area="" asp-controller="Home" asp-action="Index" class="btn back-btn">
             <img src="/images/backIcon.svg" alt="">
             Back
-        </a>
+        </a>*@
+        <button class="btn btn-outline-info d-flex align-items-center" onclick="window.history.back()">
+            <span class="material-symbols-outlined text-info fs-6">
+                arrow_back_ios
+            </span>
+            <span>Back</span>
+        </button>
     </div>
     <div class="content ">
         <div class="patient alert alert-primary">

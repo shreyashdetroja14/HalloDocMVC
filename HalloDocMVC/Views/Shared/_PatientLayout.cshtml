@@ -1,5 +1,12 @@
-﻿﻿@{
+﻿@using HalloDocServices.ViewModels;
+﻿@{
     string path = Context.Request.Path;
+}
+
+@inject HalloDocServices.Interface.IJwtService _jwtService
+
+@{
+    ClaimsData claimsData = _jwtService.GetClaimValues();
 }
 
 <!DOCTYPE html>
@@ -46,7 +53,7 @@
                     <div>
                         <span class="d-none d-md-inline">Welcome</span>
                         <span class="fw-bold d-none d-md-inline">
-                            @ViewBag.FullName
+                            @claimsData.Username
                         </span>
                         <a asp-action="Logout" asp-controller="Login" class="btn btn-outline-info ms-2 d-none d-md-inline">Logout</a>
                         <button class="btn btn-outline-info p-2 d-md-none">
@@ -64,7 +71,7 @@
                     <div class="offcanvas-header">
                         <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
                             Welcome <span class="fw-bold">
-                                @ViewBag.FullName
+                                @claimsData.Username
                             </span>
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>

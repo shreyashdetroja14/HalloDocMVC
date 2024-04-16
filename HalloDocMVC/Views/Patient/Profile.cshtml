@@ -13,10 +13,16 @@
 
 <div class="main p-4">
     <div class="back pb-4 d-flex justify-content-end">
-        <a asp-area="" asp-controller="Patient" asp-action="Dashboard" class="btn back-btn">
+        @*<a asp-area="" asp-controller="Patient" asp-action="Dashboard" class="btn back-btn">
             <img src="/images/backIcon.svg" alt="">
             Back
-        </a>
+        </a>*@
+        <button class="btn btn-outline-info d-flex align-items-center" onclick="window.history.back()">
+            <span class="material-symbols-outlined text-info fs-6">
+                arrow_back_ios
+            </span>
+            <span>Back</span>
+        </button>
     </div>
     <form asp-action="EditProfile" class="container bg-white p-4  request-form">
         <input type="number" asp-for="UserId" class="form-control" id="UserId" hidden>
@@ -127,7 +133,9 @@
     <script>
         const phoneInputField = document.querySelector("#PhoneNumber");
         const phoneInput = window.intlTelInput(phoneInputField, {
-            preferredCountries: ["us", "in", "au", "de"],
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });

@@ -13,10 +13,16 @@
 
 <div class="main p-4">
     <div class="back pb-4 d-flex justify-content-end">
-        <a  class="btn back-btn">
+        @*<a  class="btn back-btn">
             <img src="/images/backIcon.svg" alt="">
             Back
-        </a>
+        </a>*@
+        <button class="btn btn-outline-info d-flex align-items-center" onclick="window.history.back()">
+            <span class="material-symbols-outlined text-info fs-6">
+                arrow_back_ios
+            </span>
+            <span>Back</span>
+        </button>
     </div>
 
 
@@ -177,6 +183,8 @@
 </div>
 
 @section AddScript {
+    <partial name="_ToastMessageScriptsPartial" />
+
     <script>
         const phoneInputField = document.querySelector("#phone");
         const phoneInput = window.intlTelInput(phoneInputField, {
