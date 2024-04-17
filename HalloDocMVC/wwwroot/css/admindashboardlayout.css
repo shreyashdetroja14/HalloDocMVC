@@ -146,6 +146,9 @@
     font-size: 16px !important;
 }
 
+
+/* bootstrap styles override */
+
 .page-item.active {
     border: 0 !important;
 }
@@ -174,3 +177,19 @@
 .page-number {
     color: #0dcaf0 !important;
 }
+
+/* bootstrap form validation */
+
+.form-select.is-valid:not([multiple]):not([size]), .form-select.is-valid:not([multiple])[size="1"], .was-validated .form-select:valid:not([multiple]):not([size]), .was-validated .form-select:valid:not([multiple])[size="1"], .form-control.is-valid, .was-validated .form-control:valid {
+    padding-right: 0 !important;
+    background-image: none !important;
+}
+
+.form-select.is-valid, .was-validated .form-select:valid, .form-control.is-valid, .was-validated .form-control:valid {
+    border-color: #ced4da;
+}
+
+    .form-select.is-valid:focus, .was-validated .form-select:valid:focus, .form-control.is-valid:focus, .was-validated .form-control:valid:focus {
+        border: 1px solid #ced4da;
+        box-shadow: none;
+    }

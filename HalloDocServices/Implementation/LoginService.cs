@@ -1,5 +1,4 @@
-﻿using HalloDocEntities.Data;
-using HalloDocEntities.Models;
+﻿using HalloDocEntities.Models;
 using HalloDocRepository.Interface;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
@@ -12,6 +11,8 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
+using HalloDocRepository.Implementation;
+using HalloDocServices.Constants;
 
 //G:\test\hallodoc3tier\HalloDocMVC\HalloDocMVC.sln
 
@@ -19,19 +20,19 @@ namespace HalloDocServices.Implementation
 {
     public class LoginService : ILoginService
     {
-        private readonly HalloDocContext _context;
         private readonly IUserRepository _userRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly IPhysicianRepository _physicianRepository;
         private readonly IMailService _mailService;
+        private readonly IEmailSMSLogRepository _emailSMSLogRepository;
 
-        public LoginService(HalloDocContext context, IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, IMailService mailService)
+        public LoginService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, IMailService mailService, IEmailSMSLogRepository emailSMSLogRepository)
         {
-            _context = context;
             _userRepository = userRepository;
             _requestRepository = requestRepository;
             _physicianRepository = physicianRepository;
             _mailService = mailService;
+            _emailSMSLogRepository = emailSMSLogRepository;
         }
         public async Task<AspNetUser> CheckLogin(LoginViewModel LoginInfo)
         {
@@ -172,6 +173,7 @@ namespace HalloDocServices.Implementation
 
         public async Task<bool> SendMail(ForgotPasswordViewModel Info)
         {
+            var user = await _userRepository.GetUserByEmail(Info.Email);
 
             List<string> receiver = new List<string>();
             receiver.Add(Info.Email);
@@ -180,6 +182,25 @@ namespace HalloDocServices.Implementation
             string body = "Tap on link to reset password on HalloDoc: http://localhost:5059/Login/ResetPassword" + "?emailtoken=" + Info.EmailToken;
 
             bool isMailSent = await _mailService.SendMail(receiver, subject, body, isHtml: false);
+
+            if (isMailSent)
+            {
+                EmailLog emailLog = new EmailLog();
+                emailLog.EmailTemplate = body;
+                emailLog.SubjectName = subject;
+                emailLog.EmailId = Info.Email;
+                emailLog.Action = (int)ActionEnum.ResetPassword;
+                emailLog.RoleId = (int)AccountType.Patient;
+                emailLog.CreatedDate = DateTime.Now;
+                emailLog.SentDate = DateTime.Now;
+                emailLog.IsEmailSent = isMailSent;
+                emailLog.SentTries = 1;
+                emailLog.RecipientName = user.FirstName + " " + user.LastName;
+
+                await _emailSMSLogRepository.CreateEmailLog(emailLog);
+
+                return true;
+            }
 
             return isMailSent;
         }

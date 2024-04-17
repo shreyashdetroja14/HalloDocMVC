@@ -20,5 +20,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public string? Message { get; set; }
 
+        public int? AdminId { get; set; }
+
     }
 }

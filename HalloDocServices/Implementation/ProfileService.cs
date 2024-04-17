@@ -1,4 +1,5 @@
 ﻿using BCrypt.Net;
+using DocumentFormat.OpenXml.Office2016.Excel;
 using HalloDocEntities.Models;
 using HalloDocRepository.Implementation;
 using HalloDocRepository.Interface;
@@ -23,14 +24,18 @@ namespace HalloDocServices.Implementation
         private readonly ICommonRepository _commonRepository;
         private readonly IAdminRepository _adminRepository;
         private readonly IRoleRepository _roleRepository;
+        private readonly IMailService _mailService;
+        private readonly IEmailSMSLogRepository _emailSMSLogRepository;
 
-        public ProfileService(IUserRepository userRepository, IPhysicianRepository physicianRepository, ICommonRepository commonRepository, IAdminRepository adminRepository, IRoleRepository roleRepository)
+        public ProfileService(IUserRepository userRepository, IPhysicianRepository physicianRepository, ICommonRepository commonRepository, IAdminRepository adminRepository, IRoleRepository roleRepository, IMailService mailService, IEmailSMSLogRepository emailSMSLogRepository)
         {
             _userRepository = userRepository;
             _physicianRepository = physicianRepository;
             _commonRepository = commonRepository;
             _adminRepository = adminRepository;
             _roleRepository = roleRepository;
+            _mailService = mailService;
+            _emailSMSLogRepository = emailSMSLogRepository;
         }
 
         public AdminProfileViewModel GetAdminProfileViewModelData(string aspnetuserId)
@@ -213,5 +218,62 @@ namespace HalloDocServices.Implementation
             }
             return false;
         }
+
+        public async Task<bool> SendMailToAdmin(EditProviderViewModel MailDetails)
+        {
+            var physician = _physicianRepository.GetPhysicianByPhysicianId(MailDetails.ProviderId);
+            var aspnetUser = _userRepository.GetIQueryableAspNetUserById(physician.CreatedBy ?? "");
+
+            var admin = aspnetUser.Select(x => x.AdminAspNetUsers.FirstOrDefault()).FirstOrDefault();
+            
+
+            string subject = "Profile edit request for Physician ID: " + MailDetails.ProviderId;
+
+            string body = MailDetails.AdminMessage ?? "";
+
+            List<string> receivers = new List<string>
+                {
+                    admin?.Email ?? ""
+                };
+
+            bool isMailSent = await _mailService.SendMail(receivers, subject, body, false);
+
+            if(isMailSent)
+            {
+                EmailLog emailLog = new EmailLog();
+                emailLog.EmailTemplate = body;
+                emailLog.SubjectName = subject;
+                emailLog.EmailId = admin?.Email ?? "";
+                emailLog.Action = (int)ActionEnum.ProfileUpdateMessage;
+                emailLog.RoleId = (int)AccountType.Admin;
+                emailLog.AdminId = admin?.AdminId;
+                emailLog.PhysicianId = physician?.PhysicianId;
+                emailLog.CreatedDate = DateTime.Now;
+                emailLog.SentDate = DateTime.Now;
+                emailLog.IsEmailSent = isMailSent;
+                emailLog.SentTries = 1;
+                emailLog.RecipientName = admin?.FirstName + " " + admin?.LastName;
+
+                await _emailSMSLogRepository.CreateEmailLog(emailLog);
+
+                SmsLog smsLog = new SmsLog();
+                smsLog.SmsTemplate = body;
+                smsLog.MobileNumber = admin?.Mobile ?? "";
+                smsLog.Action = (int)ActionEnum.ProfileUpdateMessage;
+                smsLog.RoleId = (int)AccountType.Admin;
+                smsLog.AdminId = admin?.AdminId;
+                smsLog.PhysicianId = physician?.PhysicianId;
+                smsLog.CreatedDate = DateTime.Now;
+                smsLog.SentDate = DateTime.Now;
+                smsLog.IsSmsSent = isMailSent;
+                smsLog.SentTries = 1;
+                smsLog.RecipientName = admin?.FirstName + " " + admin?.LastName;
+
+                await _emailSMSLogRepository.CreateSmsLog(smsLog);
+            }
+
+            return isMailSent;
+        }
+
     }
 }

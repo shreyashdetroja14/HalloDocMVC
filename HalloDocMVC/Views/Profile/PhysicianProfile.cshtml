@@ -32,11 +32,47 @@
             </button>
         </div>
 
+        
+        <div class="modal fade" id="mailModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Request To Admin</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form asp-action="RequestAdmin" id="mailform" class="needs-validation" novalidate>
+                            <div class="form-floating mb-3">
+                                <input type="number" asp-for="ProviderId" hidden>
+                                <div class="form-floating mb-3">
+                                    <textarea asp-for="AdminMessage" class="form-control" placeholder="Message to admin" id="AdminMessage" style="height: 150px" required>
+
+                                                    </textarea>
+                                    <label asp-for="AdminMessage">Message for admin</label>
+                                    <div class="invalid-feedback">
+                                        Message cannot be empty.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <input type="submit" value="Send" class="btn btn-info text-white">
+                                <button type="button" class="btn btn-outline-info ms-2" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class=" rounded-3 custom-shadow" >
             <form id="form-account-info" class="bg-white p-4 rounded-3 rounded-top">
                 <input type="number" asp-for="ProviderId" hidden>
                 <div class="info mb-4">
-                    <h4 class="mb-3">Account Information</h4>
+                    <div class="d-flex justify-content-between">
+                        <h4 class="mb-3">Account Information</h4>
+                        <button type="button" class="btn btn-outline-info mb-3" data-bs-toggle="modal" data-bs-target="#mailModal">Request Admin</button>
+                        
+                    </div>
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
@@ -576,6 +612,28 @@
 
 
 
+    </script>
+
+    <script>
+        (function () {
+            'use strict'
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.querySelectorAll('.needs-validation')
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
     </script>
 }
 

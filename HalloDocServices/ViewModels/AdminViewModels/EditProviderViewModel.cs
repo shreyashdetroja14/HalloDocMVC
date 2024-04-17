@@ -127,5 +127,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public decimal? Latitude { get; set; }
 
         public decimal? Longitude { get; set; }
+
+        public string? AdminMessage { get; set; }
     }
 }

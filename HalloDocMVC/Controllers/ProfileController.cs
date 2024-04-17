@@ -1,5 +1,6 @@
 ﻿using HalloDocMVC.Auth;
 using HalloDocServices.Constants;
+using HalloDocServices.Implementation;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using HalloDocServices.ViewModels.AdminViewModels;
@@ -165,6 +166,22 @@ namespace HalloDocMVC.Controllers
             else
             {
                 TempData["ErrorMessage"] = "Failed To Update Profile Info.";
+            }
+            return RedirectToRoute("Profile");
+        }
+
+        [HttpPost]
+        [CustomAuthorize("physician")]
+        public async Task<IActionResult> RequestAdmin(EditProviderViewModel MailDetails)
+        {
+            bool isMailSent = await _profileService.SendMailToAdmin(MailDetails);
+            if (isMailSent)
+            {
+                TempData["SuccessMessage"] = "Mail Sent Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Send Mail. Try Again.";
             }
             return RedirectToRoute("Profile");
         }

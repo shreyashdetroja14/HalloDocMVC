@@ -93,7 +93,7 @@ namespace HalloDocServices.Interface
 
         Task<bool> ConcludeCare(ConcludeCareViewModel ConcludeCareData);
 
-        Task<bool> SendLink(string receiverEmail);
+        Task<bool> SendLink(string receiverEmail, int? adminId = null, int? physicianId = null);
 
         byte[] ExportToExcel(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int? pageNumber);
 

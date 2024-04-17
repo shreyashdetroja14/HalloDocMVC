@@ -14,6 +14,8 @@ namespace HalloDocRepository.Interface
         public List<EmailLog> GetEmailLogs();
 
         IQueryable<EmailLog> GetIqueryableEmailLogs();
+
+        Task<EmailLog> CreateEmailLog(EmailLog emailLog);
              
         #endregion
         
@@ -22,6 +24,8 @@ namespace HalloDocRepository.Interface
         public List<SmsLog> GetSmsLogs();
 
         IQueryable<SmsLog> GetIqueryableSmsLogs();
+
+        Task<SmsLog> CreateSmsLog(SmsLog smsLog);
 
         #endregion
 

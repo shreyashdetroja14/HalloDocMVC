@@ -12,6 +12,12 @@ namespace HalloDocServices.ViewModels
         public int RequestId { get; set; }
 
         public string? EmailValue { get; set; }
+
+        public string? SenderRole { get; set; }
+
+        public int? AdminId { get; set; }
+
+        public int? PhysicianId { get; set; }
     }
 
 }

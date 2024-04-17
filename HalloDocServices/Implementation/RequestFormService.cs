@@ -1,5 +1,7 @@
 ﻿using HalloDocEntities.Models;
+using HalloDocRepository.Implementation;
 using HalloDocRepository.Interface;
+using HalloDocServices.Constants;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -23,13 +25,15 @@ namespace HalloDocServices.Implementation
         private readonly IRequestRepository _requestRepository;
         private readonly ICommonRepository _commonRepository;
         private readonly IMailService _mailService;
+        private readonly IEmailSMSLogRepository _emailSMSLogRepository;
 
-        public RequestFormService(IUserRepository userRepository, IRequestRepository requestRepository, ICommonRepository commonRepository, IMailService mailService) 
+        public RequestFormService(IUserRepository userRepository, IRequestRepository requestRepository, ICommonRepository commonRepository, IMailService mailService, IEmailSMSLogRepository emailSMSLogRepository) 
         { 
             _userRepository = userRepository;
             _requestRepository = requestRepository;
             _commonRepository = commonRepository;
             _mailService = mailService;
+            _emailSMSLogRepository = emailSMSLogRepository;
         }
 
         #region LocalMethods
@@ -217,6 +221,25 @@ namespace HalloDocServices.Implementation
             string body = "Tap on link to create account on HalloDoc: http://localhost:5059/Login/CreateAccount" + "?emailtoken=" + PatientInfo.EmailToken;
 
             bool isMailSent = await _mailService.SendMail(receiver, subject, body, isHtml: false);
+
+            if (isMailSent)
+            {
+                EmailLog emailLog = new EmailLog();
+                emailLog.EmailTemplate = body;
+                emailLog.SubjectName = subject;
+                emailLog.EmailId = PatientInfo.Email;
+                emailLog.Action = (int)ActionEnum.CreateAccount;
+                emailLog.RoleId = (int)AccountType.Patient;
+                emailLog.CreatedDate = DateTime.Now;
+                emailLog.SentDate = DateTime.Now;
+                emailLog.IsEmailSent = isMailSent;
+                emailLog.SentTries = 1;
+                emailLog.RecipientName = PatientInfo.FirstName + " " + PatientInfo.LastName;
+
+                await _emailSMSLogRepository.CreateEmailLog(emailLog);
+
+                return true;
+            }
 
             return isMailSent;
         }

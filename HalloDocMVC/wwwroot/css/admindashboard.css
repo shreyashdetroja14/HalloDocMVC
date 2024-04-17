@@ -230,19 +230,7 @@ tr p{
 }
 
 
-.form-select.is-valid:not([multiple]):not([size]), .form-select.is-valid:not([multiple])[size="1"], .was-validated .form-select:valid:not([multiple]):not([size]), .was-validated .form-select:valid:not([multiple])[size="1"], .form-control.is-valid, .was-validated .form-control:valid {
-    padding-right: 0 !important;
-    background-image: none !important;
-}
 
-.form-select.is-valid, .was-validated .form-select:valid, .form-control.is-valid, .was-validated .form-control:valid {
-    border-color: #ced4da;
-}
-
-    .form-select.is-valid:focus, .was-validated .form-select:valid:focus, .form-control.is-valid:focus, .was-validated .form-control:valid:focus {
-        border: 1px solid #ced4da;
-        box-shadow: none;
-    }
 
 .btn-check:active + .btn-outline-info, .btn-check:checked + .btn-outline-info, .btn-outline-info.active, .btn-outline-info.dropdown-toggle.show, .btn-outline-info:active{
     color: #fff !important;

@@ -18,6 +18,22 @@ namespace HalloDocRepository.Implementation
             _context = context;
         }
 
+        public async Task<EmailLog> CreateEmailLog(EmailLog emailLog)
+        {
+            _context.EmailLogs.Add(emailLog);
+            await _context.SaveChangesAsync();
+
+            return emailLog;
+        }
+
+        public async Task<SmsLog> CreateSmsLog(SmsLog smsLog)
+        {
+            _context.SmsLogs.Add(smsLog);
+            await _context.SaveChangesAsync();
+
+            return smsLog;
+        }
+
         public List<EmailLog> GetEmailLogs()
         {
             return _context.EmailLogs.ToList();

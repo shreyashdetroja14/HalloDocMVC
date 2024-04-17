@@ -453,7 +453,17 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> SendFilesViaEmail([FromBody] DownloadRequest requestData)
         {
-            //var deletedFile = await _adminDashboardService.DeleteFile(fileId);
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            requestData.SenderRole = claimsData.AspNetUserRole;
+            if(claimsData.AspNetUserRole == "physician")
+            {
+                requestData.PhysicianId = claimsData.Id;
+            }
+            else
+            {
+                requestData.AdminId = claimsData.Id;
+            }
+
             bool isMailSent = await _adminDashboardService.SendMailWithAttachments(requestData);
             if (isMailSent)
             {
@@ -560,6 +570,16 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> SendAgreement(SendAgreementViewModel SendAgreementInfo)
         {
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            if(claimsData.AspNetUserRole == "physician")
+            {
+                SendAgreementInfo.PhysicianId = claimsData.Id;
+            }
+            else
+            {
+                SendAgreementInfo.AdminId = claimsData.Id;
+            }
+
             bool isAgreementSent = await _adminDashboardService.SendAgreementViaMail(SendAgreementInfo);
             if (isAgreementSent)
             {
@@ -758,7 +778,19 @@ namespace HalloDocMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> SendLink(AdminDashboardViewModel EmailData)
         {
-            bool isLinkSent = await _adminDashboardService.SendLink(EmailData.Email ?? "");
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            int? adminId = null;
+            int? physicianId = null;
+            if(claimsData.AspNetUserRole == "physician")
+            {
+                physicianId = claimsData.Id;
+            }
+            else
+            {
+                adminId = claimsData.Id;
+            }
+
+            bool isLinkSent = await _adminDashboardService.SendLink(EmailData.Email ?? "", adminId, physicianId);
             if (isLinkSent)
             {
                 TempData["SuccessMessage"] = "Link Sent Successfully.";

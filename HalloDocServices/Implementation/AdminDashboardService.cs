@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Formats.Asn1;
 using DocumentFormat.OpenXml.Office2016.Excel;
 using Microsoft.AspNetCore.Http.HttpResults;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 
 namespace HalloDocServices.Implementation
@@ -30,8 +31,9 @@ namespace HalloDocServices.Implementation
         private readonly ICommonRepository _commonRepository;
         private readonly IVendorRepository _vendorRepository;
         private readonly IMailService _mailService;
+        private readonly IEmailSMSLogRepository _emailSMSLogRepository;
 
-        public AdminDashboardService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IVendorRepository vendorRepository, IMailService mailService)
+        public AdminDashboardService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IVendorRepository vendorRepository, IMailService mailService, IEmailSMSLogRepository emailSMSLogRepository)
         {
             _userRepository = userRepository;
             _requestRepository = requestRepository;
@@ -40,6 +42,7 @@ namespace HalloDocServices.Implementation
             _commonRepository = commonRepository;
             _vendorRepository = vendorRepository;
             _mailService = mailService;
+            _emailSMSLogRepository = emailSMSLogRepository;
         }
 
         public async Task<AdminDashboardViewModel> GetViewModelData(int requestStatus, int? physicianId = null)
@@ -766,6 +769,28 @@ namespace HalloDocServices.Implementation
                 };
 
             bool isMailSent = await _mailService.SendMail(receivers, subject, body, false, fileNames);
+
+            if (isMailSent)
+            {
+                EmailLog emailLog = new EmailLog();
+                emailLog.EmailTemplate = body;
+                emailLog.SubjectName = subject;
+                emailLog.EmailId = requestData.EmailValue ?? "";
+                emailLog.Action = (int)ActionEnum.Attachments;
+                emailLog.AdminId = requestData.AdminId;
+                emailLog.PhysicianId = requestData.PhysicianId;
+                emailLog.RequestId = requestData.RequestId;
+                emailLog.ConfirmationNumber = request.ConfirmationNumber;
+                emailLog.CreatedDate = DateTime.Now;
+                emailLog.SentDate = DateTime.Now;
+                emailLog.IsEmailSent = isMailSent;
+                emailLog.SentTries = 1;
+                emailLog.RecipientName = requestData.EmailValue?.Split('@')[0]; 
+
+                await _emailSMSLogRepository.CreateEmailLog(emailLog);
+
+            }
+
             return isMailSent;
         }
 
@@ -877,6 +902,7 @@ namespace HalloDocServices.Implementation
         public async Task<bool> SendAgreementViaMail(SendAgreementViewModel SendAgreementInfo)
         {
             Request request = await _requestRepository.GetRequestByRequestId(SendAgreementInfo.RequestId);
+            RequestClient requestClient = await _requestRepository.GetRequestClientByRequestId(SendAgreementInfo.RequestId);
 
             if (request == null) { return false; }
 
@@ -895,6 +921,39 @@ namespace HalloDocServices.Implementation
             {
                 request.IsAgreementSent = true;
                 await _requestRepository.UpdateRequest(request);
+
+                EmailLog emailLog = new EmailLog();
+                emailLog.EmailTemplate = message;
+                emailLog.SubjectName = subject;
+                emailLog.EmailId = SendAgreementInfo.Email ?? "";
+                emailLog.Action = (int)ActionEnum.ReviewAgreement;
+                emailLog.ConfirmationNumber = request.ConfirmationNumber;
+                emailLog.RoleId = (int)AccountType.Patient;
+                emailLog.AdminId = SendAgreementInfo.AdminId;
+                emailLog.PhysicianId = SendAgreementInfo.PhysicianId;
+                emailLog.RequestId = SendAgreementInfo.RequestId;
+                emailLog.CreatedDate = DateTime.Now;
+                emailLog.SentDate = DateTime.Now;
+                emailLog.IsEmailSent = isMailSent;
+                emailLog.SentTries = 1;
+                emailLog.RecipientName = requestClient.FirstName + " " + requestClient.LastName;
+
+                await _emailSMSLogRepository.CreateEmailLog(emailLog);
+
+                SmsLog smsLog = new SmsLog();
+                smsLog.SmsTemplate = message;
+                smsLog.MobileNumber = requestClient.PhoneNumber ?? "";
+                smsLog.Action = (int)ActionEnum.ReviewAgreement;
+                smsLog.RoleId = (int)AccountType.Patient;
+                smsLog.AdminId = SendAgreementInfo.AdminId;
+                smsLog.PhysicianId = SendAgreementInfo.PhysicianId;
+                smsLog.CreatedDate = DateTime.Now;
+                smsLog.SentDate = DateTime.Now;
+                smsLog.IsSmsSent = true;
+                smsLog.SentTries = 1;
+                smsLog.RecipientName = requestClient.FirstName + " " + requestClient.LastName;
+
+                await _emailSMSLogRepository.CreateSmsLog(smsLog);
 
                 return true;
             }
@@ -1258,7 +1317,7 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
-        public async Task<bool> SendLink(string receiverEmail)
+        public async Task<bool> SendLink(string receiverEmail, int? adminId = null, int? physicianId = null)
         {
             string subject = "Get Medical Assistance @HalloDoc";
 
@@ -1271,6 +1330,40 @@ namespace HalloDocServices.Implementation
                 };
 
             bool isMailSent = await _mailService.SendMail(receivers, subject, body, false, new List<string>());
+            if (isMailSent)
+            {
+                EmailLog emailLog = new EmailLog();
+                emailLog.EmailTemplate = body;
+                emailLog.SubjectName = subject;
+                emailLog.EmailId = receiverEmail;
+                emailLog.Action = (int)ActionEnum.SendLink;
+                emailLog.RoleId = (int)AccountType.Patient;
+                emailLog.AdminId = adminId;
+                emailLog.PhysicianId = physicianId;
+                emailLog.CreatedDate = DateTime.Now;
+                emailLog.SentDate = DateTime.Now;
+                emailLog.IsEmailSent = isMailSent;
+                emailLog.SentTries = 1;
+
+                await _emailSMSLogRepository.CreateEmailLog(emailLog);
+
+                SmsLog smsLog = new SmsLog();
+                smsLog.SmsTemplate = body;
+                smsLog.MobileNumber = "09876543210";
+                smsLog.Action = (int)ActionEnum.AdminMessage;
+                smsLog.RoleId = (int)AccountType.Physician;
+                smsLog.AdminId = adminId;
+                smsLog.PhysicianId = physicianId;
+                smsLog.CreatedDate = DateTime.Now;
+                smsLog.SentDate = DateTime.Now;
+                smsLog.IsSmsSent = true;
+                smsLog.SentTries = 1;
+
+                await _emailSMSLogRepository.CreateSmsLog(smsLog);
+
+                return true;
+            }
+
             return isMailSent;
         }
 

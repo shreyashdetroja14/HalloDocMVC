@@ -1,4 +1,5 @@
-﻿using HalloDocMVC.Auth;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using HalloDocMVC.Auth;
 using HalloDocServices.Implementation;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
@@ -80,31 +81,20 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin")]
         public async Task<IActionResult> ContactProvider(ContactProviderViewModel ContactProvider)
         {
-            if (ContactProvider.CommunicationType == "email")
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            ContactProvider.AdminId = claimsData.Id;
+
+            bool isMailSent = await _providersService.ContactProvider(ContactProvider);
+
+            if (isMailSent)
             {
-                List<string> receivers = new List<string>
-                {
-                    ContactProvider.ProviderEmail ?? ""
-                };
-                string subject = ContactProvider.Subject ?? "";
-                string body = ContactProvider.Message ?? "";
-
-                bool isMailSent = await _mailService.SendMail(receivers, subject, body, false, new List<string>());
-
-                if(isMailSent)
-                {
-                    TempData["SuccessMessage"] = "Mail Sent Successfully";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Failed To Send Mail. Try Again.";
-                }
+                TempData["SuccessMessage"] = "Provider Contacted Successfully";
             }
             else
             {
-                TempData["SuccessMessage"] = "Communication Successfull";
-
+                TempData["ErrorMessage"] = "Failed To Contact Provider. Try Again.";
             }
+
             return RedirectToAction("Index");
         }
 

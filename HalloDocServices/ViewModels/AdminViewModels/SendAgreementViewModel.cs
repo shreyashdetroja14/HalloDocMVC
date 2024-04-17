@@ -19,5 +19,9 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public string? PhoneNumber { get; set; }
 
         public bool? IsAgreementSent { get; set; }
+
+        public int? AdminId { get; set; }
+
+        public int? PhysicianId { get; set; }
     }
 }

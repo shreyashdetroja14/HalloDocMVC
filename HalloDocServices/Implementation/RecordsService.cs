@@ -33,6 +33,8 @@ namespace HalloDocServices.Implementation
             _emailSMSLogRepository = emailSMSLogRepository;
         }
 
+        #region SEARCH RECORDS
+
         public IQueryable<Request> FilterRequests(SearchRecordsViewModel SearchFilter)
         {
             var rawData = _requestRepository.GetIQueryableRequests().Where(x => x.IsDeleted != true);
@@ -238,6 +240,10 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
+        #endregion
+
+        #region PATIENT HISTORY
+
         public PaginatedListViewModel<PatientRowViewModel> GetPatientList(SearchRecordsViewModel SearchFilter)
         {
             var data = _userRepository.GetIQueryableUsers();
@@ -351,6 +357,10 @@ namespace HalloDocServices.Implementation
             return PaginatedList;
         }
 
+        #endregion
+
+        #region BLOCKED HISTORY
+
         public PaginatedListViewModel<PatientRowViewModel> GetBlockedList(SearchRecordsViewModel SearchFilter)
         {
             var data = _requestRepository.GetIQueryableBlockedRequests().Where(x => x.IsActive == true);
@@ -454,6 +464,10 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
+        #endregion
+
+        #region EMAIL-SMS LOGS
+
         public PaginatedListViewModel<LogRowViewModel> GetEmailLogs(SearchRecordsViewModel SearchFilter)
         {
             var emailLogs = _emailSMSLogRepository.GetIqueryableEmailLogs();
@@ -503,7 +517,7 @@ namespace HalloDocServices.Implementation
             {
                 EmailLogId = x.EmailLogId,
                 RecipientName = x.RecipientName,
-                Action = x.Action.ToString(),
+                Action = ((ActionEnum)(x.Action ?? 0)).ToString(),
                 RoleName = ((AccountType)(x.RoleId ?? 0)).ToString(),
                 Email = x.EmailId,
                 CreatedDate = x.CreatedDate.ToString(),
@@ -572,8 +586,8 @@ namespace HalloDocServices.Implementation
             List<LogRowViewModel> EmailLogList = smsLogs.Select(x => new LogRowViewModel
             {
                 SMSLogId = x.SmsLogId,
-                RecipientName = x.RequestId != null ? x.Request.RequestClients.FirstOrDefault().FirstName + " " + x.Request.RequestClients.FirstOrDefault().LastName : x.Physician.FirstName + " " + x.Physician.LastName,
-                Action = x.Action.ToString(),
+                RecipientName = x.RecipientName,
+                Action = ((ActionEnum)(x.Action ?? 0)).ToString(),
                 RoleName = ((AccountType)(x.RoleId ?? 0)).ToString(),
                 PhoneNumber = x.MobileNumber,
                 CreatedDate = x.CreatedDate.ToString(),
@@ -593,5 +607,7 @@ namespace HalloDocServices.Implementation
 
             return PaginatedList;
         }
+
+        #endregion
     }
 }

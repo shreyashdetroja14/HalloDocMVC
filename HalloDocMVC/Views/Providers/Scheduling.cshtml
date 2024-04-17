@@ -19,6 +19,11 @@
         .btn-shadow{
             box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.4);
         }
+
+        .active-calendar-tab{
+            background-color: #0dcaf0;
+            color: #fff;
+        }
     </style>
 }
 
@@ -62,22 +67,22 @@
             </div>
             <div class="d-flex justify-content-between mb-3">
                 <div class="d-flex align-items-center">
-                    <span id="prev" class="material-symbols-outlined p-2 rounded-circle bg-info text-white text-center fs-6">
+                    <button id="prev" class="btn material-symbols-outlined p-2 rounded-circle bg-info text-white text-center fs-6">
                         arrow_back
-                    </span>
+                    </button>
                     <span class="material-symbols-outlined text-secondary mx-2">
                         calendar_month
                     </span>
-                    <span id="next" class="material-symbols-outlined p-2 rounded-circle bg-info text-white text-center fs-6">
+                    <span id="next" class="btn material-symbols-outlined p-2 rounded-circle bg-info text-white text-center fs-6">
                         arrow_forward
                     </span>
                 </div>
             @if(!Model.IsPhysician)
             {
                 <div>
-                    <button id="day" class="btn btn-outline-info">Day</button>
-                    <button id="week" class="btn btn-outline-info">Week</button>
-                    <button id="month" class="btn btn-outline-info">Month</button>
+                    <button id="day" class="btn btn-outline-info calendar-tab">Day</button>
+                    <button id="week" class="btn btn-outline-info calendar-tab">Week</button>
+                    <button id="month" class="btn btn-outline-info calendar-tab active-calendar-tab">Month</button>
                 </div>
             }
         </div>
@@ -373,16 +378,16 @@
 
                     ViewShift(eventId);
                 },
-                resourceLabelDidMount: function (resourceObj) {
-                    const img = document.createElement('img');
-                    const imgUrl = `/Upload/Physician/${resourceObj.el.dataset.resourceId}/ProfilePhoto.jpg`;
-                    img.src = imgUrl;
-                    console.log(imgUrl);
-                    img.style.maxHeight = '30px';
-                    img.style.maxWidth= '30px';
-                    img.style.marginLeft = "8px";
-                    resourceObj.el.querySelector('.fc-datagrid-cell-main').appendChild(img);
-                },
+                //resourceLabelDidMount: function (resourceObj) {
+                //    const img = document.createElement('img');
+                //    const imgUrl = `/Upload/Physician/${resourceObj.el.dataset.resourceId}/ProfilePhoto.jpg`;
+                //    img.src = imgUrl;
+                //    console.log(imgUrl);
+                //    img.style.maxHeight = '30px';
+                //    img.style.maxWidth= '30px';
+                //    img.style.marginLeft = "8px";
+                //    resourceObj.el.querySelector('.fc-datagrid-cell-main').appendChild(img);
+                //},
             });
 
             // calendar toggle buttons
@@ -396,13 +401,13 @@
             });
 
             $("#day").click(function () {
-                if ($(window).width() < 768) {
-                    calendar.changeView('timeGridDay');
-                }
-                else {
-                    calendar.changeView('resourceTimelineDay');
-                }
-                
+                //if ($(window).width() < 768) {
+                //    calendar.changeView('timeGridDay');
+                //}
+                //else {
+                //    calendar.changeView('resourceTimelineDay');
+                //}
+                calendar.changeView('resourceTimelineDay');
             });
 
             $("#week").click(function () {
@@ -412,6 +417,15 @@
 
             $("#month").click(function () {
                 calendar.changeView('dayGridMonth');
+            });
+
+            $('.calendar-tab').each(function(){
+                $(this).click(function(){
+                    $('.calendar-tab').each(function () {
+                        $(this).removeClass('active-calendar-tab');
+                    });
+                    $(this).addClass('active-calendar-tab');
+                });
             });
 
 

@@ -1,4 +1,6 @@
-﻿using HalloDocEntities.Models;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
+using HalloDocEntities.Models;
 using HalloDocRepository.Implementation;
 using HalloDocRepository.Interface;
 using HalloDocServices.Constants;
@@ -27,8 +29,10 @@ namespace HalloDocServices.Implementation
         private readonly ICommonRepository _commonRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly IShiftRepository _shiftRepository;
+        private readonly IMailService _mailService;
+        private readonly IEmailSMSLogRepository _emailSMSLogRepository;
 
-        public ProvidersService(IUserRepository userRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IRoleRepository roleRepository, IShiftRepository shiftRepository)
+        public ProvidersService(IUserRepository userRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IRoleRepository roleRepository, IShiftRepository shiftRepository, IMailService mailService, IEmailSMSLogRepository emailSMSLogRepository)
         {
             _userRepository = userRepository;
             _physicianRepository = physicianRepository;
@@ -36,6 +40,8 @@ namespace HalloDocServices.Implementation
             _commonRepository = commonRepository;
             _roleRepository = roleRepository;
             _shiftRepository = shiftRepository;
+            _mailService = mailService;
+            _emailSMSLogRepository = emailSMSLogRepository;
         }
 
         #region PROVIDERS LIST
@@ -126,6 +132,77 @@ namespace HalloDocServices.Implementation
             await _physicianRepository.Update(providers);
 
             return true;
+        }
+
+        public async Task<bool> ContactProvider(ContactProviderViewModel ContactProvider)
+        {
+            var provider = _physicianRepository.GetPhysicianByPhysicianId(ContactProvider.ProviderId);
+            if(provider == null)
+            {
+                return false;
+            }
+
+            if (ContactProvider.CommunicationType == "email")
+            {
+                List<string> receivers = new List<string>
+                {
+                    ContactProvider.ProviderEmail ?? ""
+                };
+                string subject = ContactProvider.Subject ?? "";
+                string body = ContactProvider.Message ?? "";
+
+                bool isMailSent = await _mailService.SendMail(receivers, subject, body, false);
+
+                if (isMailSent)
+                {
+                    EmailLog emailLog = new EmailLog();
+                    emailLog.EmailTemplate = body;
+                    emailLog.SubjectName = subject;
+                    emailLog.EmailId = ContactProvider.ProviderEmail ?? "";
+                    emailLog.Action = (int)ActionEnum.AdminMessage;
+                    emailLog.RoleId = (int)AccountType.Physician;
+                    emailLog.AdminId = ContactProvider.AdminId;
+                    emailLog.PhysicianId = ContactProvider.ProviderId;
+                    emailLog.CreatedDate = DateTime.Now;
+                    emailLog.SentDate = DateTime.Now;
+                    emailLog.IsEmailSent = isMailSent;
+                    emailLog.SentTries = 1;
+                    emailLog.RecipientName = provider.FirstName + " " + provider.LastName;
+
+                    await _emailSMSLogRepository.CreateEmailLog(emailLog);
+
+                    return true;
+                }
+            }
+            else
+            {
+                if(provider.Mobile == null)
+                {
+                    return false;
+                }
+
+                string subject = ContactProvider.Subject ?? "";
+                string body = ContactProvider.Message ?? "";
+
+                SmsLog smsLog = new SmsLog();
+                smsLog.SmsTemplate = body;
+                smsLog.MobileNumber = provider.Mobile ?? "";
+                smsLog.Action = (int)ActionEnum.AdminMessage;
+                smsLog.RoleId = (int)AccountType.Physician;
+                smsLog.AdminId = ContactProvider.AdminId;
+                smsLog.PhysicianId = provider.PhysicianId;
+                smsLog.CreatedDate = DateTime.Now;
+                smsLog.SentDate = DateTime.Now;
+                smsLog.IsSmsSent = true;
+                smsLog.SentTries = 1;
+                smsLog.RecipientName = provider.FirstName + " " + provider.LastName;
+
+                await _emailSMSLogRepository.CreateSmsLog(smsLog);
+
+                return true;
+            }
+
+            return false;
         }
 
         #endregion

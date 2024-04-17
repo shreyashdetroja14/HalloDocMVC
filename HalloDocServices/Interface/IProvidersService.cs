@@ -21,6 +21,8 @@ namespace HalloDocServices.Interface
 
         Task<bool> UpdateNotiStatus(List<int> StopNotificationIds);
 
+        Task<bool> ContactProvider(ContactProviderViewModel ContactProvider);
+
         #endregion
 
         #region EDIT PROVIDER

@@ -108,4 +108,19 @@ namespace HalloDocServices.Constants
         admin = 1, 
         physician = 2
     }
+
+    public enum ActionEnum
+    {
+        Anonymous = 0,
+        NotMentioned = 1,
+        CreateAccount = 2,
+        ChangePassword = 3,
+        ReviewAgreement = 4,
+        Attachments = 5,
+        NewRequest = 6,
+        AdminMessage = 7,
+        ResetPassword = 8,
+        ProfileUpdateMessage = 9,
+        SendLink = 10,
+    }
 }

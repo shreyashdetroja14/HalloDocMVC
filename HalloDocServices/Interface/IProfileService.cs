@@ -18,5 +18,7 @@ namespace HalloDocServices.Interface
         Task<bool> UpdateBillingInfo(AdminProfileViewModel AdminProfileDetails);
 
         Task<bool> UpdateAdminInfo(AdminProfileViewModel AdminProfileDetails);
+
+        Task<bool> SendMailToAdmin(EditProviderViewModel MailDetails);
     }
 }
