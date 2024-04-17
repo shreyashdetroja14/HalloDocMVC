@@ -55,8 +55,8 @@ namespace HalloDocMVC.Controllers
 
 
         [Route("Dashboard", Name = "Dashboard")]
-
         [CustomAuthorize("admin", "physician")]
+        [RoleAuthorize("DashBoard")]
         public async Task<IActionResult> Index(int? requestStatus)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
@@ -87,8 +87,8 @@ namespace HalloDocMVC.Controllers
 
 
         [Route("FetchRequests", Name = "FetchRequests")]
-
         [CustomAuthorize("admin", "physician")]
+        [RoleAuthorize("RequestData")]
         public IActionResult FetchRequests(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int pageNumber = 1)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
@@ -114,7 +114,6 @@ namespace HalloDocMVC.Controllers
 
 
         [Route("Physician/AcceptCase", Name = "AcceptCase")]
-
         [CustomAuthorize("physician")]
         public async Task<IActionResult> AcceptCase(int requestId)
         {
@@ -137,7 +136,6 @@ namespace HalloDocMVC.Controllers
 
 
         [Route("Dashboard/ViewCase", Name = "ViewCase")]
-
         [CustomAuthorize("admin", "physician")]
         public IActionResult ViewCase(int requestId) 
         {
@@ -156,7 +154,6 @@ namespace HalloDocMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Dashboard/ViewCase", Name = "EditViewCase")]
-
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> ViewCase (ViewCaseViewModel CaseInfo)
         {
@@ -175,7 +172,6 @@ namespace HalloDocMVC.Controllers
 
 
         [Route("Dashboard/ViewNotes", Name = "ViewNotes")]
-
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> ViewNotes(int requestId)
         {
@@ -190,11 +186,10 @@ namespace HalloDocMVC.Controllers
             return View(ViewNotes);
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         [Route("Dashboard/ViewNotes", Name = "EditViewNotes")]
-
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> ViewNotes(ViewNotesViewModel vnvm)
         {
@@ -216,6 +211,8 @@ namespace HalloDocMVC.Controllers
             return RedirectToRoute("ViewNotes", new { requestId = vnvm.RequestId });
         }
 
+
+        [CustomAuthorize("admin")]
         public IActionResult CancelCase(int requestId)
         {
             CancelCaseViewModel CancelCase = new CancelCaseViewModel();
@@ -228,7 +225,9 @@ namespace HalloDocMVC.Controllers
             return PartialView("_CancelCaseModal", CancelCase);
         }
 
+
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> CancelCase(CancelCaseViewModel CancelCase)
         {
             if (!ModelState.IsValid)
@@ -250,6 +249,8 @@ namespace HalloDocMVC.Controllers
             return RedirectToRoute("Dashboard");
         }
 
+
+        [CustomAuthorize("admin")]
         public IActionResult AssignCase(int requestId, bool? isTransferRequest, int regionId)
         {
             AssignCaseViewModel AssignCase = new AssignCaseViewModel();
@@ -261,7 +262,9 @@ namespace HalloDocMVC.Controllers
             return PartialView("_AssignCaseModal", AssignCase);
         }
 
+
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> AssignCase(AssignCaseViewModel AssignCase)
         {
             bool isCaseAssigned = await _adminDashboardService.AssignCase(AssignCase);
@@ -277,13 +280,16 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
+
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> TransferRequest(AssignCaseViewModel TransferRequest)
         {
             bool isRequestTransferred = await _adminDashboardService.TransferRequest(TransferRequest);
 
             return RedirectToAction("Index");
         }
+
 
         [Route("Physician/TransferToAdmin", Name = "TransferToAdmin")]
         [CustomAuthorize("physician")]
@@ -295,6 +301,7 @@ namespace HalloDocMVC.Controllers
 
             return PartialView("_TransferToAdminModal", TransferData);
         }
+
 
         [HttpPost]
         [Route("Physician/TransferToAdmin", Name = "TransferToAdmin")]
@@ -317,6 +324,8 @@ namespace HalloDocMVC.Controllers
             return RedirectToRoute("Dashboard");
         }
 
+
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> BlockRequest(int requestId) 
         {
             BlockRequestViewModel BlockRequest = new BlockRequestViewModel(); 
@@ -326,7 +335,9 @@ namespace HalloDocMVC.Controllers
             return PartialView("_BlockRequestModal", BlockRequest);
         }
 
+
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> BlockRequest(BlockRequestViewModel BlockRequest)
         {
             bool isReuqestBlocked = await _adminDashboardService.BlockRequest(BlockRequest);
@@ -343,8 +354,8 @@ namespace HalloDocMVC.Controllers
         }
 
 
-        [Route("Dashboard/ViewUploads", Name = "ViewUploads")]
 
+        [Route("Dashboard/ViewUploads", Name = "ViewUploads")]
         [CustomAuthorize("admin", "physician")]
         public IActionResult ViewUploads(int requestId)
         {
@@ -355,11 +366,10 @@ namespace HalloDocMVC.Controllers
             return View(ViewUploads);
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         [Route("Dashboard/UploadRequestFile", Name = "UploadRequestFile")]
-
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> UploadRequestFile(IEnumerable<IFormFile>? MultipleFiles, int requestId)
         {
@@ -373,7 +383,6 @@ namespace HalloDocMVC.Controllers
 
 
         [Route("Dashboard/DownloadFile", Name = "DownloadFile")]
-
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> DownloadFile(int fileId)
         {
@@ -392,7 +401,6 @@ namespace HalloDocMVC.Controllers
 
         [HttpPost]
         [Route("Dashboard/DownloadAll", Name = "DownloadAll")]
-
         [CustomAuthorize("admin", "physician")]
         public IActionResult DownloadMultipleFiles([FromBody] DownloadRequest requestData)
         {
@@ -412,7 +420,6 @@ namespace HalloDocMVC.Controllers
 
 
         [Route("Dashboard/DeleteFile", Name = "DeleteFile")]
-
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> DeleteFile(int fileId)
         {
@@ -424,7 +431,6 @@ namespace HalloDocMVC.Controllers
 
         [HttpPost]
         [Route("Dashboard/DeleteAll", Name = "DeleteAll")]
-
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> DeleteMultipleFiles([FromBody] DownloadRequest requestData)
         {
@@ -449,7 +455,6 @@ namespace HalloDocMVC.Controllers
 
         [HttpPost]
         [Route("Dashboard/SendMail", Name = "SendMail")]
-
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> SendFilesViaEmail([FromBody] DownloadRequest requestData)
         {
@@ -482,8 +487,8 @@ namespace HalloDocMVC.Controllers
 
 
         [Route("Dashboard/Orders", Name = "Orders")]
-
         [CustomAuthorize("admin", "physician")]
+        [RoleAuthorize("SendOrder")]
         public IActionResult Orders(int requestId)
         {
             OrdersViewModel OrderPageDetails = new OrdersViewModel();
@@ -494,12 +499,14 @@ namespace HalloDocMVC.Controllers
             return View(OrderPageDetails);
         }
 
+
         public IActionResult GetProfessionList(int requestId)
         {
             string professionlist = _adminDashboardService.GetProfessionListOptions();
 
             return Content(professionlist, "text/html");
         }
+
 
         public IActionResult GetVendorList(int professionId)
         {
@@ -508,16 +515,17 @@ namespace HalloDocMVC.Controllers
             return Content(vendorlist, "text/html");
         }
 
+
         public IActionResult GetVendorDetails(int vendorId)
         {
             OrdersViewModel VendorDetails = _adminDashboardService.GetVendorDetails(vendorId);
             return Json(VendorDetails);
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Dashboard/Orders", Name = "OrdersPost")]
-
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> SendOrder(OrdersViewModel Order)
         {
@@ -534,6 +542,8 @@ namespace HalloDocMVC.Controllers
             return RedirectToRoute("Orders", new {requestId = Order.RequestId});
         }
 
+
+        [CustomAuthorize("admin")]
         public IActionResult ClearCase(int requestId)
         {
             ClearCaseViewModel ClearCase = new ClearCaseViewModel();
@@ -541,7 +551,9 @@ namespace HalloDocMVC.Controllers
             return PartialView("_ClearCaseModal", ClearCase);
         }
 
+
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> ClearCase(ClearCaseViewModel ClearCase)
         {
             bool isCaseCleared = await _adminDashboardService.ClearCase(ClearCase);
@@ -552,8 +564,8 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
-        [Route("Dashboard/SendAgreement", Name = "SendAgreement")]
 
+        [Route("Dashboard/SendAgreement", Name = "SendAgreement")]
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> SendAgreement(int requestId)
         {
@@ -564,9 +576,9 @@ namespace HalloDocMVC.Controllers
             return PartialView("_SendAgreementModal", SendAgreementInfo);
         }
 
+
         [HttpPost]
         [Route("Dashboard/SendAgreement", Name = "SendAgreementPost")]
-
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> SendAgreement(SendAgreementViewModel SendAgreementInfo)
         {
@@ -592,6 +604,8 @@ namespace HalloDocMVC.Controllers
             return RedirectToRoute("Dashboard");
         }
 
+
+        [CustomAuthorize("admin")]
         public IActionResult CloseCase(int requestId)
         {
             CloseCaseViewModel CloseCaseInfo = new CloseCaseViewModel();
@@ -605,7 +619,9 @@ namespace HalloDocMVC.Controllers
             return View(CloseCaseInfo);
         }
 
+
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> UpdateCloseCase(ViewCaseViewModel ViewCase)
         {
             bool isInfoUpdated = await _adminDashboardService.UpdateViewCaseInfo(ViewCase);
@@ -621,6 +637,8 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("CloseCase", new {requestId =  ViewCase.RequestId});
         }
 
+
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> Close(int requestId)
         {
             int adminId = 1;
@@ -635,7 +653,6 @@ namespace HalloDocMVC.Controllers
 
 
         [Route("Physician/CareType", Name = "CareType")]
-
         [CustomAuthorize("physician")]
         public IActionResult CareType(int requestId)
         {
@@ -648,7 +665,6 @@ namespace HalloDocMVC.Controllers
 
         [HttpPost]
         [Route("Physician/CareType", Name = "CareTypePost")]
-
         [CustomAuthorize("physician")]
         public async Task<IActionResult> CareType(CareTypeViewModel CareTypeData)
         {
@@ -670,7 +686,6 @@ namespace HalloDocMVC.Controllers
 
 
         [Route("Dashboard/EncounterForm", Name = "EncounterForm")]
-
         [CustomAuthorize("admin", "physician")]
         public IActionResult EncounterForm(int requestId)
         {
@@ -685,9 +700,9 @@ namespace HalloDocMVC.Controllers
             return View(EncounterFormDetails);
         }
 
+
         [HttpPost]
         [Route("Dashboard/EncounterForm", Name = "EncounterFormPost")]
-
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> EncounterForm(EncounterFormViewModel EncounterFormDetails)
         {
@@ -704,9 +719,9 @@ namespace HalloDocMVC.Controllers
             return RedirectToRoute("EncounterForm", new { EncounterFormDetails.RequestId });
         }
 
+
         [HttpPost]
         [Route("Physician/Finalize", Name = "Finalize")]
-
         [CustomAuthorize("physician")]
         public async Task<IActionResult> Finalize(EncounterFormViewModel EncounterFormDetails)
         {
@@ -724,7 +739,6 @@ namespace HalloDocMVC.Controllers
 
 
         [Route("Physician/HouseCall", Name = "HouseCall")]
-
         [CustomAuthorize("physician")]
         public async Task<IActionResult> HouseCall(int requestId)
         {
@@ -743,8 +757,8 @@ namespace HalloDocMVC.Controllers
             return RedirectToRoute("Dashboard");
         }
 
-        [Route("Physician/ConcludeCare", Name = "ConcludeCare")]
 
+        [Route("Physician/ConcludeCare", Name = "ConcludeCare")]
         [CustomAuthorize("physician")]
         public IActionResult ConcludeCare(int requestId)
         {
@@ -755,9 +769,9 @@ namespace HalloDocMVC.Controllers
             return View(ConcludeCareData);
         }
 
+
         [HttpPost]
         [Route("Physician/ConcludeCare", Name = "ConcludeCarePost")]
-
         [CustomAuthorize("physician")]
         public async Task<IActionResult> ConcludeCare(ConcludeCareViewModel ConcludeCareData)
         {
@@ -775,7 +789,9 @@ namespace HalloDocMVC.Controllers
             return RedirectToRoute("Dashboard");
         }
 
+
         [HttpPost]
+        [CustomAuthorize("admin")]
         public async Task<IActionResult> SendLink(AdminDashboardViewModel EmailData)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
@@ -802,6 +818,8 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
+
+        [CustomAuthorize("admin")]
         public IActionResult Export(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int? pageNumber)
         {
             var excelFile = _adminDashboardService.ExportToExcel(requestStatus, requestType, searchPattern, searchRegion, pageNumber);
@@ -811,7 +829,6 @@ namespace HalloDocMVC.Controllers
 
 
         [Route("Dashboard/CreateRequest", Name = "CreateRequest")]
-
         [CustomAuthorize("admin", "physician")]
         public IActionResult CreateRequest()
         {
@@ -821,8 +838,8 @@ namespace HalloDocMVC.Controllers
             return View(PatientInfo);
         }
 
-        [Route("Dashboard/CreateRequest", Name = "CreateRequestPost")]
 
+        [Route("Dashboard/CreateRequest", Name = "CreateRequestPost")]
         [CustomAuthorize("admin", "physician")]
         [HttpPost]
         public async Task<IActionResult> CreateRequest(PatientRequestViewModel PatientInfo)

@@ -27,6 +27,8 @@ namespace HalloDocRepository.Interface
 
         List<RoleMenu> GetRolesMenusByRoleId(int roleId);
 
+        IQueryable<RoleMenu> GetAllRolesMenus();
+
         Task<List<RoleMenu>> RemoveRoleMenusAsync(List<RoleMenu> roleMenus);
 
         #endregion

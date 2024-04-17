@@ -81,7 +81,10 @@ namespace HalloDocRepository.Implementation
             return roleMenus;
         }
 
-
+        public IQueryable<RoleMenu> GetAllRolesMenus()
+        {
+            return _context.RoleMenus.AsQueryable();
+        }
 
         #endregion
 

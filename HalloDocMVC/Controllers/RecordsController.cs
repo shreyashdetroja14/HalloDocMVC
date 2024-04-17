@@ -1,4 +1,5 @@
 ﻿using HalloDocEntities.Models;
+using HalloDocMVC.Auth;
 using HalloDocServices.Implementation;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels;
@@ -10,6 +11,7 @@ using System.Security.Claims;
 
 namespace HalloDocMVC.Controllers
 {
+    [CustomAuthorize("admin")]
     public class RecordsController : Controller
     {
         private readonly IJwtService _jwtService;
@@ -161,6 +163,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("BlockedHistory");
         }
 
+        [RoleAuthorize("EmailLogs")]
         public IActionResult EmailLogs()
         {
             return View();

@@ -123,4 +123,27 @@ namespace HalloDocServices.Constants
         ProfileUpdateMessage = 9,
         SendLink = 10,
     }
+
+    public enum Menus
+    {
+        AdminDashboard = 1,
+        PhysicianDashboard = 2,
+        Regions = 3,
+        Scheduling = 4,
+        History = 5,
+        Accounts = 6,
+        AdminProfile = 7,
+        Role = 8,
+        Providers = 9,
+        RequestData = 10,
+        Vendors = 11,
+        Profession = 12,
+        AdminSendOrder = 13,
+        EmailLogs = 14,
+        SmsLogs = 15,
+        MySchedule = 16,
+        PhysicianProfile = 17,
+        PhysicianSendOrder = 18
+
+    }
 }
