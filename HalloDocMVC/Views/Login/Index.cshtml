@@ -13,12 +13,12 @@
         <img src="~/images/backIcon.svg" alt="">
         Back
     </a>*@
-    <button class="btn back-btn d-flex align-items-center" onclick="window.history.back()">
+    <a asp-action="Index" asp-controller="Home" class="btn back-btn d-flex align-items-center" style="width: fit-content">
         <span class="material-symbols-outlined text-info fs-6">
             arrow_back_ios
         </span>
         <span>Back</span>
-    </button>
+    </a>
     <h1 class="mb-4 mt-2 h2 text-center">Login To Your Account</h1>
     <p class="text-center text-danger fw-bold">@ViewBag.Message</p>   
     <form class="d-flex flex-column" asp-action="CheckLogin" asp-controller="Login" id="login-form">
@@ -28,7 +28,7 @@
             <input asp-for="Email" type="text" class="form-control transparent" id="Email" placeholder="name@example.com">
             <label for="Email">Email</label>
             @*<img src="~/images/usernameIcon.svg" alt="" class="label-icon">*@
-            <span class="material-symbols-outlined text-dark">
+            <span class="material-symbols-outlined text-dark icon-label">
                 account_circle
             </span>
             <span asp-validation-for="Email" class="text-danger"></span>
@@ -37,7 +37,7 @@
             <input asp-for="Password" type="password" class="form-control transparent" id="Password" placeholder="Password">
             <label for="Password">Password</label>
             @*<img src="~/images/passwordShowIcon.svg" alt="" class="label-icon">*@
-            <span class="material-symbols-outlined text-dark">
+            <span class="material-symbols-outlined text-dark icon-label">
                 visibility
             </span>
             <span asp-validation-for="Password" class="text-danger"></span>

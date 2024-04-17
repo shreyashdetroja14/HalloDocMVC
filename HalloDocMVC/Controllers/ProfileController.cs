@@ -25,7 +25,7 @@ namespace HalloDocMVC.Controllers
 
         [Route("Profile", Name = "Profile")]
         [CustomAuthorize("admin", "physician")]
-        [RoleAuthorize("AdminProfile")]
+        [RoleAuthorize("Profile")]
         public IActionResult Index()
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();

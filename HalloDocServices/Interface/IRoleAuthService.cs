@@ -9,5 +9,7 @@ namespace HalloDocServices.Interface
     public interface IRoleAuthService
     {
         bool CheckAccess(int roleId, string[] menus);
+
+        List<string> GetMenuNamesByRoleId(int roleId);
     }
 }

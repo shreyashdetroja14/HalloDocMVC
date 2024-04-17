@@ -47,6 +47,7 @@ namespace HalloDocMVC.Controllers
             return claimsData;
         }
 
+        [RoleAuthorize("Accounts")]
         public IActionResult Accounts()
         {
             AccessViewModel AccessData = new AccessViewModel();
@@ -57,6 +58,7 @@ namespace HalloDocMVC.Controllers
             return View(AccessData);
         }
 
+        [RoleAuthorize("Role")]
         public IActionResult CreateRole()
         {
             CreateRoleViewModel CreateRoleData = new CreateRoleViewModel();
@@ -88,6 +90,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Accounts");
         }
 
+        [RoleAuthorize("Role")]
         public async Task<IActionResult> DeleteRole(int roleId)
         {
             string modifiedBy = GetClaimsData().AspNetUserId ?? "";
@@ -105,6 +108,7 @@ namespace HalloDocMVC.Controllers
 
         }
 
+        [RoleAuthorize("Role")]
         public IActionResult EditRole(int roleId)
         {
             CreateRoleViewModel EditRoleData = new CreateRoleViewModel();
@@ -132,6 +136,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Accounts");
         }
 
+        [RoleAuthorize("Users")]
         public async Task<IActionResult> UserAccess()
         {
             List<UserAccessRow> userAccessList = await _accessService.GetUserAccessList();

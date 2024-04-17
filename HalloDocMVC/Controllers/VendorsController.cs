@@ -1,10 +1,12 @@
-﻿using HalloDocServices.Implementation;
+﻿using HalloDocMVC.Auth;
+using HalloDocServices.Implementation;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels.AdminViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HalloDocMVC.Controllers
 {
+    [CustomAuthorize("admin")]
     public class VendorsController : Controller
     {
         private readonly IVendorService _vendorService;
@@ -14,6 +16,7 @@ namespace HalloDocMVC.Controllers
             _vendorService = vendorService;
         }
 
+        [RoleAuthorize("Vendors")]
         public IActionResult Index()
         {
             VendorsViewModel VendorsViewData = new VendorsViewModel();

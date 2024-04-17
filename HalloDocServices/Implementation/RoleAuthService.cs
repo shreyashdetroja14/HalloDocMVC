@@ -36,5 +36,11 @@ namespace HalloDocServices.Implementation
 
             return false;
         }
+
+        public List<string> GetMenuNamesByRoleId(int roleId)
+        {
+            var roleMenus = _roleRepository.GetAllRolesMenus().Where(x => x.RoleId == roleId).Select(x => x.Menu.Name).ToList();
+            return roleMenus;
+        }
     }
 }

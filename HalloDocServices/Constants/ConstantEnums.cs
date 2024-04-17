@@ -143,7 +143,7 @@ namespace HalloDocServices.Constants
         SmsLogs = 15,
         MySchedule = 16,
         PhysicianProfile = 17,
-        PhysicianSendOrder = 18
-
+        PhysicianSendOrder = 18,
+        Records = 19,
     }
 }

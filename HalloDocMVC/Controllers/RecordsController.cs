@@ -45,6 +45,7 @@ namespace HalloDocMVC.Controllers
 
         #endregion
 
+        [RoleAuthorize("Records")]
         public IActionResult SearchRecords()
         {
             return View();
@@ -88,6 +89,7 @@ namespace HalloDocMVC.Controllers
             return File(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "records.xlsx");
         }
 
+        [RoleAuthorize("History")]
         public IActionResult PatientHistory()
         {
             return View();
@@ -183,7 +185,8 @@ namespace HalloDocMVC.Controllers
             ViewBag.PagerData = PaginatedList.PagerData;
             return PartialView("_EmailSMSLogPartial", PaginatedList.DataRows);
         }
-        
+
+        [RoleAuthorize("SmsLogs")]
         public IActionResult SMSLogs()
         {
             return View();

@@ -56,7 +56,7 @@ namespace HalloDocMVC.Controllers
 
         [Route("Dashboard", Name = "Dashboard")]
         [CustomAuthorize("admin", "physician")]
-        [RoleAuthorize("DashBoard")]
+        [RoleAuthorize("Dashboard")]
         public async Task<IActionResult> Index(int? requestStatus)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
@@ -88,7 +88,7 @@ namespace HalloDocMVC.Controllers
 
         [Route("FetchRequests", Name = "FetchRequests")]
         [CustomAuthorize("admin", "physician")]
-        [RoleAuthorize("RequestData")]
+        
         public IActionResult FetchRequests(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int pageNumber = 1)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();

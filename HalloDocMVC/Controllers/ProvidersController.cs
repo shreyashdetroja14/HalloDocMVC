@@ -51,6 +51,7 @@ namespace HalloDocMVC.Controllers
         #region PROVIDERS LIST 
 
         [CustomAuthorize("admin")]
+        [RoleAuthorize("Providers")]
         public IActionResult Index()
         {
             ProvidersViewModel Providers = new ProvidersViewModel();
@@ -293,6 +294,7 @@ namespace HalloDocMVC.Controllers
         #region SCHEDULING PAGE
         [Route("Scheduling", Name = "Scheduling")]
         [CustomAuthorize("admin", "physician")]
+        [RoleAuthorize("Scheduling")]
         public IActionResult Scheduling()
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
@@ -520,6 +522,7 @@ namespace HalloDocMVC.Controllers
         #region PROVIDER LOCATION
 
         [CustomAuthorize("admin")]
+        [RoleAuthorize("Location")]
         public IActionResult ProviderLocation()
         {
             List<ProviderLocationViewModel> ProviderLocations = _providersService.GetProviderLocations();

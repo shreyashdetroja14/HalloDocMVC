@@ -11,7 +11,7 @@
         border: 1px solid #0dcaf0;
     }
 
-.form-floating span {
+.form-floating .icon-label {
     position: absolute;
     top: 16px;
     right: 12px;

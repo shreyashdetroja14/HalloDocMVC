@@ -4,16 +4,54 @@
 }
 
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>AccessDenied</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .access-denied-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.1);
+        }
+
+        .access-denied-header {
+            color: #dc3545;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+    </style>
 </head>
 <body>
-
-    <h1>ACCESS DENIED</h1>
-    <p>Sorry You Do Not Have Access Of The Requested Page</p>
-
+    <div class="container">
+        <div class="access-denied-container">
+            <h2 class="access-denied-header">Access Denied</h2>
+            <p class="text-center">Sorry, you do not have permission to access this page.</p>
+            <p class="text-center">Please contact the administrator for further assistance.</p>
+            <div class="text-center">
+                <a href="/" class="btn btn-primary mt-3">Go to Home Page</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
