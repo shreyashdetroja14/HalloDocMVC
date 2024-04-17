@@ -1,4 +1,8 @@
-﻿.container-fluid {
+﻿body{
+    background-color: var(--bs-secondary-bg);
+}
+
+.container-fluid {
     min-height: 100vh;
 }
 

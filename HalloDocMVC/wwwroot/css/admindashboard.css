@@ -168,22 +168,26 @@
 
 .bg-patient {
     /*background-color: #19875440;*/
-    background-color: #c5e1d4;
+    /*background-color: #c5e1d4;*/
+    background-color: #5ec595;
 }
 
 .bg-family {
     /*background-color: #fd7e1440;*/
-    background-color: #fedfc4;
+    /*background-color: #fedfc4;*/
+    background-color: #ffcea2;
 }
 
 .bg-business {
     /*background-color: #d6338440;*/
-    background-color: #f5cce0;
+    /*background-color: #f5cce0;*/
+    background-color: #f9abd1;
 }
 
 .bg-concierge {
     /*background-color: #0d6efd40;*/
-    background-color: #c2dbfe;
+    /*background-color: #c2dbfe;*/
+    background-color: #a1c8ff;
 }
 
 
@@ -213,11 +217,24 @@ tr p{
     margin: 0;
 }
 
+ td {
+    background-color: transparent !important;
+    color: black !important;
+}
+
+ th{
+     background-color: transparent !important;
+ }
+
+td .btn{
+    color: black !important;
+}
 
     @media screen and (max-width: 1199px) {
         th, 
         td {
             white-space: nowrap;
+            
         }
     }
 

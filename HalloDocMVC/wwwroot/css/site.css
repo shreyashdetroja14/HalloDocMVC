@@ -65,3 +65,21 @@ body {
     filter: invert(100%) sepia(95%) saturate(0%) hue-rotate(185deg) brightness(106%) contrast(105%);
 }
 
+input {
+    border-color: var(--bs-secondary-bg);
+}
+
+
+/*BOOTSTRAP OVERRIDES*/
+
+
+/*INPUT LABEL BACKGROUND*/
+.form-floating > .form-control-plaintext ~ label::after, .form-floating > .form-control:focus ~ label::after, .form-floating > .form-control:not(:placeholder-shown) ~ label::after, .form-floating > .form-select ~ label::after {
+    background-color: transparent;
+}
+
+/*READONLY INPUT BG*/
+.form-control:read-only {
+    background-color: var(--bs-secondary-bg);
+    opacity: 1;
+}

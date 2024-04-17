@@ -1,4 +1,8 @@
-﻿.wrapper {
+﻿body {
+    background-color: var(--bs-secondary-bg);
+}
+
+.wrapper {
     min-height: 100vh;
 }
 
@@ -24,8 +28,9 @@
 }
 
 .nav-link {
-    color: #212529;
     border: none !important;
+    --bs-text-opacity: 1;
+    color: rgba(var(--bs-body-color-rgb),var(--bs-text-opacity)) !important;
 }
 
 .active {
@@ -46,4 +51,6 @@
         color: #fff !important;
     }
 
-
+.custom-shadow {
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}

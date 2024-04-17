@@ -11,15 +11,15 @@
         border: 1px solid #0dcaf0;
     }
 
-.form-floating img {
+.form-floating span {
     position: absolute;
     top: 16px;
     right: 12px;
 }
 
 .form-control {
-    border-color: #636363;
-    color: #636363;
+    border-color: var(--bs-dark);
+    color: var(--bs-dark);
     border-radius: 7px;
     background: transparent;
     transition: box-shadow .1s ease-in-out;
@@ -31,7 +31,7 @@
     }
 
 label {
-    color: #636363;
+    color: var(--bs-dark);
 }
 
 .forgot-pass {

@@ -1,4 +1,4 @@
-﻿const themeBtn = document.querySelector(".theme-btn");
+﻿/*const themeBtn = document.querySelector(".theme-btn");
 
 const isDarkThemeEnable = false;
 
@@ -14,7 +14,7 @@ const main = document.querySelector(".main");
 const requestForm = document.querySelector(".request-form");
 const uploadLabel = document.querySelector('.upload-label');
 const itiList = document.querySelectorAll('.iti__country-list');
-/*console.log(navbar);*/
+*//*console.log(navbar);*//*
 
 
 themeBtn.addEventListener('click', () => {
@@ -71,3 +71,31 @@ themeBtn.addEventListener('click', () => {
 
 
 
+*/
+
+
+// Function to apply the theme based on the stored value in localStorage
+function applyTheme() {
+    const theme = localStorage.getItem("theme") || "light";
+    if (theme === "dark") {
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+        document.querySelectorAll('.form-control').forEach(element => {
+            element.classList.add('dark-theme');
+        });
+    } else {
+        document.documentElement.setAttribute("data-bs-theme", "light");
+        document.querySelectorAll('.form-control').forEach(element => {
+            element.classList.remove('dark-theme');
+        });
+    }
+}
+
+// Apply the theme on initial page load
+applyTheme();
+
+document.querySelector(".theme-btn").addEventListener("click", function () {
+    const currentTheme = localStorage.getItem("theme") || "light";
+    const newTheme = currentTheme === "light" ? "dark" : "light";
+    localStorage.setItem("theme", newTheme);
+    applyTheme();
+});

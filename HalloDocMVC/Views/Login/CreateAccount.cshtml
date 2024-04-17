@@ -18,21 +18,30 @@
         <div class="form-floating mb-4">
             <input asp-for="Email" type="email" class="form-control transparent" id="Email" placeholder="name@example.com" readonly>
             <label for="floatingInput">Email</label>
-            <img src="~/images/usernameIcon.svg" alt="" class="label-icon">
+            @*<img src="~/images/usernameIcon.svg" alt="" class="label-icon">*@
+            <span class="material-symbols-outlined text-dark">
+                account_circle
+            </span>
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
 
         <div class="form-floating mb-4">
             <input asp-for="Password" type="password" class="form-control transparent" id="Password" placeholder="Password">
             <label for="floatingPassword">Password</label>
-            <img src="~/images/passwordShowIcon.svg" alt="" class="label-icon">
+            @*<img src="~/images/passwordShowIcon.svg" alt="" class="label-icon">*@
+            <span class="material-symbols-outlined text-dark">
+                visibility
+            </span>
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 
         <div class="form-floating mb-4">
             <input asp-for="ConfirmPassword" type="password" class="form-control transparent" id="ConfirmPassword" placeholder="Confirm Password">
             <label for="floatingPassword">Confirm Password</label>
-            <img src="~/images/passwordShowIcon.svg" alt="" class="label-icon">
+            @*<img src="~/images/passwordShowIcon.svg" alt="" class="label-icon">*@
+            <span class="material-symbols-outlined text-dark">
+                visibility
+            </span>
             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
         </div>
 
