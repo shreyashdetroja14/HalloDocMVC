@@ -1,0 +1,34 @@
+﻿
+@{
+    ViewData["Title"] = "Error";
+    Layout = "~/Views/Shared/_RequestLayout.cshtml";
+}
+
+<div class="main p-4">
+    <h1>Something is wrong...</h1>
+    <h4>An error occured while processing your request. We apologize for this inconvinience. The support team is working to fix it.</h4>
+    <p>Please contact us on <pre>tatva.dotnet.shreyashdetroja@outlook.com</pre></p>
+
+    <hr />
+
+    <div class="alert alert-danger">
+        <h5 class="alert-heading">Exception Path</h5>
+        <hr />
+        <p>@ViewBag.ExceptionPath</p>
+    </div>
+    
+    <div class="alert alert-danger">
+        <h5 class="alert-heading">Exception Message</h5>
+        <hr />
+        <p>@ViewBag.ExceptionDetails</p>
+    </div>
+    
+    <div class="alert alert-danger">
+        <h5 class="alert-heading">Exception Stack Trace</h5>
+        <hr />
+        <p>@ViewBag.StackTrace</p>
+    </div>
+
+
+</div>
+

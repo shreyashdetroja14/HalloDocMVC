@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewData["Title"] = "Not Found";
+    Layout = "~/Views/Shared/_RequestLayout.cshtml";
+}
+
+<div class="main p-4 text-center">
+    <h1>@ViewBag.ErrorMessage</h1>
+    <h1>@ViewBag.Path</h1>
+    <h1>@ViewBag.QS</h1>
+
+    <a asp-action="Index" asp-controller="Home">
+        Click here to navigate to the homepage.
+    </a>
+</div>
+
