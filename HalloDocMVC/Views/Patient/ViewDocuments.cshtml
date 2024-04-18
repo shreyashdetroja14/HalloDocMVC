@@ -28,7 +28,7 @@
         <div class="filesSection bg-body rounded-3 shadow">
             <div class="uploadSection p-3">
                 <p class="m-0">Patient Name</p>
-                <h2 class="h4 mb-3">Testing Test <span class="fw-light">(Conformation Number)</span></h2>
+                <h2 class="h4 mb-3">Testing Test <span class="fw-light">(@Model.ConfirmationNumber)</span></h2>
                 <p class="mb-4">
                     Click here for any files that you or the doctors or your subsequent requestors
                     have attached
@@ -43,7 +43,7 @@
                         <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
                                for="MultipleFiles">
                             <span class="px-3 py-2" id="filename">Select File</span>
-                            <button type="submit" class="btn btn-info p-3 text-white fw-bold rounded-0">
+                            <button type="submit" class="btn btn-info p-3 text-white fw-bold">
                                 <img src="~/images/uploadIcon.svg" class="me-2" alt="">Upload
                             </button>
                         </label>
@@ -57,13 +57,16 @@
 
                 <div>
                     <div class="heading d-flex justify-content-between align-items-center">
-                        <h4>Documents</h4>
-                        <a asp-action="DownloadAllFiles" asp-route-id="@Model.RequestId" class="btn btn-outline-info p-2 d-none d-md-inline">
+                        <h4>
+                            <input type="checkbox" name="" id="selectAllMobile" class="d-md-none" value="@Model.RequestId">
+                            Documents
+                        </h4>
+                        <button class="btn btn-outline-info p-2 d-none d-md-inline ms-2 download-all-btn">
                             Download All
-                        </a>
-                        <a asp-action="DownloadAllFiles" asp-route-id="@Model.FileInfo?.FirstOrDefault()?.FileId" class="btn btn-outline-info p-2 d-md-none">
-                            <img src="~/images/downloadIcon.svg" alt="">
-                        </a>
+                        </button>
+                        <button class="btn btn-outline-info p-2 d-md-none download-all-btn">
+                            <i class="bi bi-cloud-arrow-down"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -88,14 +91,14 @@
                             {
                                 <tr>
                                     <td class="p-3">
-                                        <input type="checkbox" name="" id="">
+                                        <input type="checkbox" name="selectFile" id="" class="selectFile" value="@item.FileId">
                                     </td>
                                     <td class="py-3">@item.FileName</td>
                                     <td class="py-3">@item.Uploader</td>
                                     <td class="py-3">@item.UploadDate</td>
                                     <td class="py-3">
                                         <a asp-action="DownloadFile" asp-route-id="@item.FileId" class="btn btn-outline-info">
-                                            <img src="~/images/downloadIcon.svg" alt="">
+                                            <i class="bi bi-cloud-download"></i>
                                         </a>
                                     </td>
                                 </tr>
@@ -124,7 +127,7 @@
                                 <div id="flush-collapse-@item.FileId" class="accordion-collapse collapse">
                                     <div class="accordion-body">
                                         <div class="mb-2">
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" name="selectFile" id="" class="selectFileMobile" value="@item.FileId">
                                             <span>@item.FileName</span>
                                         </div>
                                         <div class="mb-2">
@@ -135,7 +138,7 @@
                                         </div>
                                         <div>
                                             <a asp-action="DownloadFile" asp-route-id="@item.FileId" class="btn btn-outline-info">
-                                                <img src="~/images/downloadIcon.svg" alt="">
+                                                <i class="bi bi-cloud-download"></i>
                                             </a>
                                         </div>
                                     </div>
@@ -166,6 +169,114 @@
             fileChosen.textContent = fileChosen.textContent.slice(0, fileChosen.textContent.length - 2);
 
         })
+    </script>
+
+    <script>
+        // SELECT ALL CHECKBOX
+        const selectAllCheckbox = document.querySelector('#selectAll');
+        const selectAllCheckboxMobile = document.querySelector('#selectAllMobile');
+
+        // ALL CHECKBOXES FOR FILES
+        const checkBoxes = document.querySelectorAll('input[name="selectFile"].selectFile');
+        const checkBoxesMobile = document.querySelectorAll('input[name="selectFile"].selectFileMobile');
+
+        // GET SELECTED CHECKBOXES VALUES
+        function GetSelectedCheckboxValues() {
+            //SELECTED CHECKBOXES
+            const selectedCheckboxes = document.querySelectorAll('input[name="selectFile"].selectFile:checked');
+            const selectedCheckboxesMobile = document.querySelectorAll('input[name="selectFile"].selectFileMobile:checked');
+
+            //SELECTED FILE IDS
+            const selectedValues = [];
+            console.log('width: ', window.innerWidth);
+            if (window.innerWidth < 768) {
+                for (const checkbox of selectedCheckboxesMobile) {
+                    selectedValues.push(parseInt(checkbox.value));
+                }
+            }
+            else {
+                for (const checkbox of selectedCheckboxes) {
+                    selectedValues.push(parseInt(checkbox.value));
+                }
+            }
+
+            return selectedValues;
+        }
+
+        //SELECT ALL
+        selectAllCheckbox.addEventListener('change', () => {
+            for (const checkbox of checkBoxes) {
+                checkbox.checked = selectAllCheckbox.checked;
+            }
+            console.log('select all')
+        })
+
+        //SELECT ALL MOBILE
+        selectAllCheckboxMobile.addEventListener('change', () => {
+            for (const checkbox of checkBoxesMobile) {
+                checkbox.checked = selectAllCheckboxMobile.checked;
+            }
+            console.log('select all mobile')
+        })
+
+        //DOWNLOAD BUTTONS
+        const downloadAllBtn = document.querySelectorAll('.download-all-btn');
+
+        downloadAllBtn.forEach(item => {
+            item.addEventListener('click', async () => {
+                console.log('download btn clicked');
+
+                const selectedValues = GetSelectedCheckboxValues();
+                if (selectedValues.length === 0) {
+                    console.log('No checkboxes are selected');
+                    return;
+                }
+
+                // REQUEST ID
+                const requestId = @Model.RequestId;
+                console.log(requestId);
+
+                console.log(JSON.stringify({ selectedValues, requestId }));
+
+                try {
+
+                    const response = await fetch('/Patient/DownloadMultipleFiles', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ selectedValues, requestId })
+                    });
+
+                    if (response.ok) {
+                        console.log(response);
+
+                        //download file logic
+
+                        const data = await response.blob();
+                        console.log(data);
+
+                        const a = document.createElement('a');
+                        const url = window.URL.createObjectURL(data);
+                        a.href = url;
+                        a.download = `request-${requestId}.zip`;
+                        document.body.append(a);
+                        a.click();
+                        a.remove();
+                        window.URL.revokeObjectURL(url);
+
+                        console.log('Files downloaded successfully');
+
+                    } else {
+                        console.error('Error downloading files:', await response.text());
+                    }
+
+                } catch (error) {
+                    console.log('Error: ', error);
+                }
+
+            });
+        });
     </script>
 }
 

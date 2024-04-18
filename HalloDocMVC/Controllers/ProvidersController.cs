@@ -60,6 +60,7 @@ namespace HalloDocMVC.Controllers
             return View(Providers);
         }
 
+
         [CustomAuthorize("admin")]
         public IActionResult FetchProviders(int regionId)
         {
@@ -67,6 +68,7 @@ namespace HalloDocMVC.Controllers
             Providers = _providersService.GetProvidersList(regionId);
             return PartialView("_ProvidersListPartial", Providers);
         }
+
 
         [CustomAuthorize("admin")]
         public IActionResult ContactProvider(int providerId)
@@ -77,6 +79,7 @@ namespace HalloDocMVC.Controllers
 
             return PartialView("_ContactProviderModal", ContactProvider);
         }
+
 
         [HttpPost]
         [CustomAuthorize("admin")]
@@ -98,6 +101,7 @@ namespace HalloDocMVC.Controllers
 
             return RedirectToAction("Index");
         }
+
 
         [HttpPost]
         [CustomAuthorize("admin")]
@@ -132,6 +136,7 @@ namespace HalloDocMVC.Controllers
             return View(ProviderInfo);
         }
 
+
         [HttpPost]
         [CustomAuthorize("admin")]
         public async Task<IActionResult> ResetPassword(EditProviderViewModel AccountInfo)
@@ -157,6 +162,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("EditProvider", new { providerId = AccountInfo.ProviderId });
         }
 
+
         [HttpPost]
         [CustomAuthorize("admin")]
         public async Task<IActionResult> EditAccountInfo(EditProviderViewModel AccountInfo)
@@ -172,6 +178,7 @@ namespace HalloDocMVC.Controllers
             }
             return RedirectToAction("EditProvider", new {providerId = AccountInfo.ProviderId});
         }
+
 
         [HttpPost]
         [CustomAuthorize("admin")]
@@ -189,6 +196,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("EditProvider", new { providerId = PhysicianInfo.ProviderId });
         }
         
+
         [HttpPost]
         [CustomAuthorize("admin")]
         public async Task<IActionResult> EditBillingInfo(EditProviderViewModel BillingInfo)
@@ -205,6 +213,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("EditProvider", new { providerId = BillingInfo.ProviderId });
         }
         
+
         [HttpPost]
         [CustomAuthorize("admin")]
         public async Task<IActionResult> EditProfileInfo(EditProviderViewModel ProfileInfo)
@@ -220,6 +229,7 @@ namespace HalloDocMVC.Controllers
             }
             return RedirectToAction("EditProvider", new { providerId = ProfileInfo.ProviderId });
         }
+
 
         [HttpPost]
         [CustomAuthorize("admin")]
@@ -238,6 +248,7 @@ namespace HalloDocMVC.Controllers
 
             return RedirectToAction("EditProvider", new { providerId });
         }
+
 
         [CustomAuthorize("admin")]
         public async Task<IActionResult> DeleteProvider(int providerId)
@@ -269,6 +280,7 @@ namespace HalloDocMVC.Controllers
             return View(ProviderInfo);
         }
 
+
         [HttpPost]
         [CustomAuthorize("admin")]
         public async Task<IActionResult> CreateProvider(EditProviderViewModel ProviderInfo)
@@ -292,6 +304,7 @@ namespace HalloDocMVC.Controllers
         #endregion
 
         #region SCHEDULING PAGE
+
         [Route("Scheduling", Name = "Scheduling")]
         [CustomAuthorize("admin", "physician")]
         [RoleAuthorize("Scheduling")]
@@ -315,6 +328,7 @@ namespace HalloDocMVC.Controllers
             return View(SchedulingData);
         }
 
+
         [CustomAuthorize("admin", "physician")]
         public IActionResult GetEventResources(int regionId)
         {
@@ -332,6 +346,7 @@ namespace HalloDocMVC.Controllers
             return Json(calendarData);
         }
 
+
         [HttpPost]
         [CustomAuthorize("admin", "physician")]
         public IActionResult CheckAvailableShift(CreateShiftViewModel CreateShiftData)
@@ -340,6 +355,7 @@ namespace HalloDocMVC.Controllers
 
             return Json(new { status = isShiftAvailable });
         }
+
 
         [HttpPost]
         [CustomAuthorize("admin", "physician")]
@@ -361,6 +377,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Scheduling");
         }
 
+
         [CustomAuthorize("admin")]
         public IActionResult GetPhysicianSelectList(int regionId)
         {
@@ -368,6 +385,7 @@ namespace HalloDocMVC.Controllers
 
             return Json(physicianList);
         }
+
 
         [CustomAuthorize("admin", "physician")]
         public IActionResult ViewShift(int shiftDetailId)
@@ -390,6 +408,7 @@ namespace HalloDocMVC.Controllers
             return PartialView("_ViewShiftModal", ViewShiftData);
         }
 
+
         [HttpPost]
         [CustomAuthorize("admin", "physician")]
         public async Task<IActionResult> EditShift(CreateShiftViewModel EditShiftData)
@@ -409,6 +428,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Scheduling");
         }
         
+
         [HttpPost]
         [CustomAuthorize("admin")]
         public async Task<IActionResult> ReturnShift(CreateShiftViewModel ReturnShiftData)
@@ -425,6 +445,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Scheduling");
         }
         
+
         [HttpPost]
         [CustomAuthorize("admin")]
         public async Task<IActionResult> DeleteShift(CreateShiftViewModel DeleteShiftData)
@@ -453,6 +474,7 @@ namespace HalloDocMVC.Controllers
             return View(RequestedShiftData);
         }
 
+
         [CustomAuthorize("admin")]
         public IActionResult GetShiftsList(int regionId)
         {
@@ -460,6 +482,7 @@ namespace HalloDocMVC.Controllers
 
             return PartialView("_RequestShiftTablePartial", shiftsList);
         }
+
 
         [HttpPost]
         [CustomAuthorize("admin")]
@@ -479,6 +502,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("RequestedShifts");
         }
         
+
         [HttpPost]
         [CustomAuthorize("admin")]
         public async Task<IActionResult> DeleteShifts(List<int> shiftDetailIds)
@@ -509,6 +533,7 @@ namespace HalloDocMVC.Controllers
 
             return View(MDsOnCallData);
         }
+
 
         [CustomAuthorize("admin")]
         public IActionResult GetMDsList(int regionId)

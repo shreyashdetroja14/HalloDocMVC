@@ -25,11 +25,16 @@ namespace HalloDocMVC.Controllers
         {
             return View();
         }
+
+        #region PATIENT REQUEST
+
         public IActionResult PatientRequest()
         {
             ViewBag.RegionList = _requestFormService.GetRegionList();
             return View();
         }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PatientRequest(PatientRequestViewModel prvm)
@@ -67,11 +72,16 @@ namespace HalloDocMVC.Controllers
             
         }
 
+        #endregion
+
+        #region FAMILY REQUEST
+
         public IActionResult FamilyRequest()
         {
             ViewBag.RegionList = _requestFormService.GetRegionList();
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -103,11 +113,16 @@ namespace HalloDocMVC.Controllers
             }
         }
 
+        #endregion
+
+        #region CONCIERGE REGION
+
         public IActionResult ConciergeRequest()
         {
             ViewBag.RegionList = _requestFormService.GetRegionList();
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -140,11 +155,16 @@ namespace HalloDocMVC.Controllers
 
         }
 
+        #endregion
+
+        #region BUSINESS REQUEST
+
         public IActionResult BusinessRequest()
         {
             ViewBag.RegionList = _requestFormService.GetRegionList();
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -176,6 +196,9 @@ namespace HalloDocMVC.Controllers
 
         }
 
+        #endregion
+
+        #region CHECK USER ACCOUNT EXISTS OR NOT
 
         public async Task<IActionResult> CheckUserAccount(string? email)
         {
@@ -190,5 +213,6 @@ namespace HalloDocMVC.Controllers
             return Json(new { status = "invalid" });
         }
 
+        #endregion
     }
 }

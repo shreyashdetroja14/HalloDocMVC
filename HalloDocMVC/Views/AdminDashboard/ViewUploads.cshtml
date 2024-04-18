@@ -36,7 +36,7 @@
                         <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
                                for="MultipleFiles">
                             <span class="px-3 py-2" id="filename" style="overflow-x: hidden;">Select File</span>
-                            <button type="submit" class="btn btn-info p-3 text-white fw-bold rounded-0">
+                            <button type="submit" class="btn btn-info p-3 text-white fw-bold">
                                 <img src="~/images/uploadIcon.svg" class="me-2" alt="">Upload
                             </button>
                         </label>
@@ -207,15 +207,52 @@
     </script>
 
     <script>
-        //SELECT ALL CHECKBOXES
+        // SELECT ALL CHECKBOX
         const selectAllCheckbox = document.querySelector('#selectAll');
         const selectAllCheckboxMobile = document.querySelector('#selectAllMobile');
 
-        //ALL CHECKBOXES FOR FILES
-        const checkBoxes = document.querySelectorAll('input[name="selectFile"].selectFile')
-        const checkBoxesMobile = document.querySelectorAll('input[name="selectFile"].selectFileMobile')
-        console.log(checkBoxes);
-        console.log(checkBoxesMobile);
+        // ALL CHECKBOXES FOR FILES
+        const checkBoxes = document.querySelectorAll('input[name="selectFile"].selectFile');
+        const checkBoxesMobile = document.querySelectorAll('input[name="selectFile"].selectFileMobile');
+
+        // GET SELECTED CHECKBOXES VALUES
+        function GetSelectedCheckboxValues(){
+            //SELECTED CHECKBOXES
+            const selectedCheckboxes = document.querySelectorAll('input[name="selectFile"].selectFile:checked');
+            const selectedCheckboxesMobile = document.querySelectorAll('input[name="selectFile"].selectFileMobile:checked');
+
+            //SELECTED FILE IDS
+            const selectedValues = [];
+            console.log('width: ', window.innerWidth);
+            if (window.innerWidth < 768) {
+                for (const checkbox of selectedCheckboxesMobile) {
+                    selectedValues.push(parseInt(checkbox.value));
+                }
+            } 
+            else {
+                for (const checkbox of selectedCheckboxes) {
+                    selectedValues.push(parseInt(checkbox.value));
+                }
+            }
+
+            return selectedValues;
+        }
+
+        //SELECT ALL
+        selectAllCheckbox.addEventListener('change', () => {
+            for (const checkbox of checkBoxes) {
+                checkbox.checked = selectAllCheckbox.checked;
+            }
+            console.log('select all')
+        })
+
+        //SELECT ALL MOBILE
+        selectAllCheckboxMobile.addEventListener('change', () => {
+            for (const checkbox of checkBoxesMobile) {
+                checkbox.checked = selectAllCheckboxMobile.checked;
+            }
+            console.log('select all mobile')
+        })
 
         //DOWNLOAD BUTTONS
         const downloadAllBtn = document.querySelectorAll('.download-all-btn');
@@ -224,50 +261,27 @@
             item.addEventListener('click', async () => {
                 console.log('download btn clicked');
 
-                //SELECTED CHECKBOXES 
-                const selectedCheckboxes = document.querySelectorAll('input[name="selectFile"].selectFile:checked');
-                const selectedCheckboxesMobile = document.querySelectorAll('input[name="selectFile"].selectFileMobile:checked');
-
-                console.log(selectedCheckboxes);
-                console.log(selectedCheckboxesMobile);
-
-                //SELECTED FILE IDS
-                const selectedValues = [];
-
-                //FILL BASED ON SCREENSIZE. FIRST CHECK DESKTOP SCREEN VALUES. THEN MOBILE.
-                if (selectedCheckboxes.length === 0) {
-                    if(selectedCheckboxesMobile.length === 0){
-                        console.log('No checkboxes are selected');
-                        return;
-                    } else{
-                        for (const checkbox of selectedCheckboxesMobile) {
-                            selectedValues.push(parseInt(checkbox.value));
-                        }
-                    }
-                } else{
-                    for (const checkbox of selectedCheckboxes) {
-                        selectedValues.push(parseInt(checkbox.value));
-                    }
+                const selectedValues = GetSelectedCheckboxValues();
+                if (selectedValues.length === 0) {
+                    console.log('No checkboxes are selected');
+                    return;
                 }
-                console.log(selectedValues);
 
-                // REQUEST ID 
+                // REQUEST ID
                 const requestId = @Model.RequestId;
                 console.log(requestId);
 
-                console.log(JSON.stringify({ selectedValues , requestId }));
+                console.log(JSON.stringify({ selectedValues, requestId }));
 
                 try {
-                    
+
                     const response = await fetch('/Dashboard/DownloadAll', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ selectedValues , requestId })
+                        body: JSON.stringify({ selectedValues, requestId })
                     });
-
-                    
 
                     if (response.ok) {
                         console.log(response);
@@ -295,6 +309,7 @@
                 } catch (error) {
                     console.log('Error: ', error);
                 }
+                
             });
         });
 
@@ -304,32 +319,13 @@
         deleteAllBtn.forEach(item => {
             item.addEventListener('click', async () => {
                 console.log('delete btn clicked');
-                //SELECTED CHECKBOXES
-                const selectedCheckboxes = document.querySelectorAll('input[name="selectFile"].selectFile:checked');
-                const selectedCheckboxesMobile = document.querySelectorAll('input[name="selectFile"].selectFileMobile:checked');
 
-                console.log(selectedCheckboxes);
-                console.log(selectedCheckboxesMobile);
 
-                //SELECTED FILE IDS
-                const selectedValues = [];
-
-                //FILL BASED ON SCREENSIZE. FIRST CHECK DESKTOP SCREEN VALUES. THEN MOBILE.
-                if (selectedCheckboxes.length === 0) {
-                    if (selectedCheckboxesMobile.length === 0) {
-                        console.log('No checkboxes are selected');
-                        return;
-                    } else {
-                        for (const checkbox of selectedCheckboxesMobile) {
-                            selectedValues.push(parseInt(checkbox.value));
-                        }
-                    }
-                } else {
-                    for (const checkbox of selectedCheckboxes) {
-                        selectedValues.push(parseInt(checkbox.value));
-                    }
+                const selectedValues = GetSelectedCheckboxValues();
+                if (selectedValues.length === 0) {
+                    console.log('No checkboxes are selected');
+                    return;
                 }
-                console.log(selectedValues);
 
                 // REQUEST ID
                 const requestId = @Model.RequestId;
@@ -338,7 +334,6 @@
                 console.log(JSON.stringify({ selectedValues, requestId }));
 
                 try {
-
                     const response = await fetch('/Dashboard/DeleteAll', {
                         method: 'POST',
                         headers: {
@@ -347,16 +342,12 @@
                         body: JSON.stringify({ selectedValues, requestId })
                     });
 
-
                     if (!response.ok) {
                         throw Error("unable to delete");
-                        //console.log('Files downloaded successfully');
-
-                    } 
+                    }
                     console.log(response);
 
                     const url = await response.text();
-
                     window.location.href = url;
 
                     console.log('deleted successfully');
@@ -367,7 +358,6 @@
             });
         });
 
-
         //SEND MAIL
         const mailForm = document.querySelector('#mailform');
         mailForm.addEventListener('submit', async (e) => {
@@ -377,32 +367,11 @@
 
             console.log(emailValue);
 
-            //SELECTED CHECKBOXES
-            const selectedCheckboxes = document.querySelectorAll('input[name="selectFile"].selectFile:checked');
-            const selectedCheckboxesMobile = document.querySelectorAll('input[name="selectFile"].selectFileMobile:checked');
-
-            console.log(selectedCheckboxes);
-            console.log(selectedCheckboxesMobile);
-
-            //SELECTED FILE IDS
-            const selectedValues = [];
-
-            //FILL BASED ON SCREENSIZE. FIRST CHECK DESKTOP SCREEN VALUES. THEN MOBILE.
-            if (selectedCheckboxes.length === 0) {
-                if (selectedCheckboxesMobile.length === 0) {
-                    console.log('No checkboxes are selected');
-                    return;
-                } else {
-                    for (const checkbox of selectedCheckboxesMobile) {
-                        selectedValues.push(parseInt(checkbox.value));
-                    }
-                }
-            } else {
-                for (const checkbox of selectedCheckboxes) {
-                    selectedValues.push(parseInt(checkbox.value));
-                }
+            const selectedValues = GetSelectedCheckboxValues();
+            if (selectedValues.length === 0) {
+                console.log('No checkboxes are selected');
+                return;
             }
-            console.log(selectedValues);
 
             // REQUEST ID
             const requestId = @Model.RequestId;
@@ -411,7 +380,6 @@
             console.log(JSON.stringify({ selectedValues, requestId, emailValue }));
 
             try {
-
                 const response = await fetch('/Dashboard/SendMail', {
                     method: 'POST',
                     headers: {
@@ -420,26 +388,13 @@
                     body: JSON.stringify({ selectedValues, requestId, emailValue })
                 });
 
-
                 if (!response.ok) {
                     throw Error("unable to send mail");
-                    //console.log('Files downloaded successfully');
-
                 }
                 console.log(response);
 
                 const url = await response.text();
-
                 window.location.href = url;
-
-                //const newUrl = response.url || "";
-
-                //if (newUrl) {
-                //    console.log('Loading new URL:', newUrl);
-                //    window.location.href = newUrl;
-                //} else {
-                //    console.warn('No URL found in response');
-                //}
 
                 console.log('mail sent successfully');
 
@@ -447,25 +402,6 @@
                 console.log('Error: ', error);
             }
         })
-
-
-        //SELECT ALL 
-        selectAllCheckbox.addEventListener('change', () => {
-            for (const checkbox of checkBoxes) {
-                checkbox.checked = selectAllCheckbox.checked;
-            }
-            console.log('select all')
-        })
-
-        //SELECT ALL MOBILE
-        selectAllCheckboxMobile.addEventListener('change', () => {
-            for (const checkbox of checkBoxesMobile) {
-                checkbox.checked = selectAllCheckboxMobile.checked;
-            }
-            console.log('select all mobile')
-        })
-
-        //console.log(checkBoxes);
-        //console.log(selectAllCheckbox.value);
+        
     </script>
 }

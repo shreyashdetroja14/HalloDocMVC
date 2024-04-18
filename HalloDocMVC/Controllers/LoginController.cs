@@ -21,21 +21,8 @@ namespace HalloDocMVC.Controllers
             _jwtService = jwtService;
         }
 
-        public static string? decrypt(string emailToken)
-        {
-            if (emailToken == null)
-            {
-                return null;
-            }
-            else
-            {
-                byte[] encryptedEmail = Convert.FromBase64String(emailToken);
-                string email = ASCIIEncoding.ASCII.GetString(encryptedEmail);
-                return email;
-            }
-        }
+        #region LOGIN
 
-        //[CustomAuthorize("")]
         public IActionResult Index()
         {
             string token = Request.Cookies["jwt"] ?? "";
@@ -59,6 +46,7 @@ namespace HalloDocMVC.Controllers
 
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -94,7 +82,7 @@ namespace HalloDocMVC.Controllers
             }
             else if(role == "patient")
             {
-                return RedirectToAction("Dashboard", "Patient", new { id = aspnetuser.Id });
+                return RedirectToAction("Dashboard", "Patient");
             }
             else
             {
@@ -103,10 +91,15 @@ namespace HalloDocMVC.Controllers
 
         }
 
+        #endregion
+
+        #region FORGOT PASSWORD
+
         public IActionResult ForgotPassword()
         {
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -126,6 +119,10 @@ namespace HalloDocMVC.Controllers
             return View();
         }
 
+        #endregion
+
+        #region CREATE ACCOUNT
+
         public IActionResult CreateAccount(string emailtoken)
         {
             if (_jwtService.ValidateToken(emailtoken, out JwtSecurityToken jwtToken))
@@ -142,6 +139,7 @@ namespace HalloDocMVC.Controllers
 
             
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -177,6 +175,10 @@ namespace HalloDocMVC.Controllers
             }
         }
 
+        #endregion
+
+        #region RESET PASSWORD
+
         public IActionResult ResetPassword(string emailtoken)
         {
             if (_jwtService.ValidateToken(emailtoken, out JwtSecurityToken jwtToken))
@@ -191,6 +193,7 @@ namespace HalloDocMVC.Controllers
 
             return NotFound();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -219,12 +222,20 @@ namespace HalloDocMVC.Controllers
             return View("~/Views/Login/Index.cshtml");
         }
 
+        #endregion
+
+        #region LOGOUT 
+
         public IActionResult Logout ()
         {
             Response.Cookies.Delete("jwt");
             //return View("Index");
             return RedirectToAction("Index");
         }
+
+        #endregion
+
+        #region VALIDATE COOKIE (JWT TOKEN)
 
         public IActionResult ValidateCookie() 
         {
@@ -235,6 +246,8 @@ namespace HalloDocMVC.Controllers
             }
             return StatusCode(200, "Cookie is valid");
         }
+
+        #endregion
     }
 }
 

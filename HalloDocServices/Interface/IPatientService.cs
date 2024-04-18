@@ -18,10 +18,12 @@ namespace HalloDocServices.Interface
 
         Task<List<DashboardRequestViewModel>> GetRequestList(int userId);
 
-        Task<List<RequestFileViewModel>> GetRequestFiles(int requestId);
+        Task<ViewDocumentsViewModel> GetRequestFiles(int requestId);
 
         Task UploadFiles(IEnumerable<IFormFile> MultipleFiles, int requestId);
- 
+
+        byte[] GetFilesAsZip(List<int> fileIds, int requestId);
+
         Task<int> GetUserIdByRequestId(int requestId);
 
         Task<string> GetAspNetUserIdByUserId(int userId);
@@ -30,13 +32,13 @@ namespace HalloDocServices.Interface
 
         Task<ProfileViewModel> GetProfileDetails(int userId);
 
-        Task EditProfile(ProfileViewModel ProfileDetails);
+        Task<bool> EditProfile(ProfileViewModel ProfileDetails);
 
         Task<PatientRequestViewModel> GetPatientInfo(int userId);
 
-        Task<int> CreatePatientRequest(FamilyRequestViewModel frvm);
+        Task<bool> CreatePatientRequest(FamilyRequestViewModel frvm);
 
-        Task CreateFamilyRequest(FamilyRequestViewModel frvm, int userId);
+        Task<bool> CreateFamilyRequest(FamilyRequestViewModel frvm, int userId);
 
         Task<AgreementViewModel> GetAgreementViewModelData(AgreementViewModel AgreementInfo);
 

@@ -48,6 +48,9 @@ namespace HalloDocMVC.Controllers
             }
         }
 
+
+        #region EDIT ADMIN PROFILE
+
         [HttpPost]
         [CustomAuthorize("admin")]
         public async Task<IActionResult> ResetPassword(AdminProfileViewModel AdminProfileDetails)
@@ -73,6 +76,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
+
         [HttpPost]
         [CustomAuthorize("admin")]
         public async Task<IActionResult> EditAccountInfo(AdminProfileViewModel AdminProfileDetails)
@@ -92,6 +96,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
+
         [HttpPost]
         [CustomAuthorize("admin")]
         public async Task<IActionResult> EditAdminInfo(AdminProfileViewModel AdminProfileDetails)
@@ -110,6 +115,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
+
         [HttpPost]
         [CustomAuthorize("admin")]
         public async Task<IActionResult> EditBilling(AdminProfileViewModel AdminProfileDetails)
@@ -127,6 +133,10 @@ namespace HalloDocMVC.Controllers
 
             return RedirectToAction("Index");
         }
+
+        #endregion
+
+        #region EDIT PHYSICIAN PROFILE
 
         [HttpPost]
         [Route("Physician/ResetPassword", Name ="ResetPasswordPhysician")]
@@ -154,6 +164,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToRoute("Profile");
         }
 
+
         [HttpPost]
         [Route("Physician/ProfileInfo", Name = "EditProfileInfoPhysician")]
         [CustomAuthorize("physician")]
@@ -171,6 +182,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToRoute("Profile");
         }
 
+
         [HttpPost]
         [CustomAuthorize("physician")]
         public async Task<IActionResult> RequestAdmin(EditProviderViewModel MailDetails)
@@ -186,5 +198,7 @@ namespace HalloDocMVC.Controllers
             }
             return RedirectToRoute("Profile");
         }
+
+        #endregion
     }
 }

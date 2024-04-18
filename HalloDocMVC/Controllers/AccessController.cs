@@ -41,11 +41,13 @@ namespace HalloDocMVC.Controllers
                 claimsData.Email = jwtToken?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
                 claimsData.AspNetUserRole = jwtToken?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
                 claimsData.Username = jwtToken?.Claims.FirstOrDefault(x => x.Type == "username")?.Value;
-                claimsData.Id = int.Parse(jwtToken?.Claims.FirstOrDefault(x => x.Type == "id")?.Value ?? "");
+                claimsData.RoleId = int.Parse(jwtToken?.Claims.FirstOrDefault(x => x.Type == "roleId")?.Value ?? "0");
+                claimsData.Id = int.Parse(jwtToken?.Claims.FirstOrDefault(x => x.Type == "id")?.Value ?? "0");
             }
 
             return claimsData;
         }
+
 
         [RoleAuthorize("Accounts")]
         public IActionResult Accounts()
@@ -58,6 +60,7 @@ namespace HalloDocMVC.Controllers
             return View(AccessData);
         }
 
+
         [RoleAuthorize("Role")]
         public IActionResult CreateRole()
         {
@@ -66,6 +69,7 @@ namespace HalloDocMVC.Controllers
 
             return View(CreateRoleData);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> CreateRole(CreateRoleViewModel CreateRoleData)
@@ -90,6 +94,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Accounts");
         }
 
+
         [RoleAuthorize("Role")]
         public async Task<IActionResult> DeleteRole(int roleId)
         {
@@ -108,6 +113,7 @@ namespace HalloDocMVC.Controllers
 
         }
 
+
         [RoleAuthorize("Role")]
         public IActionResult EditRole(int roleId)
         {
@@ -118,6 +124,7 @@ namespace HalloDocMVC.Controllers
 
             return View("CreateRole", EditRoleData);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> EditRole(CreateRoleViewModel EditRoleData)
@@ -136,12 +143,14 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Accounts");
         }
 
+
         [RoleAuthorize("Users")]
         public async Task<IActionResult> UserAccess()
         {
             List<UserAccessRow> userAccessList = await _accessService.GetUserAccessList();
             return View(userAccessList);
         }
+
 
         public IActionResult CreatePhysician()
         {
@@ -151,6 +160,7 @@ namespace HalloDocMVC.Controllers
 
             return View("~/Views/Providers/CreateProvider.cshtml", ProviderInfo);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> CreateProvider(EditProviderViewModel ProviderInfo)
@@ -170,6 +180,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("UserAccess");
         }
 
+
         public IActionResult CreateAdmin()
         {
             AdminProfileViewModel AdminDetails = new AdminProfileViewModel();
@@ -177,6 +188,7 @@ namespace HalloDocMVC.Controllers
 
             return View(AdminDetails);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> CreateAdmin(AdminProfileViewModel AdminDetails)
@@ -195,6 +207,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("UserAccess");
         }
 
+
         public IActionResult EditAdmin(string aspnetuserId)
         {
 
@@ -204,6 +217,7 @@ namespace HalloDocMVC.Controllers
 
             return View("~/Views/Profile/Index.cshtml", AdminProfileDetails);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> ResetPassword(AdminProfileViewModel AdminProfileDetails)
@@ -229,6 +243,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("EditAdmin", new { aspnetuserId = AdminProfileDetails.AspNetUserId });
         }
 
+
         [HttpPost]
         public async Task<IActionResult> EditAccountInfo(AdminProfileViewModel AdminProfileDetails)
         {
@@ -247,6 +262,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("EditAdmin", new { aspnetuserId = AdminProfileDetails.AspNetUserId });
         }
 
+
         [HttpPost]
         public async Task<IActionResult> EditAdminInfo(AdminProfileViewModel AdminProfileDetails)
         {
@@ -263,6 +279,7 @@ namespace HalloDocMVC.Controllers
 
             return RedirectToAction("EditAdmin", new { aspnetuserId = AdminProfileDetails.AspNetUserId });
         }
+
 
         [HttpPost]
         public async Task<IActionResult> EditBilling(AdminProfileViewModel AdminProfileDetails)
@@ -281,6 +298,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("EditAdmin", new { aspnetuserId = AdminProfileDetails.AspNetUserId });
         }
 
+
         public IActionResult EditPhysician(int physicianId)
         {
             EditProviderViewModel ProviderInfo = new EditProviderViewModel();
@@ -291,6 +309,7 @@ namespace HalloDocMVC.Controllers
 
             return View("~/Views/Providers/EditProvider.cshtml", ProviderInfo);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> ResetProviderPassword(EditProviderViewModel AccountInfo)
@@ -316,6 +335,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("EditPhysician", new { providerId = AccountInfo.ProviderId });
         }
 
+
         [HttpPost]
         public async Task<IActionResult> EditProviderAccountInfo(EditProviderViewModel AccountInfo)
         {
@@ -330,6 +350,7 @@ namespace HalloDocMVC.Controllers
             }
             return RedirectToAction("EditPhysician", new { physicianId = AccountInfo.ProviderId });
         }
+
 
         [HttpPost]
         public async Task<IActionResult> EditPhysicianInfo(EditProviderViewModel PhysicianInfo)
@@ -346,6 +367,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("EditPhysician", new { physicianId = PhysicianInfo.ProviderId });
         }
 
+
         [HttpPost]
         public async Task<IActionResult> EditBillingInfo(EditProviderViewModel BillingInfo)
         {
@@ -361,6 +383,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("EditPhysician", new { physicianId = BillingInfo.ProviderId });
         }
 
+
         [HttpPost]
         public async Task<IActionResult> EditProfileInfo(EditProviderViewModel ProfileInfo)
         {
@@ -375,6 +398,7 @@ namespace HalloDocMVC.Controllers
             }
             return RedirectToAction("EditPhysician", new { physicianId = ProfileInfo.ProviderId });
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Onboarding(IFormFile UploadDoc, int docId, int providerId)

@@ -37,55 +37,27 @@ namespace HalloDocMVC.Controllers
         }
         #endregion
 
-        public async Task<IActionResult> GoToDashboard(int UserId)
-        {
-            //var userFetched = await _context.Users.FindAsync(UserId);
-
-            string aspnetuserId = await _patientService.GetAspNetUserIdByUserId(UserId);
-            if (aspnetuserId.Equals(""))
-            {
-                return NotFound();
-            }
-            return RedirectToAction("Dashboard", new { id = aspnetuserId });
-        }
+        #region DASHBOARD
 
         [CustomAuthorize("patient")]
-        public async Task<IActionResult> Dashboard(string id)
+        public async Task<IActionResult> Dashboard()
         {
-            string token = Request.Cookies["jwt"] ?? "";
-            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
-            {
-                var aspnetuseridclaim = jwtToken.Claims.FirstOrDefault(x => x.Type == "aspnetuserId");
-                id = aspnetuseridclaim?.Value ?? "";
-            }
-
-            int userId = await _patientService.CheckUser(id);
-            if (userId == 0)
-            {
-                return NotFound();
-            }
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            int userId = claimsData.Id;
 
             List<DashboardRequestViewModel> requestlist = await _patientService.GetRequestList(userId);
-
-            ViewBag.UserId = userId;
 
             return View(requestlist);
         }
 
+        #endregion
+
+        #region VIEW DOCUMENTS
+
         [CustomAuthorize("patient")]
         public async Task<IActionResult> ViewDocuments(int requestid)
         {
-            List<RequestFileViewModel> requestfilelist = await _patientService.GetRequestFiles(requestid);
-
-            ViewDocumentsViewModel vrvm = new()
-            {
-                RequestId = requestid,
-                FileInfo = requestfilelist
-            };
-
-            int userId = await _patientService.GetUserIdByRequestId(requestid);
-            ViewBag.UserId = userId;
-
+            ViewDocumentsViewModel vrvm = await _patientService.GetRequestFiles(requestid);
 
             return View(vrvm);
         }
@@ -117,33 +89,38 @@ namespace HalloDocMVC.Controllers
 
         }
 
-        [CustomAuthorize("patient")]
-        public async Task<IActionResult> DownloadAllFiles(int id)
-        {
-            var filesRow = await _patientService.GetRequestFiles(id);
-            MemoryStream ms = new MemoryStream();
-            using (ZipArchive zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
-                filesRow.ForEach(file =>
-                {
-                    string FilePath = "wwwroot\\" + file.FilePath;
-                    string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
 
-                    ZipArchiveEntry zipEntry = zip.CreateEntry(Path.GetFileName(file.FileName));
-                    using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
-                    using (Stream zipEntryStream = zipEntry.Open())
-                    {
-                        fs.CopyTo(zipEntryStream);
-                    }
-                });
-            return File(ms.ToArray(), "application/zip", "download.zip");
+        [HttpPost]
+        [CustomAuthorize("patient")]
+        public IActionResult DownloadMultipleFiles([FromBody] DownloadRequest requestData)
+        {
+
+            List<int> selectedValues = requestData.SelectedValues;
+            int requestId = requestData.RequestId;
+
+            var zipdata = _patientService.GetFilesAsZip(selectedValues, requestId);
+
+            if (zipdata != null)
+            {
+                return File(zipdata, "application/zip", "download.zip");
+            }
+
+            TempData["ErrorMessage"] = "Unable To Update Profile";
+
+            return RedirectToAction("ViewDocuments", new { requestid = requestData.RequestId });
         }
 
+        #endregion
+
+        #region PROFILE 
+
         [CustomAuthorize("patient")]
-        public async Task<IActionResult> Profile(int UserId)
+        public async Task<IActionResult> Profile()
         {
-            var profileDetails = await _patientService.GetProfileDetails(UserId);
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+
+            ProfileViewModel profileDetails = await _patientService.GetProfileDetails(claimsData.Id);
             
-            ViewBag.UserId = profileDetails.UserId;
             return View(profileDetails);
         }
 
@@ -154,29 +131,41 @@ namespace HalloDocMVC.Controllers
         {
             if (!ModelState.IsValid)
             {
+                var regionList = _patientService.GetRegionList();
+                ProfileDetails.RegionList = regionList;
                 return View("~/Views/Patient/Profile.cshtml", ProfileDetails);
             }
 
-            await _patientService.EditProfile(ProfileDetails);
+            bool isProfileEdited = await _patientService.EditProfile(ProfileDetails);
+            if (isProfileEdited)
+            {
+                TempData["SuccessMessage"] = "Profile Updated Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable To Update Profile";
 
-            return RedirectToAction("Profile", new { UserId = ProfileDetails.UserId });
+            }
+
+            return RedirectToAction("Profile");
         }
 
-        [CustomAuthorize("patient")]
-        public async Task<IActionResult> PatientRequest(int UserId)
-        {
-            PatientRequestViewModel PatientInfo = new PatientRequestViewModel();
+        #endregion
 
-            PatientInfo = await _patientService.GetPatientInfo(UserId);
+        #region PATIENT REQUEST
+
+        [CustomAuthorize("patient")]
+        public async Task<IActionResult> PatientRequest()
+        {
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+
+            PatientRequestViewModel PatientInfo = new PatientRequestViewModel();
+            PatientInfo = await _patientService.GetPatientInfo(claimsData.Id);
 
             FamilyRequestViewModel frvm = new FamilyRequestViewModel();
             frvm.PatientInfo = PatientInfo;
 
             ViewBag.RegionList = _patientService.GetRegionList();
-
-            // Send data to view
-            //ViewBag.Fullname = userFetched?.FirstName + " " + userFetched?.LastName;
-            ViewBag.UserId = UserId;
             ViewBag.RequestType = 2;
 
             return View(frvm);
@@ -190,21 +179,34 @@ namespace HalloDocMVC.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ViewBag.RegionList = _patientService.GetRegionList();
                 return View(frvm);
             }
 
-            int userRequestUserId = await _patientService.CreatePatientRequest(frvm);
+            bool isRequestCreated = await _patientService.CreatePatientRequest(frvm);
+            if (isRequestCreated)
+            {
+                TempData["SuccessMessage"] = "Request Created Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable To Create Request";
+                return RedirectToAction("PatientRequest");
 
-            return RedirectToAction("GoToDashboard", new { UserId = userRequestUserId });
+            }
+
+            return RedirectToAction("Dashboard");
 
         }
 
-        [CustomAuthorize("patient")]
-        public IActionResult FamilyRequest(int UserId)
-        {
-            ViewBag.UserId = UserId;
-            ViewBag.RequestType = 3;
+        #endregion
 
+        #region FAMILY REQUEST
+
+        [CustomAuthorize("patient")]
+        public IActionResult FamilyRequest()
+        {
+            ViewBag.RequestType = 3;
             ViewBag.RegionList = _patientService.GetRegionList();
 
             return View("~/Views/Patient/PatientRequest.cshtml");
@@ -213,21 +215,35 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("patient")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> FamilyRequest(FamilyRequestViewModel frvm, int UserId)
+        public async Task<IActionResult> FamilyRequest(FamilyRequestViewModel frvm)
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.UserId = UserId;
                 ViewBag.RequestType = 3;
+                ViewBag.RegionList = _patientService.GetRegionList();
                 return View("~/Views/Patient/PatientRequest.cshtml", frvm);
             }
 
-            //frvm.PatientInfo.EmailToken = _jwtService.GenerateEmailToken(frvm.PatientInfo.Email, isExpireable: false);
+            ClaimsData claimsData = _jwtService.GetClaimValues();
 
-            await _patientService.CreateFamilyRequest(frvm, UserId);
+            bool isRequestCreated = await _patientService.CreateFamilyRequest(frvm, claimsData.Id);
+            if (isRequestCreated)
+            {
+                TempData["SuccessMessage"] = "Request Created Successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable To Create Request";
+                return RedirectToAction("FamilyRequest");
 
-            return RedirectToAction("GoToDashboard", new { UserId });
+            }
+
+            return RedirectToAction("Dashboard");
         }
+
+        #endregion
+
+        #region AGREEMENT
 
         public async Task<IActionResult> Agreement(string requestId)
         {
@@ -281,5 +297,7 @@ namespace HalloDocMVC.Controllers
 
             }
         }
+
+        #endregion
     }
 }

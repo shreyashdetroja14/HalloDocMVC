@@ -45,11 +45,14 @@ namespace HalloDocMVC.Controllers
 
         #endregion
 
+        #region SEARCH RECORDS
+
         [RoleAuthorize("Records")]
         public IActionResult SearchRecords()
         {
             return View();
         }
+
 
         [HttpPost]
         public IActionResult GetRecordsList(SearchRecordsViewModel SearchFilters)
@@ -66,6 +69,7 @@ namespace HalloDocMVC.Controllers
             return PartialView("_RecordsTablePartial", PaginatedList.DataRows);
         }
 
+
         public async Task<IActionResult> DeleteRecord(int requestId)
         {
             bool idRecordDeleted = await _recordsService.DeleteRecord(requestId, GetClaimsData().Id);
@@ -81,6 +85,7 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("SearchRecords");
         }
 
+
         [HttpPost]
         public IActionResult ExportRecords(SearchRecordsViewModel SearchFilters)
         {
@@ -89,11 +94,16 @@ namespace HalloDocMVC.Controllers
             return File(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "records.xlsx");
         }
 
+        #endregion
+
+        #region PATIENT HISTORY AND RECORD
+
         [RoleAuthorize("History")]
         public IActionResult PatientHistory()
         {
             return View();
         }
+
 
         [HttpPost]
         public IActionResult GetPatientList(SearchRecordsViewModel SearchFilters)
@@ -110,11 +120,13 @@ namespace HalloDocMVC.Controllers
             return PartialView("_PatientHistoryPartial", PaginatedList.DataRows);
         }
 
+
         public IActionResult PatientRecord(int userId)
         {   PatientRowViewModel UserIdModel = new PatientRowViewModel();
             UserIdModel.UserId = userId;
             return View(UserIdModel);
         }
+
 
         public IActionResult GetPatientRecordList(int userId, int pageNumber)
         {
@@ -130,10 +142,15 @@ namespace HalloDocMVC.Controllers
             return PartialView("_PatientRecordPartial", PaginatedList.DataRows);
         }
 
+        #endregion
+
+        #region BLOCK HISTORY
+
         public IActionResult BlockedHistory()
         {
             return View();
         }
+
 
         [HttpPost]
         public IActionResult GetBlockedList(SearchRecordsViewModel SearchFilters)
@@ -150,6 +167,7 @@ namespace HalloDocMVC.Controllers
             return PartialView("_BlockedHistoryPartial", PaginatedList.DataRows);
         }
 
+
         public async Task<IActionResult> Unblock(int blockRequestId)
         {
             bool isRequestUnblocked = await _recordsService.UnblockRequest(blockRequestId, GetClaimsData().Id);
@@ -165,11 +183,16 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("BlockedHistory");
         }
 
+        #endregion
+
+        #region EMAIL LOGS
+
         [RoleAuthorize("EmailLogs")]
         public IActionResult EmailLogs()
         {
             return View();
         }
+
 
         [HttpPost]
         public IActionResult GetEmailLogs(SearchRecordsViewModel SearchFilters)
@@ -186,11 +209,16 @@ namespace HalloDocMVC.Controllers
             return PartialView("_EmailSMSLogPartial", PaginatedList.DataRows);
         }
 
+        #endregion
+
+        #region SMS LOGS
+
         [RoleAuthorize("SmsLogs")]
         public IActionResult SMSLogs()
         {
             return View();
         }
+
 
         [HttpPost]
         public IActionResult GetSMSLogs(SearchRecordsViewModel SearchFilters)
@@ -206,5 +234,7 @@ namespace HalloDocMVC.Controllers
             ViewBag.PagerData = PaginatedList.PagerData;
             return PartialView("_EmailSMSLogPartial", PaginatedList.DataRows);
         }
+
+        #endregion
     }
 }

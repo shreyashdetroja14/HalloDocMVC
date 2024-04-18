@@ -16,6 +16,8 @@ namespace HalloDocMVC.Controllers
             _vendorService = vendorService;
         }
 
+        #region GET VENDORS
+
         [RoleAuthorize("Vendors")]
         public IActionResult Index()
         {
@@ -25,11 +27,16 @@ namespace HalloDocMVC.Controllers
             return View(VendorsViewData);
         }
 
+
         public IActionResult GetVendorsList(int professionId, string searchPattern)
         {
             List<VendorRowViewModel> VendorsList = _vendorService.GetVendorsList(professionId, searchPattern);
             return PartialView("_VendorsListPartial", VendorsList);
         }
+
+        #endregion
+
+        #region CREATE VENDOR
 
         public IActionResult CreateVendor()
         {
@@ -39,6 +46,7 @@ namespace HalloDocMVC.Controllers
 
             return View("~/Views/Vendors/CreateEditVendor.cshtml", CreateVendorData);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> CreateVendor(CreateVendorViewModel CreateVendorData)
@@ -67,6 +75,10 @@ namespace HalloDocMVC.Controllers
             }
         }
 
+        #endregion
+
+        #region EDIT VENDOR
+
         public IActionResult EditVendor(int vendorId)
         {
             CreateVendorViewModel EditVendorData = new CreateVendorViewModel();
@@ -76,6 +88,7 @@ namespace HalloDocMVC.Controllers
 
             return View("~/Views/Vendors/CreateEditVendor.cshtml", EditVendorData);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> EditVendor(CreateVendorViewModel EditVendorData)
@@ -104,6 +117,10 @@ namespace HalloDocMVC.Controllers
             }
         }
 
+        #endregion
+
+        #region DELETE VENDOR
+
         public async Task<IActionResult> DeleteVendor(int vendorId)
         {
             bool isVendorDeleted = await _vendorService.DeleteVendor(vendorId);
@@ -117,5 +134,7 @@ namespace HalloDocMVC.Controllers
             }
                 return RedirectToAction("Index");
         }
+
+        #endregion
     }
 }

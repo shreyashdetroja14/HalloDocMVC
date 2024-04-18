@@ -88,7 +88,6 @@ namespace HalloDocMVC.Controllers
 
         [Route("FetchRequests", Name = "FetchRequests")]
         [CustomAuthorize("admin", "physician")]
-        
         public IActionResult FetchRequests(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int pageNumber = 1)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
@@ -605,6 +604,7 @@ namespace HalloDocMVC.Controllers
         }
 
 
+        [Route("/Admin/CloseCase", Name = "CloseCase")]
         [CustomAuthorize("admin")]
         public IActionResult CloseCase(int requestId)
         {

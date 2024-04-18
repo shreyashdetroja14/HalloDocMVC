@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using System.IO.Compression;
 
 namespace HalloDocServices.Implementation
 {
@@ -80,7 +81,7 @@ namespace HalloDocServices.Implementation
             return requestlist;
         }
 
-        public async Task<List<RequestFileViewModel>> GetRequestFiles(int requestId)
+        public async Task<ViewDocumentsViewModel> GetRequestFiles(int requestId)
         {
             var requestwisefilesFetched = await _requestRepository.GetRequestWiseFilesByRequestId(requestId);
             var requestFetched = await _requestRepository.GetRequestByRequestIdAsList(requestId);
@@ -91,15 +92,6 @@ namespace HalloDocServices.Implementation
                 req => req.RequestId,
                 (rwf, req) => new { rwf, req }
                 );
-
-            /*var data = from requests in _context.Requests.ToList()
-                       join files in requestwisefilesFetched
-                       on requests.RequestId equals files.RequestId
-                       select new
-                       {
-                           requests,
-                           files
-                       };*/
 
             List<RequestFileViewModel> requestfilelist = new List<RequestFileViewModel>();
             foreach (var row in data)
@@ -114,7 +106,14 @@ namespace HalloDocServices.Implementation
                 });
             }
 
-            return requestfilelist;
+            ViewDocumentsViewModel vrvm = new()
+            {
+                RequestId = requestFetched.FirstOrDefault()?.RequestId ?? 0,
+                ConfirmationNumber = requestFetched.FirstOrDefault()?.ConfirmationNumber,
+                FileInfo = requestfilelist
+            };
+
+            return vrvm;
         }
 
         public async Task<int> GetUserIdByRequestId(int requestId)
@@ -165,6 +164,31 @@ namespace HalloDocServices.Implementation
             await _requestRepository.CreateRequestWiseFiles(requestWiseFiles);
         }
 
+        public byte[] GetFilesAsZip(List<int> fileIds, int requestId)
+        {
+            //var filesRow = await _patientService.GetRequestFiles(id);
+            var files = _requestRepository.GetRequestWiseFilesByFileIds(fileIds);
+
+            MemoryStream ms = new MemoryStream();
+            using (ZipArchive zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
+            {
+                files.ForEach(file =>
+                {
+                    string FilePath = "wwwroot\\" + file.FileName;
+                    string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+
+                    ZipArchiveEntry zipEntry = zip.CreateEntry(Path.GetFileName(file.FileName));
+                    using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+                    using (Stream zipEntryStream = zipEntry.Open())
+                    {
+                        fs.CopyTo(zipEntryStream);
+                    }
+                });
+            }
+
+            return ms.ToArray();
+        }
+
         public async Task<RequestWiseFile> RequestFileData(int fileId)
         {
             var requestwisefileFetched = await _requestRepository.GetRequestWiseFileByFileId(fileId);
@@ -203,16 +227,25 @@ namespace HalloDocServices.Implementation
             return ProfileDetails;
         }
 
-        public async Task EditProfile(ProfileViewModel ProfileDetails)
+        public async Task<bool> EditProfile(ProfileViewModel ProfileDetails)
         {
             var aspnetuserFetched = await _userRepository.GetAspNetUserByEmail(ProfileDetails.Email);
+            var userFetched = await _userRepository.GetUserByEmail(ProfileDetails.Email);
+            var requestsFetched = await _requestRepository.GetRequestsByEmail(ProfileDetails.Email);
+            var requestClientsFetched = await _requestRepository.GetRequestsClientsByEmail(ProfileDetails.Email);
+
+            if(aspnetuserFetched == null || userFetched == null)
+            {
+                return false;
+            }
+
             if (aspnetuserFetched != null)
             {
                 aspnetuserFetched.PhoneNumber = ProfileDetails.PhoneNumber;
 
                 await _userRepository.UpdateAspNetUser(aspnetuserFetched);
             }
-            var userFetched = await _userRepository.GetUserByEmail(ProfileDetails.Email);
+            
             if (userFetched != null)
             {
                 userFetched.FirstName = ProfileDetails.FirstName;
@@ -234,7 +267,6 @@ namespace HalloDocServices.Implementation
                 await _userRepository.UpdateUser(userFetched);
             }
 
-            var requestsFetched = await _requestRepository.GetRequestsByEmail(ProfileDetails.Email);
             if (requestsFetched.Count > 0)
             {
                 foreach (var request in requestsFetched)
@@ -247,7 +279,6 @@ namespace HalloDocServices.Implementation
                 await _requestRepository.UpdateRequests(requestsFetched);
             }
 
-            var requestClientsFetched = await _requestRepository.GetRequestsClientsByEmail(ProfileDetails.Email);
             if (requestClientsFetched.Count > 0)
             {
                 foreach (var requestClient in requestClientsFetched)
@@ -266,6 +297,8 @@ namespace HalloDocServices.Implementation
                 }
                 await _requestRepository.UpdateRequestClients(requestClientsFetched);
             }
+
+            return true;
         }
 
         public async Task<PatientRequestViewModel> GetPatientInfo(int userId)
@@ -424,55 +457,56 @@ namespace HalloDocServices.Implementation
         }
         #endregion
 
-        public async Task<int> CreatePatientRequest(FamilyRequestViewModel frvm)
+        public async Task<bool> CreatePatientRequest(FamilyRequestViewModel frvm)
         {
             var aspnetuserFetched = await _userRepository.GetAspNetUserByEmail(frvm.PatientInfo.Email);
             var userFetched = await _userRepository.GetUserByEmail(frvm.PatientInfo.Email);
-            if (userFetched != null && aspnetuserFetched != null)
+            if (userFetched == null || aspnetuserFetched == null)
             {
-                var requestNew = new Request();
+                return false;
+            }
+            var requestNew = new Request();
 
-                requestNew.RequestTypeId = 2;
-                requestNew.UserId = userFetched.UserId;
-                requestNew.FirstName = frvm.PatientInfo.FirstName;
-                requestNew.LastName = frvm.PatientInfo.LastName;
-                requestNew.PhoneNumber = frvm.PatientInfo.PhoneNumber;
-                requestNew.Email = frvm.PatientInfo.Email;
-                requestNew.Status = 1;
-                requestNew.CreatedDate = DateTime.Now;
-                requestNew.IsUrgentEmailSent = false;
-                requestNew.PatientAccountId = aspnetuserFetched?.Id;
-                requestNew.CreatedUserId = userFetched.UserId;
+            requestNew.RequestTypeId = 2;
+            requestNew.UserId = userFetched.UserId;
+            requestNew.FirstName = frvm.PatientInfo.FirstName;
+            requestNew.LastName = frvm.PatientInfo.LastName;
+            requestNew.PhoneNumber = frvm.PatientInfo.PhoneNumber;
+            requestNew.Email = frvm.PatientInfo.Email;
+            requestNew.Status = 1;
+            requestNew.CreatedDate = DateTime.Now;
+            requestNew.IsUrgentEmailSent = false;
+            requestNew.PatientAccountId = aspnetuserFetched?.Id;
+            requestNew.CreatedUserId = userFetched.UserId;
 
-                requestNew.ConfirmationNumber = GenerateConfirmationNumber(requestNew.CreatedDate, frvm.PatientInfo.LastName ?? "", frvm.PatientInfo.FirstName, frvm.PatientInfo.State ?? "");
+            requestNew.ConfirmationNumber = GenerateConfirmationNumber(requestNew.CreatedDate, frvm.PatientInfo.LastName ?? "", frvm.PatientInfo.FirstName, frvm.PatientInfo.State ?? "");
 
-                await _requestRepository.CreateRequest(requestNew);
+            await _requestRepository.CreateRequest(requestNew);
 
-                var requestClientNew = CreateRequestClient(frvm.PatientInfo, requestNew);
+            var requestClientNew = CreateRequestClient(frvm.PatientInfo, requestNew);
 
-                await _requestRepository.CreateRequestClient(requestClientNew);
+            await _requestRepository.CreateRequestClient(requestClientNew);
 
-                if (frvm.PatientInfo.MultipleFiles != null)
+            if (frvm.PatientInfo.MultipleFiles != null)
+            {
+                List<string> files = UploadFilesToServer(frvm.PatientInfo.MultipleFiles, requestNew.RequestId);
+                List<RequestWiseFile> requestWiseFiles = new List<RequestWiseFile>();
+                foreach (string file in files)
                 {
-                    List<string> files = UploadFilesToServer(frvm.PatientInfo.MultipleFiles, requestNew.RequestId);
-                    List<RequestWiseFile> requestWiseFiles = new List<RequestWiseFile>();
-                    foreach (string file in files)
-                    {
-                        var reqwisefileNew = new RequestWiseFile();
-                        reqwisefileNew.RequestId = requestNew.RequestId;
-                        reqwisefileNew.FileName = file;
-                        reqwisefileNew.CreatedDate = DateTime.Now;
+                    var reqwisefileNew = new RequestWiseFile();
+                    reqwisefileNew.RequestId = requestNew.RequestId;
+                    reqwisefileNew.FileName = file;
+                    reqwisefileNew.CreatedDate = DateTime.Now;
 
-                        requestWiseFiles.Add(reqwisefileNew);
-                    }
-                    await _requestRepository.CreateRequestWiseFiles(requestWiseFiles);
+                    requestWiseFiles.Add(reqwisefileNew);
                 }
+                await _requestRepository.CreateRequestWiseFiles(requestWiseFiles);
             }
 
-            return userFetched?.UserId ?? 0;
+            return true;
         }
 
-        public async Task CreateFamilyRequest(FamilyRequestViewModel frvm, int userId)
+        public async Task<bool> CreateFamilyRequest(FamilyRequestViewModel frvm, int userId)
         {
             var aspnetuserFetched = await _userRepository.GetAspNetUserByEmail(frvm.PatientInfo.Email);
             var userFetched = await _userRepository.GetUserByEmail(frvm.PatientInfo.Email);
@@ -519,6 +553,8 @@ namespace HalloDocServices.Implementation
                 }
 
             }
+
+            return true;
         }
 
         public async Task<bool> AcceptAgreement(AgreementViewModel AgreementInfo)
