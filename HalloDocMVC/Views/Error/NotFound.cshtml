@@ -4,10 +4,15 @@
     Layout = "~/Views/Shared/_RequestLayout.cshtml";
 }
 
-<div class="main p-4 text-center">
-    <h1>@ViewBag.ErrorMessage</h1>
-    <h1>@ViewBag.Path</h1>
-    <h1>@ViewBag.QS</h1>
+<div class="main p-4 text-center w-100">
+    <div class="container">
+        <h1>@ViewBag.ErrorMessage</h1>
+        <h3>@ViewBag.Path</h3>
+        <div style="word-wrap: break-word;">
+            <p>@ViewBag.QS</p>
+        </div>
+        
+    </div>
 
     <a asp-action="Index" asp-controller="Home">
         Click here to navigate to the homepage.

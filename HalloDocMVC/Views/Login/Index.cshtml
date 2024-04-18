@@ -36,9 +36,8 @@
         <div class="form-floating mb-4">
             <input asp-for="Password" type="password" class="form-control transparent" id="Password" placeholder="Password">
             <label for="Password">Password</label>
-            @*<img src="~/images/passwordShowIcon.svg" alt="" class="label-icon">*@
-            <span class="material-symbols-outlined text-dark icon-label">
-                visibility
+            <span class="material-symbols-outlined text-dark icon-label" id="eye">
+                visibility_off
             </span>
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
@@ -55,6 +54,9 @@
 @section AddScript
 {
     <partial name="_ToastMessageScriptsPartial" />
+
+    @*GET USER LOCATION, COORDINATES*@
+    @* IF USER IS PHYSICIAN STORE THEM IN DB *@
 
     <script>
         $('#submit-btn').click(function (event) {
@@ -90,6 +92,21 @@
                 $('#login-form').submit();
             }
         });
+    </script>
+
+    <script>
+        $('#eye').click(function () {
+            var passwordInput = $('#Password');
+            var eyeIcon = $('#eye');
+
+            if (passwordInput.attr('type') === "password") {
+                passwordInput.attr('type', 'text');
+                eyeIcon.text('visibility');
+            } else {
+                passwordInput.attr('type', 'password');
+                eyeIcon.text('visibility_off');
+            }
+        })
     </script>
 }
 

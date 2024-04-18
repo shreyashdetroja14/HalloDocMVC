@@ -56,21 +56,21 @@
 
                     <div class="d-flex justify-content-end">
                         
-                        @if (!Model.IsPhysician)
-                        {
-                            <button type="button" class="btn btn-info text-white ms-2" id="return-shift">Return</button>
-                        }
                         @if (!Model.IsOldShift)
                         {
+                            @if (!Model.IsPhysician)
+                            {
+                                <button type="button" class="btn btn-info text-white ms-2" id="return-shift">Return</button>
+                            }
                             <button type="button" class="btn btn-outline-info ms-2" id="edit-btn">Edit</button>
+                            <button type="button" class="btn btn-info text-white ms-2" id="edit-shift">Save</button>
+                            <input type="reset" value="Cancel" class="btn btn-outline-info ms-2" id="cancel-btn" />
+                            @if (!Model.IsPhysician)
+                            {
+                                <button type="button" class="btn btn-danger text-white ms-2" id="delete-shift">Delete</button>
+                            }
                         }
-                        <button type="button" class="btn btn-info text-white ms-2" id="edit-shift" >Save</button>
-                        <input type="reset" value="Cancel" class="btn btn-outline-info ms-2" id="cancel-btn" />
-                        @if (!Model.IsPhysician)
-                        {
-                            <button type="button" class="btn btn-danger text-white ms-2" id="delete-shift">Delete</button>
-                        }
-                        
+
                     </div>
 
                 </form>

@@ -333,6 +333,9 @@ async function GetSendAgreementModalData(requestId) {
             const modalContainer = document.getElementById('modal-container');
             modalContainer.innerHTML = sendAgreementModalHtml;
 
+            const myModal = new bootstrap.Modal('#send-agreement-modal');
+            myModal.show();
+
         }
     }
     catch (error) {
@@ -646,8 +649,7 @@ function addEventListnersForPartial() {
 
                 await GetSendAgreementModalData(requestId);
 
-                const myModal = new bootstrap.Modal('#send-agreement-modal');
-                myModal.show();
+                
             });
         });
     }

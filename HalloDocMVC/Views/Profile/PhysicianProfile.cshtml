@@ -87,6 +87,9 @@
                                 <input type="password" asp-for="Password" class="form-control" id="Password"
                                        placeholder="Password">
                                 <label asp-for="Password">Password</label>
+                                <span class="material-symbols-outlined text-body icon-label" id="eye">
+                                    visibility_off
+                                </span>
                                 <span asp-validation-for="Password" class="text-danger"></span>
                             </div>
                         </div>
@@ -279,7 +282,7 @@
                             <div class="w-100 d-flex justify-content-evenly flex-column align-items-center flex-lg-row align-items-lg-start my-3">
                                 @if (Model.SignaturePath != null)
                                 {
-                                    <img src="@Model.SignaturePath" class="border mb-3 mb-lg-0" style="width: 150px; height: 150px;" />
+                                    <img src="@Model.SignaturePath" class="border mb-3 mb-lg-0 bg-white" style="width: 150px; height: 150px;" />
                                 }
                                 <div class="signature-container d-flex flex-column align-items-center d-none">
                                     <canvas id="signature-pad" class="border border-dark mb-3" width="150" height="150"></canvas>
@@ -490,6 +493,10 @@
         const resetPassBtn = $('#reset-pass');
 
         resetPassBtn.click(function () {
+            if (resetPassBtn.val() === "") {
+                toastr.error("Password can't be empty");
+                return;
+            }
             $('#form-account-info').attr('action', '/Physician/ResetPassword');
             $('#form-account-info').attr('method', 'post');
             $('#form-account-info').submit();
@@ -634,6 +641,21 @@
                     }, false)
                 })
         })()
+    </script>
+
+    <script>
+        $('#eye').click(function () {
+            var passwordInput = $('#Password');
+            var eyeIcon = $('#eye');
+
+            if (passwordInput.attr('type') === "password") {
+                passwordInput.attr('type', 'text');
+                eyeIcon.text('visibility');
+            } else {
+                passwordInput.attr('type', 'password');
+                eyeIcon.text('visibility_off');
+            }
+        })
     </script>
 }
 

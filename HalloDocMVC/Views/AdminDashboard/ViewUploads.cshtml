@@ -276,6 +276,7 @@
                 const selectedValues = GetSelectedCheckboxValues();
                 if (selectedValues.length === 0) {
                     console.log('No checkboxes are selected');
+                    toastr.error("Please select files to download");
                     return;
                 }
 
