@@ -27,6 +27,8 @@ namespace HalloDocServices.ViewModels
 
         public string? Street { get; set; }
 
+        [RegularExpression(@"^[a-zA-Z\s\-']+$", ErrorMessage = "City name can only contain letters, spaces, hyphens, and apostrophes.")]
+
         public string? City { get; set; }
 
         /*[Required(ErrorMessage = "Region/State is required")]

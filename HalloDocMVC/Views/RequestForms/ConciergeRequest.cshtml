@@ -69,7 +69,7 @@
                     </div>
                 </div>
                 <div class="col-sm-6 pb-3">
-                    <input type="tel" asp-for="ConciergePhoneNumber" class="form-control w-100" id="ConciergePhoneNumber" />
+                    <input type="tel" asp-for="ConciergePhoneNumber" class="form-control w-100" id="PhoneNumber2" />
                     <span asp-validation-for="ConciergePhoneNumber" class="text-danger"></span>
 
                 </div>
@@ -152,7 +152,7 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" asp-for="PatientInfo.FirstName" class="form-control" id="PatientInfo.FirstName"
+                        <input type="text" asp-for="PatientInfo.FirstName" class="form-control" id="FirstName"
                                placeholder="First Name">
                         <label asp-for="PatientInfo.FirstName">First Name</label>
                         <span asp-validation-for="PatientInfo.FirstName" class="text-danger"></span>
@@ -160,7 +160,7 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input asp-for="PatientInfo.LastName" type="text" class="form-control" id="PatientInfo.LastName"
+                        <input asp-for="PatientInfo.LastName" type="text" class="form-control" id="LastName"
                                placeholder="Last Name">
                         <label asp-for="PatientInfo.LastName">Last Name</label>
                     </div>
@@ -180,7 +180,7 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="email" asp-for="PatientInfo.Email" class="form-control" id="PatientInfo.Email"
+                        <input type="email" asp-for="PatientInfo.Email" class="form-control" id="Email"
                                placeholder="abc@xyz.pqr">
                         <label asp-for="PatientInfo.Email">Email</label>
                         <span asp-validation-for="PatientInfo.Email" class="text-danger"></span>
@@ -199,7 +199,7 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" asp-for="PatientInfo.Room" class="form-control" id="PatientInfo.Room"
+                        <input type="text" asp-for="PatientInfo.Room" class="form-control" id="Room"
                                placeholder="City">
                         <label asp-for="PatientInfo.Room">Room # / Suite (Optional)</label>
                     </div>
@@ -218,26 +218,7 @@
 @section AddScript{
     <partial name="_ToastMessageScriptsPartial" />
 
-    <script>
-        const phoneInputField = document.querySelector("#ConciergePhoneNumber");
-        const ptphoneInputField = document.querySelector("#PhoneNumber");
-
-        const phoneInput = window.intlTelInput(phoneInputField, {
-            initialCountry: "in",
-            preferredCountries: ["in"],
-            onlyCountries: ["in", "us", "au", "de"],
-            utilsScript:
-                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        });
-
-        const ptphoneInput = window.intlTelInput(ptphoneInputField, {
-            initialCountry: "in",
-            preferredCountries: ["in"],
-            onlyCountries: ["in", "us", "au", "de"],
-            utilsScript:
-                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        });
-    </script>
+    
 
     <script type="text/javascript">
         $(window).on('load', function () {
@@ -252,6 +233,12 @@
             const state = $('#region-list').find('option:selected').text();
             $('#State').val(state);
         })
+    </script>
+
+    <script src="~/js/request.js"></script>
+
+    <script>
+
     </script>
 }
 

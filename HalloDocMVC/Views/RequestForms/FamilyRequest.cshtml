@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 <div class="col-sm-6 pb-3">
-                    <input type="tel" asp-for="FamilyPhoneNumber" class="form-control w-100" id="familyphone" />
+                    <input type="tel" asp-for="FamilyPhoneNumber" class="form-control w-100" id="PhoneNumber2" />
                     <span asp-validation-for="FamilyPhoneNumber" class="text-danger"></span>
 
                 </div>
@@ -103,7 +103,7 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
-                        <input type="text" asp-for="PatientInfo.FirstName" class="form-control" id="firstname"
+                        <input type="text" asp-for="PatientInfo.FirstName" class="form-control" id="FirstName"
                                placeholder="First Name">
                         <label asp-for="PatientInfo.FirstName">First Name</label>
                         <span asp-validation-for="PatientInfo.FirstName" class="text-danger"></span>
@@ -137,7 +137,7 @@
                     </div>
                 </div>
                 <div class="col-sm-6 pb-3">
-                    <input type="tel" asp-for="PatientInfo.PhoneNumber" class="form-control w-100" id="phone" />
+                    <input type="tel" asp-for="PatientInfo.PhoneNumber" class="form-control w-100" id="PhoneNumber" />
                     <span asp-validation-for="PatientInfo.PhoneNumber" class="text-danger"></span>
 
                 </div>
@@ -206,7 +206,7 @@
                         <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
                                asp-for="PatientInfo.MultipleFiles">
                             <span class="px-3 py-2" id="filename">Select File</span>
-                            <div class="btn btn-info p-3 text-white fw-bold rounded-0">
+                            <div class="btn btn-info p-3 text-white fw-bold ">
                                 <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
                             </div>
                         </label>
@@ -226,26 +226,7 @@
 @section AddScript{
     <partial name="_ToastMessageScriptsPartial" />
 
-    <script>
-        const phoneInputField = document.querySelector("#familyphone");
-        const ptphoneInputField = document.querySelector("#phone");
-
-        const phoneInput = window.intlTelInput(phoneInputField, {
-            initialCountry: "in",
-            preferredCountries: ["in"],
-            onlyCountries: ["in", "us", "au", "de"],
-            utilsScript:
-                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        });
-
-        const ptphoneInput = window.intlTelInput(ptphoneInputField, {
-            initialCountry: "in",
-            preferredCountries: ["in"],
-            onlyCountries: ["in", "us", "au", "de"],
-            utilsScript:
-                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        });
-    </script>
+    
 
     <script type="text/javascript">
         $(window).on('load', function () {
@@ -276,5 +257,8 @@
             $('#State').val(state);
         })
     </script>
+
+    <script src="~/js/request.js"></script>
+
 }
 

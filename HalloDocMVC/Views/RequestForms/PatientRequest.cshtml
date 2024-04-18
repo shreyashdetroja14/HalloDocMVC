@@ -165,7 +165,7 @@
                         <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label"
                                asp-for="MultipleFiles">
                             <span class="px-3 py-2" id="filename">Select File</span>
-                            <div class="btn btn-info p-3 text-white fw-bold rounded-0">
+                            <div class="btn btn-info p-3 text-white fw-bold">
                                 <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
                             </div>
                         </label>
@@ -185,16 +185,7 @@
 @section AddScript{
     <partial name="_ToastMessageScriptsPartial" />
 
-    <script>
-        const phoneInputField = document.querySelector("#PhoneNumber");
-        const phoneInput = window.intlTelInput(phoneInputField, {
-            initialCountry: "in",
-            preferredCountries: ["in"],
-            onlyCountries: ["in", "us", "au", "de"],
-            utilsScript:
-                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        });
-    </script>
+    
     <script>
         const emailInput = document.querySelector("#Email");
 
@@ -260,4 +251,6 @@
             $('#State').val(state);
         })
     </script>
+
+    <script src="~/js/request.js"></script>
 }
