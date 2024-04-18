@@ -27,8 +27,8 @@
 <div class="requests-desktop table-responsive-xxl d-none d-md-block mb-3">
     <table class="table">
         <thead>
-            <tr>
-                <th scope="col" style="min-width: 12rem">Name</th>
+            <tr class="bg-body">
+                <th scope="col" class="ps-3" style="min-width: 12rem">Name</th>
                 <th scope="col" style="min-width: 12rem">Phone</th>
                 <th scope="col" style="min-width: 7rem">Address</th>
                 @if(status == 3)
@@ -42,7 +42,7 @@
             @foreach (var request in Model)
             {
                 <tr class="@(request.RequestType == 1?"bg-business":"") @(request.RequestType == 2?"bg-patient":"") @(request.RequestType == 3?"bg-family":"") @(request.RequestType == 4?"bg-concierge":"") ">
-                    <td>
+                    <td class="ps-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <span>@request.PatientFullName</span>
                             <button class="btn p-1">
@@ -271,7 +271,7 @@
                                 </div>
                             }
                             <div class="col-6">
-                                <a asp-route="ViewCase" asp-route-requestId="@request.RequestId" class="btn bg-white border border-3 rounded-pill mb-2 w-75">
+                                <a asp-route="ViewCase" asp-route-requestId="@request.RequestId" class="btn btn-primary rounded-pill mb-2 w-75">
                                     View Case
                                 </a>
                             </div>

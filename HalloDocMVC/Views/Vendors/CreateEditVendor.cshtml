@@ -40,7 +40,7 @@
                 <span>Back</span>
             </button>
         </div>
-        <form asp-action="@(Model.IsEditVendor ? "EditVendor" : "CreateVendor")" class=" bg-white p-4 request-form">
+        <form asp-action="@(Model.IsEditVendor ? "EditVendor" : "CreateVendor")" class=" bg-body p-4 request-form">
             <input type="number" asp-for="VendorId" hidden>
             <h4 class="mb-3">Submit Information</h4>
             <div class="row">

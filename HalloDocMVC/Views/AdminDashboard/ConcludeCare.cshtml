@@ -36,7 +36,7 @@
                 <span>Back</span>
             </button>
         </div>
-        <div class="filesSection bg-white rounded-3 shadow">
+        <div class="filesSection bg-body rounded-3 custom-shadow">
             <div class="headingSection p-3">
                 <p class="m-0">Patient Name</p>
                 <h2 class="h4 mb-4 d-flex flex-column flex-sm-row">
@@ -50,8 +50,8 @@
             </div>
             <div class="requestfiles-md d-none d-md-block">
                 <table class="table">
-                    <thead style="background-color: #FAF9F6;">
-                        <tr class="requestfilesheader">
+                    <thead>
+                        <tr class="requestfilesheader bg-body-secondary">
                             <th scope="col" class="py-3"></th>
                             <th scope="col" class="py-3">Documents</th>
                             <th scope="col" class="py-3">Upload Date</th>
@@ -63,7 +63,7 @@
                         {
                             @foreach (var item in Model.FileInfo)
                             {
-                                <tr class="bg-white">
+                                <tr class="bg-body">
                                     <td class="py-3  text-center"><i class="bi bi-file-earmark-fill text-info fs-5"></i></td>
                                     <td class="py-3">@(item.FileName.Substring(0, item.FileName.LastIndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</td>
                                     <td class="py-3">@item.UploadDate</td>
@@ -125,7 +125,7 @@
                 }
             </div>
 
-            <form asp-route="ConcludeCarePost" class="bg-white p-4  request-form rounded-0 shadow-none">
+            <form asp-route="ConcludeCarePost" class="bg-body p-4  request-form rounded-bottom shadow-none">
                 <input type="number" asp-for="RequestId" hidden>
                 <h4 class="mb-3">Provider Notes</h4>
                 <div class="row">

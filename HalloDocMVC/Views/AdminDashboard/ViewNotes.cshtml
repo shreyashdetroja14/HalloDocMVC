@@ -21,7 +21,7 @@
         </div>
         <div class="row mb-1">
             <div class="col-12 col-md-6 p-2">
-                <div class="d-flex bg-white shadow-sm p-3 rounded-3">
+                <div class="d-flex bg-body shadow-sm p-3 rounded-3">
                     <i class="bi bi-sign-turn-slight-right h3"></i>
                     <div class="ms-2">
                         <p class="fs-4 fw-bold">Transfer Notes</p>
@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div class="col-12 col-md-6 p-2">
-                <div class="d-flex bg-white shadow-sm p-3 rounded-3">
+                <div class="d-flex bg-body shadow-sm p-3 rounded-3">
                     <i class="bi bi-sign-turn-slight-right h3"></i>
                     <div class="ms-2">
                         <p class="fs-4 fw-bold">Physician Notes</p>
@@ -54,7 +54,7 @@
                 </div>
             </div>
             <div class="col-12 col-md-6 p-2">
-                <div class="d-flex bg-white shadow-sm p-3 rounded-3">
+                <div class="d-flex bg-body shadow-sm p-3 rounded-3">
                     <i class="bi bi-sign-turn-slight-right h3"></i>
                     <div class="ms-2">
                         <p class="fs-4 fw-bold">Admin Notes</p>
@@ -72,7 +72,7 @@
             @if(Model.AdminCancellationNotes != null)
             {
                 <div class="col-12 col-md-6 p-2">
-                    <div class="d-flex bg-white shadow-sm p-3 rounded-3">
+                    <div class="d-flex bg-body shadow-sm p-3 rounded-3">
                         <i class="bi bi-sign-turn-slight-right h3"></i>
                         <div class="ms-2">
                             <p class="fs-4 fw-bold">Admin Cancellation Notes</p>
@@ -84,7 +84,7 @@
             else if(Model.PhysicianCancellationNotes != null)
             {
                 <div class="col-12 col-md-6 p-2">
-                    <div class="d-flex bg-white shadow-sm p-3 rounded-3">
+                    <div class="d-flex bg-body shadow-sm p-3 rounded-3">
                         <i class="bi bi-sign-turn-slight-right h3"></i>
                         <div class="ms-2">
                             <p class="fs-4 fw-bold">Physician Cancellation Notes</p>
@@ -96,7 +96,7 @@
             else if(Model.PatientCancellationNotes != null)
             {
                 <div class="col-12 col-md-6 p-2">
-                    <div class="d-flex bg-white shadow-sm p-3 rounded-3">
+                    <div class="d-flex bg-body shadow-sm p-3 rounded-3">
                         <i class="bi bi-sign-turn-slight-right h3"></i>
                         <div class="ms-2">
                             <p class="fs-4 fw-bold">Patient Cancellation Notes</p>
@@ -108,7 +108,7 @@
         </div>
         <div class="row">
             <div class="col-12 p-2">
-                <form asp-action="ViewNotes" class="bg-white shadow-sm p-3 rounded-3">
+                <form asp-action="ViewNotes" class="bg-body shadow-sm p-3 rounded-3">
                     <input type="number" asp-for="RequestId" hidden/>
                     @if(Model.IsPhysician == true)
                     {

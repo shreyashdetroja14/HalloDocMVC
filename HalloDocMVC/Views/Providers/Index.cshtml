@@ -29,10 +29,6 @@
             width: 20px;
             height: 20px;
         }
-
-        .main{
-            background-color: #FFF;
-        }
     </style>
 }
 
@@ -47,7 +43,7 @@
                 Provider Information
             </h2>
 
-            <div class="providersSection bg-white rounded-3" style="box-shadow: 0 0 5px rgba(0,0,0,0.3)">
+            <div class="providersSection bg-body rounded-3 custom-shadow" >
                 <div class="searchSection p-3 mb-2 d-flex flex-column flex-md-row justify-content-between align-items-center">
                     <select class="form-select selectlist mb-3 mb-md-0" asp-for="RegionId" asp-items="@Model.RegionList">
 

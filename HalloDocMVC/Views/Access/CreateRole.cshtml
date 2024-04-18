@@ -29,7 +29,7 @@
                 </button>
             </div>
 
-            <form asp-action="@(Model.IsCreateRole ? "CreateRole" : "EditRole")" class="bg-white p-4 request-form rounded-0 shadow">
+            <form asp-action="@(Model.IsCreateRole ? "CreateRole" : "EditRole")" class="bg-body p-4 rounded-3 custom-shadow">
                 <input type="number" asp-for="RoleId" hidden />
                 <h4 class="mb-3">Details</h4>
                 <div class="row">

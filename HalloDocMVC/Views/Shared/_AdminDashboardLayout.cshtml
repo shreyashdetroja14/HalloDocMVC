@@ -37,9 +37,12 @@
             <div class="navbar navbar-expand-md bg-body">
                 <div class="container-fluid">
                     <div>
-                        <button class="navbar-toggler border p-2" type="button" data-bs-toggle="offcanvas"
+                        <button class=" navbar-toggler p-2 btn btn-outline-info" type="button" data-bs-toggle="offcanvas"
                                 data-bs-target="#offcanvasNavbar">
-                            <img src="~/images/listIcon.svg" alt="">
+                            @*<img src="~/images/listIcon.svg" alt="">*@
+                            <span class="material-symbols-outlined text-info">
+                                menu
+                            </span>
                         </button>
 
                         <img src="~/images/HalloDocLogo.png" alt="" class="navbar-logo">
@@ -298,7 +301,7 @@
             }
             else if (claimsData.AspNetUserRole == "physician")
             {
-                <ul class="nav nav-tabs border-0 mb-3 nav-shadow d-none d-md-flex bg-white" id="ex1" role="tablist">
+                <ul class="nav nav-tabs border-0 mb-3 nav-shadow d-none d-md-flex bg-body text-body" id="ex1" role="tablist">
                     @if (AvailableMenus.Contains("Dashboard"))
                     {
                         <li class="nav-item" role="presentation">

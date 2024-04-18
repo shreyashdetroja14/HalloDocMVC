@@ -246,7 +246,10 @@ td .btn{
     font-size: 14px;
 }
 
-
+.accordion-button, .accordion-body {
+    background-color: #e7f1ff !important;
+    color: #000 !important;
+}
 
 
 .btn-check:active + .btn-outline-info, .btn-check:checked + .btn-outline-info, .btn-outline-info.active, .btn-outline-info.dropdown-toggle.show, .btn-outline-info:active{

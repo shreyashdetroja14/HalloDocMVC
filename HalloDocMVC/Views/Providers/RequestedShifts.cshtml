@@ -7,7 +7,8 @@
 {
     <style>
         .shift-item{
-            background-color: #e7f1ff;
+            color: #000;
+            background-color: #cff4fc;
             box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.2);
         }
 
@@ -34,7 +35,7 @@
                 <span>Back</span>
             </button>
         </div>
-        <div class="shiftsSection bg-white rounded-3 custom-shadow">
+        <div class="shiftsSection bg-body rounded-3 custom-shadow">
             <div class="search-area p-3 d-flex flex-column flex-md-row flex-md-wrap justify-content-between align-items-center">
                 <select class="form-select mb-2 me-md-2" style="width: 270px;" id="region-list" asp-items="@Model.RegionList">
                     <option value="">All Regions</option>

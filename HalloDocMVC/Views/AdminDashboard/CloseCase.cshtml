@@ -38,7 +38,7 @@
                 <span>Back</span>
             </button>
         </div>
-        <div class="filesSection bg-white rounded-3 shadow">
+        <div class="filesSection bg-body rounded-3 shadow">
             <div class="headingSection p-3">
                 <p class="m-0">Patient Name</p>
                 <h2 class="h4 mb-4 d-flex flex-column flex-sm-row">
@@ -49,8 +49,8 @@
             </div>
             <div class="requestfiles-md d-none d-md-block">
                 <table class="table">
-                    <thead style="background-color: #FAF9F6;">
-                        <tr class="requestfilesheader">
+                    <thead>
+                        <tr class="requestfilesheader bg-body-secondary">
                             <th scope="col" class="py-3"></th>
                             <th scope="col" class="py-3"></th>
                             <th scope="col" class="py-3">Upload Date</th>
@@ -58,11 +58,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (Model.ViewUploads?.FileInfo != null)
+                        @if (Model.ViewUploads?.FileInfo.Count() != 0)
                         {
                             @foreach (var item in Model.ViewUploads.FileInfo)
                             {
-                                <tr class="bg-white">
+                                <tr class="bg-body">
                                     <td class="py-3  text-center"><i class="bi bi-file-earmark-fill text-info fs-5"></i></td>
                                     <td class="py-3">@(item.FileName.Substring(0, item.FileName.LastIndexOf("-")) + item.FileName.Substring(item.FileName.IndexOf(".")))</td>
                                     <td class="py-3">@item.UploadDate</td>
@@ -73,6 +73,12 @@
                                     </td>
                                 </tr>
                             }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center">No Documents Found</td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -111,10 +117,14 @@
                             </div>
                         }
                     }
+                    @if (Model.ViewUploads?.FileInfo.Count() == 0)
+                    {
+                        <div class="px-3">No Documents Found.</div>
+                    }
                 </div>
             </div>
 
-            <form asp-action="UpdateCloseCase" class="bg-white p-4  request-form rounded-0 shadow-none">
+            <form asp-action="UpdateCloseCase" class="bg-body p-4  request-form rounded-0 shadow-none">
                 <input type="number" asp-for="ViewCase.RequestId" hidden>
                 <input type="number" asp-for="ViewCase.RequestType" hidden>
                 <div class="info mb-4">

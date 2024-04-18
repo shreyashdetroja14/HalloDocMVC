@@ -32,8 +32,8 @@
             </button>
         </div>
 
-        <div class=" rounded-3" style="box-shadow: 0 0 5px rgba(0,0,0,0.3)">
-            <form id="form-account-info" class="bg-white p-4 request-form rounded-3 rounded-top shadow-none">
+        <div class=" rounded-3 custom-shadow">
+            <form id="form-account-info" class="bg-body p-4  rounded-3 rounded-top shadow-none">
                 <input type="number" asp-for="ProviderId" hidden>
                 <div class="info mb-4">
                     <h4 class="mb-3">Account Information</h4>
@@ -80,7 +80,7 @@
                 </div>
             </form>
 
-            <form asp-action="EditPhysicianInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
+            <form asp-action="EditPhysicianInfo" class="bg-body p-4 pt-0  rounded-0 shadow-none">
                 <input type="number" asp-for="ProviderId" hidden>
                 <input type="text" asp-for="Username" id="Username2" hidden>
                 <div class="info mb-4">
@@ -163,7 +163,7 @@
 
             </form>
 
-            <form asp-action="EditBillingInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none">
+            <form asp-action="EditBillingInfo" class="bg-body p-4 pt-0  rounded-0 shadow-none">
                 <input type="number" asp-for="ProviderId" hidden>
                 <div class="info mb-4">
                     <h4 class="mb-3">Mailing & Billing Information</h4>
@@ -220,7 +220,7 @@
 
             </form>
 
-            <form asp-action="EditProfileInfo" class="bg-white p-4 pt-0 request-form rounded-0 shadow-none" enctype="multipart/form-data">
+            <form asp-action="EditProfileInfo" class="bg-body p-4 pt-0  rounded-0 shadow-none" enctype="multipart/form-data">
                 <input type="number" asp-for="ProviderId" hidden>
                 <div class="info mb-4">
                     <h4 class="mb-3">Provider Profile</h4>
@@ -316,7 +316,7 @@
 
             </form>
 
-            <div class="p-4 pt-0 bg-white rounded-3 rounded-bottom">
+            <div class="p-4 pt-0 bg-body rounded-bottom">
                 <h4 class="mb-3">Onboarding</h4>
                 <form asp-action="Onboarding" enctype="multipart/form-data" asp-route-providerId="@Model.ProviderId" class="rounded-0 shadow-none mb-3">
                     <input type="number" value="1" name="docId" hidden />

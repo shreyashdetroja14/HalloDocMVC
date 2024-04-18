@@ -16,11 +16,11 @@
     <link href="https://unpkg.com/fullcalendar-scheduler@5.10.1/main.min.css" rel="stylesheet" />
 
     <style>
-        .btn-shadow{
+        .btn-shadow {
             box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.4);
         }
 
-        .active-calendar-tab{
+        .active-calendar-tab {
             background-color: #0dcaf0;
             color: #fff;
         }
@@ -30,29 +30,31 @@
 <div class="main">
     @*<partial name="_NavbarLinks">*@
 
-        <div class="container-xl p-4">
-            <div class="d-flex justify-content-between align-items-center">
-            <h2 class="mb-4">Scheduling</h2>
+    <div class="container-xl p-4">
+        <h2 class="mb-4">Scheduling</h2>
+
+        <div class="bg-body rounded-3 p-4 custom-shadow">
+            @if (!Model.IsPhysician)
+            {
+                <div class="search-area d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+                    <select class="form-select mb-3 mb-md-0" id="region-list" style="width: 270px;" asp-for="RegionId" asp-items="@Model.RegionList">
+                        <option value="">All Regions</option>
+                    </select>
+                    <div class="d-flex">
+                        <a asp-action="MDsOnCall" class="btn btn-info text-white me-2 btn-shadow">Providers On Call</a>
+                        <a asp-action="RequestedShifts" class="btn btn-info text-white me-2 btn-shadow">Shifts For Review</a>
+                        <button type="button" class="btn btn-info text-white btn-shadow" data-bs-toggle="modal" data-bs-target="#create-shift-modal">Add Shift</button>
+                    </div>
+                </div>
+            }
+
             @if (Model.IsPhysician)
             {
-                <button type="button" class="btn btn-info text-white btn-shadow" data-bs-toggle="modal" data-bs-target="#create-shift-modal">Create Shift</button>
-            }
-            </div>
-
-        @if(!Model.IsPhysician)
-        {
-            <div class="search-area d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
-                <select class="form-select mb-3 mb-md-0" id="region-list" style="width: 270px;" asp-for="RegionId" asp-items="@Model.RegionList">
-                    <option value="">All Regions</option>
-                </select>
-                <div class="d-flex">
-                    <a asp-action="MDsOnCall" class="btn btn-info text-white me-2 btn-shadow">Providers On Call</a>
-                    <a asp-action="RequestedShifts" class="btn btn-info text-white me-2 btn-shadow">Shifts For Review</a>
-                    <button type="button" class="btn btn-info text-white btn-shadow" data-bs-toggle="modal" data-bs-target="#create-shift-modal">Add Shift</button>
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-info text-white btn-shadow" data-bs-toggle="modal" data-bs-target="#create-shift-modal">Create Shift</button>
                 </div>
-            </div>
-        }
-        
+            }
+
 
             <h5 class="mb-3" id="calendar-title"></h5>
             <div class="d-flex justify-content-end mb-3">
@@ -65,8 +67,8 @@
                     <span>Approved Shifts</span>
                 </div>
             </div>
-            <div class="d-flex justify-content-between mb-3">
-                <div class="d-flex align-items-center">
+            <div class="d-flex flex-column flex-md-row  justify-content-between">
+                <div class="d-flex align-items-center mb-3">
                     <button id="prev" class="btn material-symbols-outlined p-2 rounded-circle bg-info text-white text-center fs-6">
                         arrow_back
                     </button>
@@ -77,18 +79,20 @@
                         arrow_forward
                     </span>
                 </div>
-            @if(!Model.IsPhysician)
-            {
-                <div>
-                    <button id="day" class="btn btn-outline-info calendar-tab">Day</button>
-                    <button id="week" class="btn btn-outline-info calendar-tab">Week</button>
-                    <button id="month" class="btn btn-outline-info calendar-tab active-calendar-tab">Month</button>
-                </div>
-            }
+                @if (!Model.IsPhysician)
+                {
+                    <div class="mb-3">
+                        <button id="day" class="btn btn-outline-info calendar-tab">Day</button>
+                        <button id="week" class="btn btn-outline-info calendar-tab">Week</button>
+                        <button id="month" class="btn btn-outline-info calendar-tab active-calendar-tab">Month</button>
+                    </div>
+                }
+            </div>
+            <div id="calendar" class="bg-body-tertiary "></div>
         </div>
-            <div id="calendar" class=""></div>
 
-        </div>
+
+    </div>
 </div>
 
 <div class="modal fade" data-bs-backdrop="static" id="create-shift-modal" tabindex="-1">
@@ -123,7 +127,7 @@
                     }
                     @if (Model.IsPhysician)
                     {
-                        <input type="number" asp-for="CreateShiftData.PhysicianId" hidden/>
+                        <input type="number" asp-for="CreateShiftData.PhysicianId" hidden />
                     }
 
                     <div class="form-floating mb-3">
@@ -240,7 +244,7 @@
                     </div>
 
                     <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn-info text-white" id="create-shift" >Create</button>
+                        <button type="button" class="btn btn-info text-white" id="create-shift">Create</button>
                         <button type="button" class="btn btn-outline-info ms-3" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </form>
@@ -250,7 +254,6 @@
 </div>
 
 <div id="modal-container">
-
 </div>
 
 @section AddScript
@@ -291,7 +294,7 @@
             $('#StartTime').change(function () {
                 var startTime = $(this).val();
                 $('#EndTime').attr('min', startTime);
-                validateTimes(); 
+                validateTimes();
             });
 
             $('#EndTime').change(validateTimes);
@@ -319,18 +322,18 @@
                 console.log('func running')
             }
 
-            
+
 
 
             // repeat switch toggle
 
             $('#repeat').hide();
 
-            $('#IsRepeat').change(function(){
-                if ($('#IsRepeat').prop('checked')){
+            $('#IsRepeat').change(function () {
+                if ($('#IsRepeat').prop('checked')) {
                     $('#repeat').show();
                 }
-                else{
+                else {
                     $('#repeat').hide();
                 }
             });
@@ -343,11 +346,12 @@
             // calendar initialize
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                
+
                 height: 'auto',
                 dayMaxEvents: 4,
                 headerToolbar: false,
                 navLinks: true,
+                eventDisplay: 'Block',
                 datesSet: function (info) {
                     var title = info.view.title;
                     $("#calendar-title").html(title);
@@ -371,9 +375,9 @@
                         eventLimit: true
                     }
                 },
-                eventClick: function(info){
+                eventClick: function (info) {
                     console.log(info);
-                    const eventId= info.event.id;
+                    const eventId = info.event.id;
                     console.log('event clicked: ', eventId);
 
                     ViewShift(eventId);
@@ -412,15 +416,15 @@
 
             $("#week").click(function () {
                 calendar.changeView('resourceTimelineWeek');
-                
+
             });
 
             $("#month").click(function () {
                 calendar.changeView('dayGridMonth');
             });
 
-            $('.calendar-tab').each(function(){
-                $(this).click(function(){
+            $('.calendar-tab').each(function () {
+                $(this).click(function () {
                     $('.calendar-tab').each(function () {
                         $(this).removeClass('active-calendar-tab');
                     });
@@ -465,9 +469,9 @@
                             title: item.physicianName,
                             start: item.shiftDate + 'T' + item.startTime + ':00',
                             end: item.shiftDate + 'T' + item.endTime + ':00',
-                            backgroundColor: item.isApproved ? '#19875440' : '#d6338440',
+                            backgroundColor: item.isApproved ? '#198754' : '#d63384',
                             color: item.isApproved ? '#198754' : '#d63384',
-                            textColor: item.isApproved ? '#198754' : '#d63384'
+                            
                         }));
 
                         console.log(resources);
@@ -492,7 +496,7 @@
 
             // view shift modal data ajax call function
 
-            function ViewShift(eventId){
+            function ViewShift(eventId) {
                 $.ajax({
                     url: '/Providers/ViewShift',
                     data: {
@@ -507,7 +511,7 @@
 
                         $('#view-shift-modal').modal('show');
 
-                        
+
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         console.error("Error fetching data:", textStatus);
@@ -520,7 +524,7 @@
             }
 
 
-            // create shift modal 
+            // create shift modal
 
             //region filter for physicians
 
@@ -555,7 +559,7 @@
                 });
             });
 
-            $('#create-shift').click(function(event){
+            $('#create-shift').click(function (event) {
                 console.log('submit btn clicked');
                 $('div').remove('#alert-shift');
 
@@ -563,7 +567,7 @@
                 console.log('isValid: ', isValid);
                 console.log('form validated');
 
-                if(isValid){
+                if (isValid) {
 
                     var formData = $("#create-shift-form").serialize();
 
@@ -605,9 +609,9 @@
             });
 
 
-            // event listners for view shift partial 
+            // event listners for view shift partial
 
-            function viewShiftEventListeners(){
+            function viewShiftEventListeners() {
 
                 $('#cancel-btn').hide();
                 $('#edit-shift').hide();
@@ -702,7 +706,7 @@
                     $('#edit-shift-form').attr('method', 'post');
                     $('#edit-shift-form').submit();
                 });
-                
+
                 $('#delete-shift').click(function (event) {
                     $('#edit-shift-form').attr('action', '/Providers/DeleteShift');
                     $('#edit-shift-form').attr('method', 'post');
