@@ -140,6 +140,7 @@ namespace HalloDocServices.Implementation
                 requests = requests.Where(x => x.RequestClients.FirstOrDefault().RegionId == searchRegion);
             }
 
+            requests = requests.OrderByDescending(x => x.CreatedDate);
             int requestCount = requests.Count();
             int pageSize = 5;
             if (pageNumber <= 0)

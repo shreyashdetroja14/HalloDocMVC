@@ -377,7 +377,6 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Scheduling");
         }
 
-
         [CustomAuthorize("admin")]
         public IActionResult GetPhysicianSelectList(int regionId)
         {
