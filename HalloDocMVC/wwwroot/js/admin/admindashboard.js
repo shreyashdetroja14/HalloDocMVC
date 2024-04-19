@@ -196,14 +196,14 @@ async function GetCancelCaseModalData(requestId) {
 
 //assign case modal data ajax call
 
-async function GetAssignCaseModalData(requestId, isTransferRequest = null, regionId = 0) {
+async function GetAssignCaseModalData(requestId, isTransferRequest = null) {
 
     try {
 
         const isCookieValid = await ValidateCookie();
         if (isCookieValid) {
 
-            let url = `/AdminDashBoard/AssignCase?requestId=${requestId}&isTransferRequest=${isTransferRequest}&regionId=${regionId}`;
+            let url = `/AdminDashBoard/AssignCase?requestId=${requestId}&isTransferRequest=${isTransferRequest}`;
             const response = await fetch(url);
 
             if (!response.ok) {
@@ -213,6 +213,35 @@ async function GetAssignCaseModalData(requestId, isTransferRequest = null, regio
             const assignCaseModalHtml = await response.text();
             const modalContainer = document.getElementById('modal-container');
             modalContainer.innerHTML = assignCaseModalHtml;
+
+            const regionSelectList = document.querySelector('.region-select');
+            regionSelectList.addEventListener('change', async () => {
+                const regionId = regionSelectList.value;
+                try {
+                    let url = `/AdminDashBoard/GetPhysicianSelectList?regionId=${regionId}`;
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    let options = '<option value="" selected>Select Physician</option>';
+                    data.forEach(physician => {
+                        options += `<option value="${physician.value}">${physician.text}</option>`;
+                    });
+
+                    console.log(options);
+
+                    const physicianList = document.getElementById('assign-physician-list');
+                    physicianList.innerHTML = options;
+                }
+                catch (error) {
+                    console.error('Error fetching partial view:', error);
+                }
+
+            });
 
             (function () {
                 'use strict'
@@ -237,16 +266,7 @@ async function GetAssignCaseModalData(requestId, isTransferRequest = null, regio
             const myModal = new bootstrap.Modal('#assign-case-modal')
             myModal.show();
 
-            const regionSelectList = document.querySelector('.region-select');
-            regionSelectList.addEventListener('change', async () => {
-                const regionId = regionSelectList.value;
-                console.log('region value:: ', regionId);
-                console.log('request id:: ', requestId);
-                console.log('transfer req:: ', isTransferRequest);
-
-                myModal.hide();
-                await GetAssignCaseModalData(requestId, isTransferRequest, regionId);
-            });
+            
         }
 
 

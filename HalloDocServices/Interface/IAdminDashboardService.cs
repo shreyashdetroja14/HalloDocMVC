@@ -35,6 +35,8 @@ namespace HalloDocServices.Interface
 
         AssignCaseViewModel GetAssignCaseViewModelData(AssignCaseViewModel AssignCase);
 
+        List<SelectListItem> GetPhysiciansByRegion(int regionId);
+
         Task<bool> AssignCase(AssignCaseViewModel AssignCase);
 
         Task<bool> TransferRequest(AssignCaseViewModel TransferRequest);

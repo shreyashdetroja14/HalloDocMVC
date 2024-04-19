@@ -20,23 +20,9 @@
                 <form asp-action="@(Model.IsTransferRequest == true ? "TransferRequest" : "AssignCase")" class="shadow-none needs-validation" novalidate>
                     <input type="number" asp-for="RequestId" hidden />
                     <div class="form-floating mb-3">
-                        <select asp-for="RegionId" class="form-select region-select" required>
+                        <select asp-for="RegionId" class="form-select region-select" asp-items="@Model.RegionList" required>
                             <option value="" selected>All Regions</option>
-                            @if(Model.RegionList != null)
-                            {
-                                @foreach (var region in Model.RegionList)
-                                {
-                                    @if (region.Key == Model.RegionId)
-                                    {
-                                        <option value="@region.Key" selected>@region.Value</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@region.Key">@region.Value</option>
-                                    }
-                                }
-                            }
-
+                            
                         </select>
                         <label asp-for="RegionId">Narrow Search By Region</label>
                         <div class="invalid-feedback">
@@ -44,15 +30,9 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <select asp-for="PhysicianId" class="form-select physician-select p-3" required>
+                        <select asp-for="PhysicianId" class="form-select physician-select p-3" id="assign-physician-list" asp-items="@Model.PhysicianList" required>
                             <option value="" selected>Select Physician</option>
-                            @if(Model.PhysicianList != null)
-                            {
-                                @foreach (var physician in Model.PhysicianList)
-                                {
-                                    <option value="@physician.Key">@physician.Value</option>
-                                }
-                            }
+                            
                         </select>
                         <div class="invalid-feedback">
                             Please select a physician.

@@ -459,28 +459,47 @@ namespace HalloDocServices.Implementation
             var regions = _commonRepository.GetAllRegions();
             var physicians = _physicianRepository.GetAllPhysicians();
 
-            if (AssignCase.RegionId != 0)
-            {
-                physicians = physicians.Where(x => x.RegionId == AssignCase.RegionId).ToList();
-            }
-
-            Dictionary<int, string> RegionList = new Dictionary<int, string>();
-            Dictionary<int, string> PhysicianList = new Dictionary<int, string>();
 
             foreach (var region in regions)
             {
-                RegionList.Add(region.RegionId, region.Name);
+                AssignCase.RegionList.Add(new SelectListItem
+                {
+                    Value = region.RegionId.ToString(),
+                    Text = region.Name,
+                });
             }
 
             foreach (var physician in physicians)
             {
-                PhysicianList.Add(physician.PhysicianId, physician.FirstName + " " + physician.LastName);
+                AssignCase.PhysicianList.Add(new SelectListItem
+                {
+                    Value = physician.PhysicianId.ToString(),
+                    Text = physician.FirstName + " " + physician.LastName,
+                });
             }
 
-            AssignCase.RegionList = RegionList;
-            AssignCase.PhysicianList = PhysicianList;
 
             return AssignCase;
+        }
+
+        public List<SelectListItem> GetPhysiciansByRegion(int regionId)
+        {
+
+            var physicians = _physicianRepository.GetIQueryablePhysicians().Where(x => x.PhysicianRegions.Where(x => regionId == 0 || x.RegionId == regionId).Any());
+
+            List<SelectListItem> physicianList = new List<SelectListItem>();
+
+            foreach (var physician in physicians)
+            {
+                physicianList.Add(new SelectListItem
+                {
+                    Value = physician.PhysicianId.ToString(),
+                    Text = physician.FirstName + " " + physician.LastName,
+                });
+            }
+
+            return physicianList;
+
         }
 
         public async Task<bool> AssignCase(AssignCaseViewModel AssignCase)
@@ -497,7 +516,28 @@ namespace HalloDocServices.Implementation
             receiver.Add(physicianFetched.Email);
             string subject = "New Case Assignment";
             string message = "You have been assigned a new case. " + "Confirmation number: " + requestFetched.ConfirmationNumber;
-            await _mailService.SendMail(receiver, subject, message, isHtml: false);
+            bool isMailSent = await _mailService.SendMail(receiver, subject, message, isHtml: false);
+            if (isMailSent)
+            {
+                EmailLog emailLog = new EmailLog();
+                emailLog.EmailTemplate = message;
+                emailLog.SubjectName = subject;
+                emailLog.EmailId = physicianFetched.Email;
+                emailLog.Action = (int)ActionEnum.AssignCase;
+                emailLog.RoleId = (int)AccountType.Physician;
+                emailLog.AdminId = AssignCase.AdminId;
+                emailLog.PhysicianId = physicianFetched.PhysicianId;
+                emailLog.RequestId = AssignCase.RequestId;
+                emailLog.ConfirmationNumber = requestFetched.ConfirmationNumber;
+                emailLog.CreatedDate = DateTime.Now;
+                emailLog.SentDate = DateTime.Now;
+                emailLog.IsEmailSent = isMailSent;
+                emailLog.SentTries = 1;
+                emailLog.RecipientName = physicianFetched.FirstName + " " + physicianFetched.LastName;
+
+                await _emailSMSLogRepository.CreateEmailLog(emailLog);
+
+            }
 
             RequestStatusLog log = new RequestStatusLog();
             log.RequestId = AssignCase.RequestId;
@@ -520,6 +560,33 @@ namespace HalloDocServices.Implementation
             requestFetched.Status = 2;
 
             await _requestRepository.UpdateRequest(requestFetched);
+
+            List<string> receiver = new List<string>();
+            receiver.Add(physicianFetched.Email);
+            string subject = "Transfer of Case";
+            string message = "You have been transferred a case. " + "Confirmation number: " + requestFetched.ConfirmationNumber;
+            bool isMailSent = await _mailService.SendMail(receiver, subject, message, isHtml: false);
+            if (isMailSent)
+            {
+                EmailLog emailLog = new EmailLog();
+                emailLog.EmailTemplate = message;
+                emailLog.SubjectName = subject;
+                emailLog.EmailId = physicianFetched.Email;
+                emailLog.Action = (int)ActionEnum.TransferCase;
+                emailLog.RoleId = (int)AccountType.Physician;
+                emailLog.AdminId = TransferRequest.AdminId;
+                emailLog.PhysicianId = physicianFetched.PhysicianId;
+                emailLog.RequestId = TransferRequest.RequestId;
+                emailLog.ConfirmationNumber = requestFetched.ConfirmationNumber;
+                emailLog.CreatedDate = DateTime.Now;
+                emailLog.SentDate = DateTime.Now;
+                emailLog.IsEmailSent = isMailSent;
+                emailLog.SentTries = 1;
+                emailLog.RecipientName = physicianFetched.FirstName + " " + physicianFetched.LastName;
+
+                await _emailSMSLogRepository.CreateEmailLog(emailLog);
+
+            }
 
             RequestStatusLog log = new RequestStatusLog();
             log.RequestId = TransferRequest.RequestId;

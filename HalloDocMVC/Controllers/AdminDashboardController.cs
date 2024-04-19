@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Dynamic;
 using System.Security.Claims;
 using HalloDocServices.Constants;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HalloDocMVC.Controllers
 {
@@ -250,22 +251,31 @@ namespace HalloDocMVC.Controllers
 
 
         [CustomAuthorize("admin")]
-        public IActionResult AssignCase(int requestId, bool? isTransferRequest, int regionId)
+        public IActionResult AssignCase(int requestId, bool? isTransferRequest)
         {
             AssignCaseViewModel AssignCase = new AssignCaseViewModel();
             AssignCase.RequestId = requestId;
-            AssignCase.RegionId = regionId;
             AssignCase.IsTransferRequest = isTransferRequest;
             AssignCase = _adminDashboardService.GetAssignCaseViewModelData(AssignCase);
 
             return PartialView("_AssignCaseModal", AssignCase);
         }
 
+        [CustomAuthorize("admin")]
+        public IActionResult GetPhysicianSelectList(int regionId)
+        {
+            List<SelectListItem> physicianList = _adminDashboardService.GetPhysiciansByRegion(regionId);
+
+            return Json(physicianList);
+        }
 
         [HttpPost]
         [CustomAuthorize("admin")]
         public async Task<IActionResult> AssignCase(AssignCaseViewModel AssignCase)
         {
+            ClaimsData claims = _jwtService.GetClaimValues();
+            AssignCase.AdminId = claims.Id;
+
             bool isCaseAssigned = await _adminDashboardService.AssignCase(AssignCase);
             if (isCaseAssigned)
             {
@@ -284,6 +294,8 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin")]
         public async Task<IActionResult> TransferRequest(AssignCaseViewModel TransferRequest)
         {
+            ClaimsData claims = _jwtService.GetClaimValues();
+            TransferRequest.AdminId = claims.Id;
             bool isRequestTransferred = await _adminDashboardService.TransferRequest(TransferRequest);
 
             return RedirectToAction("Index");

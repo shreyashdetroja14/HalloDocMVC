@@ -122,6 +122,8 @@ namespace HalloDocServices.Constants
         ResetPassword = 8,
         ProfileUpdateMessage = 9,
         SendLink = 10,
+        AssignCase = 11,
+        TransferCase = 12,
     }
 
     public enum Menus

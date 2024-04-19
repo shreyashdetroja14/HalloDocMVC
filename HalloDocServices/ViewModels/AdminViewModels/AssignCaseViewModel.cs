@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,9 +15,9 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public bool? IsTransferRequest { get; set; }
 
-        public Dictionary<int, string>? RegionList { get; set; }
+        public List<SelectListItem> RegionList { get; set; } = new List<SelectListItem>();
 
-        public Dictionary<int, string>? PhysicianList { get; set; }
+        public List<SelectListItem> PhysicianList { get; set; } = new List<SelectListItem>();
 
         public int? RegionId { get; set; }
 
