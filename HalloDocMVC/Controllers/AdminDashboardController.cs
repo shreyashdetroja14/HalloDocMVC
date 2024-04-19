@@ -804,7 +804,7 @@ namespace HalloDocMVC.Controllers
 
         [HttpPost]
         [CustomAuthorize("admin")]
-        public async Task<IActionResult> SendLink(AdminDashboardViewModel EmailData)
+        public async Task<IActionResult> SendLink(SendLinkViewModel EmailData)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
             int? adminId = null;

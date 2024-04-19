@@ -156,9 +156,23 @@
                     <div class="modal-body">
                         <form id="mailform" asp-action="SendLink">
                             <div class="form-floating mb-3">
-                                <input type="email" asp-for="Email" class="form-control" id="recipient-email" required>
+                                <input type="text" asp-for="SendLinkData.FirstName" class="form-control" id="recipient-email" required>
                                 <label for="recipient-email" class="col-form-label">Recipient:</label>
-                                <span asp-validation-for="Email" class="text-danger"></span>
+                                <span asp-validation-for="SendLinkData.Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="SendLinkData.LastName" class="form-control" id="recipient-email" required>
+                                <label for="recipient-email" class="col-form-label">Recipient:</label>
+                                <span asp-validation-for="SendLinkData.Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="tel" asp-for="SendLinkData.PhoneNumber" class="form-control w-100" id="PhoneNumber" />
+                                <span asp-validation-for="SendLinkData.PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="SendLinkData.Email" class="form-control" id="recipient-email" required>
+                                <label for="recipient-email" class="col-form-label">Recipient:</label>
+                                <span asp-validation-for="SendLinkData.Email" class="text-danger"></span>
                             </div>
                             <div class="d-flex justify-content-end">
                                 <input type="submit" value="Send" class="btn btn-info text-white">
