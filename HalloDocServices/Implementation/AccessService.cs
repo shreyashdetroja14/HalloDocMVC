@@ -219,7 +219,10 @@ namespace HalloDocServices.Implementation
             aspnetuserNew.Id = Guid.NewGuid().ToString();
 
             aspnetuserNew.UserName = AdminDetails.Username;
-            aspnetuserNew.PasswordHash = BCrypt.Net.BCrypt.HashPassword(AdminDetails.Password);
+            if(AdminDetails.Password != null)
+            {
+                aspnetuserNew.PasswordHash = BCrypt.Net.BCrypt.HashPassword(AdminDetails.Password);
+            }
             aspnetuserNew.Email = AdminDetails.Email;
             aspnetuserNew.PhoneNumber = AdminDetails.PhoneNumber;
             aspnetuserNew.CreatedDate = DateTime.Now;

@@ -179,6 +179,7 @@ namespace HalloDocServices.Implementation
 
             aspnetuserFetched.Email = AdminProfileDetails.Email;
             aspnetuserFetched.PhoneNumber = AdminProfileDetails.PhoneNumber;
+            aspnetuserFetched.UserName = AdminProfileDetails.Username;
 
             await _userRepository.UpdateAspNetUser(aspnetuserFetched);
 

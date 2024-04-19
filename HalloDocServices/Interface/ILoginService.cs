@@ -21,5 +21,7 @@ namespace HalloDocServices.Interface
         Task<bool> SendMail(ForgotPasswordViewModel Info);
 
         Task<bool> ValidateToken(string token);
+
+        string GetAvailableUsername(string username);
     }
 }

@@ -214,5 +214,28 @@ namespace HalloDocServices.Implementation
             }
             return true;
         }
+
+        public string GetAvailableUsername(string username)
+        {
+            int count = 0;
+            string initialUsername = username;
+            while (true)
+            {
+                if (count != 0)
+                {
+                    initialUsername = username + count;
+                }
+                
+                bool isUsernameExist = _userRepository.GetIQueryableAspNetUsers().Where(x => x.UserName == initialUsername).Any();
+                if (!isUsernameExist)
+                {
+                    return initialUsername;
+                }
+                else
+                {
+                    count++;
+                }
+            }
+        }
     }
 }

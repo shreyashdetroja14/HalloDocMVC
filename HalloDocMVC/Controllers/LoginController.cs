@@ -247,6 +247,17 @@ namespace HalloDocMVC.Controllers
         }
 
         #endregion
+
+        #region CHECK USERNAME
+
+        public string CheckUsername(string username)
+       {
+            string newUsername = _loginService.GetAvailableUsername(username);
+
+            return newUsername;
+        }
+
+        #endregion
     }
 }
 

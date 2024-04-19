@@ -37,8 +37,12 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         [Required(ErrorMessage = "Please Enter First Name")]
         [StringLength(100), MinLength(2, ErrorMessage = "Name can't be a single letter")]
         /*[RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Firstname can only contain letters and spaces.")]*/
+        /*[RegularExpression(@"^(?! +$)[a-zA-Z]+$", ErrorMessage = "Use letters only please")]*/
+        [RegularExpression(@"^\s*[A-Za-z0-9]+(?:\s+[A-Za-z0-9]+)*$", ErrorMessage = "Name can't be a single letter or contain special characters")]
+
         public string FirstName { get; set; } = null!;
 
+        [Required(ErrorMessage = "Please Enter Last Name")]
         /*[RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Lastname can only contain letters and spaces.")]*/
         public string? LastName { get; set;}
 

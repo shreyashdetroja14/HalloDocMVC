@@ -95,6 +95,7 @@
             <form asp-action="EditAdminInfo" class=" p-4 pt-0 request-form rounded-0 shadow-none">
                 <input type="number" asp-for="AdminId" hidden>
                 <input type="text" asp-for="AspNetUserId" hidden>
+                <input type="text" asp-for="Username" id="Username2" hidden>
                 <div class="info mb-4">
                     <h4 class="mb-3">Administrator Information</h4>
                     <div class="row">
@@ -412,5 +413,74 @@
                 eyeIcon.text('visibility_off');
             }
         })
+    </script>
+
+    @*GENERATE USERNAME*@
+    <script>
+        const userNameInput = document.querySelector('#Username');
+        const userNameInput2 = document.querySelector('#Username2');
+        const firstNameInput = document.querySelector('#FirstName');
+        const lastNameInput = document.querySelector('#LastName');
+
+        function getAvailableUsername(username) {
+
+            $.ajax({
+                url: '/Login/CheckUsername',
+                data: {
+                    username: username,
+                },
+                type: 'GET',
+                success: function (data) {
+                    console.log(data);
+                    userNameInput.value = data;
+                    userNameInput2.value = data;
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error fetching data:", textStatus);
+                    if (errorThrown) {
+                        console.error("Specific error:", errorThrown);
+                    }
+                    console.error("HTTP status code:", jqXHR.status);
+                }
+            })
+        }
+
+        function generateUsername() {
+
+            const firstName = firstNameInput.value.trim().toUpperCase();
+            const lastName = lastNameInput.value.trim().toUpperCase();
+
+            console.log(firstName);
+            console.log(lastName);
+
+            if (firstName == '') {
+
+                firstNameInput.value = firstName;
+                return;
+            }
+
+            if (lastName == '') {
+                lastNameInput.value = lastName;
+                return;
+            }
+
+            let firstNamePart = firstName.substring(0, 1);
+            let lastNamePart = lastName.substring(0, 3);
+
+
+            if (lastName.length < 3) {
+                lastNamePart = lastName;
+            }
+
+            const username = `ADMIN.${lastNamePart}.${firstNamePart}`;
+
+            getAvailableUsername(username);
+
+
+        }
+
+        firstNameInput.addEventListener('keyup', generateUsername);
+        lastNameInput.addEventListener('keyup', generateUsername);
+
     </script>
 }
