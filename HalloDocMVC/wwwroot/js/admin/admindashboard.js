@@ -323,7 +323,7 @@ async function GetSendAgreementModalData(requestId) {
 
             let url = `/DashBoard/SendAgreement?requestId=${requestId}`;
 
-            const response = await fetch(url);
+            /*const response = await fetch(url);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -334,7 +334,23 @@ async function GetSendAgreementModalData(requestId) {
             modalContainer.innerHTML = sendAgreementModalHtml;
 
             const myModal = new bootstrap.Modal('#send-agreement-modal');
-            myModal.show();
+            myModal.show();*/
+
+            fetch(url)
+                .then((response) => {
+                    return response.text();
+                })
+                .then((data) => {
+                    const sendAgreementModalHtml = data;
+                    const modalContainer = document.getElementById('modal-container');
+                    modalContainer.innerHTML = sendAgreementModalHtml;
+
+                    const myModal = new bootstrap.Modal('#send-agreement-modal');
+                    myModal.show()
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
 
         }
     }

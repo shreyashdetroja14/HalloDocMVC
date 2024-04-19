@@ -54,7 +54,7 @@
                     <div>
                         <span class="d-none d-md-inline">Welcome</span>
                         <span class="fw-bold d-none d-md-inline">
-                            @claimsData.Username
+                            @(claimsData.Username?.Substring(0, claimsData.Username.IndexOf('@')))
                         </span>
                         <a asp-action="Logout" asp-controller="Login" class="btn btn-outline-info ms-2 d-none d-md-inline">Logout</a>
                         <a asp-action="Logout" asp-controller="Login" class="btn btn-outline-info p-2 d-md-none">
