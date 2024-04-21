@@ -95,13 +95,15 @@ namespace HalloDocServices.Interface
 
         Task<bool> ConcludeCare(ConcludeCareViewModel ConcludeCareData);
 
-        Task<bool> SendLink(string receiverEmail, int? adminId = null, int? physicianId = null);
+        Task<bool> SendLink(SendLinkViewModel SendLinkData);
 
         byte[] ExportToExcel(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int? pageNumber);
 
         List<SelectListItem> GetRegionList();
 
         Task<bool> CreateRequest(PatientRequestViewModel PatientInfo);
+
+        Task<bool> RequestSupport(AdminDashboardViewModel SupportMessageData);
 
     }
 }

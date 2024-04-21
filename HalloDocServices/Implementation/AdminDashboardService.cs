@@ -1017,7 +1017,7 @@ namespace HalloDocServices.Implementation
                 smsLog.PhysicianId = SendAgreementInfo.PhysicianId;
                 smsLog.CreatedDate = DateTime.Now;
                 smsLog.SentDate = DateTime.Now;
-                smsLog.IsSmsSent = true;
+                smsLog.IsSmsSent = false;
                 smsLog.SentTries = 1;
                 smsLog.RecipientName = requestClient.FirstName + " " + requestClient.LastName;
 
@@ -1385,16 +1385,16 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
-        public async Task<bool> SendLink(string receiverEmail, int? adminId = null, int? physicianId = null)
+        public async Task<bool> SendLink(SendLinkViewModel SendLinkData)
         {
             string subject = "Get Medical Assistance @HalloDoc";
 
             string url = "http://localhost:5059/RequestForms/SubmitRequest";
-            string body = "Click on the link and create a new request to get the medical assistance for you or your family : " + url;
+            string body = "Dear Mr./Ms. " + SendLinkData.FirstName + " " + SendLinkData.LastName + ", Click on the link and create a new request to get the medical assistance for you or your family : " + url;
 
             List<string> receivers = new List<string>
                 {
-                    receiverEmail
+                    SendLinkData.Email ?? ""
                 };
 
             bool isMailSent = await _mailService.SendMail(receivers, subject, body, false, new List<string>());
@@ -1403,28 +1403,29 @@ namespace HalloDocServices.Implementation
                 EmailLog emailLog = new EmailLog();
                 emailLog.EmailTemplate = body;
                 emailLog.SubjectName = subject;
-                emailLog.EmailId = receiverEmail;
+                emailLog.EmailId = SendLinkData.Email ?? "";
                 emailLog.Action = (int)ActionEnum.SendLink;
                 emailLog.RoleId = (int)AccountType.Patient;
-                emailLog.AdminId = adminId;
-                emailLog.PhysicianId = physicianId;
+                emailLog.AdminId = SendLinkData.AdminId;
+                emailLog.PhysicianId = SendLinkData.PhysicianId;
                 emailLog.CreatedDate = DateTime.Now;
                 emailLog.SentDate = DateTime.Now;
                 emailLog.IsEmailSent = isMailSent;
                 emailLog.SentTries = 1;
+                emailLog.RecipientName = SendLinkData.FirstName + " " + SendLinkData.LastName;
 
                 await _emailSMSLogRepository.CreateEmailLog(emailLog);
 
                 SmsLog smsLog = new SmsLog();
                 smsLog.SmsTemplate = body;
-                smsLog.MobileNumber = "09876543210";
+                smsLog.MobileNumber = SendLinkData.PhoneNumber ?? "";
                 smsLog.Action = (int)ActionEnum.AdminMessage;
                 smsLog.RoleId = (int)AccountType.Physician;
-                smsLog.AdminId = adminId;
-                smsLog.PhysicianId = physicianId;
+                smsLog.AdminId = SendLinkData.AdminId;
+                smsLog.PhysicianId = SendLinkData.PhysicianId;
                 smsLog.CreatedDate = DateTime.Now;
                 smsLog.SentDate = DateTime.Now;
-                smsLog.IsSmsSent = true;
+                smsLog.IsSmsSent = false;
                 smsLog.SentTries = 1;
 
                 await _emailSMSLogRepository.CreateSmsLog(smsLog);
@@ -1658,6 +1659,23 @@ namespace HalloDocServices.Implementation
                 await _notesAndLogsRepository.AddRequestStatusLog(log);
             }
 
+            return true;
+        }
+
+        public async Task<bool> RequestSupport(AdminDashboardViewModel SupportMessageData)
+        {
+            var activeMDs = _physicianRepository.GetIQueryablePhysicians().Where(z => z.Shifts.Where(y => y.ShiftDetails.Where(x => x.IsDeleted == false && DateOnly.FromDateTime(x.ShiftDate) == DateOnly.FromDateTime(DateTime.Now) && x.StartTime <= TimeOnly.FromDateTime(DateTime.Now) && x.EndTime >= TimeOnly.FromDateTime(DateTime.Now)).Any()).Any());
+
+            var inactiveMDs = _physicianRepository.GetIQueryablePhysicians().Except(activeMDs);
+
+            List<string> receiverMds = inactiveMDs.Select(x => x.Email).ToList();
+
+            string subject = "Requesting Support @HalloDoc";
+
+            string body = "To all unscheduled physicians: We are short on coverage and need additional support On Call to respond to requests. " + SupportMessageData.SupportMessage ?? "";
+
+            bool isMailSent = await _mailService.SendMail(receiverMds, subject, body, false, new List<string>());
+            
             return true;
         }
     }

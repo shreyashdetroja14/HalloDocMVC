@@ -170,6 +170,7 @@
                         <input type="date" asp-for="PatientInfo.DOB" class="form-control" id="DOB"
                                placeholder="DOB">
                         <label asp-for="PatientInfo.DOB">Date Of Birth</label>
+                        <span asp-validation-for="PatientInfo.DOB"></span>
                     </div>
                 </div>
             </div>
@@ -238,7 +239,25 @@
     <script src="~/js/request.js"></script>
 
     <script>
+        $('#ConciergePropertyName').change(function () {
+            let firstname = $('#ConciergePropertyName').val();
+            let trimmedValue = firstname.trim();
+            $('#ConciergePropertyName').val(trimmedValue);
+        });
 
+        $('#ConciergeStreet').change(function () {
+            let firstname = $('#ConciergeStreet').val();
+            let trimmedValue = firstname.trim();
+            $('#ConciergeStreet').val(trimmedValue);
+        });
+
+        $('#ConciergeCity').change(function () {
+            let firstname = $('#ConciergeCity').val();
+            let trimmedValue = firstname.trim();
+            $('#ConciergeCity').val(trimmedValue);
+        });
+
+        
     </script>
 }
 

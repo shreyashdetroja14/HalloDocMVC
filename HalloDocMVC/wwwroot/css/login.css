@@ -18,8 +18,8 @@
 }
 
 .form-control {
-    border-color: var(--bs-dark);
-    color: var(--bs-dark);
+    border-color: var(--bs-body-color);
+    color: var(--bs-body-color);
     border-radius: 7px;
     background: transparent;
     transition: box-shadow .1s ease-in-out;
@@ -31,7 +31,7 @@
     }
 
 label {
-    color: var(--bs-dark);
+    color: var(--bs-body-color);
 }
 
 .forgot-pass {

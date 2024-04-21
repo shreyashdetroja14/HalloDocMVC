@@ -208,8 +208,12 @@
             const url = `http://localhost:5059/RequestForms/CheckUserAccount?email=${mailId}`;
 
             try {
+                $('#loader').fadeIn();
+
                 const response = await fetch(url);
                 const data = await response.json();
+
+                $('#loader').fadeOut();
 
                 if (data.status == 'invalid') {
                     document.querySelector('#passfield').classList.remove("d-none");

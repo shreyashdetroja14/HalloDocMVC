@@ -698,11 +698,16 @@ exportAllBtn.addEventListener('click',async () => {
     try {
         console.log(urlparams.requestStatus);
         console.log(url)
+
+        $('#loader').fadeIn();
+
         const response = await fetch(url);
 
         console.log(response);
 
         const blob = await response.blob(); // Convert response to blob
+
+        $('#loader').fadeOut();
 
         // Create download link
         const downloadLink = document.createElement('a');
@@ -741,11 +746,16 @@ exportBtn.addEventListener('click', async () => {
     try {
         //console.log(urlparams.requestStatus);
         console.log(url)
+
+        $('#loader').fadeIn();
+
         const response = await fetch(url);
 
         console.log(response);
 
         const blob = await response.blob(); // Convert response to blob
+
+        $('#loader').fadeOut();
 
         // Create download link
         const downloadLink = document.createElement('a');

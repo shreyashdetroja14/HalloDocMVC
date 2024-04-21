@@ -168,6 +168,8 @@
                 const searchFilters = $('#search-filters').serialize();
 
                 try {
+                    $('#loader').fadeIn();
+
                     const response = await fetch('/Records/ExportRecords', {
                         method: 'POST',
                         body: searchFilters,
@@ -176,12 +178,16 @@
                         }
                     });
 
+                    
+
                     if (!response.ok) {
                         throw new Error(`Error fetching data: ${response.statusText}`);
                     }
 
                     const data = await response.blob();
                     console.log(data);
+
+                    $('#loader').fadeOut();
 
                     // Download logic using the Blob
                     const url = window.URL.createObjectURL(data);
@@ -196,27 +202,6 @@
                 } catch (error) {
                     console.error("Error:", error);
                 }
-
-                //var formData = $('#search-filters').serialize();
-
-                //$.ajax({
-                //    url: '/Records/ExportRecords',
-                //    data: formData,
-                //    type: 'POST',
-                //    dataType: 'blob',
-                //    success: function (data) {
-                //        console.log(data);
-
-                //    },
-                //    error: function (jqXHR, textStatus, errorThrown) {
-                //        console.error("Error fetching data:", textStatus);
-                //        if (errorThrown) {
-                //            console.error("Specific error:", errorThrown);
-                //        }
-                //        console.error("HTTP status code:", jqXHR.status);
-                //    }
-                //});
-                
             });
 
             function partialEventListeners(){

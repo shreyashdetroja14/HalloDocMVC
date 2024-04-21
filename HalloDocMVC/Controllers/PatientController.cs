@@ -72,6 +72,8 @@ namespace HalloDocMVC.Controllers
             {
                 await _patientService.UploadFiles(MultipleFiles, requestid);
             }
+            TempData["SuccessMessage"] = "Files Uploaded Successfully";
+
             return RedirectToAction("ViewDocuments", new { requestid });
         }
 

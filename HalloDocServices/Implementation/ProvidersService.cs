@@ -193,7 +193,7 @@ namespace HalloDocServices.Implementation
                 smsLog.PhysicianId = provider.PhysicianId;
                 smsLog.CreatedDate = DateTime.Now;
                 smsLog.SentDate = DateTime.Now;
-                smsLog.IsSmsSent = true;
+                smsLog.IsSmsSent = false;
                 smsLog.SentTries = 1;
                 smsLog.RecipientName = provider.FirstName + " " + provider.LastName;
 

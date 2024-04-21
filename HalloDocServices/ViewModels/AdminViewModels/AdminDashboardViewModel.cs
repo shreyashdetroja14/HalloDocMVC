@@ -30,5 +30,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public List<RequestRowViewModel>? RequestRows { get; set; }
 
         public SendLinkViewModel SendLinkData { get; set; } = new SendLinkViewModel();
+
+        public string? SupportMessage { get; set; }
     }
 }

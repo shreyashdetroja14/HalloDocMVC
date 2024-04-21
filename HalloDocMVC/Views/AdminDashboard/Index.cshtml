@@ -5,8 +5,15 @@
 
 @section AddStyles{
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <link href="@Url.Content("~/css/admindashboard.css")" rel="stylesheet" type="text/css" />
-    
+    <style>
+        .iti--allow-dropdown {
+            width: 100%;
+            height: 60px;
+        }
+    </style>
 }
 
 @model HalloDocServices.ViewModels.AdminViewModels.AdminDashboardViewModel
@@ -139,7 +146,7 @@
                     <span class="d-none d-lg-inline">Export All</span>
                 </button>
 
-                    <button class="btn btn-info text-white">
+                <button class="btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#supportModal">
                     <i class="bi bi-person-raised-hand"></i>
                     <span class="d-none d-lg-inline">Request Support</span>
                 </button>
@@ -154,25 +161,62 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="mailform" asp-action="SendLink">
-                            <div class="form-floating mb-3">
-                                <input type="text" asp-for="SendLinkData.FirstName" class="form-control" id="recipient-email" required>
-                                <label for="recipient-email" class="col-form-label">Recipient:</label>
-                                <span asp-validation-for="SendLinkData.Email" class="text-danger"></span>
+                        <form id="mailform" asp-action="SendLink" class="row">
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input type="text" asp-for="SendLinkData.FirstName" class="form-control" id="FirstName" placeholder="First Name" required>
+                                    <label for="FirstName" class="col-form-label">First Name</label>
+                                    <span asp-validation-for="SendLinkData.Email" class="text-danger"></span>
+                                </div>
                             </div>
-                            <div class="form-floating mb-3">
-                                <input type="text" asp-for="SendLinkData.LastName" class="form-control" id="recipient-email" required>
-                                <label for="recipient-email" class="col-form-label">Recipient:</label>
-                                <span asp-validation-for="SendLinkData.Email" class="text-danger"></span>
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input type="text" asp-for="SendLinkData.LastName" class="form-control" id="LastName" placeholder="Last Name" required>
+                                    <label for="LastName" class="col-form-label">Last Name</label>
+                                    <span asp-validation-for="SendLinkData.Email" class="text-danger"></span>
+                                </div>
                             </div>
-                            <div class="form-floating mb-3">
-                                <input type="tel" asp-for="SendLinkData.PhoneNumber" class="form-control w-100" id="PhoneNumber" />
-                                <span asp-validation-for="SendLinkData.PhoneNumber" class="text-danger"></span>
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input type="tel" asp-for="SendLinkData.PhoneNumber" class="form-control w-100 h-100" id="PhoneNumber" />
+                                    <span asp-validation-for="SendLinkData.PhoneNumber" class="text-danger"></span>
+                                </div>
                             </div>
-                            <div class="form-floating mb-3">
-                                <input type="text" asp-for="SendLinkData.Email" class="form-control" id="recipient-email" required>
-                                <label for="recipient-email" class="col-form-label">Recipient:</label>
-                                <span asp-validation-for="SendLinkData.Email" class="text-danger"></span>
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input type="text" asp-for="SendLinkData.Email" class="form-control" id="Email" placeholder="Email" required>
+                                    <label for="Email" class="col-form-label">Recipient</label>
+                                    <span asp-validation-for="SendLinkData.Email" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <input type="submit" value="Send" class="btn btn-info text-white">
+                                <button type="button" class="btn btn-outline-info ms-2" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="supportModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Request Support</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="">To all unscheduled physicians: We are short on coverage and need additional support On Call to respond to requests.</p>
+                        <form id="mailform" asp-action="RequestSupport" class="row">
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <div class="form-floating mb-3">
+                                        <textarea asp-for="SupportMessage" class="form-control" placeholder="Enter Message" id="Message"
+                                                  style="height: 100px" ></textarea>
+                                        <label asp-for="SupportMessage">Support Message</label>
+                                    </div>
+                                </div>
                             </div>
                             <div class="d-flex justify-content-end">
                                 <input type="submit" value="Send" class="btn btn-info text-white">
@@ -231,6 +275,19 @@
 
 @section AddScript
 {
+    <script>
+        /* PHONE INPUT INTL SCRIPT */
+
+        const phoneInput1 = document.querySelector("#PhoneNumber");
+        const intlInput1 = window.intlTelInput(phoneInput1, {
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+    </script>
+
     <partial name="_ToastMessageScriptsPartial" />
         <script src="~/js/admin/admindashboard.js"></script>
 }

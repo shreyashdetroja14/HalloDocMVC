@@ -152,12 +152,16 @@
                         </div>
                         <div class="col-sm-6 pb-3">
                             <input type="tel" asp-for="ViewCase.PhoneNumber" class="form-control w-100" id="PhoneNumber" readonly />
+                            <span asp-validation-for="ViewCase.PhoneNumber" class="text-danger"></span>
+
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
                                 <input type="email" asp-for="ViewCase.Email" class="form-control" id="Email"
                                        placeholder="abc@xyz.pqr" autocomplete="off" readonly>
                                 <label asp-for="ViewCase.Email">Email</label>
+                                <span asp-validation-for="ViewCase.Email" class="text-danger"></span>
+
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -190,7 +194,9 @@
     <script>
         const phoneInputField = document.querySelector("#PhoneNumber");
         const phoneInput = window.intlTelInput(phoneInputField, {
-            preferredCountries: ["us", "in", "au", "de"],
+            initialCountry: "in",
+            preferredCountries: ["in"],
+            onlyCountries: ["in", "us", "au", "de"],
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });

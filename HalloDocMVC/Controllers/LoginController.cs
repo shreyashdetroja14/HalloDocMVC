@@ -170,7 +170,8 @@ namespace HalloDocMVC.Controllers
             }
             else
             {
-                return View("~/Views/Login/Index.cshtml");
+                TempData["SuccessMessage"] = "Account Created Successfully";
+                return RedirectToAction("Index");
             }
         }
 
@@ -218,7 +219,8 @@ namespace HalloDocMVC.Controllers
                 return View(Credentials);
             }
 
-            return View("~/Views/Login/Index.cshtml");
+            TempData["SuccessMessage"] = "Password has been reset successfully";
+            return RedirectToAction("Index");
         }
 
         #endregion

@@ -74,12 +74,16 @@
                     </div>
                     <div class="col-sm-6 pb-3">
                         <input type="tel" asp-for="PhoneNumber" class="form-control w-100" id="PhoneNumber" readonly />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+
                     </div>
                     <div class="col-sm-6">
                         <div class="form-floating mb-3">
                             <input type="email" asp-for="Email" class="form-control" id="Email"
                                    placeholder="abc@xyz.pqr" autocomplete="off" readonly>
                             <label asp-for="Email">Email</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+
                         </div>
                     </div>
                     @if(Model.Status != 1 && Model.IsPhysician != true)

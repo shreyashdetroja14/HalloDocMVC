@@ -21,5 +21,9 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         [RegularExpression(@"^(?:0)?[6789]\d{4}(?:\s?\d{5})?$", ErrorMessage = "Please enter a valid Indian phone number (e.g., 098765 43210, 9876543210)")]
         public string? PhoneNumber { get; set; }
+
+        public int? AdminId { get; set; }
+
+        public int? PhysicianId { get; set; }
     }
 }

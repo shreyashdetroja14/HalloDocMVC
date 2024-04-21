@@ -78,7 +78,7 @@
                         <div class="modal fade" id="mailModal" tabindex="-1">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
-                                    <div class="modal-header">
+                                    <div class="modal-header bg-info">
                                         <h1 class="modal-title fs-5" id="exampleModalLabel">Send Mail</h1>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
@@ -89,8 +89,8 @@
                                                 <label for="recipient-email" class="col-form-label">Recipient:</label>
                                             </div>
                                             <div class="d-flex justify-content-end">
-                                                <input type="submit" value="Send Mail" class="btn btn-primary">
-                                                <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal">Close</button>
+                                                <input type="submit" value="Send Mail" class="btn btn-info text-white">
+                                                <button type="button" class="btn btn-outline-info ms-2" data-bs-dismiss="modal">Close</button>
                                             </div>
                                         </form>
                                     </div>  
@@ -287,6 +287,7 @@
                 console.log(JSON.stringify({ selectedValues, requestId }));
 
                 try {
+                    $('#loader').fadeIn();
 
                     const response = await fetch('/Dashboard/DownloadAll', {
                         method: 'POST',
@@ -295,6 +296,8 @@
                         },
                         body: JSON.stringify({ selectedValues, requestId })
                     });
+
+                    $('#loader').fadeOut();
 
                     if (response.ok) {
                         console.log(response);
@@ -337,6 +340,7 @@
                 const selectedValues = GetSelectedCheckboxValues();
                 if (selectedValues.length === 0) {
                     console.log('No checkboxes are selected');
+                    toastr.error("Select files to be deleted!");
                     return;
                 }
 
@@ -347,6 +351,8 @@
                 console.log(JSON.stringify({ selectedValues, requestId }));
 
                 try {
+                    $('#loader').fadeIn();
+
                     const response = await fetch('/Dashboard/DeleteAll', {
                         method: 'POST',
                         headers: {
@@ -354,6 +360,8 @@
                         },
                         body: JSON.stringify({ selectedValues, requestId })
                     });
+
+                    $('#loader').fadeOut();
 
                     if (!response.ok) {
                         throw Error("unable to delete");
@@ -364,6 +372,7 @@
                     window.location.href = url;
 
                     console.log('deleted successfully');
+                    toastr.success("Files deleted successfully.");
 
                 } catch (error) {
                     console.log('Error: ', error);
@@ -383,6 +392,7 @@
             const selectedValues = GetSelectedCheckboxValues();
             if (selectedValues.length === 0) {
                 console.log('No checkboxes are selected');
+                toastr.error("Select files to be sent!");
                 return;
             }
 
@@ -393,6 +403,8 @@
             console.log(JSON.stringify({ selectedValues, requestId, emailValue }));
 
             try {
+                $('#loader').fadeIn();
+
                 const response = await fetch('/Dashboard/SendMail', {
                     method: 'POST',
                     headers: {
@@ -400,6 +412,8 @@
                     },
                     body: JSON.stringify({ selectedValues, requestId, emailValue })
                 });
+
+                $('#loader').fadeOut();
 
                 if (!response.ok) {
                     throw Error("unable to send mail");
@@ -410,6 +424,7 @@
                 window.location.href = url;
 
                 console.log('mail sent successfully');
+                toastr.success("Mail sent successfully.");
 
             } catch (error) {
                 console.log('Error: ', error);

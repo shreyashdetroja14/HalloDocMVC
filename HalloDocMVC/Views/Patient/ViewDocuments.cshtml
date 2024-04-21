@@ -241,6 +241,8 @@
 
                 try {
 
+                    $('#loader').fadeIn();
+
                     const response = await fetch('/Patient/DownloadMultipleFiles', {
                         method: 'POST',
                         headers: {
@@ -248,6 +250,8 @@
                         },
                         body: JSON.stringify({ selectedValues, requestId })
                     });
+
+                    $('#loader').fadeOut();
 
                     if (response.ok) {
                         console.log(response);

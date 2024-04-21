@@ -388,6 +388,11 @@ namespace HalloDocMVC.Controllers
             if (MultipleFiles != null && MultipleFiles?.Count() != 0)
             {
                 await _adminDashboardService.UploadFiles(MultipleFiles, requestId);
+                TempData["SuccessMessage"] = "Files uploaded successfully";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to upload files.";
             }
             return RedirectToAction("ViewUploads", new { requestId });
         }
@@ -400,11 +405,13 @@ namespace HalloDocMVC.Controllers
             var downloadedFile = await _adminDashboardService.DownloadFile(fileId);
 
             if (downloadedFile != null) 
-            { 
+            {
+                TempData["SuccessMessage"] = "File downloaded successfully";
                 return File(downloadedFile.Data, "application/octet-stream", downloadedFile.Filename);
             }
             else
             {
+                TempData["ErrorMessage"] = "Failed To Download File.";
                 return RedirectToRoute("ViewUploads", new { requestId = downloadedFile?.RequestId});
             }
         }
@@ -436,6 +443,7 @@ namespace HalloDocMVC.Controllers
         {
             var deletedFile = await _adminDashboardService.DeleteFile(fileId);
 
+            TempData["SuccessMessage"] = "File deleted successfully";
             return RedirectToRoute("ViewUploads", new { requestId = deletedFile?.RequestId });
         }
 
@@ -451,11 +459,11 @@ namespace HalloDocMVC.Controllers
             bool isFileDeleted = await _adminDashboardService.DeleteSelectedFiles(selectedValues, requestId);
             if (isFileDeleted)
             {
-                TempData["SuccessMessage"] = "Files Deleted Successfully";
+                TempData["SuccessMessage"] = "Files deleted successfully";
             }
             else
             {
-                TempData["ErrorMessage"] = "Failed To Delete Files.";
+                TempData["ErrorMessage"] = "Failed to delete files.";
             }
 
             string url = "/Dashboard/ViewUploads?requestId=" + requestData.RequestId.ToString();
@@ -483,11 +491,11 @@ namespace HalloDocMVC.Controllers
             bool isMailSent = await _adminDashboardService.SendMailWithAttachments(requestData);
             if (isMailSent)
             {
-                TempData["SuccessMessage"] = "Mail Sent Successfully";
+                TempData["SuccessMessage"] = "Mail sent successfully";
             }
             else
             {
-                TempData["ErrorMessage"] = "Failed To Send Mail. Try Again.";
+                TempData["ErrorMessage"] = "Failed to send mail. Try again.";
             }
 
             string url = "/Dashboard/ViewUploads?requestId=" + requestData.RequestId.ToString();
@@ -803,22 +811,20 @@ namespace HalloDocMVC.Controllers
 
 
         [HttpPost]
-        [CustomAuthorize("admin")]
-        public async Task<IActionResult> SendLink(SendLinkViewModel EmailData)
+        [CustomAuthorize("admin", "physician")]
+        public async Task<IActionResult> SendLink(SendLinkViewModel SendLinkData)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
-            int? adminId = null;
-            int? physicianId = null;
             if(claimsData.AspNetUserRole == "physician")
             {
-                physicianId = claimsData.Id;
+                SendLinkData.PhysicianId = claimsData.Id;
             }
             else
             {
-                adminId = claimsData.Id;
+                SendLinkData.AdminId = claimsData.Id;
             }
 
-            bool isLinkSent = await _adminDashboardService.SendLink(EmailData.Email ?? "", adminId, physicianId);
+            bool isLinkSent = await _adminDashboardService.SendLink(SendLinkData);
             if (isLinkSent)
             {
                 TempData["SuccessMessage"] = "Link Sent Successfully.";
@@ -826,6 +832,25 @@ namespace HalloDocMVC.Controllers
             else
             {
                 TempData["ErrorMessage"] = "Unable to Send The Link.";
+            }
+            return RedirectToAction("Index");
+        }
+
+
+        [HttpPost]
+        [CustomAuthorize("admin")]
+        public async Task<IActionResult> RequestSupport(AdminDashboardViewModel SupportMessageData)
+        {
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+
+            bool isMailSent = await _adminDashboardService.RequestSupport(SupportMessageData);
+            if (isMailSent)
+            {
+                TempData["SuccessMessage"] = "Support Request sent Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to Send The Request.";
             }
             return RedirectToAction("Index");
         }

@@ -48,6 +48,7 @@
                     <div class="form-floating mb-3">
                         <input type="date" asp-for="DOB" class="form-control" id="DOB" placeholder="DOB">
                         <label asp-for="DOB">Date Of Birth</label>
+                        <span asp-validation-for="DOB" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -133,6 +134,7 @@
         });
     </script>
     <script>
+
         const editBtn = document.querySelector('#editbtn');
         const submitBtn = document.querySelector('input[type="submit"]');
         const cancelBtn = document.querySelector('input[type="reset"]');
