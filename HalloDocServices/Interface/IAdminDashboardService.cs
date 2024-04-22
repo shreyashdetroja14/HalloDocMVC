@@ -105,5 +105,7 @@ namespace HalloDocServices.Interface
 
         Task<bool> RequestSupport(AdminDashboardViewModel SupportMessageData);
 
+        Task<byte[]> GenerateEncounterPdf(DownloadFormViewModel DownloadFormData);
+
     }
 }

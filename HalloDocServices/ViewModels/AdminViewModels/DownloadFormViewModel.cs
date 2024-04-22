@@ -10,6 +10,8 @@ namespace HalloDocServices.ViewModels.AdminViewModels
     {
         public int EncounterFormId { get; set; }
 
+        public int RequestId { get; set; }
+
         public int? PhysicianId { get; set; }
     }
 }

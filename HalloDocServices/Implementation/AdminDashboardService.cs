@@ -18,6 +18,9 @@ using System.Formats.Asn1;
 using DocumentFormat.OpenXml.Office2016.Excel;
 using Microsoft.AspNetCore.Http.HttpResults;
 using DocumentFormat.OpenXml.Wordprocessing;
+using System.Diagnostics.Metrics;
+using iText.Kernel.Pdf;
+using iText.Layout.Properties;
 
 
 namespace HalloDocServices.Implementation
@@ -1661,6 +1664,101 @@ namespace HalloDocServices.Implementation
             bool isMailSent = await _mailService.SendMail(receiverMds, subject, body, false, new List<string>());
             
             return true;
+        }
+
+        public async Task<byte[]> GenerateEncounterPdf(DownloadFormViewModel DownloadFormData)
+        {
+            EncounterForm encounterForm = _commonRepository.GetEncounterFormByRequestId(DownloadFormData.RequestId);
+
+            using (var memoryStream = new MemoryStream())
+            {
+                /*var pdfWriter = new PdfWriter(memoryStream);
+                var pdfDocument = new PdfDocument(pdfWriter);
+
+                var document = new Document(pdfDocument);
+
+                // Add a title
+                var title = new Paragraph("Medical Report")
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetFontSize(20);
+                document.Add(title);
+                // Add a table
+                var table = new iText.Layout.Element.Table(new float[] { 4, 6 });
+                table.SetWidth(UnitValue.CreatePercentValue(100));
+
+                table.AddHeaderCell("Property");
+                table.AddHeaderCell("Value");
+
+                // Add properties
+                table.AddCell("RequestId");
+                table.AddCell(encounter?.EncounterId.ToString());
+                table.AddCell("FirstName");
+                table.AddCell(encounter?.FirstName);
+                table.AddCell("LastName");
+                table.AddCell(encounter?.LastName);
+                table.AddCell("Location");
+                table.AddCell(encounter?.Address ?? "");
+                table.AddCell("DateOfBirth");
+                table.AddCell(encounter?.Dob.ToString());
+                table.AddCell("DateOfService");
+                table.AddCell(encounter?.CreatedDate.ToString());
+                table.AddCell("Mobile");
+                table.AddCell(encounter?.Mobile);
+                table.AddCell("Email");
+                table.AddCell(encounter?.IllnessHistory);
+                table.AddCell("HistoryOfPresentIllness");
+                table.AddCell(encounter?.MedicalHistory ?? "");
+                table.AddCell("Medication");
+                table.AddCell(encounter?.Medication ?? "");
+                table.AddCell("Allergies");
+                table.AddCell(encounter?.Allergies ?? "");
+                table.AddCell("Temprature");
+                table.AddCell(encounter?.Temp ?? "");
+                table.AddCell("HeartRate");
+                table.AddCell(encounter?.Hr ?? "");
+                table.AddCell("RespiratoryRate");
+                table.AddCell(encounter?.Rr ?? "");
+                table.AddCell("BloodPressureDiastolic");
+                table.AddCell(encounter?.Bp ?? "");
+                table.AddCell("O2Level");
+                table.AddCell(encounter?.O2 ?? "");
+                table.AddCell("Pain");
+                table.AddCell(encounter?.Pain ?? "");
+                table.AddCell("HEENT");
+                table.AddCell(encounter?.Heent ?? "");
+                table.AddCell("CvReading");
+                table.AddCell(encounter?.Cv ?? "");
+                table.AddCell("Chest");
+                table.AddCell(encounter?.Chest ?? "");
+                table.AddCell("ABD");
+                table.AddCell(encounter?.Abd ?? "");
+                table.AddCell("Extr");
+                table.AddCell(encounter?.Extr ?? "");
+                table.AddCell("Skin");
+                table.AddCell(encounter?.Skin ?? "");
+                table.AddCell("Neuro");
+                table.AddCell(encounter?.Neuro ?? "");
+                table.AddCell("Other");
+                table.AddCell(encounter?.Other ?? "");
+                table.AddCell("Diagnosis");
+                table.AddCell(encounter?.Diagnosis ?? "");
+                table.AddCell("TreatmentPlan");
+                table.AddCell(encounter?.TreatmentPlan ?? "");
+                table.AddCell("MedicationDispensed");
+                table.AddCell(encounter?.MedicationDespensed ?? "");
+                table.AddCell("Procedures");
+                table.AddCell(encounter?.Procedure ?? "");
+                table.AddCell("FollowUp");
+                table.AddCell(encounter?.Followup ?? "");
+                document.Add(table);
+
+                // Add the table to the document
+                document.Add(table);
+
+                document.Close();*/
+
+                return memoryStream.ToArray();
+            }
         }
     }
 }

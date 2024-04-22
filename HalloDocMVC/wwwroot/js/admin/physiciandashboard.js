@@ -228,6 +228,32 @@ async function GetCareTypeModalData(requestId) {
     }
 }
 
+async function GetDownloadModalData(requestId) {
+
+    try {
+
+        const isCookieValid = await ValidateCookie();
+        if (isCookieValid) {
+
+            let url = `/Physician/DownloadEncounterForm?requestId=${requestId}`;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const downloadModalHtml = await response.text();
+            const modalContainer = document.getElementById('modal-container');
+            modalContainer.innerHTML = downloadModalHtml;
+
+        }
+    }
+    catch (error) {
+        console.error('Error fetching partial view:', error);
+    }
+}
+
 
 //active button functions
 

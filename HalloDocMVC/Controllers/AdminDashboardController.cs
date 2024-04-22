@@ -909,5 +909,32 @@ namespace HalloDocMVC.Controllers
             }
             
         }
+
+
+        [Route("Physician/DownloadEncounterForm", Name = "DownloadEncounterForm")]
+        [CustomAuthorize("physician")]
+        public IActionResult DownloadEncounterForm(int requestId)
+        {
+            DownloadFormViewModel DownloadFormData = new DownloadFormViewModel();
+            DownloadFormData.RequestId = requestId;
+
+            return PartialView("_DownloadFormModal", DownloadFormData);
+        }
+
+        [HttpPost]
+        [Route("Physician/DownloadEncounterForm", Name = "DownloadEncounterFormPost")]
+        [CustomAuthorize("physician")]
+        public async Task<IActionResult> DownloadEncounterForm(DownloadFormViewModel DownloadFormData)
+        {
+            var encounterData = await _adminDashboardService.GenerateEncounterPdf(DownloadFormData);
+
+            if(encounterData == null)
+            {
+                TempData["ErrorMessage"] = "Unable to download encounter form.";
+                return RedirectToRoute("Dashboard");
+            }
+
+            return File(encounterData, "application/pdf", "EncounterForm.pdf");
+        }
     }
 }
