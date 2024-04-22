@@ -928,6 +928,7 @@ namespace HalloDocServices.Implementation
             foreach (var shiftDetail in shiftDetails)
             {
                 shiftDetail.Status = (short)ShiftStatus.Deleted;
+                shiftDetail.IsDeleted = true;
                 shiftDetail.ModifiedBy = modifiedBy;
                 shiftDetail.ModifiedDate = DateTime.Now;
             }
@@ -1074,6 +1075,7 @@ namespace HalloDocServices.Implementation
                 return false;
             }
 
+            shiftDetail.Status = (short)(ShiftStatus.Deleted);
             shiftDetail.IsDeleted = true;
 
             await _shiftRepository.UpdateShiftDetail(shiftDetail);

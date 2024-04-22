@@ -365,6 +365,26 @@ async function GetSendAgreementModalData(requestId) {
                     const modalContainer = document.getElementById('modal-container');
                     modalContainer.innerHTML = sendAgreementModalHtml;
 
+                    (function () {
+                        'use strict'
+
+                        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                        var forms = document.querySelectorAll('.needs-validation')
+
+                        // Loop over them and prevent submission
+                        Array.prototype.slice.call(forms)
+                            .forEach(function (form) {
+                                form.addEventListener('submit', function (event) {
+                                    if (!form.checkValidity()) {
+                                        event.preventDefault()
+                                        event.stopPropagation()
+                                    }
+
+                                    form.classList.add('was-validated')
+                                }, false)
+                            })
+                    })()
+
                     const myModal = new bootstrap.Modal('#send-agreement-modal');
                     myModal.show()
                 })
@@ -771,4 +791,22 @@ exportBtn.addEventListener('click', async () => {
     catch (error) {
         console.log(error);
     }
+});
+
+//SEND LINK LOADER ON SUBMIT
+
+$('#send-link-btn').click(function () {
+    
+    $('#loader').fadeIn();
+
+    $('#sendlinkform').submit();
+    console.log('form submitted');
+});
+
+$('#req-support-btn').click(function () {
+    
+    $('#loader').fadeIn();
+
+    $('#reqsupportform').submit();
+    console.log('form submitted');
 });

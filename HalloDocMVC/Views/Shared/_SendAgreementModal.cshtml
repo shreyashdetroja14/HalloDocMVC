@@ -9,27 +9,35 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                
                 <p class="fs-6 text-secondary">
                     To Send Agreement please make sure you are updating the correct contact information below for the responsible party.
                 </p>
-                <form asp-action="SendAgreement">
+
+                @if (Model.IsAgreementSent == true)
+                {
+                    <div class="alert alert-warning" role="alert">
+                        The agreement has already been sent for this request.
+                    </div>
+                }
+
+                <form asp-action="SendAgreement" class="needs-validation" novalidate>
                     <input type="number" asp-for="RequestId" hidden />
 
                     <div class="form-floating mb-3">
-                        <input type="email" asp-for="Email" class="form-control" id="Email" placeholder="name@example.com">
+                        <input type="email" asp-for="Email" class="form-control" id="Email" placeholder="name@example.com" required>
                         <label for="Email">Email address</label>
+                        <div class="invalid-feedback">
+                            Please enter an email.
+                        </div>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="number" asp-for="PhoneNumber" class="form-control" id="PhoneNumber" placeholder="PhoneNumber">
+                        <input type="number" asp-for="PhoneNumber" class="form-control" id="PhoneNumber" placeholder="PhoneNumber" required>
                         <label for="PhoneNumber">Phone Number</label>
-                    </div>
-
-                    @if(Model.IsAgreementSent == true)
-                    {
-                        <div class="mb-3">
-                            <p class="text-warning fs-5">The agreement has already been sent for this request.</p>
+                        <div class="invalid-feedback">
+                            Please enter a phone number.
                         </div>
-                    }
+                    </div>
 
                     <div class=" d-flex justify-content-end">
                         <input type="submit" value="Send" class="btn btn-info text-white px-3 py-2" />

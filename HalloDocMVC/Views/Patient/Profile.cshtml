@@ -87,6 +87,7 @@
                         <input type="text" asp-for="City" class="form-control" id="City"
                                placeholder="City">
                         <label asp-for="City">City</label>
+                        <span asp-validation-for="City" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -173,6 +174,15 @@
         })
 
     </script>
+
+    <script>
+        $('#FirstName').change(function () {
+            let firstname = $('#FirstName').val();
+            let trimmedValue = firstname.trim();
+            $('#FirstName').val(trimmedValue);
+        });
+    </script>
+
     <script>
         const dateInput = document.querySelector('#DOB');
         dateInput.max = new Date().toISOString().split("T")[0];

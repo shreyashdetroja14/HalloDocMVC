@@ -161,7 +161,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="mailform" asp-action="SendLink" class="row">
+                        <form id="sendlinkform" asp-action="SendLink" class="row">
                             <div class="col-12">
                                 <div class="form-floating mb-3">
                                     <input type="text" asp-for="SendLinkData.FirstName" class="form-control" id="FirstName" placeholder="First Name" required>
@@ -190,7 +190,7 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end">
-                                <input type="submit" value="Send" class="btn btn-info text-white">
+                                <button type="button" id="send-link-btn" class="btn btn-info text-white">Send</button>
                                 <button type="button" class="btn btn-outline-info ms-2" data-bs-dismiss="modal">Close</button>
                             </div>
                         </form>
@@ -208,18 +208,18 @@
                     </div>
                     <div class="modal-body">
                         <p class="">To all unscheduled physicians: We are short on coverage and need additional support On Call to respond to requests.</p>
-                        <form id="mailform" asp-action="RequestSupport" class="row">
+                        <form id="reqsupportform" asp-action="RequestSupport" class="row">
                             <div class="col-12">
                                 <div class="form-floating mb-3">
                                     <div class="form-floating mb-3">
-                                        <textarea asp-for="SupportMessage" class="form-control" placeholder="Enter Message" id="Message"
+                                        <textarea asp-for="SupportMessage" class="form-control" placeholder="Enter Message" id="SupportMessage"
                                                   style="height: 100px" ></textarea>
                                         <label asp-for="SupportMessage">Support Message</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end">
-                                <input type="submit" value="Send" class="btn btn-info text-white">
+                                <button type="button" id="req-support-btn" class="btn btn-info text-white">Send</button>
                                 <button type="button" class="btn btn-outline-info ms-2" data-bs-dismiss="modal">Close</button>
                             </div>
                         </form>

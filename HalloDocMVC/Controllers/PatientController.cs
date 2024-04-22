@@ -17,11 +17,13 @@ namespace HalloDocMVC.Controllers
     {
         private readonly IPatientService _patientService;
         private readonly IJwtService _jwtService;
+        private readonly IRequestFormService _requestFormService;
 
-        public PatientController( IPatientService patientService, IJwtService jwtService)
+        public PatientController( IPatientService patientService, IJwtService jwtService, IRequestFormService requestFormService)
         {
             _patientService = patientService;
             _jwtService = jwtService;
+            _requestFormService = requestFormService;
         }
 
         #region Encode_Decode
@@ -71,8 +73,12 @@ namespace HalloDocMVC.Controllers
             if (MultipleFiles != null && MultipleFiles?.Count() != 0)
             {
                 await _patientService.UploadFiles(MultipleFiles, requestid);
+                TempData["SuccessMessage"] = "Files Uploaded Successfully";
             }
-            TempData["SuccessMessage"] = "Files Uploaded Successfully";
+            else
+            {
+                TempData["ErrorMessage"] = "Unable to upload files.";
+            }
 
             return RedirectToAction("ViewDocuments", new { requestid });
         }
@@ -227,6 +233,13 @@ namespace HalloDocMVC.Controllers
             }
 
             ClaimsData claimsData = _jwtService.GetClaimValues();
+
+            bool isUserExists = await _requestFormService.CheckUser(frvm.PatientInfo.Email);
+            if (!isUserExists)
+            {
+                frvm.PatientInfo.EmailToken = _jwtService.GenerateEmailToken(frvm.PatientInfo.Email, isExpireable: false);
+                await _requestFormService.SendMail(frvm.PatientInfo);
+            }
 
             bool isRequestCreated = await _patientService.CreateFamilyRequest(frvm, claimsData.Id);
             if (isRequestCreated)

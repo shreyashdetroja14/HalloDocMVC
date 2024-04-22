@@ -26,6 +26,22 @@
             </button>
         </div>
         <form asp-route="EncounterForm" id="encounter-form" class="bg-body p-4  request-form">
+            @if (Model.IsPhysician != true && Model.IsFinalized == true)
+            {
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle-fill"></i>
+                    Encounter Form has been finalized by the physician.
+                </div>
+            }
+
+            @if (Model.EncounterFormId == 0)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    Physician has not created the encounter form yet.
+                </div>
+            }
+
             <h1 class="text-info text-center mb-3">Medical Report-Confidential</h1>
             <input type="number" asp-for="RequestId" hidden>
             <input type="number" asp-for="EncounterFormId" hidden>
@@ -294,12 +310,7 @@
 
                 </div>
 
-                @if (Model.IsPhysician == true && Model.IsFinalized == true)
-                {
-                    <div class="text-center">
-                        <h4 class="text-warning">Encounter Form has been finalized.</h4>
-                    </div>
-                }
+                
             }
 
         </form>

@@ -91,7 +91,7 @@ namespace HalloDocServices.Implementation
 
             requests = requests.Where(x => physicianId == null || x.PhysicianId == physicianId);
 
-            int[] myarray = new int[3];
+            /*int[] myarray = new int[3];
             switch (requestStatus)
             {
                 case 1:
@@ -120,7 +120,9 @@ namespace HalloDocServices.Implementation
                 case 6:
                     myarray[0] = 9;
                     break;
-            }
+            }*/
+
+            int[] myarray = new CommonMethods().GetRequestStatus(requestStatus);
 
             requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Include(x => x.RequestStatusLogs).Where(x => x.IsDeleted != true && myarray.Contains(x.Status));
 

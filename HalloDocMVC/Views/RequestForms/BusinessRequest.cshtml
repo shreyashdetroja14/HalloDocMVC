@@ -244,6 +244,19 @@
         });
     </script>
     <script>
+        $('#BusinessName').change(function () {
+            let firstname = $('#BusinessName').val();
+            let trimmedValue = firstname.trim();
+            $('#BusinessName').val(trimmedValue);
+        });
+
+        $('#FirstName').change(function () {
+            let firstname = $('#FirstName').val();
+            let trimmedValue = firstname.trim();
+            $('#FirstName').val(trimmedValue);
+        });
+    </script>
+    <script>
         const dateInput = document.querySelector('#DOB');
         dateInput.max = new Date().toISOString().split("T")[0];
 

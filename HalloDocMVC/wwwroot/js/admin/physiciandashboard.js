@@ -483,3 +483,14 @@ function addEventListnersForPartial() {
 }
 
 
+//SEND LINK LOADER ON SUBMIT
+
+$('#send-link-btn').click(function () {
+
+    $('#loader').fadeIn();
+
+    $('#sendlinkform').submit();
+    console.log('form submitted');
+});
+
+

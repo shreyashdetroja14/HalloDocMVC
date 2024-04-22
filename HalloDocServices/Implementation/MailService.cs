@@ -29,6 +29,7 @@ namespace HalloDocServices.Implementation
                     var defaultEmail = _configuration["Email:MailId"];
                     List<string> defaultReceivers = new List<string>();
                     defaultReceivers.Add(defaultEmail ?? "");
+                    //defaultReceivers.Add("shreyashdetroja14@gmail.com");
                     receiver = defaultReceivers;
                 }
 

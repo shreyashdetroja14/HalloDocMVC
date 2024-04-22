@@ -166,7 +166,15 @@
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
     </script>
-    
+
+    <script>
+        $('#FirstName').change(function () {
+            let firstname = $('#FirstName').val();
+            let trimmedValue = firstname.trim();
+            $('#FirstName').val(trimmedValue);
+        });
+    </script>
+
     <script>
         const dateInput = document.querySelector('#DOB');
         dateInput.max = new Date().toISOString().split("T")[0];

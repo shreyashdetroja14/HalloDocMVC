@@ -34,7 +34,7 @@
 
         <div class="shadow rounded-3">
             <form asp-action="CreateProvider" class="bg-body p-4 shadow-none " id="create-form" enctype="multipart/form-data">
-                <input type="number" asp-for="Latitude" id="Latitude" hidden/>
+                <input type="number" asp-for="Latitude" id="Latitude" hidden />
                 <input type="number" asp-for="Longitude" id="Longitude" hidden />
 
                 <div class="info mb-4">
@@ -51,7 +51,7 @@
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
                                 <input type="password" asp-for="Password" class="form-control account-info" id="Password"
-                                       placeholder="Password" >
+                                       placeholder="Password">
                                 <label asp-for="Password">Password</label>
                                 <span class="material-symbols-outlined text-body icon-label" id="eye">
                                     visibility_off
@@ -61,7 +61,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="Html.GetEnumSelectList<Status>()" >
+                                <select asp-for="Status" id="status-list" class="form-select p-3 account-info" asp-items="Html.GetEnumSelectList<Status>()">
                                     <option value="">Set a status</option>
                                 </select>
                                 <span asp-validation-for="Status" class="text-danger"></span>
@@ -69,7 +69,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class=" mb-3">
-                                <select asp-for="RoleId" id="role-list" class="form-select p-3 account-info" asp-items="@Model.RoleList" >
+                                <select asp-for="RoleId" id="role-list" class="form-select p-3 account-info" asp-items="@Model.RoleList">
                                 </select>
                                 <span asp-validation-for="RoleId" class="text-danger"></span>
                             </div>
@@ -83,7 +83,7 @@
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
                                 <input type="text" asp-for="FirstName" class="form-control physician-info" id="FirstName"
-                                       placeholder="FirstName" >
+                                       placeholder="FirstName">
                                 <label asp-for="FirstName">First Name</label>
                                 <span asp-validation-for="FirstName" class="text-danger"></span>
                             </div>
@@ -91,39 +91,39 @@
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
                                 <input type="text" asp-for="LastName" class="form-control physician-info" id="LastName"
-                                       placeholder="LastName" >
+                                       placeholder="LastName">
                                 <label asp-for="LastName">Last Name</label>
                                 <span asp-validation-for="LastName" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <input type="email" asp-for="Email" class="form-control physician-info" id="Email" placeholder="Email" >
+                                <input type="email" asp-for="Email" class="form-control physician-info" id="Email" placeholder="Email">
                                 <label asp-for="Email">Email</label>
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-sm-6 pb-3">
-                            <input type="tel" asp-for="PhoneNumber" class="form-control w-100 physician-info" id="PhoneNumber"  />
+                            <input type="tel" asp-for="PhoneNumber" class="form-control w-100 physician-info" id="PhoneNumber" />
                             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <input type="text" asp-for="MedicalLicense" class="form-control physician-info" id="MedicalLicense" placeholder="MedicalLicense" >
+                                <input type="text" asp-for="MedicalLicense" class="form-control physician-info" id="MedicalLicense" placeholder="MedicalLicense">
                                 <label asp-for="MedicalLicense">Medical License</label>
                                 <span asp-validation-for="MedicalLicense" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <input type="text" asp-for="NPINumber" class="form-control physician-info" id="NPINumber" placeholder="NPINumber" >
+                                <input type="text" asp-for="NPINumber" class="form-control physician-info" id="NPINumber" placeholder="NPINumber">
                                 <label asp-for="NPINumber">NPI Number</label>
                                 <span asp-validation-for="NPINumber" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <input type="email" asp-for="SyncEmail" class="form-control physician-info" id="SyncEmail" placeholder="SyncEmail" >
+                                <input type="email" asp-for="SyncEmail" class="form-control physician-info" id="SyncEmail" placeholder="SyncEmail">
                                 <label asp-for="SyncEmail">Sync Email</label>
                                 <span asp-validation-for="SyncEmail" class="text-danger"></span>
                             </div>
@@ -138,8 +138,7 @@
                                            value="@state.Value"
                                            id="region-@state.Value"
                                            name="ProviderRegions"
-                                           checked="@(Model.ProviderRegions.Contains(int.Parse(state.Value)) ? "true" : false)"
-                                           >
+                                           checked="@(Model.ProviderRegions.Contains(int.Parse(state.Value)) ? "true" : false)">
                                     <label class="form-check-label" for="region-@state.Value">
                                         @state.Text
                                     </label>
@@ -155,7 +154,7 @@
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
                                 <input type="text" asp-for="Address1" class="form-control billing-info" id="Address1"
-                                       placeholder="Address1" >
+                                       placeholder="Address1">
                                 <label asp-for="Address1">Address 1</label>
                                 <span asp-validation-for="Address1" class="text-danger"></span>
                             </div>
@@ -163,34 +162,34 @@
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
                                 <input type="text" asp-for="Address2" class="form-control billing-info" id="Address2"
-                                       placeholder="Address2" >
+                                       placeholder="Address2">
                                 <label asp-for="Address2">Address 2</label>
                                 <span asp-validation-for="Address2" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <input type="text" asp-for="City" class="form-control billing-info" id="City" placeholder="City" >
+                                <input type="text" asp-for="City" class="form-control billing-info" id="City" placeholder="City">
                                 <label asp-for="City">City</label>
                                 <span asp-validation-for="City" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class=" mb-3">
-                                <select asp-for="RegionId" id="region-list" class="form-select p-3" asp-items="@Model.StateList" >
+                                <select asp-for="RegionId" id="region-list" class="form-select p-3" asp-items="@Model.StateList">
                                 </select>
                                 <span asp-validation-for="RegionId" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
-                                <input type="text" asp-for="ZipCode" class="form-control billing-info" id="ZipCode" placeholder="ZipCode" >
+                                <input type="text" asp-for="ZipCode" class="form-control billing-info" id="ZipCode" placeholder="ZipCode">
                                 <label asp-for="ZipCode">ZipCode</label>
                                 <span asp-validation-for="ZipCode" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-sm-6 pb-3">
-                            <input type="tel" asp-for="SecondPhoneNumber" class="form-control w-100 billing-info" id="SecondPhoneNumber"  />
+                            <input type="tel" asp-for="SecondPhoneNumber" class="form-control w-100 billing-info" id="SecondPhoneNumber" />
                             <span asp-validation-for="SecondPhoneNumber" class="text-danger"></span>
                         </div>
                     </div>
@@ -202,7 +201,7 @@
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
                                 <input type="text" asp-for="BusinessName" class="form-control profile-info" id="BusinessName"
-                                       placeholder="BusinessName" >
+                                       placeholder="BusinessName">
                                 <label asp-for="BusinessName">Business Name</label>
                                 <span asp-validation-for="BusinessName" class="text-danger"></span>
                             </div>
@@ -210,7 +209,7 @@
                         <div class="col-sm-6">
                             <div class="form-floating mb-3">
                                 <input type="text" asp-for="BusinessWebsite" class="form-control profile-info" id="BusinessWebsite"
-                                       placeholder="BusinessWebsite" >
+                                       placeholder="BusinessWebsite">
                                 <label asp-for="BusinessWebsite">Business Website</label>
                                 <span asp-validation-for="BusinessWebsite" class="text-danger"></span>
                             </div>
@@ -232,7 +231,7 @@
                         <div class="col-12">
                             <div class="form-floating mb-3">
                                 <textarea asp-for="AdminNotes" class="form-control profile-info" placeholder="Enter Symptoms" id="AdminNotes"
-                                          style="height: 150px" ></textarea>
+                                          style="height: 150px"></textarea>
                                 <label asp-for="AdminNotes">Admin Notes</label>
                                 <span asp-validation-for="AdminNotes" class="text-danger"></span>
                             </div>
@@ -251,7 +250,7 @@
                             <label for="ContractorDoc" class="me-2">Independent Contractor Agreement</label>
                         </div>
                         <div class="col-sm-5 mb-3">
-                            <input type="file" accept=".jpg" asp-for="ContractorDoc" class="onboarding-doc"  id="ContractorInput">
+                            <input type="file" accept=".jpg" asp-for="ContractorDoc" class="onboarding-doc" id="ContractorInput">
                             <label for="ContractorInput" class="btn btn-info text-white me-2">Upload</label>
                             @if (Model.IsContractorDoc)
                             {
@@ -259,24 +258,24 @@
                             }
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-1 mb-3">
-                            <input type="checkbox" asp-for="IsBackgroundDoc"  class="form-check-input" id="BackgroundDoc" checked="@Model.IsBackgroundDoc" />
+                            <input type="checkbox" asp-for="IsBackgroundDoc" class="form-check-input" id="BackgroundDoc" checked="@Model.IsBackgroundDoc" />
                         </div>
                         <div class="col-11 col-sm-6 mb-3">
                             <label for="BackgroundDoc" class="me-2">Background Check</label>
                         </div>
                         <div class="col-sm-5 mb-3">
-                            <input type="file" accept=".jpg" asp-for="BackgroundDoc" class="onboarding-doc"  id="BackgroundInput">
+                            <input type="file" accept=".jpg" asp-for="BackgroundDoc" class="onboarding-doc" id="BackgroundInput">
                             <label for="BackgroundInput" class="btn btn-info text-white me-2">Upload</label>
-                            @if (Model.IsBackgroundDoc )
+                            @if (Model.IsBackgroundDoc)
                             {
                                 <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/2.jpg" class="btn btn-info text-white">View</a>
                             }
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-1 mb-3">
                             <input type="checkbox" asp-for="IsHippaDoc" class="form-check-input me-2" id="HippaDoc" checked="@Model.IsHippaDoc" />
@@ -285,15 +284,15 @@
                             <label for="HippaDoc" class="me-2">HIPAA Compliance</label>
                         </div>
                         <div class="col-sm-5 mb-3">
-                            <input type="file" accept=".jpg" asp-for="HippaDoc" class="onboarding-doc"  id="HippaInput">
+                            <input type="file" accept=".jpg" asp-for="HippaDoc" class="onboarding-doc" id="HippaInput">
                             <label for="HippaInput" class="btn btn-info text-white me-2">Upload</label>
-                            @if (Model.IsHippaDoc )
+                            @if (Model.IsHippaDoc)
                             {
                                 <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/3.jpg" class="btn btn-info text-white">View</a>
                             }
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-1 mb-3">
                             <input type="checkbox" asp-for="IsNonDisclosureDoc" class="form-check-input me-2" id="NonDisclosureDoc" checked="@Model.IsNonDisclosureDoc" />
@@ -302,15 +301,15 @@
                             <label for="NonDisclosureDoc" class="me-2">Non-Disclosure Agreement</label>
                         </div>
                         <div class="col-sm-5 mb-3">
-                            <input type="file" accept=".jpg" asp-for="NonDisclosureDoc" class="onboarding-doc"  id="NonDisclosureInput">
+                            <input type="file" accept=".jpg" asp-for="NonDisclosureDoc" class="onboarding-doc" id="NonDisclosureInput">
                             <label for="NonDisclosureInput" class="btn btn-info text-white me-2">Upload</label>
-                            @if (Model.IsNonDisclosureDoc )
+                            @if (Model.IsNonDisclosureDoc)
                             {
                                 <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/4.jpg" class="btn btn-info text-white">View</a>
                             }
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-1 mb-3">
                             <input type="checkbox" asp-for="IsLicenseDoc" class="form-check-input me-2" id="LicenseDoc" checked="@Model.IsLicenseDoc" />
@@ -319,9 +318,9 @@
                             <label for="LicenseDoc" class="me-2">License Document</label>
                         </div>
                         <div class="col-sm-5 mb-3">
-                            <input type="file" accept=".jpg" asp-for="LicenseDoc" class="onboarding-doc"  id="LicenseInput">
+                            <input type="file" accept=".jpg" asp-for="LicenseDoc" class="onboarding-doc" id="LicenseInput">
                             <label for="LicenseInput" class="btn btn-info text-white me-2">Upload</label>
-                            @if (Model.IsLicenseDoc )
+                            @if (Model.IsLicenseDoc)
                             {
                                 <a target="_blank" href="~/Upload/Physician/@(Model.ProviderId)/5.jpg" class="btn btn-info text-white">View</a>
                             }
@@ -349,7 +348,7 @@
 
     <partial name="_ToastMessageScriptsPartial" />
 
-   
+
 
 
     @*PHONE NUMBER INPUT SCRIPT*@
@@ -376,7 +375,7 @@
 
     </script>
 
-    
+
     @*UPLOAD LABEL SCRIPT*@
 
     <script>
@@ -392,7 +391,7 @@
             }
         });
 
-        
+
     </script>
 
 
@@ -418,7 +417,7 @@
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARrk6kY-nnnSpReeWotnQxCAo_MoI4qbU"></script>
 
     <script>
-        $('#create-btn').click(function(event){
+        $('#create-btn').click(function (event) {
             event.preventDefault();
             console.log('btn clicked');
 
@@ -435,14 +434,14 @@
 
                     console.log($('#Latitude').val());
                     console.log($('#Longitude').val());
-                    
+
                     $('#create-form').submit();
                 }
             });
 
         });
 
-        
+
     </script>
 
     <script>
@@ -510,7 +509,7 @@
             let firstNamePart = firstName.substring(0, 1);
             let lastNamePart = lastName.substring(0, 3);
 
-            
+
             if (lastName.length < 3) {
                 lastNamePart = lastName;
             }
@@ -527,5 +526,21 @@
 
     </script>
 
+    <script>
+        //first name, last name trims are handled by username generation script
+
+
+        $('#BusinessName').change(function () {
+            let business = $('#BusinessName').val();
+            let trimmedValue = business.trim();
+            $('#BusinessName').val(trimmedValue);
+        });
+
+        $('#City').change(function () {
+            let city = $('#City').val();
+            let trimmedValue = city.trim();
+            $('#City').val(trimmedValue);
+        });
+    </script>
 }
 

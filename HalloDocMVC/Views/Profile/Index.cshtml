@@ -288,10 +288,7 @@
         
         resetPassBtn.click(function(){
             console.log('reset btn clicked');
-            if (resetPassBtn.val() === "") {
-                toastr.error("Password can't be empty");
-                return;
-            }
+            
 
             if(window.location.href.toLowerCase().includes('access')){
                 //console.log('status: ', isEditAdmin);
@@ -400,6 +397,9 @@
 
     </script>
 
+
+    @*PASSWORD SHOW/HIDE*@
+
     <script>
         $('#eye').click(function () {
             var passwordInput = $('#Password');
@@ -479,8 +479,8 @@
 
         }
 
-        firstNameInput.addEventListener('keyup', generateUsername);
-        lastNameInput.addEventListener('keyup', generateUsername);
+        firstNameInput.addEventListener('change', generateUsername);
+        lastNameInput.addEventListener('change', generateUsername);
 
     </script>
 }

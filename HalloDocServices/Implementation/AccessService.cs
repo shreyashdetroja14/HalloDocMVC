@@ -155,7 +155,7 @@ namespace HalloDocServices.Implementation
             /*var aspnetusers = _userRepository.GetIQueryableAspNetUsers().Include(x => x.AdminAspNetUsers).ThenInclude(x => x.Role).Include(x => x.PhysicianAspNetUsers).ThenInclude(x => x.Role).Include(x => x.PhysicianAspNetUsers).ThenInclude(x => x.Requests);*/
             var newRequestCount = await _requestRepository.GetNewRequestCount();
 
-            List<UserAccessRow> userAccessList = _userRepository.GetIQueryableAspNetUsers().Where(x => x.AdminAspNetUsers.Count() != 0 || x.PhysicianAspNetUsers.Count() != 0)
+            List<UserAccessRow> userAccessList = _userRepository.GetIQueryableAspNetUsers().Where(x => x.AdminAspNetUsers.Count() != 0 || (x.PhysicianAspNetUsers.Count() != 0 && !x.PhysicianAspNetUsers.Where(x => x.IsDeleted == true).Any()))
                      .Select(x => new UserAccessRow
                      {
                          AspNetUserId = x.Id,

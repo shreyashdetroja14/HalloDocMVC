@@ -262,6 +262,12 @@ namespace HalloDocServices.Implementation
                 var aspnetuserNew = CreateAspnetuser(prvm);
                 aspnetuserNew = await _userRepository.CreateAspNetUser(aspnetuserNew);
 
+                var aspnetuserRoleNew = new AspNetUserRole();
+                aspnetuserRoleNew.AspNetUserId = aspnetuserNew.Id;
+                aspnetuserRoleNew.RoleId = "c5169b0d-e9f6-4c6f-8f98-a7b8d4a95158";
+
+                await _userRepository.CreateAspNetUserRole(aspnetuserRoleNew);
+
                 var userNew = CreateUser(prvm, aspnetuserNew);
                 await _userRepository.CreateUser(userNew);
             }

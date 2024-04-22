@@ -416,5 +416,21 @@ namespace HalloDocMVC.Controllers
 
             return RedirectToAction("EditPhysician", new { physicianId = providerId });
         }
+
+        [CustomAuthorize("admin")]
+        public async Task<IActionResult> DeleteProvider(int providerId)
+        {
+            bool isProvDeleted = await _providersService.DeleteProvider(providerId);
+            if (isProvDeleted)
+            {
+                TempData["SuccessMessage"] = "Provider Deleted Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Delete Provider.";
+            }
+
+            return RedirectToAction("UserAccess");
+        }
     }
 }

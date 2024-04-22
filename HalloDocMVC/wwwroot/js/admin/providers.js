@@ -111,7 +111,7 @@ async function GetContactProviderModal(providerId) {
             radioBtns.forEach(radio => {
                 radio.addEventListener('click', () => {
                     const subjectInput = document.querySelector('#SubjectField');
-                    if (radio.value == "email") {
+                    if (radio.value != "sms") {
                         subjectInput.classList.remove('d-none');
                     }
                     else {

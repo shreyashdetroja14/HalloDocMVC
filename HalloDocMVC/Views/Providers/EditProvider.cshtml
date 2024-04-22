@@ -51,6 +51,9 @@
                                 <input type="password" asp-for="Password" class="form-control" id="Password"
                                        placeholder="Password">
                                 <label asp-for="Password">Password</label>
+                                <span class="material-symbols-outlined text-body icon-label" id="eye">
+                                    visibility_off
+                                </span>
                                 <span asp-validation-for="Password" class="text-danger"></span>
                             </div>
                         </div>
@@ -553,6 +556,22 @@
 
     </script>
 
+    @*PASSWORD SHOW/HIDE*@
+
+    <script>
+        $('#eye').click(function () {
+            var passwordInput = $('#Password');
+            var eyeIcon = $('#eye');
+
+            if (passwordInput.attr('type') === "password") {
+                passwordInput.attr('type', 'text');
+                eyeIcon.text('visibility');
+            } else {
+                passwordInput.attr('type', 'password');
+                eyeIcon.text('visibility_off');
+            }
+        })
+    </script>
 
     @*EDIT BUTTONS SCRIPT*@
 
@@ -568,12 +587,11 @@
         const statusList = document.querySelector('#status-list');
 
         const resetPassBtn = $('#reset-pass');
-        const isAccessProvider = '@Model.IsAccessProvider'
-        console.log(isAccessProvider);
+        
 
         resetPassBtn.click(function () {
             console.log('reset btn clicked');
-           if(isAccessProvider){
+            if (window.location.href.toLowerCase().includes('/access')) {
                 $('#form-account-info').attr('action', '/Access/ResetProviderPassword');
            }
            else{
@@ -585,7 +603,7 @@
 
         $('#account-info-save').click(function () {
             console.log('reset btn clicked');
-            if (isAccessProvider) {
+            if (window.location.href.toLowerCase().includes('/access')) {
                 $('#form-account-info').attr('action', '/Access/EditProviderAccountInfo');
             }
             else {
@@ -767,8 +785,18 @@
             signContainer.classList.remove('d-none');
             createSignatureBtn.classList.add('d-none');
         })
+
+
     </script>
 
+    <script>
+        $('#BusinessName').change(function () {
+            let firstname = $('#BusinessName').val();
+            let trimmedValue = firstname.trim();
+            $('#BusinessName').val(trimmedValue);
+        });
+
+    </script>
 
     @*UPLOAD LABEL SCRIPT*@
 
