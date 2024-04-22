@@ -167,11 +167,22 @@
                                     }
                                     else
                                     {
-                                        <li>
-                                            <a class="dropdown-item" asp-route="EncounterForm" asp-route-requestId="@request.RequestId">
-                                                <i class="bi bi-file-medical pe-3"></i>Encounter
-                                            </a>
-                                        </li>
+                                        @if (request.IsFinalized)
+                                        {
+                                            <li>
+                                                <a class="dropdown-item download-btn" style="cursor: pointer" data-request-id="@request.RequestId">
+                                                    <i class="bi bi-file-medical pe-3"></i>Encounter
+                                                </a>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li>
+                                                <a class="dropdown-item" asp-route="EncounterForm" asp-route-requestId="@request.RequestId">
+                                                    <i class="bi bi-file-medical pe-3"></i>Encounter
+                                                </a>
+                                            </li>
+                                        }
                                     }
                                 }
                             </ul>
@@ -325,11 +336,22 @@
                                 }
                                 else
                                 {
-                                    <div class="col-6">
-                                        <a asp-route="EncounterForm" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">
-                                            Encounter
-                                        </a>
-                                    </div>
+                                    @if (request.IsFinalized)
+                                    {
+                                        <div class="col-6">
+                                            <button class="btn btn-info rounded-pill mb-2 w-75 download-btn" data-request-id="@request.RequestId">
+                                                Encounter
+                                            </button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-6">
+                                            <a asp-route="EncounterForm" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">
+                                                Encounter
+                                            </a>
+                                        </div>
+                                    }
                                 }
 
                                 

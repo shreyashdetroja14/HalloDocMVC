@@ -424,6 +424,7 @@ function addEventListnersForPartial() {
     const sendAgreementBtn = document.querySelectorAll('.send-agreement-btn');
     const transferRequestBtn = document.querySelectorAll('.transfer-case-btn');
     const careTypeBtn = document.querySelectorAll('.care-type-btn');
+    const downloadBtn = document.querySelectorAll('.download-btn');
     const pageNumberLinks = document.querySelectorAll('.page-number');
     //const nextPageLink = document.querySelector('page-next');
 
@@ -476,6 +477,20 @@ function addEventListnersForPartial() {
                 await GetCareTypeModalData(requestId);
 
                 const myModal = new bootstrap.Modal('#care-type-modal');
+                myModal.show();
+            });
+        });
+    }
+
+    if (downloadBtn !== null) {
+        downloadBtn.forEach(item => {
+            item.addEventListener('click', async (event) => {
+                const requestId = event.target.dataset.requestId;
+                console.log(requestId);
+
+                await GetDownloadModalData(requestId);
+
+                const myModal = new bootstrap.Modal('#download-form-modal');
                 myModal.show();
             });
         });

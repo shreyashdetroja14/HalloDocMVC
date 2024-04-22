@@ -49,5 +49,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public List<string>? Notes { get; set; }
 
         public string? CallType { get; set; }
+
+        public bool IsFinalized { get; set; }
     }
 }

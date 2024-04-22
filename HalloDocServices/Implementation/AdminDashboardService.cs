@@ -91,40 +91,9 @@ namespace HalloDocServices.Implementation
 
             requests = requests.Where(x => physicianId == null || x.PhysicianId == physicianId);
 
-            /*int[] myarray = new int[3];
-            switch (requestStatus)
-            {
-                case 1:
-                    myarray[0] = 1;
-                    break;
-
-                case 2:
-                    myarray[0] = 2;
-                    break;
-
-                case 3:
-                    myarray[0] = 4;
-                    myarray[1] = 5;
-                    break;
-
-                case 4:
-                    myarray[0] = 6;
-                    break;
-
-                case 5:
-                    myarray[0] = 3;
-                    myarray[1] = 7;
-                    myarray[2] = 8;
-                    break;
-
-                case 6:
-                    myarray[0] = 9;
-                    break;
-            }*/
-
             int[] myarray = new CommonMethods().GetRequestStatus(requestStatus);
 
-            requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Include(x => x.RequestStatusLogs).Where(x => x.IsDeleted != true && myarray.Contains(x.Status));
+            requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Include(x => x.RequestStatusLogs).Include(x => x.EncounterForms).Where(x => x.IsDeleted != true && myarray.Contains(x.Status));
 
 
             if (requestType != null)
@@ -165,6 +134,18 @@ namespace HalloDocServices.Implementation
                 int year = requestClient?.IntYear ?? 0;
                 string month = requestClient?.StrMonth ?? "";
 
+                EncounterForm? encounterForm = request.EncounterForms.FirstOrDefault();
+                bool isFinalized;
+                if(encounterForm == null || encounterForm.IsFinalized != true)
+                {
+                    isFinalized = false;
+                }
+                else
+                {
+                    isFinalized = true;
+                }
+
+
                 List<string> notes = new List<string>();
                 foreach (var log in request.RequestStatusLogs)
                 {
@@ -193,6 +174,7 @@ namespace HalloDocServices.Implementation
                     Region = requestClient?.RegionId,
                     Notes = notes,
                     CallType = ((CareType)(request.CallType ?? 0)).ToString(),
+                    IsFinalized = isFinalized
                 });
             }
 
