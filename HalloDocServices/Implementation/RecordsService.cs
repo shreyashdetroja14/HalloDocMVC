@@ -479,7 +479,7 @@ namespace HalloDocServices.Implementation
 
             if(SearchFilter.ReceiverName != null)
             {
-                emailLogs.Where(x => EF.Functions.ILike(x.RecipientName, "%" + SearchFilter.ReceiverName + "%"));
+                emailLogs = emailLogs.Where(x => EF.Functions.ILike(x.RecipientName, "%" + SearchFilter.ReceiverName + "%"));
             }
 
             if(SearchFilter.Email != null)
@@ -549,7 +549,7 @@ namespace HalloDocServices.Implementation
 
             if (SearchFilter.ReceiverName != null)
             {
-                smsLogs.Where(x => EF.Functions.ILike(x.RecipientName ?? "", "%" + SearchFilter.ReceiverName + "%"));
+                smsLogs = smsLogs.Where(x => EF.Functions.ILike(x.RecipientName ?? "", "%" + SearchFilter.ReceiverName + "%"));
             }
 
             if (SearchFilter.PhoneNumber != null)

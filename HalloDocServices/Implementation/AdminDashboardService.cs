@@ -21,7 +21,10 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using System.Diagnostics.Metrics;
 using iText.Kernel.Pdf;
 using iText.Layout.Properties;
-
+using iText.Layout;
+using iText.Layout.Element;
+using Paragraph = iText.Layout.Element.Paragraph;
+using TextAlignment = iText.Layout.Properties.TextAlignment;
 
 namespace HalloDocServices.Implementation
 {
@@ -150,7 +153,8 @@ namespace HalloDocServices.Implementation
 
 
                 List<string> notes = new List<string>();
-                foreach (var log in request.RequestStatusLogs)
+                var requestStatusLogs = request.RequestStatusLogs.OrderByDescending(x => x.CreatedDate).ToList();
+                foreach (var log in requestStatusLogs)
                 {
                     if (log.Notes != null)
                     {
@@ -281,7 +285,7 @@ namespace HalloDocServices.Implementation
             ViewNotesViewModel ViewNotes = new ViewNotesViewModel();
 
             var requestNotes = await _notesAndLogsRepository.GetNoteByRequestId(requestId);
-            var requestStatusLogs = _notesAndLogsRepository.GetStatusLogsByRequestId(requestId).ToList();
+            var requestStatusLogs = _notesAndLogsRepository.GetStatusLogsByRequestId(requestId).OrderByDescending(x => x.CreatedDate).ToList();
 
             ViewNotes.RequestId = requestId;
             ViewNotes.AdminNotes = requestNotes?.AdminNotes;
@@ -1668,14 +1672,14 @@ namespace HalloDocServices.Implementation
 
         public async Task<byte[]> GenerateEncounterPdf(DownloadFormViewModel DownloadFormData)
         {
-            EncounterForm encounterForm = _commonRepository.GetEncounterFormByRequestId(DownloadFormData.RequestId);
+            EncounterForm encounter = _commonRepository.GetEncounterFormByRequestId(DownloadFormData.RequestId);
 
             using (var memoryStream = new MemoryStream())
             {
-                /*var pdfWriter = new PdfWriter(memoryStream);
+                var pdfWriter = new PdfWriter(memoryStream);
                 var pdfDocument = new PdfDocument(pdfWriter);
 
-                var document = new Document(pdfDocument);
+                var document = new iText.Layout.Document(pdfDocument);
 
                 // Add a title
                 var title = new Paragraph("Medical Report")
@@ -1689,51 +1693,59 @@ namespace HalloDocServices.Implementation
                 table.AddHeaderCell("Property");
                 table.AddHeaderCell("Value");
 
+                if(DownloadFormData.RequestId == 0 || encounter == null)
+                {
+                    document.Add(table);
+                    document.Close();
+
+                    return memoryStream.ToArray();
+                }
+
                 // Add properties
                 table.AddCell("RequestId");
-                table.AddCell(encounter?.EncounterId.ToString());
+                table.AddCell(encounter?.EncounterFormId.ToString());
                 table.AddCell("FirstName");
                 table.AddCell(encounter?.FirstName);
                 table.AddCell("LastName");
-                table.AddCell(encounter?.LastName);
+                table.AddCell(encounter?.LastName ?? "");
                 table.AddCell("Location");
-                table.AddCell(encounter?.Address ?? "");
+                table.AddCell(encounter?.Location ?? "");
                 table.AddCell("DateOfBirth");
-                table.AddCell(encounter?.Dob.ToString());
+                table.AddCell(encounter?.StrMonth + " " + encounter?.IntDate + ", " + encounter?.IntYear);
                 table.AddCell("DateOfService");
-                table.AddCell(encounter?.CreatedDate.ToString());
+                table.AddCell(DateOnly.FromDateTime(encounter?.ServiceDate ?? DateTime.Now).ToString());
                 table.AddCell("Mobile");
-                table.AddCell(encounter?.Mobile);
+                table.AddCell(encounter?.PhoneNumber ?? "");
                 table.AddCell("Email");
-                table.AddCell(encounter?.IllnessHistory);
+                table.AddCell(encounter?.PresentIllnessHistory ?? "");
                 table.AddCell("HistoryOfPresentIllness");
                 table.AddCell(encounter?.MedicalHistory ?? "");
                 table.AddCell("Medication");
-                table.AddCell(encounter?.Medication ?? "");
+                table.AddCell(encounter?.Medications ?? "");
                 table.AddCell("Allergies");
                 table.AddCell(encounter?.Allergies ?? "");
                 table.AddCell("Temprature");
-                table.AddCell(encounter?.Temp ?? "");
+                table.AddCell(encounter?.Temperature ?? "");
                 table.AddCell("HeartRate");
-                table.AddCell(encounter?.Hr ?? "");
+                table.AddCell(encounter?.HeartRate ?? "");
                 table.AddCell("RespiratoryRate");
-                table.AddCell(encounter?.Rr ?? "");
+                table.AddCell(encounter?.RespirationRate ?? "");
                 table.AddCell("BloodPressureDiastolic");
-                table.AddCell(encounter?.Bp ?? "");
+                table.AddCell(encounter?.BloodPressureDiastolic ?? "");
                 table.AddCell("O2Level");
-                table.AddCell(encounter?.O2 ?? "");
+                table.AddCell(encounter?.OxygenLevel ?? "");
                 table.AddCell("Pain");
                 table.AddCell(encounter?.Pain ?? "");
                 table.AddCell("HEENT");
                 table.AddCell(encounter?.Heent ?? "");
                 table.AddCell("CvReading");
-                table.AddCell(encounter?.Cv ?? "");
+                table.AddCell(encounter?.Cardiovascular ?? "");
                 table.AddCell("Chest");
                 table.AddCell(encounter?.Chest ?? "");
                 table.AddCell("ABD");
-                table.AddCell(encounter?.Abd ?? "");
+                table.AddCell(encounter?.Abdomen ?? "");
                 table.AddCell("Extr");
-                table.AddCell(encounter?.Extr ?? "");
+                table.AddCell(encounter?.Extremities ?? "");
                 table.AddCell("Skin");
                 table.AddCell(encounter?.Skin ?? "");
                 table.AddCell("Neuro");
@@ -1745,17 +1757,15 @@ namespace HalloDocServices.Implementation
                 table.AddCell("TreatmentPlan");
                 table.AddCell(encounter?.TreatmentPlan ?? "");
                 table.AddCell("MedicationDispensed");
-                table.AddCell(encounter?.MedicationDespensed ?? "");
+                table.AddCell(encounter?.MedicationsDispensed ?? "");
                 table.AddCell("Procedures");
-                table.AddCell(encounter?.Procedure ?? "");
+                table.AddCell(encounter?.Procedures ?? "");
                 table.AddCell("FollowUp");
-                table.AddCell(encounter?.Followup ?? "");
-                document.Add(table);
+                table.AddCell(encounter?.FollowUp ?? "");
 
                 // Add the table to the document
                 document.Add(table);
-
-                document.Close();*/
+                document.Close();
 
                 return memoryStream.ToArray();
             }

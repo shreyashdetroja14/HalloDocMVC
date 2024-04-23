@@ -42,7 +42,8 @@ async function ValidateCookie() {
 async function GetProvidersListPartial(regionId = 0) {
     try {
 
-        const isCookieValid = await ValidateCookie();
+        //const isCookieValid = await ValidateCookie();
+        const isCookieValid = true;
 
         if (isCookieValid) {
 
@@ -50,11 +51,20 @@ async function GetProvidersListPartial(regionId = 0) {
 
             console.log('url: ', url);
 
-            const response = await fetch(url);
+            const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest'}});
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                console.log(response);
+                console.log(response.status);
 
+                const data = await response.json();
+                console.log(data);
+                if (data.status == 414) {
+                    window.location.href = '/Login';
+                }
+
+                //throw new Error(`HTTP error! status: ${response.status}`);
+                
             }
 
             console.log('response is ok');
@@ -99,6 +109,8 @@ async function GetContactProviderModal(providerId) {
             const response = await fetch(url);
 
             if (!response.ok) {
+                alert('respponse not ok');
+
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
@@ -124,11 +136,13 @@ async function GetContactProviderModal(providerId) {
     }
     catch (error) {
         console.error('Error fetching partial view:', error);
+        
     }
 }
 
 
 selectList.addEventListener('change', async () => {
+    alert('select list called');
     const regionValue = selectList.value;
 
     await GetProvidersListPartial(regionValue);

@@ -47,3 +47,10 @@
     .btn-outline-info:hover .material-symbols-outlined {
         color: #fff !important;
     }
+
+.form-floating .icon-label {
+    position: absolute;
+    top: 16px;
+    right: 12px;
+    cursor: pointer;
+}

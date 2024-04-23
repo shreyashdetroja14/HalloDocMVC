@@ -159,11 +159,35 @@
                         {
                             @if (request.Notes?.Count() != 0)
                             {
-                                <td style="min-width: 10rem">
+                                @*<td style="min-width: 10rem">
                                     @foreach (var note in request.Notes)
                                     {
                                         <p>@note</p>
                                     }
+                                </td>*@
+                                <td style="min-width: 10rem">
+                                    <p data-bs-toggle="modal" data-bs-target="#logs-modal-@request.RequestId" style="cursor: pointer;">
+                                        @request.Notes?[0]
+                                    </p>
+                                
+                                    <div class="modal fade"  id="logs-modal-@request.RequestId" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                            <div class="modal-content rounded-3">
+                                                <div class="modal-header fw-bold bg-info text-white">
+                                                    <h1 class="modal-title fs-5 " id="modaltitle">Request Status Logs</h1>
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    @foreach (var note in request.Notes)
+                                                    {
+                                                        <p class="text-body" style="white-space: normal; font-weight:normal">@note</p>
+                                                        <hr />
+                                                    }
+                                                
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                             }
                             else
@@ -393,9 +417,38 @@
 
                                     @if (request.Notes != null)
                                     {
-                                        @foreach (var note in request.Notes)
+                                        @*@foreach (var note in request.Notes)
                                         {
                                             <p>@note</p>
+                                        }*@
+                                        @if(request.Notes.Count() != 0)
+                                        {
+                                            <p data-bs-toggle="modal" data-bs-target="#mlogs-modal-@request.RequestId" style="cursor: pointer;">
+                                                @request.Notes?[0]
+                                            </p>
+
+                                            <div class="modal fade" data-bs-backdrop="static" id="mlogs-modal-@request.RequestId" tabindex="-1">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content rounded-3">
+                                                        <div class="modal-header fw-bold bg-info text-white">
+                                                            <h1 class="modal-title fs-5 " id="modaltitle">Request Status Logs</h1>
+                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            @foreach (var note in request.Notes)
+                                                            {
+                                                                <p class="text-body">@note</p>
+                                                                <hr />
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <p>-</p>
                                         }
                                     }
                                     else

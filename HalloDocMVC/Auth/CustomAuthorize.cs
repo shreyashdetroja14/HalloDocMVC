@@ -26,7 +26,7 @@ namespace HalloDocMVC.Auth
         {
             var jwtService = context.HttpContext.RequestServices.GetService<IJwtService>();
 
-            if(jwtService == null)
+            if (jwtService == null)
             {
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Login", action = "Index" }));
                 return;
@@ -35,28 +35,46 @@ namespace HalloDocMVC.Auth
             var request = context.HttpContext.Request;
             var token = request.Cookies["jwt"];
 
-            if(token == null)
+            if (token == null)
             {
+                if (context.HttpContext.Request.Headers.TryGetValue("X-Requested-With", out var requestedWith) && requestedWith.FirstOrDefault() == "XMLHttpRequest")
+                {
+                    context.Result = new BadRequestObjectResult(new ProblemDetails
+                    {
+                        Status = 414
+                    });
+                    return;
+                }
+
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Login", action = "Index" }));
                 return;
             }
 
-            if( !jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            if (!jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
             {
+                if (context.HttpContext.Request.Headers.TryGetValue("X-Requested-With", out var requestedWith) && requestedWith.FirstOrDefault() == "XMLHttpRequest")
+                {
+                    context.Result = new BadRequestObjectResult(new ProblemDetails
+                    {
+                        Status = 414
+                    });
+                    return;
+                }
+
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Login", action = "Logout" }));
                 return;
             }
 
-            if(request.Path.Value == "/Login" || request.Path.Value == "/Login/Index")
+            /*if (request.Path.Value == "/Login" || request.Path.Value == "/Login/Index")
             {
                 var id = jwtToken.Claims.FirstOrDefault(x => x.Type == "aspnetuserId")?.Value;
-                context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Patient", action = "Dashboard", id = id}));
+                context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Patient", action = "Dashboard", id = id }));
                 return;
-            }
+            }*/
 
             var roleClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Role);
 
-            if(roleClaim == null)
+            if (roleClaim == null)
             {
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Login", action = "Logout" }));
                 return;
@@ -82,5 +100,7 @@ namespace HalloDocMVC.Auth
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Home", action = "AccessDenied" }));
             }*/
         }
+
+
     }
 }

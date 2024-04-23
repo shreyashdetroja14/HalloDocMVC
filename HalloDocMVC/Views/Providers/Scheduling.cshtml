@@ -108,9 +108,18 @@
 
                 <form asp-action="CreateShift" id="create-shift-form">
                     <div class="form-floating mb-3">
-                        <select class="form-select" id="modal-region-list" asp-for="CreateShiftData.RegionId" asp-items="CreateShiftData.RegionList">
-                            <option value="">Select Region</option>
-                        </select>
+                        @if (Model.IsPhysician)
+                        {
+                            <select class="form-select" asp-for="CreateShiftData.RegionId" asp-items="CreateShiftData.RegionList">
+                                <option value="">Select Region</option>
+                            </select>
+                        }
+                        else
+                        {
+                            <select class="form-select" id="modal-region-list" asp-for="CreateShiftData.RegionId" asp-items="CreateShiftData.RegionList">
+                                <option value="">Select Region</option>
+                            </select>
+                        }
                         <label for="modal-region-list">Regions</label>
                         <span class="text-danger" asp-validation-for="CreateShiftData.RegionId"></span>
                     </div>
@@ -488,6 +497,10 @@
                             console.error("Specific error:", errorThrown);
                         }
                         console.error("HTTP status code:", jqXHR.status);
+
+                        if (jqXHR.responseJSON.status == 414) {
+                            window.location.href = '/Login';
+                        }
                     }
                 });
             }
@@ -519,6 +532,10 @@
                             console.error("Specific error:", errorThrown);
                         }
                         console.error("HTTP status code:", jqXHR.status);
+
+                        if (jqXHR.responseJSON.status == 414) {
+                            window.location.href = '/Login';
+                        }
                     }
                 });
             }
@@ -555,6 +572,10 @@
                             console.error("Specific error:", errorThrown);
                         }
                         console.error("HTTP status code:", jqXHR.status);
+
+                        if (jqXHR.responseJSON.status == 414) {
+                            window.location.href = '/Login';
+                        }
                     }
                 });
             });
@@ -602,6 +623,10 @@
                                 console.error("Specific error:", errorThrown);
                             }
                             console.error("HTTP status code:", jqXHR.status);
+
+                            if (jqXHR.responseJSON.status == 414) {
+                                window.location.href = '/Login';
+                            }
                         }
                     });
                 }
@@ -695,6 +720,10 @@
                                     console.error("Specific error:", errorThrown);
                                 }
                                 console.error("HTTP status code:", jqXHR.status);
+
+                                if (jqXHR.responseJSON.status == 414) {
+                                    window.location.href = '/Login';
+                                }
                             }
                         });
                     }

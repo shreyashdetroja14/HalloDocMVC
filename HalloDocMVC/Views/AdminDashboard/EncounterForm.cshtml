@@ -53,6 +53,7 @@
                         <input type="text" asp-for="FirstName" class="form-control" id="FirstName"
                                placeholder="First Name"  >
                         <label asp-for="FirstName">First Name</label>
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -76,6 +77,7 @@
                     <div class="form-floating mb-3">
                         <input type="date" asp-for="DOB" class="form-control" id="DOB" placeholder="DOB"  >
                         <label asp-for="DOB">Date Of Birth</label>
+                        <span asp-validation-for="DOB" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -88,13 +90,14 @@
 
                 <div class="col-md-6 pb-3">
                     <input type="tel" asp-for="PhoneNumber" class="form-control w-100" id="PhoneNumber"   />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
-                        <input type="email" asp-for="Email" class="form-control" id="Email"
-                               placeholder="abc@xyz.pqr" autocomplete="off"  >
+                        <input type="email" asp-for="Email" class="form-control" id="Email" placeholder="abc@xyz.pqr" autocomplete="off"  >
                         <label asp-for="Email">Email</label>
+                        <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -255,6 +258,7 @@
                         <textarea asp-for="Diagnosis" class="form-control" placeholder="Diagnosis" id="Diagnosis"
                                   style="height: 100px"  ></textarea>
                         <label asp-for="Diagnosis">Diagnosis</label>
+                        <span asp-validation-for="Diagnosis" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -263,6 +267,7 @@
                         <textarea asp-for="TreatmentPlan" class="form-control" placeholder="TreatmentPlan" id="TreatmentPlan"
                                   style="height: 100px"  ></textarea>
                         <label asp-for="TreatmentPlan">Treatment Plan</label>
+                        <span asp-validation-for="TreatmentPlan" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -271,6 +276,7 @@
                         <textarea asp-for="MedicationsDispensed" class="form-control" placeholder="MedicationsDispensed" id="MedicationsDispensed"
                                   style="height: 100px"  ></textarea>
                         <label asp-for="MedicationsDispensed">Medications Dispensed</label>
+                        <span asp-validation-for="MedicationsDispensed" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -279,6 +285,7 @@
                         <textarea asp-for="Procedures" class="form-control" placeholder="Procedures" id="Procedures"
                                   style="height: 100px"  ></textarea>
                         <label asp-for="Procedures">Procedures</label>
+                        <span asp-validation-for="Procedures" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -287,6 +294,7 @@
                         <textarea asp-for="FollowUp" class="form-control" placeholder="FollowUp" id="FollowUp"
                                   style="height: 100px"  ></textarea>
                         <label asp-for="FollowUp">Follow Up</label>
+                        <span asp-validation-for="FollowUp" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -352,6 +360,45 @@
             $('#encounter-form').attr('action', '/Dashboard/EncounterForm');
             $('#encounter-form').attr('method', 'post');
             $('#encounter-form').submit();
+        });
+    </script>
+
+    @*TRIM REQUIRED VALUES*@
+    <script>
+        $('#FirstName').change(function () {
+            let value = $('#FirstName').val();
+            let trimmedValue = value.trim();
+            $('#FirstName').val(trimmedValue);
+        });
+
+        $('#Diagnosis').change(function () {
+            let value = $('#Diagnosis').val();
+            let trimmedValue = value.trim();
+            $('#Diagnosis').val(trimmedValue);
+        });
+
+        $('#TreatmentPlan').change(function () {
+            let value = $('#TreatmentPlan').val();
+            let trimmedValue = value.trim();
+            $('#TreatmentPlan').val(trimmedValue);
+        });
+
+        $('#MedicationsDispensed').change(function () {
+            let value = $('#MedicationsDispensed').val();
+            let trimmedValue = value.trim();
+            $('#MedicationsDispensed').val(trimmedValue);
+        });
+
+        $('#Procedures').change(function () {
+            let value = $('#Procedures').val();
+            let trimmedValue = value.trim();
+            $('#Procedures').val(trimmedValue);
+        });
+
+        $('#FollowUp').change(function () {
+            let value = $('#FollowUp').val();
+            let trimmedValue = value.trim();
+            $('#FollowUp').val(trimmedValue);
         });
     </script>
 }

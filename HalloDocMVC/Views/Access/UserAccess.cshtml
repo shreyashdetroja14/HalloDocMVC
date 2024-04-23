@@ -82,7 +82,7 @@
                                         @user.FullName
                                     </td>
                                     <td class="py-3">
-                                        @user.PhoneNumber
+                                        @(user.PhoneNumber != null ? user.PhoneNumber : "-")
                                     </td>
                                     <td class="py-3">
                                         @user.Status

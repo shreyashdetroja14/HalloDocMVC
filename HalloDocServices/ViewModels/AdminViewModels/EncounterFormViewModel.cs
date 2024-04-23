@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public int RequestId { get; set; }
 
+        [Required(ErrorMessage = "Please Enter First Name")]
+        [StringLength(100), MinLength(2, ErrorMessage = "Name can't be a single letter")]
         public string FirstName { get; set; } = null!;
 
         public string? LastName { get; set; }
@@ -22,8 +25,11 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public string? ServiceDate { get; set; }
 
+        [RegularExpression(@"^(?:0)?[6789]\d{4}(?:\s?\d{5})?$", ErrorMessage = "Please enter a valid Indian phone number (e.g., 098765 43210, 9876543210)")]
         public string? PhoneNumber { get; set; }
 
+        [Required(ErrorMessage = "Please Enter Email Address")]
+        [RegularExpression(@"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}))$", ErrorMessage = "Please enter a valid email address. (e.g., user@example.com)")]
         public string Email { get; set; } = null!;
 
         public string? PresentIllnessHistory { get; set; }
@@ -64,14 +70,19 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public string? Other { get; set; }
 
+        [Required(ErrorMessage = "Please enter a diagnosis")]
         public string? Diagnosis { get; set; }
 
+        [Required(ErrorMessage = "Please enter a treatment plan")]
         public string? TreatmentPlan { get; set; }
 
+        [Required(ErrorMessage = "Please enter medications dispensed")]
         public string? MedicationsDispensed { get; set; }
 
+        [Required(ErrorMessage = "Please enter a procedure")]
         public string? Procedures { get; set; }
 
+        [Required(ErrorMessage = "Please enter follow-up details")]
         public string? FollowUp { get; set; }
 
         public DateTime CreatedDate { get; set; }

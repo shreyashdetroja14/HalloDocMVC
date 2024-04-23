@@ -27,10 +27,21 @@
                         <p class="fs-4 fw-bold">Transfer Notes</p>
                         @if(Model.TransferNotes != null)
                         {
-                            @foreach (var note in Model.TransferNotes)
+                            @if(Model.TransferNotes.Count() != 0)
                             {
-                                <p class="m-0">@note</p>
+                                @foreach (var note in Model.TransferNotes)
+                                {
+                                    <p class="m-1">@note</p>
+                                }
                             }
+                            else
+                            {
+                                <p class="m-0">-</p>
+                            }
+                        }
+                        else
+                        {
+                            <p class="m-0">-</p>
                         }
                         @* <p class="m-0">Admin transferred to DR. AGOLA on 27/09/2023 at 9:34:08AM: test assign</p>
                         <p class="m-0">Admin transferred to DR. AGOLA on 27/09/2023 at 9:34:08AM: test assign</p> *@

@@ -83,6 +83,9 @@
                         <input type="password" asp-for="Password" class="form-control" id="Password"
                                placeholder="Password">
                         <label asp-for="Password">Password</label>
+                        <span class="material-symbols-outlined text-body icon-label" id="eye1">
+                            visibility_off
+                        </span>
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                     <span class="text-danger">@ViewBag.Msg</span>
@@ -93,6 +96,9 @@
                         <input type="password" asp-for="ConfirmPassword" class="form-control" id="ConfirmPassword"
                                placeholder="Confirm Password">
                         <label asp-for="ConfirmPassword">Confirm Password</label>
+                        <span class="material-symbols-outlined text-body icon-label" id="eye2">
+                            visibility_off
+                        </span>
                         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>
                     <span class="text-danger">@ViewBag.Msg</span>
@@ -253,6 +259,35 @@
         $('#region-list').change(function () {
             const state = $('#region-list').find('option:selected').text();
             $('#State').val(state);
+        })
+    </script>
+
+    @*EYE ICON FOR PASSWORD SHOW/HIDE*@
+    <script>
+        $('#eye1').click(function () {
+            var passwordInput = $('#Password');
+            var eyeIcon = $('#eye1');
+
+            if (passwordInput.attr('type') === "password") {
+                passwordInput.attr('type', 'text');
+                eyeIcon.text('visibility');
+            } else {
+                passwordInput.attr('type', 'password');
+                eyeIcon.text('visibility_off');
+            }
+        })
+
+        $('#eye2').click(function () {
+            var passwordInput2 = $('#ConfirmPassword');
+            var eyeIcon2 = $('#eye2');
+
+            if (passwordInput2.attr('type') === "password") {
+                passwordInput2.attr('type', 'text');
+                eyeIcon2.text('visibility');
+            } else {
+                passwordInput2.attr('type', 'password');
+                eyeIcon2.text('visibility_off');
+            }
         })
     </script>
 

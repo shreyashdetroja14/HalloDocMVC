@@ -112,6 +112,10 @@
                             console.error("Specific error:", errorThrown);
                         }
                         console.error("HTTP status code:", jqXHR.status);
+
+                        if (jqXHR.responseJSON.status == 414) {
+                            window.location.href = '/Login';
+                        }
                     }
                 });
             }

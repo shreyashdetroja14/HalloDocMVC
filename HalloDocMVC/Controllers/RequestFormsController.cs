@@ -60,7 +60,7 @@ namespace HalloDocMVC.Controllers
             if(isrequestcreated)
             {
                 TempData["SuccessMessage"] = "Request Created Successfully.";
-                return RedirectToAction("SubmitRequest");
+                return RedirectToAction("Index", "Home");
             }
             else
             {
