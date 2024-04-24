@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
@@ -51,6 +52,32 @@ namespace HalloDocServices.Implementation
                 }
             }
             return 0;
+        }
+
+        public string GenerateAddress(string? street = null ,string? city = null, string? state = null, string? zipcode = null)
+        {
+            string address = string.Empty;
+
+            if (street != null)
+            {
+                address += street + ", ";
+            }
+            if (city != null)
+            {
+                address += city + ", ";
+            }
+            if (state != null)
+            {
+                address += state + ", ";
+            }
+            if (zipcode != null)
+            {
+                address += zipcode + ", ";
+            }
+
+            address = address.Remove(address.Length - 2, 1);
+
+            return address;
         }
 
         public AspNetUser CreateAspnetuser(PatientRequestViewModel prvm)
@@ -189,6 +216,7 @@ namespace HalloDocServices.Implementation
 
             return confirmationNumber.ToUpper();
         }
+
         #endregion
 
         public List<SelectListItem> GetRegionList()

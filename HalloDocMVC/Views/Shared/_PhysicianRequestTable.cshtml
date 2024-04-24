@@ -45,11 +45,11 @@
                     <td class="ps-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <span>@request.PatientFullName</span>
-                            <button class="btn p-1">
+                            <a href="mailto:@(request.PatientEmail)" class="btn p-1 d-flex">
                                 <i class="material-symbols-outlined">
                                     mail
                                 </i>
-                            </button>
+                            </a>
                         </div>
                     </td>
 
@@ -84,7 +84,7 @@
                         <td>
                             @if(request.CallType != "0")
                             {
-                                <a asp-route="HouseCall" asp-route-requestId="@request.RequestId" class="btn btn-info text-white">@request.CallType</a>
+                                <a asp-route="HouseCall" asp-route-requestId="@request.RequestId" class="btn btn-info text-white border">@request.CallType</a>
                             }
                         </td>
                     }

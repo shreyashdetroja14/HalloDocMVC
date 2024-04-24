@@ -80,11 +80,11 @@
                     <td class="ps-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <span>@request.PatientFullName</span>
-                            <button class="btn p-1">
+                            <a href="mailto:@(request.PatientEmail)" class="btn p-1 d-flex">
                                 <i class="material-symbols-outlined">
                                     mail
                                 </i>
-                            </button>
+                            </a>
                         </div>
                     </td>
                     @if (status != 6)
