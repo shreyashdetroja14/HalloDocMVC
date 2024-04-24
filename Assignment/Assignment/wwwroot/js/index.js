@@ -176,7 +176,11 @@ function DeletePatient(patientId) {
 
 }*/
 
-
+const validateEmail = (email) => {
+    return email.match(
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
 
 function patientFormEventListeners() {
     $('#submit-form-btn').click(function () {
@@ -185,8 +189,14 @@ function patientFormEventListeners() {
         if (!form.checkValidity()) {
             form.classList.add('was-validated')
 
+
         } else {
-            CreatePatient();
+            var email = $('#Email').val();
+            if (validateEmail(email)) {
+                CreatePatient();
+            } else {
+                $('#emailspan').html("enter valid email");
+            }
         }
 
 
@@ -201,8 +211,12 @@ function editPatientFormEventListeners() {
             form.classList.add('was-validated')
 
         } else {
-
-            EditPatient();
+            var email = $('#Email').val();
+            if (validateEmail(email)) {
+                EditPatient();
+            } else {
+                $('#emailspan').html("enter valid email");
+            }
         }
 
         
