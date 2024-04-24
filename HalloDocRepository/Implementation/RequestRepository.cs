@@ -130,6 +130,11 @@ namespace HalloDocRepository.Implementation
             return request;
         }
 
+        public Request GetRequest(int requestId)
+        {
+            return _context.Requests.FirstOrDefault(x => x.RequestId == requestId) ?? new Request();
+        }
+
         public async Task<List<Request>> GetRequestByRequestIdAsList(int requestId)
         {
             var requestAsList = await _context.Requests.Where(x => x.RequestId == requestId).ToListAsync();
@@ -275,5 +280,7 @@ namespace HalloDocRepository.Implementation
 
             return blockRequest;
         }
+
+        
     }
 }

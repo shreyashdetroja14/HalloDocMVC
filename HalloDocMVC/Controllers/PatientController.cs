@@ -59,6 +59,14 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("patient")]
         public async Task<IActionResult> ViewDocuments(int requestid)
         {
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            int userId = claimsData.Id;
+            bool isValidRequest = _patientService.CheckValidRequest(requestid, userId);
+            if (!isValidRequest)
+            {
+                return View("~/Views/Home/AccessDenied.cshtml");
+            }
+
             ViewDocumentsViewModel vrvm = await _patientService.GetRequestFiles(requestid);
 
             return View(vrvm);

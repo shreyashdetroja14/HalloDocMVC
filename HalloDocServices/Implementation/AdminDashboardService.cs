@@ -192,6 +192,17 @@ namespace HalloDocServices.Implementation
             return PaginatedData;
         }
 
+        public bool CheckValidRequest(int requestId, int physicianId)
+        {
+            var request = _requestRepository.GetRequest(requestId);
+            if(request.RequestId == 0 || request.PhysicianId != physicianId)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public async Task<bool> AcceptCase(int requestId)
         {
             Request request = await _requestRepository.GetRequestByRequestId(requestId);

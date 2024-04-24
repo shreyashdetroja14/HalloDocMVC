@@ -45,5 +45,7 @@ namespace HalloDocServices.Interface
         Task<bool> AcceptAgreement(AgreementViewModel AgreementInfo);
 
         Task<bool> CancelAgreement(AgreementViewModel CancelAgreementInfo);
+
+        bool CheckValidRequest(int requestId, int userId);
     }
 }

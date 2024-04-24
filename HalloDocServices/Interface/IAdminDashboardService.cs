@@ -17,6 +17,8 @@ namespace HalloDocServices.Interface
 
         PaginatedListViewModel<RequestRowViewModel> GetViewModelData(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int pageNumber, int? physicianId = null);
 
+        bool CheckValidRequest(int requestId, int physicianId);
+
         Task<bool> AcceptCase(int requestId);
 
         ViewCaseViewModel GetViewCaseViewModelData(ViewCaseViewModel CaseInfo);

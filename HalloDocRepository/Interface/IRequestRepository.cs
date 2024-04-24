@@ -46,6 +46,8 @@ namespace HalloDocRepository.Interface
 
         Task<Request> GetRequestByRequestId(int requestId);
 
+        Request GetRequest(int requestId);
+
         Task<List<Request>> GetRequestByRequestIdAsList(int requestId);
 
         IQueryable<Request> GetIQueryableRequestByRequestId(int requestId);

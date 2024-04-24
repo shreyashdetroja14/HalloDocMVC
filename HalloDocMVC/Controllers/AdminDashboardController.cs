@@ -141,6 +141,15 @@ namespace HalloDocMVC.Controllers
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
 
+            if(claimsData.AspNetUserRole == "physician")
+            {
+                bool isValidRequest = _adminDashboardService.CheckValidRequest(requestId, claimsData.Id);
+                if (!isValidRequest)
+                {
+                    return View("~/Views/Home/AccessDenied.cshtml");
+                }
+            }
+
             ViewCaseViewModel CaseInfo = new ViewCaseViewModel();
             CaseInfo.RequestId = requestId;
             CaseInfo.IsPhysician = claimsData.AspNetUserRole == "physician" ? true : false;
@@ -176,6 +185,15 @@ namespace HalloDocMVC.Controllers
         public async Task<IActionResult> ViewNotes(int requestId)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
+
+            if (claimsData.AspNetUserRole == "physician")
+            {
+                bool isValidRequest = _adminDashboardService.CheckValidRequest(requestId, claimsData.Id);
+                if (!isValidRequest)
+                {
+                    return View("~/Views/Home/AccessDenied.cshtml");
+                }
+            }
 
             ViewNotesViewModel ViewNotes = new ViewNotesViewModel();
             ViewNotes = await _adminDashboardService.GetViewNotesViewModelData(requestId);
@@ -370,6 +388,16 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin", "physician")]
         public IActionResult ViewUploads(int requestId)
         {
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            if (claimsData.AspNetUserRole == "physician")
+            {
+                bool isValidRequest = _adminDashboardService.CheckValidRequest(requestId, claimsData.Id);
+                if (!isValidRequest)
+                {
+                    return View("~/Views/Home/AccessDenied.cshtml");
+                }
+            }
+
             ViewDocumentsViewModel ViewUploads = new ViewDocumentsViewModel();
             ViewUploads.RequestId = requestId;
             ViewUploads = _adminDashboardService.GetViewUploadsViewModelData(ViewUploads);
@@ -510,6 +538,16 @@ namespace HalloDocMVC.Controllers
         [RoleAuthorize("SendOrder")]
         public IActionResult Orders(int requestId)
         {
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            if (claimsData.AspNetUserRole == "physician")
+            {
+                bool isValidRequest = _adminDashboardService.CheckValidRequest(requestId, claimsData.Id);
+                if (!isValidRequest)
+                {
+                    return View("~/Views/Home/AccessDenied.cshtml");
+                }
+            }
+
             OrdersViewModel OrderPageDetails = new OrdersViewModel();
             OrderPageDetails = _adminDashboardService.GetOrdersViewModel(requestId);
 
@@ -710,6 +748,14 @@ namespace HalloDocMVC.Controllers
         public IActionResult EncounterForm(int requestId)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
+            if (claimsData.AspNetUserRole == "physician")
+            {
+                bool isValidRequest = _adminDashboardService.CheckValidRequest(requestId, claimsData.Id);
+                if (!isValidRequest)
+                {
+                    return View("~/Views/Home/AccessDenied.cshtml");
+                }
+            }
 
             EncounterFormViewModel EncounterFormDetails = new EncounterFormViewModel();
             EncounterFormDetails.RequestId = requestId;
@@ -782,6 +828,15 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("physician")]
         public IActionResult ConcludeCare(int requestId)
         {
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            if (claimsData.AspNetUserRole == "physician")
+            {
+                bool isValidRequest = _adminDashboardService.CheckValidRequest(requestId, claimsData.Id);
+                if (!isValidRequest)
+                {
+                    return View("~/Views/Home/AccessDenied.cshtml");
+                }
+            }
             ConcludeCareViewModel ConcludeCareData = new ConcludeCareViewModel();
             ConcludeCareData.RequestId = requestId;
 

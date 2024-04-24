@@ -634,6 +634,17 @@ namespace HalloDocServices.Implementation
 
             return AgreementInfo;
         }
+
+        public bool CheckValidRequest(int requestId, int userId)
+        {
+            var request = _requestRepository.GetRequest(requestId);
+            if(request.RequestId == 0 || request.UserId != userId)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 
 }
