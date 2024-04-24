@@ -1,8 +1,26 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Hospital Management System";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@section AddStyles{
+    <link href="@Url.Content("~/css/index.css")" rel="stylesheet" type="text/css" />
+}
+
+<div class="main">
+    <div class="p-3 d-flex justify-content-end bg-primary-subtle">
+        <button type="button" id="add-patient-btn" class="btn btn-light fw-bold custom-shadow">ADD Patient</button>
+        <div id="modal-container"></div>
+    </div>
+
+    <div class="container-fluid p-4">
+        <input type="text" class="form-control p-3 mb-3" id="searchbar" placeholder="Search"/>
+        <div id="patient-list-container">
+            
+        </div>
+    </div>
+
 </div>
+
+@section AddScripts{
+    <script src="~/js/index.js"></script>
+}

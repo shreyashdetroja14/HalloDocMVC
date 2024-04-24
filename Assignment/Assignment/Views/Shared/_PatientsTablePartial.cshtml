@@ -1,0 +1,106 @@
+﻿@using Repository.ViewModels;
+@model List<Repository.ViewModels.PatientRowViewModel>
+
+@{
+    var Pager = new PagerViewModel();
+    int pageNumber = 0;
+
+    if (ViewBag.PagerData != null)
+    {
+        Pager = ViewBag.PagerData;
+        pageNumber = Pager.CurrentPage;
+    }
+
+    int rowsToSkip = (pageNumber - 1) * Pager.PageSize;
+}
+
+<div class="table-container">
+    <table class="table mb-3">
+        <thead>
+            <tr class="providerslistheader bg-body-secondary">
+                <th scope="col" class="p-3">Patient ID</th>
+                <th scope="col" class="py-3">First Name</th>
+                <th scope="col" class="py-3">Last Name</th>
+                <th scope="col" class="py-3">Email</th>
+                <th scope="col" class="py-3">Age</th>
+                <th scope="col" class="py-3">Phone Number</th>
+                <th scope="col" class="py-3">Gender</th>
+                <th scope="col" class="py-3">Disease</th>
+                <th scope="col" class="py-3">Doctor</th>
+                <th scope="col" class="py-3 text-center" style="min-width:12rem">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach(var item in Model)
+            {
+                <tr>
+                    <td class="p-3">@item.PatientId</td>
+                    <td class="py-3">@item.FirstName</td>
+                    <td class="py-3">@item.LastName</td>
+                    <td class="py-3">@item.Email</td>
+                    <td class="py-3">@item.Age</td>
+                    <td class="py-3">@item.PhoneNumber</td>
+                    <td class="py-3">@item.Gender</td>
+                    <td class="py-3">@item.Disease</td>
+                    <td class="py-3">@item.Doctor</td>
+                    <td class="py-3 text-center">
+                        <button class="btn btn-primary Edit-btn"  data-patient-id="@item.PatientId">
+                            Edit
+                        </button>
+                        <button class="btn btn-danger Delete-btn"  data-patient-id="@item.PatientId">
+                            Delete
+                        </button>
+
+                    </td>
+
+                </tr>
+            }
+
+            @*<tr>
+                <td class="p-3">1</td>
+                <td class="py-3">Shreyash</td>
+                <td class="py-3">Detroja</td>
+                <td class="py-3">shreyash.detroja14@gmail.com</td>
+                <td class="py-3">22</td>
+                <td class="py-3">9586498683</td>
+                <td class="py-3">Male</td>
+                <td class="py-3">Fever</td>
+                <td class="py-3">ENT specialist</td>
+                <td class="py-3 text-center">
+                    <button class="btn btn-primary">
+                        Edit
+                    </button>
+                    <button class="btn btn-danger">
+                        Delete
+                    </button>
+
+                </td>
+
+            </tr>*@
+        </tbody>
+    </table>
+
+    <div id="pagination" class="d-flex justify-content-end pe-3">
+        @if(Pager.CurrentPage == Pager.EndPage)
+        {
+            <span>@(rowsToSkip + 1) - @(Pager.TotalItems) of @(Pager.TotalItems)</span>
+        }
+        else
+        {
+            <span>@(rowsToSkip + 1) - @(rowsToSkip + Pager.PageSize) of @(Pager.TotalItems)</span>
+        }
+        @if(Pager.TotalPages != 1)
+        {
+            @if(Pager.CurrentPage != 1)
+            {
+                <a class="pagination-link text-black ps-4" data-page-number="@(Pager.CurrentPage - 1)"><i class="bi bi-arrow-left"></i></a>
+            }
+            @if(Pager.CurrentPage != Pager.TotalPages)
+            {
+                <a class="pagination-link text-black ps-4" data-page-number="@(Pager.CurrentPage + 1)"><i class="bi bi-arrow-right"></i></a>
+            }
+        }
+    </div>
+
+</div>

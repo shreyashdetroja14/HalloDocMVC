@@ -1,0 +1,141 @@
+﻿@using Repository.ViewModels;
+@model Repository.ViewModels.PatientFormViewModel
+
+<div class="modal fade" data-bs-backdrop="static" id="patient-form-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-3">
+            <div class="modal-header fw-bold bg-primary text-white">
+                <h1 class="modal-title fs-5 " id="modaltitle">Patient Form</h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="patient-form" class="row needs-validation" novalidate>
+                    <input type="number" hidden asp-for="PatientId"/>
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="FirstName" class="form-control" id="FirstName"
+                                   placeholder="First Name" required>
+                            <label asp-for="FirstName">First Name</label>
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                            <div class="invalid-feedback">
+                                Please enter firstname.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="LastName" class="form-control" id="LastName"
+                                   placeholder="Last Name" >
+                            <label asp-for="LastName">Last Name</label>
+                            <span asp-validation-for="LastName"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="Email" class="form-control" id="Email"
+                                   placeholder="Email" required>
+                            <label asp-for="Email">Email</label>
+                            <span asp-validation-for="Email"></span>
+                            <div class="invalid-feedback">
+                                Please enter email.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="Age" class="form-control" id="Age"
+                                   placeholder="Age">
+                            <label asp-for="Age">Age</label>
+                            <span asp-validation-for="Age"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <span class="fw-bold">Gender: </span>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="Gender" id="gender1" value="@((int)Gender.Male)" checked="@(Model.Gender == (int)Gender.Male ? true : false)" required>
+                            <label class="form-check-label" for="exampleRadios1">
+                                @((Gender.Male).ToString())
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="Gender" id="gender2" value="@((int)Gender.Female)" checked="@(Model.Gender == (int)Gender.Female ? true : false)" required>
+                            <label class="form-check-label" for="exampleRadios2">
+                                @((Gender.Female).ToString())
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="Gender" id="gender3" value="@((int)Gender.Other)" checked="@(Model.Gender == (int)Gender.Other ? true : false)" required>
+                            <label class="form-check-label" for="exampleRadios3">
+                                @((Gender.Other).ToString())
+                            </label>
+                        </div>
+                        <div>
+                            <span id="gender-validation-error"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="PhoneNumber" class="form-control" id="PhoneNumber"
+                                   placeholder="PhoneNumber" required>
+                            <label asp-for="PhoneNumber">Phone Number</label>
+                            <span asp-validation-for="PhoneNumber"></span>
+                            <div class="invalid-feedback">
+                                Please enter phone number.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <select asp-for="DiseaseKey" class="form-select disease-select p-3 mb-3" required>
+                            <option value="" selected>Disease</option>
+                            @foreach (var item in Model.DiseaseDictionary)
+                            {
+                                <option value="@item.Key">@item.Value</option>
+                            }
+                        </select>
+                        <span asp-validation-for="DiseaseKey"></span>
+                        <div class="invalid-feedback">
+                            Please select a disease.
+                        </div>
+                    </div> 
+                    
+                    <div class="col-sm-6">
+                        <select asp-for="DoctorId" class="form-select doctor-select p-3 mb-3" asp-items="@Model.SpecialistList" required>
+                            <option value="" selected>Specialist</option>
+                            
+
+
+                        </select>
+                        <span asp-validation-for="DoctorId"></span>
+                        <div class="invalid-feedback">
+                            Please select a doctor.
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-6 mt-3">
+                        <button type="button" class="w-100 btn btn-outline-light text-dark shadow" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+
+                    @if (Model.IsEditPatient)
+                    {
+                        <div class="col-sm-6 mt-3">
+                            <button type="button" class="w-100 btn btn-primary shadow" id="edit-form-btn">Edit</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-sm-6 mt-3">
+                            <button type="button" class="w-100 btn btn-primary shadow" id="submit-form-btn">Save</button>
+                        </div>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

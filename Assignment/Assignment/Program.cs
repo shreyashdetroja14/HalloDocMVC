@@ -1,7 +1,17 @@
+using Entities.Data;
+using Microsoft.EntityFrameworkCore;
+using Repository.Implementation;
+using Repository.Interface;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<HMSContext>(options =>
+options.UseNpgsql(builder.Configuration.GetConnectionString("HMSDbCS")));
+
+builder.Services.AddScoped<IHomeRepository, HomeRepository>();
 
 var app = builder.Build();
 
