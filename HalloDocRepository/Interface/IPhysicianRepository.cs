@@ -17,6 +17,8 @@ namespace HalloDocRepository.Interface
 
         Physician GetPhysicianByRoleId(int roleId);
 
+        Physician GetPhysicianByEmail(string email);
+
         IQueryable<Physician> GetIQueryablePhysicians();
 
         IQueryable<Physician> GetIQueryablePhysicians(int physicianId);

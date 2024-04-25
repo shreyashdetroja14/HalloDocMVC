@@ -134,7 +134,8 @@ namespace HalloDocServices.Implementation
             requestClientNew.LastName = PatientInfo.LastName;
             requestClientNew.PhoneNumber = PatientInfo.PhoneNumber;
             requestClientNew.Location = PatientInfo.Room;
-            requestClientNew.Address = PatientInfo.Street + ", " + PatientInfo.City + ", " + PatientInfo.State + ", " + PatientInfo.ZipCode;
+            //requestClientNew.Address = PatientInfo.Street + ", " + PatientInfo.City + ", " + PatientInfo.State + ", " + PatientInfo.ZipCode;
+            requestClientNew.Address = GenerateAddress(PatientInfo.Street, PatientInfo.City, PatientInfo.State, PatientInfo.ZipCode);
             requestClientNew.NotiMobile = PatientInfo.PhoneNumber;
             requestClientNew.NotiEmail = PatientInfo.Email;
             requestClientNew.Notes = PatientInfo.Symptoms;

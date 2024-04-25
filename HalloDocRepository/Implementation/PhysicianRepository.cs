@@ -49,6 +49,12 @@ namespace HalloDocRepository.Implementation
             var physician = _context.Physicians.FirstOrDefault(x => x.IsDeleted != true && x.RoleId == roleId);
             return physician ?? new Physician();
         }
+        
+        public Physician GetPhysicianByEmail(string email)
+        {
+            var physician = _context.Physicians.FirstOrDefault(x => x.IsDeleted != true && x.Email == email);
+            return physician ?? new Physician();
+        }
 
         public async Task<List<Physician>> Update(List<Physician> physicians)
         {

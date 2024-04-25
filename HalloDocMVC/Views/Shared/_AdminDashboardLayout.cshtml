@@ -31,6 +31,8 @@
     {
         @RenderSection("AddStyles", required: false)
     }
+
+    <script src="~/js/theme.js"></script>
 </head>
 <body>
     <partial name="_LoaderPartial" />
@@ -390,7 +392,7 @@
 
 
         <script src="~/js/site.js" asp-append-version="true"></script>
-        <script src="~/js/theme.js"></script>
+        
         @*@await RenderSectionAsync("Scripts", required: false)*@
 </body>
 </html>

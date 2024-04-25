@@ -33,6 +33,12 @@ namespace HalloDocRepository.Implementation
             var adminFetched = _context.Admins.FirstOrDefault(x => x.RoleId == roleId);
             return adminFetched ?? new Admin();
         }
+        
+        public Admin GetAdminByEmail(string email)
+        {
+            var adminFetched = _context.Admins.FirstOrDefault(x => x.Email == email);
+            return adminFetched ?? new Admin();
+        }
 
 
         #endregion

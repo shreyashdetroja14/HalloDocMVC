@@ -22,14 +22,16 @@ namespace HalloDocServices.Implementation
     {
         private readonly IUserRepository _userRepository;
         private readonly IRequestRepository _requestRepository;
+        private readonly IAdminRepository _adminRepository;
         private readonly IPhysicianRepository _physicianRepository;
         private readonly IMailService _mailService;
         private readonly IEmailSMSLogRepository _emailSMSLogRepository;
 
-        public LoginService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, IMailService mailService, IEmailSMSLogRepository emailSMSLogRepository)
+        public LoginService(IUserRepository userRepository, IRequestRepository requestRepository, IAdminRepository adminRepository, IPhysicianRepository physicianRepository, IMailService mailService, IEmailSMSLogRepository emailSMSLogRepository)
         {
             _userRepository = userRepository;
             _requestRepository = requestRepository;
+            _adminRepository = adminRepository;
             _physicianRepository = physicianRepository;
             _mailService = mailService;
             _emailSMSLogRepository = emailSMSLogRepository;
@@ -177,7 +179,29 @@ namespace HalloDocServices.Implementation
 
         public async Task<bool> SendMail(ForgotPasswordViewModel Info)
         {
+            string fullname = string.Empty;
             var user = await _userRepository.GetUserByEmail(Info.Email);
+            if(user == null)
+            {
+                var admin = _adminRepository.GetAdminByEmail(Info.Email);
+                if(admin == null)
+                {
+                    var physician = _physicianRepository.GetPhysicianByEmail(Info.Email);
+                    if(physician != null)
+                    {
+                        fullname = physician.FirstName + " " + physician.LastName;
+                    }
+                }
+                else
+                {
+                    fullname = admin.FirstName + " " + admin.LastName;
+                }
+            }
+            else
+            {
+                fullname = user.FirstName + " " + user.LastName;
+            }
+
 
             List<string> receiver = new List<string>();
             receiver.Add(Info.Email);
@@ -199,7 +223,7 @@ namespace HalloDocServices.Implementation
                 emailLog.SentDate = DateTime.Now;
                 emailLog.IsEmailSent = isMailSent;
                 emailLog.SentTries = 1;
-                emailLog.RecipientName = user.FirstName + " " + user.LastName;
+                emailLog.RecipientName = fullname;
 
                 await _emailSMSLogRepository.CreateEmailLog(emailLog);
 
