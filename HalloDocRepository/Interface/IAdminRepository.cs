@@ -14,6 +14,8 @@ namespace HalloDocRepository.Interface
         #region GET
         Admin GetAdminByAdminId(int adminId);
 
+        Admin GetAdminByRoleId(int roleId);
+
         #endregion
 
         #region UPDATE

@@ -50,6 +50,10 @@ namespace HalloDocServices.Implementation
                     if (aspnetuserFetched.PhysicianAspNetUsers.Any())
                     {
                         var physician = aspnetuserFetched.PhysicianAspNetUsers.FirstOrDefault();
+                        if(physician?.IsDeleted == true)
+                        {
+                            return new AspNetUser();
+                        }
                         var location = _physicianRepository.GetPhysicianLocationByPhysicianId(physician?.PhysicianId ?? 0);
                         if(location.LocationId != 0)
                         {

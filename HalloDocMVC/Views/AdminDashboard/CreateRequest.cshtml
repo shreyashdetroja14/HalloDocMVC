@@ -25,12 +25,12 @@
                 <img src="/images/backIcon.svg" alt="">
                 Back
             </button>*@
-            <button class="btn btn-outline-info d-flex align-items-center" onclick="window.history.back()">
+            <a asp-action="Index" class="btn btn-outline-info d-flex align-items-center">
                 <span class="material-symbols-outlined text-info fs-6">
                     arrow_back_ios
                 </span>
                 <span>Back</span>
-            </button>
+            </a>
         </div>
         <form asp-action="CreateRequest" class="bg-body p-4 request-form" >
             <div class="info mb-4">

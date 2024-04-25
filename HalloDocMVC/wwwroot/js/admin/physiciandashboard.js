@@ -169,28 +169,13 @@ async function GetSendAgreementModalData(requestId) {
             const modalContainer = document.getElementById('modal-container');
             modalContainer.innerHTML = sendAgreementModalHtml;
 
+            $.validator.unobtrusive.parse($('#send-agreement-form'));
+
+
             const myModal = new bootstrap.Modal('#send-agreement-modal');
             myModal.show();
 
-            (function () {
-                'use strict'
-
-                // Fetch all the forms we want to apply custom Bootstrap validation styles to
-                var forms = document.querySelectorAll('.needs-validation')
-
-                // Loop over them and prevent submission
-                Array.prototype.slice.call(forms)
-                    .forEach(function (form) {
-                        form.addEventListener('submit', function (event) {
-                            if (!form.checkValidity()) {
-                                event.preventDefault()
-                                event.stopPropagation()
-                            }
-
-                            form.classList.add('was-validated')
-                        }, false)
-                    })
-            })()
+            
         }
     }
     catch (error) {
@@ -549,7 +534,9 @@ function addEventListnersForPartial() {
 
 $('#send-link-btn').click(function () {
 
-    $('#loader').fadeIn();
+    if ($('#sendlinkform').valid()) {
+        $('#loader').fadeIn();
+    }
 
     $('#sendlinkform').submit();
     console.log('form submitted');

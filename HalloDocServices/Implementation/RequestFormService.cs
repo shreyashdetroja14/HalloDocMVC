@@ -54,7 +54,7 @@ namespace HalloDocServices.Implementation
             return 0;
         }
 
-        public string GenerateAddress(string? street = null ,string? city = null, string? state = null, string? zipcode = null)
+        public string GenerateAddress(string? street, string? city, string? state, string? zipcode)
         {
             string address = string.Empty;
 

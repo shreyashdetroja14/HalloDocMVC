@@ -226,6 +226,7 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Add Note.";
             }
 
+            TempData["back"] = 1;
             return RedirectToRoute("ViewNotes", new { requestId = vnvm.RequestId });
         }
 

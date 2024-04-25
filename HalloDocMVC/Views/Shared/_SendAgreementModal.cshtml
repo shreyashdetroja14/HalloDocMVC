@@ -21,19 +21,22 @@
                     </div>
                 }
 
-                <form asp-action="SendAgreement" class="needs-validation" novalidate>
+                <form asp-action="SendAgreement" id="send-agreement-form" class="" >
                     <input type="number" asp-for="RequestId" hidden />
 
                     <div class="form-floating mb-3">
-                        <input type="email" asp-for="Email" class="form-control" id="Email" placeholder="name@example.com" required>
+                        <input type="text" asp-for="Email" class="form-control" id="Email" placeholder="name@example.com" >
                         <label for="Email">Email address</label>
+                        <span asp-validation-for="Email" class="text-danger"></span>
                         <div class="invalid-feedback">
                             Please enter an email.
                         </div>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="number" asp-for="PhoneNumber" class="form-control" id="PhoneNumber" placeholder="PhoneNumber" required>
+                        <input type="number" asp-for="PhoneNumber" class="form-control" id="PhoneNumber" placeholder="PhoneNumber" >
                         <label for="PhoneNumber">Phone Number</label>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        
                         <div class="invalid-feedback">
                             Please enter a phone number.
                         </div>

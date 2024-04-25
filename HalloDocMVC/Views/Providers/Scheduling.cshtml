@@ -157,7 +157,7 @@
                             <div class="form-floating mb-3">
                                 <input type="time" asp-for="CreateShiftData.EndTime" class="form-control" id="EndTime" placeholder="End Time">
                                 <label for="EndTime">End Time</label>
-                                <span class="text-danger" asp-validation-for="CreateShiftData.EndTime"></span>
+                                @*<span class="text-danger" asp-validation-for="CreateShiftData.EndTime"></span>*@
                             </div>
                             <div id="timeError" style="color: red; display: none;" class="mb-3">End time must be later than start time.</div>
                         </div>

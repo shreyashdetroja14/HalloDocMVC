@@ -28,7 +28,11 @@ namespace HalloDocRepository.Implementation
             return adminFetched ?? new Admin();
         }
 
-
+        public Admin GetAdminByRoleId(int roleId)
+        {
+            var adminFetched = _context.Admins.FirstOrDefault(x => x.RoleId == roleId);
+            return adminFetched ?? new Admin();
+        }
 
 
         #endregion

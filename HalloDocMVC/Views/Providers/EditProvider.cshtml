@@ -796,6 +796,12 @@
             $('#BusinessName').val(trimmedValue);
         });
 
+        $('#City').change(function () {
+            let city = $('#City').val();
+            let trimmedValue = city.trim();
+            $('#City').val(trimmedValue);
+        });
+
     </script>
 
     @*UPLOAD LABEL SCRIPT*@
@@ -909,8 +915,8 @@
 
         }
 
-        firstNameInput.addEventListener('keyup', generateUsername);
-        lastNameInput.addEventListener('keyup', generateUsername);
+        firstNameInput.addEventListener('change', generateUsername);
+        lastNameInput.addEventListener('change', generateUsername);
 
     </script>
 }

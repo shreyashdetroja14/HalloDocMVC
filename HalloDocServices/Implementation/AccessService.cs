@@ -21,14 +21,16 @@ namespace HalloDocServices.Implementation
         private readonly IUserRepository _userRepository;
         private readonly ICommonRepository _commonRepository;
         private readonly IAdminRepository _adminRepository;
+        private readonly IPhysicianRepository _physicianRepository;
 
-        public AccessService(IRoleRepository roleRepository, IRequestRepository requestRepository, IUserRepository userRepository, ICommonRepository commonRepository, IAdminRepository adminRepository)
+        public AccessService(IRoleRepository roleRepository, IRequestRepository requestRepository, IUserRepository userRepository, ICommonRepository commonRepository, IAdminRepository adminRepository, IPhysicianRepository physicianRepository)
         {
             _roleRepository = roleRepository;
             _requestRepository = requestRepository;
             _userRepository = userRepository;
             _commonRepository = commonRepository;
             _adminRepository = adminRepository;
+            _physicianRepository = physicianRepository;
         }
 
         public AccessViewModel GetAccessViewModel(AccessViewModel AccessData)
@@ -108,6 +110,25 @@ namespace HalloDocServices.Implementation
         public async Task<bool> DeleteRole(int roleId, string modifiedBy)
         {
             var role = _roleRepository.GetRoleById(roleId);
+
+            if(role.AccountType == (int)AccountType.Admin)
+            {
+                var admin = _adminRepository.GetAdminByRoleId(role.RoleId);
+                if(admin.AdminId != 0)
+                {
+                    return false;
+                }
+            }
+            
+            if(role.AccountType == (int)AccountType.Physician)
+            {
+                var physician = _physicianRepository.GetPhysicianByRoleId(role.RoleId);
+                if(physician.PhysicianId != 0)
+                {
+                    return false;
+                }
+            }
+
             role.IsDeleted = true;
             role.ModifiedDate = DateTime.Now;
             role.ModifiedBy = modifiedBy;

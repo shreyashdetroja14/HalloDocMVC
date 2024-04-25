@@ -9,11 +9,13 @@ namespace HalloDocRepository.Interface
 {
     public interface IPhysicianRepository
     {
-        #region Physician
+        #region PHYSICIAN
 
         List<Physician> GetAllPhysicians();
 
         Physician GetPhysicianByPhysicianId(int physicianId);
+
+        Physician GetPhysicianByRoleId(int roleId);
 
         IQueryable<Physician> GetIQueryablePhysicians();
 
