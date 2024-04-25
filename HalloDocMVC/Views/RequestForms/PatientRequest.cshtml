@@ -260,6 +260,12 @@
             const state = $('#region-list').find('option:selected').text();
             $('#State').val(state);
         })
+
+        $('#Email').change(function () {
+            let value = $('#Email').val();
+            let trimmedValue = value.trim();
+            $('#Email').val(trimmedValue);
+        });
     </script>
 
     @*EYE ICON FOR PASSWORD SHOW/HIDE*@

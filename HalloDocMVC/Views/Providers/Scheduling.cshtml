@@ -475,7 +475,7 @@
                         const events = data.events.map(item => ({
                             id: item.shiftDetailId,
                             resourceId: item.physicianId,
-                            title: item.physicianName,
+                            title: item.shiftRegion,
                             start: item.shiftDate + 'T' + item.startTime + ':00',
                             end: item.shiftDate + 'T' + item.endTime + ':00',
                             backgroundColor: item.isApproved ? '#198754' : '#d63384',

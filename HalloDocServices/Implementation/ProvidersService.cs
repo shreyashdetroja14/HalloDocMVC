@@ -148,7 +148,7 @@ namespace HalloDocServices.Implementation
                 {
                     ContactProvider.ProviderEmail ?? ""
                 };
-                string subject = ContactProvider.Subject ?? "";
+                string subject = ContactProvider.Subject ?? "Contacted by Admin";
                 string body = ContactProvider.Message ?? "";
 
                 bool isMailSent = await _mailService.SendMail(receivers, subject, body, false);
@@ -957,6 +957,7 @@ namespace HalloDocServices.Implementation
                 ShiftDate = x.ShiftDate.ToString("yyyy-MM-dd"),
                 StartTime = x.StartTime.ToString(),
                 EndTime = x.EndTime.ToString(),
+                ShiftRegion = x.ShiftDetailRegions.FirstOrDefault() != null ? x.ShiftDetailRegions.FirstOrDefault().Region.Name : "",
                 IsApproved = x.Status == (short)ShiftStatus.Approved
 
             }).ToList();
@@ -1153,10 +1154,41 @@ namespace HalloDocServices.Implementation
                 Longitude = x.Longitude,
                 PhysicianName = x.PhysicianName,
                 Address = x.Address,
+                LastLogin = GetLastLoginTime(x.CreatedDate)
 
             }).ToList();
 
             return ProviderLocations;
+        }
+
+        public static string GetLastLoginTime(DateTime createdDate)
+        {
+            TimeSpan timeDifference = DateTime.Now - createdDate;
+
+            string result = "";
+
+            // Calculate hours, minutes, and seconds
+            int hours = (int)timeDifference.TotalHours;
+            int minutes = (int)timeDifference.TotalMinutes % 60;
+            int seconds = (int)timeDifference.TotalSeconds % 60;
+
+            // Construct the string based on the time difference
+            if (hours > 0)
+            {
+                result += hours + " hours ";
+            }
+            if (minutes > 0)
+            {
+                result += minutes + " minutes ";
+            }
+            if (seconds > 0)
+            {
+                result += seconds + " seconds ";
+            }
+
+            result += "ago";
+
+            return result;
         }
 
         #endregion

@@ -161,10 +161,26 @@
 
             GetRecordsList();
 
+            $('#FromDateOfService').change(function () {
+                // Get the selected date from From Date Of Service input
+                var fromDate = $(this).val();
+
+                // Set the minimum date for To Date Of Service input
+                $('#ToDateOfService').attr('min', fromDate);
+            });
+
             $('#search-btn').click(function(event){
                 event.preventDefault();
                 $('#PageNumber').val(1);
 
+                GetRecordsList();
+            });
+
+            $('#reset-btn').click(function (e) {
+                e.preventDefault();
+
+                $('#search-filters').trigger('reset');
+                $('#PageNumber').val(1);
                 GetRecordsList();
             });
 
@@ -224,3 +240,5 @@
         });
     </script>
 }
+   
+   

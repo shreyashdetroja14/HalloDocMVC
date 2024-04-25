@@ -209,6 +209,7 @@ namespace HalloDocServices.Implementation
             if (request == null) { return false; }
 
             request.Status = (short)RequestStatus.Accepted;
+            request.AcceptedDate = DateTime.Now;
             await _requestRepository.UpdateRequest(request);
 
             RequestStatusLog log = new RequestStatusLog();
@@ -942,6 +943,11 @@ namespace HalloDocServices.Implementation
                 CreatedDate = DateTime.Now
             };
 
+            if(order.VendorId == 0)
+            {
+                return false;
+            }
+
             await _commonRepository.CreateOrder(order);
 
             return true;
@@ -1122,6 +1128,7 @@ namespace HalloDocServices.Implementation
             encounterForm.IntYear = requestClient.IntYear;
             encounterForm.Email = requestClient.Email;
             encounterForm.PhoneNumber = requestClient.PhoneNumber;
+            encounterForm.Location = requestClient.Address;
             encounterForm.CreatedDate = DateTime.Now;
             encounterForm.IsFinalized = false;
 

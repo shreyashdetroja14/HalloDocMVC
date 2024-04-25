@@ -23,5 +23,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public string? PhysicianName { get; set; }
 
         public string? Address { get; set; }
+
+        public string? LastLogin { get; set; }
     }
 }

@@ -392,6 +392,15 @@
 
 
         <script src="~/js/site.js" asp-append-version="true"></script>
+
+        <script>
+            document.querySelector(".theme-btn").addEventListener("click", function () {
+                const currentTheme = localStorage.getItem("theme") || "light";
+                const newTheme = currentTheme === "light" ? "dark" : "light";
+                localStorage.setItem("theme", newTheme);
+                applyTheme();
+            });
+        </script>
         
         @*@await RenderSectionAsync("Scripts", required: false)*@
 </body>

@@ -21,8 +21,9 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         /*[RegularExpression(@"^MD\.[A-Z]{1,3}\.[A-Z]{1,3}(?=.*\d)$", ErrorMessage = "Please enter a username in the format MD.ABC.DEF")]*/
         public string? Username { get; set; }
 
-        [StringLength(20, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
-        [RegularExpression(@"^((?=.*[a-z])(?=.*[A-Z])(?=.*\d)).+$", ErrorMessage = "Password must contain 1 number, 1 special charecter, 1 uppercase and 1 lowercase charecter")]
+        [StringLength(20, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 8)]
+        /*[RegularExpression(@"^((?=.*[a-z])(?=.*[A-Z])(?=.*\d)).+$", ErrorMessage = "Password must contain 1 number, 1 special charecter, 1 uppercase and 1 lowercase charecter")]*/
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$", ErrorMessage = "Password must contain at least 1 number, 1 special character, 1 uppercase and 1 lowercase character.")]
         public string? Password { get; set; }
 
         [Required(ErrorMessage = "Please select status.")]

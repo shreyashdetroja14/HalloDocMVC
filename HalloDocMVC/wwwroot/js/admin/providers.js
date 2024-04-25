@@ -109,7 +109,6 @@ async function GetContactProviderModal(providerId) {
             const response = await fetch(url);
 
             if (!response.ok) {
-                alert('respponse not ok');
 
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -118,6 +117,25 @@ async function GetContactProviderModal(providerId) {
             const modalContainer = document.getElementById('modal-container');
             modalContainer.innerHTML = contactProviderModalHtml;
 
+            (function () {
+                'use strict'
+
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.querySelectorAll('.needs-validation')
+
+                // Loop over them and prevent submission
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })()
 
             const radioBtns = document.querySelectorAll('input[type=radio]');
             radioBtns.forEach(radio => {
@@ -125,9 +143,11 @@ async function GetContactProviderModal(providerId) {
                     const subjectInput = document.querySelector('#SubjectField');
                     if (radio.value != "sms") {
                         subjectInput.classList.remove('d-none');
+                        $('#SubjectField').attr('required', 'required');
                     }
                     else {
                         subjectInput.classList.add('d-none');
+                        $('#SubjectField').removeAttr('required');
                     }
                 })
             })
@@ -142,7 +162,6 @@ async function GetContactProviderModal(providerId) {
 
 
 selectList.addEventListener('change', async () => {
-    alert('select list called');
     const regionValue = selectList.value;
 
     await GetProvidersListPartial(regionValue);

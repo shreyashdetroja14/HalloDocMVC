@@ -58,6 +58,7 @@ namespace HalloDocMVC.Controllers
                 return View("Index");
             }
 
+            LoginInfo.Email = LoginInfo.Email.ToLower().Trim();
             var aspnetuser = await _loginService.CheckLogin(LoginInfo);
 
             if (aspnetuser.Id == null)
@@ -105,6 +106,7 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel Info)
         {
+            Info.Email = Info.Email.ToLower().Trim();
             bool isEmailValid = await _loginService.CheckUser(Info.Email);
             if (!isEmailValid)
             {
@@ -156,6 +158,7 @@ namespace HalloDocMVC.Controllers
                 return View(Credentials);
             }
 
+            Credentials.Email = Credentials.Email.ToLower().Trim();
             string status = await _loginService.CreateAccount(Credentials);
 
             if (status.Equals("user exists"))

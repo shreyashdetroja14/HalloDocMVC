@@ -202,6 +202,7 @@ namespace HalloDocMVC.Controllers
 
         public async Task<IActionResult> CheckUserAccount(string? email)
         {
+            email = email?.ToLower().Trim();
             if (email != null)
             {
                 bool isUserExist = await _requestFormService.CheckUser(email);

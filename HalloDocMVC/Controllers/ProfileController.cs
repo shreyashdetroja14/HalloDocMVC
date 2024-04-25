@@ -101,6 +101,8 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin")]
         public async Task<IActionResult> EditAdminInfo(AdminProfileViewModel AdminProfileDetails)
         {
+            AdminProfileDetails.Email = AdminProfileDetails.Email.ToLower().Trim();
+
             bool isAdminInfoUpdated = await _profileService.UpdateAdminInfo(AdminProfileDetails);
             if (isAdminInfoUpdated)
             {

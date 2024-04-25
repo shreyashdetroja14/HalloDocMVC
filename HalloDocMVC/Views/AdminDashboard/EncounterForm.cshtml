@@ -51,7 +51,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="FirstName" class="form-control" id="FirstName"
-                               placeholder="First Name"  >
+                               placeholder="First Name" readonly>
                         <label asp-for="FirstName">First Name</label>
                         <span asp-validation-for="FirstName" class="text-danger"></span>
                     </div>
@@ -60,7 +60,7 @@
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="LastName" class="form-control" id="LastName"
-                               placeholder="Last Name"  >
+                               placeholder="Last Name" readonly>
                         <label asp-for="LastName">Last Name</label>
                     </div>
                 </div>
@@ -68,14 +68,14 @@
                 <div class="col-12">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="Location" class="form-control" id="Location"
-                               placeholder="Location"  >
+                               placeholder="Location" readonly>
                         <label asp-for="Location">Location</label>
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
-                        <input type="date" asp-for="DOB" class="form-control" id="DOB" placeholder="DOB"  >
+                        <input type="date" asp-for="DOB" class="form-control" id="DOB" placeholder="DOB" readonly>
                         <label asp-for="DOB">Date Of Birth</label>
                         <span asp-validation-for="DOB" class="text-danger"></span>
                     </div>
@@ -83,19 +83,19 @@
 
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
-                        <input type="date" asp-for="ServiceDate" class="form-control" id="ServiceDate" placeholder="ServiceDate"  >
+                        <input type="date" asp-for="ServiceDate" class="form-control" id="ServiceDate" placeholder="ServiceDate" readonly>
                         <label asp-for="ServiceDate">ServiceDate</label>
                     </div>
                 </div>
 
                 <div class="col-md-6 pb-3">
-                    <input type="tel" asp-for="PhoneNumber" class="form-control w-100" id="PhoneNumber"   />
+                    <input type="tel" asp-for="PhoneNumber" class="form-control w-100" id="PhoneNumber" readonly />
                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
-                        <input type="email" asp-for="Email" class="form-control" id="Email" placeholder="abc@xyz.pqr" autocomplete="off"  >
+                        <input type="email" asp-for="Email" class="form-control" id="Email" placeholder="abc@xyz.pqr" autocomplete="off" readonly>
                         <label asp-for="Email">Email</label>
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>

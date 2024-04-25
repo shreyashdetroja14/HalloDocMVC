@@ -118,5 +118,13 @@
             }
         })
     </script>
+
+    <script>
+        $('#Email').change(function () {
+            let value = $('#Email').val();
+            let trimmedValue = value.trim();
+            $('#Email').val(trimmedValue);
+        });
+    </script>
 }
 

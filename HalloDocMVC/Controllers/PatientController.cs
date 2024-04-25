@@ -152,6 +152,7 @@ namespace HalloDocMVC.Controllers
                 return View("~/Views/Patient/Profile.cshtml", ProfileDetails);
             }
 
+            //ProfileDetails.Email = ProfileDetails.Email.ToLower().Trim();
             bool isProfileEdited = await _patientService.EditProfile(ProfileDetails);
             if (isProfileEdited)
             {
@@ -163,6 +164,7 @@ namespace HalloDocMVC.Controllers
 
             }
 
+            TempData["back"] = 1;
             return RedirectToAction("Profile");
         }
 
@@ -199,6 +201,7 @@ namespace HalloDocMVC.Controllers
                 return View(frvm);
             }
 
+            frvm.PatientInfo.Email = frvm.PatientInfo.Email.ToLower().Trim();
             bool isRequestCreated = await _patientService.CreatePatientRequest(frvm);
             if (isRequestCreated)
             {
@@ -242,6 +245,7 @@ namespace HalloDocMVC.Controllers
 
             ClaimsData claimsData = _jwtService.GetClaimValues();
 
+            frvm.PatientInfo.Email = frvm.PatientInfo.Email.ToLower().Trim();
             bool isUserExists = await _requestFormService.CheckUser(frvm.PatientInfo.Email);
             if (!isUserExists)
             {

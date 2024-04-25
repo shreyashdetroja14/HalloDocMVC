@@ -141,7 +141,7 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin")]
         public async Task<IActionResult> ResetPassword(EditProviderViewModel AccountInfo)
         {
-
+            TempData["back"] = 1;
             if (AccountInfo.Password == null)
             {
                 TempData["ErrorMessage"] = "Unable to reset password";
@@ -176,6 +176,8 @@ namespace HalloDocMVC.Controllers
             {
                 TempData["ErrorMessage"] = "Failed To Update Account Info.";
             }
+
+            TempData["back"] = 1;
             return RedirectToAction("EditProvider", new {providerId = AccountInfo.ProviderId});
         }
 
@@ -184,6 +186,7 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin")]
         public async Task<IActionResult> EditPhysicianInfo(EditProviderViewModel PhysicianInfo)
         {
+            PhysicianInfo.Email = PhysicianInfo.Email.ToLower().Trim();
             bool isInfoUpdated = await _providersService.EditPhysicianInfo(PhysicianInfo);
             if (isInfoUpdated)
             {
@@ -193,6 +196,8 @@ namespace HalloDocMVC.Controllers
             {
                 TempData["ErrorMessage"] = "Failed To Update Physician Info.";
             }
+
+            TempData["back"] = 1;
             return RedirectToAction("EditProvider", new { providerId = PhysicianInfo.ProviderId });
         }
         
@@ -210,6 +215,8 @@ namespace HalloDocMVC.Controllers
             {
                 TempData["ErrorMessage"] = "Failed To Update Billing Info.";
             }
+
+            TempData["back"] = 1;
             return RedirectToAction("EditProvider", new { providerId = BillingInfo.ProviderId });
         }
         
@@ -227,6 +234,8 @@ namespace HalloDocMVC.Controllers
             {
                 TempData["ErrorMessage"] = "Failed To Update Profile Info.";
             }
+
+            TempData["back"] = 1;
             return RedirectToAction("EditProvider", new { providerId = ProfileInfo.ProviderId });
         }
 
@@ -246,6 +255,7 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Upload Document.";
             }
 
+            TempData["back"] = 1;
             return RedirectToAction("EditProvider", new { providerId });
         }
 
@@ -288,6 +298,7 @@ namespace HalloDocMVC.Controllers
             ClaimsData claimsData = _jwtService.GetClaimValues();
             ProviderInfo.CreatedBy = claimsData.AspNetUserId;
 
+            ProviderInfo.Email = ProviderInfo.Email.ToLower().Trim();
             bool isProvCreated= await _providersService.CreateProvider(ProviderInfo);
             if (isProvCreated)
             {
@@ -487,6 +498,12 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin")]
         public async Task<IActionResult> ApproveShifts(List<int> shiftDetailIds)
         {
+            if(shiftDetailIds.Count() == 0)
+            {
+                TempData["ErrorMessage"] = "Select Shifts To Approve.";
+                return RedirectToAction("RequestedShifts");
+            }
+
             ClaimsData claimsData = _jwtService.GetClaimValues();
 
             bool isShiftApproved = await _providersService.ApproveShifts(shiftDetailIds, claimsData.AspNetUserId ?? "");
@@ -506,6 +523,12 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin")]
         public async Task<IActionResult> DeleteShifts(List<int> shiftDetailIds)
         {
+            if (shiftDetailIds.Count() == 0)
+            {
+                TempData["ErrorMessage"] = "Select Shifts To Delete.";
+                return RedirectToAction("RequestedShifts");
+            }
+
             ClaimsData claimsData = _jwtService.GetClaimValues();
 
             bool isShiftDeleted = await _providersService.DeleteShifts(shiftDetailIds, claimsData.AspNetUserId ?? "");

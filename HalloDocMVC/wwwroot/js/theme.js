@@ -93,9 +93,4 @@ function applyTheme() {
 // Apply the theme on initial page load
 applyTheme();
 
-document.querySelector(".theme-btn").addEventListener("click", function () {
-    const currentTheme = localStorage.getItem("theme") || "light";
-    const newTheme = currentTheme === "light" ? "dark" : "light";
-    localStorage.setItem("theme", newTheme);
-    applyTheme();
-});
+

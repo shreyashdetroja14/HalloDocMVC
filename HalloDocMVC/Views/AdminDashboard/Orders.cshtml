@@ -26,7 +26,7 @@
                 <span>Back</span>
             </a>
         </div>
-        <form asp-action="SendOrder" class="container bg-body p-4 request-form">
+        <form asp-action="SendOrder" id="SendOrder" class="container bg-body p-4 request-form">
             <input type="number" asp-for="RequestId" hidden>
             <div class="row">
                 <div class="col-sm-6">
@@ -164,6 +164,8 @@
                     console.log(data);
 
                     vendorList.innerHTML = data;
+
+                    $.validator.unobtrusive.parse($('#send-agreement-form'));
 
                     document.getElementById('BusinessContact').value = '';
                     document.getElementById('Email').value = '';

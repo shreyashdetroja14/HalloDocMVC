@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using HalloDocRepository.Implementation;
 using HalloDocServices.Constants;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 //G:\test\hallodoc3tier\HalloDocMVC\HalloDocMVC.sln
 
@@ -39,7 +40,7 @@ namespace HalloDocServices.Implementation
         public async Task<AspNetUser> CheckLogin(LoginViewModel LoginInfo)
         {
             //string id = "";
-
+            
             //var aspnetuserFetched = await _userRepository.GetAspNetUserByEmail(LoginInfo.Email);
             var aspnetuserIQ = _userRepository.GetIQueryableAspNetUserByEmail(LoginInfo.Email);
             var aspnetuserFetched = aspnetuserIQ.FirstOrDefault();
@@ -61,6 +62,7 @@ namespace HalloDocServices.Implementation
                         {
                             location.Latitude = LoginInfo.Latitude; 
                             location.Longitude = LoginInfo.Longitude;
+                            location.CreatedDate = DateTime.Now;
 
                             await _physicianRepository.UpdatePhysicianLocation(location);
                         }

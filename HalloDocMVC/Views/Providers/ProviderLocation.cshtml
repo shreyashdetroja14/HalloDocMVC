@@ -52,7 +52,7 @@
         for (var i = 0; i < providers.length; i++) {
             var provider = providers[i];
             var marker = L.marker([provider.latitude, provider.longitude])
-                .bindPopup("<h4> " + provider.physicianName + "</h4><p> Address: " + provider.address + "</p><p> Latitude: " + provider.latitude + "</p><p> Longitude: " + provider.longitude + "</p>")
+                .bindPopup("<h4> " + provider.physicianName + "</h4><p> Address: " + (provider.address || "") + "</p><p> Latitude: " + provider.latitude + "</p><p> Longitude: " + provider.longitude + "</p><p> Last Login: " + provider.lastLogin + "</p>")
                 .addTo(map);
             console.log(provider);
             markers.push(marker);
