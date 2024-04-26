@@ -353,7 +353,7 @@ namespace HalloDocServices.Implementation
                 return false;
             }
 
-            aspnetuser.UserName = PhysicianInfo.Username;
+            aspnetuser.UserName = PhysicianInfo.Username ?? "";
             aspnetuser.Email = PhysicianInfo.Email;
             aspnetuser.PhoneNumber = PhysicianInfo.PhoneNumber;
 

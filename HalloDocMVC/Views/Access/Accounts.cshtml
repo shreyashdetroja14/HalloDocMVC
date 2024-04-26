@@ -91,9 +91,9 @@
                                                 <a asp-action="EditRole" asp-route-roleId="@account.RoleId" class="btn btn-outline-info ms-2 contact-provider-btn">
                                                     Edit
                                                 </a>
-                                                <a asp-action="DeleteRole" asp-route-roleId="@account.RoleId" class="btn btn-outline-info ms-2">
+                                                <button data-role-id="@account.RoleId" class="btn btn-outline-info ms-2 delete-btn">
                                                     Delete
-                                                </a>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
