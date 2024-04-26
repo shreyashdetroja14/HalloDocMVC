@@ -226,7 +226,7 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Add Note.";
             }
 
-            TempData["back"] = 1;
+            //TempData["back"] = 1;
             return RedirectToRoute("ViewNotes", new { requestId = vnvm.RequestId });
         }
 
@@ -687,11 +687,11 @@ namespace HalloDocMVC.Controllers
 
             if (isInfoUpdated)
             {
-                ViewBag.Success = "Case Updated";
+                TempData["SuccessMessage"] = "Case Info Updated Successfully.";
             }
             else
             {
-                ViewBag.Failure = "Unable to update details";
+                TempData["ErrorMessage"] = "Failed To Update Case Info.";
             }
             return RedirectToAction("CloseCase", new {requestId =  ViewCase.RequestId});
         }
@@ -704,7 +704,11 @@ namespace HalloDocMVC.Controllers
             bool isCaseClosed = await _adminDashboardService.CloseCase(requestId, adminId);
             if (isCaseClosed)
             {
-
+                TempData["SuccessMessage"] = "Case Closed Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Close Case.";
             }
 
             return RedirectToAction("Index");

@@ -144,7 +144,7 @@ namespace HalloDocMVC.Controllers
             //TempData["back"] = 1;
             if (AccountInfo.Password == null)
             {
-                TempData["ErrorMessage"] = "Unable to reset password";
+                TempData["ErrorMessage"] = "Password cannot be empty";
                 return RedirectToAction("EditProvider", new { providerId = AccountInfo.ProviderId });
             }
 

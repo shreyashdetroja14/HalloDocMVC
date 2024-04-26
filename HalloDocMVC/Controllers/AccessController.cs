@@ -225,7 +225,7 @@ namespace HalloDocMVC.Controllers
 
             if (AdminProfileDetails.Password == null)
             {
-                TempData["ErrorMessage"] = "Unable to reset password";
+                TempData["ErrorMessage"] = "Password cannot be empty";
                 return RedirectToAction("EditAdmin", new {aspnetuserId = AdminProfileDetails.AspNetUserId});
             }
 
@@ -317,7 +317,7 @@ namespace HalloDocMVC.Controllers
 
             if (AccountInfo.Password == null)
             {
-                TempData["ErrorMessage"] = "Unable to reset password";
+                TempData["ErrorMessage"] = "Password cannot be empty";
                 return RedirectToAction("EditPhysician", new { physicianId = AccountInfo.ProviderId });
             }
 

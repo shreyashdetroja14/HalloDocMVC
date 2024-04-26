@@ -461,7 +461,7 @@ namespace HalloDocServices.Implementation
         public AssignCaseViewModel GetAssignCaseViewModelData(AssignCaseViewModel AssignCase)
         {
             var regions = _commonRepository.GetAllRegions();
-            var physicians = _physicianRepository.GetAllPhysicians();
+            var physicians = _physicianRepository.GetAllPhysicians().Where(x => x.IsDeleted != true);
 
 
             foreach (var region in regions)
@@ -489,7 +489,7 @@ namespace HalloDocServices.Implementation
         public List<SelectListItem> GetPhysiciansByRegion(int regionId)
         {
 
-            var physicians = _physicianRepository.GetIQueryablePhysicians().Where(x => x.PhysicianRegions.Where(x => regionId == 0 || x.RegionId == regionId).Any());
+            var physicians = _physicianRepository.GetIQueryablePhysicians().Where(x => x.IsDeleted != true && x.PhysicianRegions.Where(x => regionId == 0 || x.RegionId == regionId).Any());
 
             List<SelectListItem> physicianList = new List<SelectListItem>();
 
@@ -1287,7 +1287,7 @@ namespace HalloDocServices.Implementation
             log.RequestId = request.RequestId;
             log.Status = request.Status;
             log.PhysicianId = physicianId;
-            log.Notes = "Physician concluded the request on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
+            log.Notes = "Physician completed the housecall on " + DateOnly.FromDateTime(DateTime.Now) + " at " + DateTime.Now.ToLongTimeString();
             log.CreatedDate = DateTime.Now;
 
             await _notesAndLogsRepository.AddRequestStatusLog(log);

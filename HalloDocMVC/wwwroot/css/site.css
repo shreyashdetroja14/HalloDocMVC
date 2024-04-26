@@ -177,7 +177,11 @@ input {
 }*/
 
 
-
+div:where(.swal2-container) div:where(.swal2-popup) {
+    background: none !important;
+    background-color: var(--bs-secondary-bg) !important;
+    color: var(--bs-body-color) !important;
+}
 
 
 

@@ -58,7 +58,7 @@ namespace HalloDocMVC.Controllers
 
             if(AdminProfileDetails.Password == null)
             {
-                TempData["ErrorMessage"] = "Unable to reset password";
+                TempData["ErrorMessage"] = "Password cannot be empty";
                 return RedirectToAction("Index");
             }
 
@@ -152,7 +152,7 @@ namespace HalloDocMVC.Controllers
 
             if (AccountInfo.Password == null)
             {
-                TempData["ErrorMessage"] = "Unable to reset password";
+                TempData["ErrorMessage"] = "Password cannot be empty";
                 return RedirectToRoute("Profile");
             }
 

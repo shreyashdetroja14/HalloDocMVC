@@ -2,7 +2,11 @@
 {
     <script>
 
-        toastr.success("@TempData["SuccessMessage"]");
+        @*toastr.success("@TempData["SuccessMessage"]");*@
+            Swal.fire({
+                text: "@TempData["SuccessMessage"]",
+                icon: "success"
+            });
 
     </script>
 }
@@ -11,7 +15,11 @@
 {
     <script>
 
-        toastr.error("@TempData["ErrorMessage"]");
+        @*toastr.error("@TempData["ErrorMessage"]");*@
+            Swal.fire({
+                text: "@TempData["ErrorMessage"]",
+                icon: "error"
+            });
 
     </script>
 }

@@ -124,7 +124,16 @@
 
             $('#search-btn').click(function (event) {
                 event.preventDefault();
+                $('#PageNumber').val(1);
 
+                GetBlockedList();
+            });
+
+            $('#reset-btn').click(function (e) {
+                e.preventDefault();
+
+                $('#search-filters').trigger('reset');
+                $('#PageNumber').val(1);
                 GetBlockedList();
             });
 

@@ -322,6 +322,14 @@
                                         Orders
                                     </a>
                                 </div>
+
+                                @if (request.CallType != "0")
+                                {
+                                    <div class="col-6">
+                                        <a asp-route="HouseCall" asp-route-requestId="@request.RequestId" class="btn btn-info text-white rounded-pill mb-2 w-75">@request.CallType</a>
+                                    </div>
+
+                                }
                             }
 
                             @if (status == 3 || status == 4)
@@ -363,13 +371,7 @@
                                 </button>
                             </div>
 
-                            @if (request.CallType != "0")
-                            {
-                                <div class="col-6">
-                                    <a asp-route="HouseCall" asp-route-requestId="@request.RequestId" class="btn btn-info text-white rounded-pill mb-2 w-75">@request.CallType</a>
-                                </div>
-                                
-                            }
+                            
                             
                         </div>
                     </div>
