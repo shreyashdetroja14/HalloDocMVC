@@ -272,6 +272,11 @@ namespace HalloDocRepository.Implementation
         {
             return _context.BlockRequests.FirstOrDefault(x => x.BlockRequestId == blockRequestId) ?? new BlockRequest();
         }
+        
+        public BlockRequest GetBlockRequestByEmail(string email)
+        {
+            return _context.BlockRequests.FirstOrDefault(x => x.Email == email && x.IsActive == true) ?? new BlockRequest();
+        }
 
         public async Task<BlockRequest> UpdateBlockRequest(BlockRequest blockRequest)
         {

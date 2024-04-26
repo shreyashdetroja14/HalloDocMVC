@@ -14,6 +14,8 @@ namespace HalloDocServices.Interface
 
         Task<bool> CheckUser(string email);
 
+        bool CheckBlockRequest(string email);
+
         Task<bool> SendMail(PatientRequestViewModel PatientInfo);
 
         Task<bool> ValidateToken(string token);

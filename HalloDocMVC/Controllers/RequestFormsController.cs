@@ -50,6 +50,13 @@ namespace HalloDocMVC.Controllers
                 }
             }
 
+            bool isUserBlocked = _requestFormService.CheckBlockRequest(prvm.Email);
+            if (isUserBlocked)
+            {
+                TempData["ErrorMessage"] = "Sorry, This patient email has been blocked.";
+                return RedirectToAction("PatientRequest");
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewBag.RegionList = _requestFormService.GetRegionList();
@@ -87,6 +94,13 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> FamilyRequest(FamilyRequestViewModel frvm)
         {
+            bool isUserBlocked = _requestFormService.CheckBlockRequest(frvm.PatientInfo.Email);
+            if (isUserBlocked)
+            {
+                TempData["ErrorMessage"] = "Sorry, This patient email has been blocked.";
+                return RedirectToAction("FamilyRequest");
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewBag.RegionList = _requestFormService.GetRegionList();
@@ -115,7 +129,7 @@ namespace HalloDocMVC.Controllers
 
         #endregion
 
-        #region CONCIERGE REGION
+        #region CONCIERGE REQUEST
 
         public IActionResult ConciergeRequest()
         {
@@ -128,6 +142,13 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConciergeRequest(ConciergeRequestViewModel crvm)
         {
+            bool isUserBlocked = _requestFormService.CheckBlockRequest(crvm.PatientInfo.Email);
+            if (isUserBlocked)
+            {
+                TempData["ErrorMessage"] = "Sorry, This patient email has been blocked.";
+                return RedirectToAction("ConciergeRequest");
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewBag.RegionList = _requestFormService.GetRegionList();
@@ -170,6 +191,13 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BusinessRequest(BusinessRequestViewModel brvm)
         {
+            bool isUserBlocked = _requestFormService.CheckBlockRequest(brvm.PatientInfo.Email);
+            if (isUserBlocked)
+            {
+                TempData["ErrorMessage"] = "Sorry, This patient email has been blocked.";
+                return RedirectToAction("BusinessRequest");
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewBag.RegionList = _requestFormService.GetRegionList();

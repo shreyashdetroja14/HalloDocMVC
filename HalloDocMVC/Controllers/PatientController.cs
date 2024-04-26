@@ -195,6 +195,13 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PatientRequest(FamilyRequestViewModel frvm)
         {
+            bool isUserBlocked = _requestFormService.CheckBlockRequest(frvm.PatientInfo.Email);
+            if (isUserBlocked)
+            {
+                TempData["ErrorMessage"] = "Sorry, This patient email has been blocked.";
+                return RedirectToAction("PatientRequest");
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewBag.RegionList = _patientService.GetRegionList();
@@ -236,6 +243,13 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> FamilyRequest(FamilyRequestViewModel frvm)
         {
+            bool isUserBlocked = _requestFormService.CheckBlockRequest(frvm.PatientInfo.Email);
+            if (isUserBlocked)
+            {
+                TempData["ErrorMessage"] = "Sorry, This patient email has been blocked.";
+                return RedirectToAction("FamilyRequest");
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewBag.RequestType = 3;

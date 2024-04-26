@@ -101,6 +101,8 @@ namespace HalloDocRepository.Interface
 
         BlockRequest GetBlockRequestById(int blockRequestId);
 
+        BlockRequest GetBlockRequestByEmail(string email);
+
         Task<BlockRequest> UpdateBlockRequest(BlockRequest blockRequest);
     }
 }

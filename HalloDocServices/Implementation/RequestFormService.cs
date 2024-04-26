@@ -241,6 +241,17 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
+        public bool CheckBlockRequest(string email)
+        {
+            var blockRequest = _requestRepository.GetBlockRequestByEmail(email);
+            if(blockRequest.BlockRequestId != 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public async Task<bool> SendMail(PatientRequestViewModel PatientInfo)
         {
             List<string> receiver = new List<string>();
