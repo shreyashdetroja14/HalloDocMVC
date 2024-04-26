@@ -48,9 +48,9 @@
                                             <a asp-action="EditRole" asp-route-roleId="@account.RoleId" class="btn btn-outline-info contact-provider-btn">
                                                 Edit
                                             </a>
-                                            <a asp-action="DeleteRole" asp-route-roleId="@account.RoleId" class="btn btn-outline-info">
+                                            <button data-role-id="@account.RoleId" class="btn btn-outline-info delete-btn">
                                                 Delete
-                                            </a>
+                                            </button>
                                         </td>
                                     </tr>
                                 }
@@ -117,5 +117,28 @@
 @section AddScript
 {
     <partial name="_ToastMessageScriptsPartial" />
+
+    <script>
+        $('.delete-btn').each(function () {
+            $(this).click(function () {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, delete it!"
+                })
+                    .then((result) => {
+                        if (result.isConfirmed) {
+                            let roleId = $(this).attr('data-role-id');
+
+                            window.location.href = `/Access/DeleteRole?roleId=${roleId}`;
+                        }
+                    });
+            })
+        })
+    </script>
 
 }

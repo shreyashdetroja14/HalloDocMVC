@@ -84,6 +84,8 @@
                         console.log(data);
 
                         $('#partial-container').html(data);
+
+                        partialEventListeners();
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         console.error("Error fetching data:", textStatus);
@@ -109,5 +111,29 @@
                 GetVendorsList();
             });
         });
+
+        function partialEventListeners(){
+            $('.delete-btn').each(function(){
+                $(this).click(function(){
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yes, delete it!"
+                    })
+                    .then((result) => {
+                        if (result.isConfirmed) {
+                            let vendorId = $(this).attr('data-vendor-id');
+
+                            console.log(vendorId);
+                            window.location.href = `/Vendors/DeleteVendor?vendorId=${vendorId}`;
+                        }
+                    });
+                })
+            })
+        }
     </script>
 }

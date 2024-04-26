@@ -39,9 +39,9 @@
                         <a asp-action="EditVendor" asp-route-vendorId="@vendor.VendorId" class="btn btn-outline-info">
                             Edit
                         </a>
-                        <a asp-action="DeleteVendor" asp-route-vendorId="@vendor.VendorId" class="btn btn-outline-info">
+                        <button data-vendor-id="@vendor.VendorId" class="btn btn-outline-info delete-btn">
                             Delete
-                        </a>
+                        </button>
                     </td>
                 </tr>
             }
@@ -104,9 +104,9 @@
                             <a asp-action="EditVendor" asp-route-vendorId="@vendor.VendorId" class="btn btn-outline-info">
                                 Edit
                             </a>
-                            <a asp-action="DeleteVendor" asp-route-vendorId="@vendor.VendorId" class="btn btn-outline-info ms-2">
+                            <button data-vendor-id="@vendor.VendorId" class="btn btn-outline-info ms-2 delete-btn">
                                 Delete
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
