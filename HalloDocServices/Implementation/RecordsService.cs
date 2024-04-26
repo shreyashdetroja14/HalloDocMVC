@@ -83,6 +83,8 @@ namespace HalloDocServices.Implementation
                 rawData = rawData.Where(x => x.RequestClients.FirstOrDefault() != null ? EF.Functions.ILike(x.RequestClients.FirstOrDefault().PhoneNumber, "%" + SearchFilter.PhoneNumber + "%") : false);
             }
 
+            rawData = rawData.OrderByDescending(x => x.CreatedDate);
+
             return rawData;
         }
              
@@ -268,6 +270,8 @@ namespace HalloDocServices.Implementation
                 data = data.Where(x => EF.Functions.ILike(x.Mobile ?? "", "%" + SearchFilter.PhoneNumber + "%"));
             }
 
+            data = data.OrderByDescending(x => x.CreatedDate);
+
             //pagination data initialize
 
             int requestCount = data.Count();
@@ -305,6 +309,8 @@ namespace HalloDocServices.Implementation
         public PaginatedListViewModel<PatientRowViewModel> GetPatientRecordList(int userId, int pageNumber)
         {
             var rawData = _requestRepository.GetIQueryableRequests().Where(x => x.UserId  == userId);
+
+            rawData = rawData.OrderByDescending(x => x.CreatedDate);
 
             int requestCount = rawData.Count();
             int pageSize = 5;
@@ -387,6 +393,8 @@ namespace HalloDocServices.Implementation
             {
                 data = data.Where(x => EF.Functions.ILike(x.PhoneNumber ?? "", "%" + SearchFilter.PhoneNumber + "%"));
             }
+
+            data = data.OrderByDescending(x => x.CreatedDate);
 
             //pagination data initialize
 
@@ -497,7 +505,9 @@ namespace HalloDocServices.Implementation
             {
                 DateTime sentDate = DateTime.ParseExact(SearchFilter.SentDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
                 emailLogs = emailLogs.Where(x => DateOnly.FromDateTime(x.SentDate ?? DateTime.Now) == DateOnly.FromDateTime(sentDate));
-            }   
+            }
+
+            emailLogs = emailLogs.OrderByDescending(x => x.CreatedDate);
 
             //pagination data initialize
 
@@ -521,7 +531,7 @@ namespace HalloDocServices.Implementation
                 RoleName = ((AccountType)(x.RoleId ?? 0)).ToString(),
                 Email = x.EmailId,
                 CreatedDate = x.CreatedDate.ToString(),
-                SentDate = x.SentDate != null ? x.SentDate.ToString() : DateTime.Now.ToString(),
+                SentDate = x.SentDate != null ? x.SentDate.ToString() : null,
                 IsSent = x.IsEmailSent ?? false,
                 SentTries = x.SentTries,
                 ConfirmationNumber = x.Request != null ? x.Request.ConfirmationNumber : "",
@@ -569,6 +579,8 @@ namespace HalloDocServices.Implementation
                 smsLogs = smsLogs.Where(x => DateOnly.FromDateTime(x.SentDate ?? DateTime.Now) == DateOnly.FromDateTime(sentDate));
             }
 
+            smsLogs = smsLogs.OrderByDescending(x => x.CreatedDate);
+
             //pagination data initialize
 
             int requestCount = smsLogs.Count();
@@ -591,7 +603,7 @@ namespace HalloDocServices.Implementation
                 RoleName = ((AccountType)(x.RoleId ?? 0)).ToString(),
                 PhoneNumber = x.MobileNumber,
                 CreatedDate = x.CreatedDate.ToString(),
-                SentDate = x.SentDate != null ? x.SentDate.ToString() : DateTime.Now.ToString(),
+                SentDate = x.SentDate != null ? x.SentDate.ToString() : null,
                 IsSent = x.IsSmsSent ?? false,
                 SentTries = x.SentTries,
                 ConfirmationNumber = x.Request != null ? x.Request.ConfirmationNumber : "",

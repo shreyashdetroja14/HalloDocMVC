@@ -141,7 +141,7 @@ namespace HalloDocMVC.Controllers
         [CustomAuthorize("admin")]
         public async Task<IActionResult> ResetPassword(EditProviderViewModel AccountInfo)
         {
-            TempData["back"] = 1;
+            //TempData["back"] = 1;
             if (AccountInfo.Password == null)
             {
                 TempData["ErrorMessage"] = "Unable to reset password";
@@ -177,7 +177,7 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Update Account Info.";
             }
 
-            TempData["back"] = 1;
+            //TempData["back"] = 1;
             return RedirectToAction("EditProvider", new {providerId = AccountInfo.ProviderId});
         }
 
@@ -197,7 +197,7 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Update Physician Info.";
             }
 
-            TempData["back"] = 1;
+            //TempData["back"] = 1;
             return RedirectToAction("EditProvider", new { providerId = PhysicianInfo.ProviderId });
         }
         
@@ -216,7 +216,7 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Update Billing Info.";
             }
 
-            TempData["back"] = 1;
+            //TempData["back"] = 1;
             return RedirectToAction("EditProvider", new { providerId = BillingInfo.ProviderId });
         }
         
@@ -235,7 +235,7 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Update Profile Info.";
             }
 
-            TempData["back"] = 1;
+            //TempData["back"] = 1;
             return RedirectToAction("EditProvider", new { providerId = ProfileInfo.ProviderId });
         }
 
@@ -255,7 +255,7 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Upload Document.";
             }
 
-            TempData["back"] = 1;
+            //TempData["back"] = 1;
             return RedirectToAction("EditProvider", new { providerId });
         }
 

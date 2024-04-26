@@ -335,7 +335,7 @@ namespace HalloDocServices.Implementation
 
             await _physicianRepository.Update(provider);
 
-            aspnetUser.UserName = AccountInfo.Username;
+            aspnetUser.UserName = AccountInfo.Username ?? "";
 
             await _userRepository.UpdateAspNetUser(aspnetUser);
 

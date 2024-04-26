@@ -164,7 +164,7 @@ namespace HalloDocMVC.Controllers
 
             }
 
-            TempData["back"] = 1;
+            //TempData["back"] = 1;
             return RedirectToAction("Profile");
         }
 

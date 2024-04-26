@@ -150,6 +150,14 @@
                 GetEmailLogs();
             });
 
+            $('#reset-btn').click(function (e) {
+                e.preventDefault();
+
+                $('#search-filters').trigger('reset');
+                $('#PageNumber').val(1);
+                GetEmailLogs();
+            });
+
             function partialEventListeners() {
                 $('.page-number').each(function () {
                     $(this).click(function (event) {

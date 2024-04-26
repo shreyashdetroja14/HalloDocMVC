@@ -26,12 +26,15 @@
             {
                 <h2>Profile</h2>
             }
-            <button class="btn btn-outline-info d-flex align-items-center" onclick="window.history.back()">
-                <span class="material-symbols-outlined text-info fs-6">
-                    arrow_back_ios
-                </span>
-                <span>Back</span>
-            </button>
+            @if(Model.IsEditAdmin ?? false)
+            {
+                <button class="btn btn-outline-info d-flex align-items-center" onclick="window.history.back()">
+                    <span class="material-symbols-outlined text-info fs-6">
+                        arrow_back_ios
+                    </span>
+                    <span>Back</span>
+                </button>
+            }
         </div>
 
         <div class="rounded-3 custom-shadow bg-body" >

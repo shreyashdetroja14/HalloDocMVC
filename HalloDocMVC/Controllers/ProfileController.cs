@@ -73,6 +73,7 @@ namespace HalloDocMVC.Controllers
 
             }
 
+            //TempData["back"] = 1;
             return RedirectToAction("Index");
         }
 
@@ -93,6 +94,7 @@ namespace HalloDocMVC.Controllers
 
             }
 
+            //TempData["back"] = 1;
             return RedirectToAction("Index");
         }
 
@@ -114,6 +116,7 @@ namespace HalloDocMVC.Controllers
 
             }
 
+            //TempData["back"] = 1;
             return RedirectToAction("Index");
         }
 
@@ -133,6 +136,7 @@ namespace HalloDocMVC.Controllers
 
             }
 
+            //TempData["back"] = 1;
             return RedirectToAction("Index");
         }
 
@@ -163,6 +167,7 @@ namespace HalloDocMVC.Controllers
 
             }
 
+            //TempData["back"] = 1;
             return RedirectToRoute("Profile");
         }
 
@@ -181,6 +186,8 @@ namespace HalloDocMVC.Controllers
             {
                 TempData["ErrorMessage"] = "Failed To Update Profile Info.";
             }
+
+            //TempData["back"] = 1;
             return RedirectToRoute("Profile");
         }
 
@@ -198,6 +205,8 @@ namespace HalloDocMVC.Controllers
             {
                 TempData["ErrorMessage"] = "Failed To Send Mail. Try Again.";
             }
+
+            //TempData["back"] = 1;
             return RedirectToRoute("Profile");
         }
 

@@ -33,7 +33,7 @@
         </div>
 
         <div class=" rounded-3 custom-shadow">
-            <form id="form-account-info" class="bg-body p-4  rounded-3 rounded-top shadow-none">
+            <form id="form-account-info" class="bg-body p-4  rounded-top shadow-none">
                 <input type="number" asp-for="ProviderId" hidden>
                 <div class="info mb-4">
                     <h4 class="mb-3">Account Information</h4>
@@ -286,10 +286,10 @@
                             <div class="w-100 d-flex justify-content-evenly flex-column align-items-center flex-lg-row align-items-lg-start my-3">
                                 @if (Model.SignaturePath != null)
                                 {
-                                    <img src="@Model.SignaturePath" class="border mb-3 mb-lg-0" style="width: 150px; height: 150px;" />
+                                    <img src="@Model.SignaturePath" class="border mb-3 mb-lg-0 bg-white" style="width: 150px; height: 150px;" />
                                 }
                                 <div class="signature-container d-flex flex-column align-items-center d-none">
-                                    <canvas id="signature-pad" class="border border-dark mb-3" width="150" height="150"></canvas>
+                                    <canvas id="signature-pad" class="border border-dark mb-3 bg-white" width="150" height="150"></canvas>
                                     <div>
                                         <button type="button" id="clear-button" class="btn btn-outline-info">Clear</button>
                                         <button type="button" id="save-button" class="btn btn-info text-white">Save</button>
