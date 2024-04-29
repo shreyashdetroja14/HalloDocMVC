@@ -1,4 +1,5 @@
-﻿@{
+﻿@using HalloDocServices.ViewModels;
+@{
     ViewData["Title"] = "Family Request";
     Layout = "~/Views/Shared/_RequestLayout.cshtml";
 }
@@ -91,6 +92,7 @@
             </div>
         </div>
 
+        @*<partial name="_PatientRequestFormPartial" >*@
         <div class="info mb-4">
             <h2 class="mb-3">Patient Information</h2>
             <div class="row">
@@ -99,6 +101,7 @@
                         <textarea asp-for="PatientInfo.Symptoms" class="form-control" placeholder="Enter Symptoms" id="symptoms"
                                   style="height: 100px"></textarea>
                         <label asp-for="PatientInfo.Symptoms">Enter Brief Details of Symptoms</label>
+                        <span asp-validation-for="PatientInfo.Symptoms"></span>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -171,14 +174,6 @@
                         <input type="text" asp-for="PatientInfo.State" id="State" hidden />
                     </div>
                 </div>
-                @* <div class="col-sm-6">
-                    <div class="form-floating mb-3">
-                        <input type="text" asp-for="PatientInfo.State" class="form-control" id="state"
-                               placeholder="State">
-                        <label asp-for="PatientInfo.State">State</label>
-                        <span asp-validation-for="PatientInfo.State" class="text-danger"></span>
-                    </div>
-                </div> *@
                 <div class="col-sm-6">
                     <div class="form-floating mb-3">
                         <input type="text" asp-for="PatientInfo.ZipCode" class="form-control" id="zipcode"

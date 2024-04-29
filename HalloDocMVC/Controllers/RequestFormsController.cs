@@ -85,6 +85,8 @@ namespace HalloDocMVC.Controllers
 
         public IActionResult FamilyRequest()
         {
+            //FamilyRequestViewModel frvm = new FamilyRequestViewModel();
+
             ViewBag.RegionList = _requestFormService.GetRegionList();
             return View();
         }

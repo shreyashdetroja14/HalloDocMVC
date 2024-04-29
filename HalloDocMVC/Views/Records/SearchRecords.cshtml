@@ -14,12 +14,12 @@
             margin: 0;
         }
 
-    .h6{
-        margin-bottom: 0;   
+    .h6 {
+        margin-bottom: 0;
     }
 
     @@media screen and (max-width: 991px) {
-        th, 
+        th,
         td {
             white-space: nowrap;
         }
@@ -32,108 +32,107 @@
 <div class="main">
     @*<partial name="_NavbarLinks">*@
 
-        <div class="container-fluid p-4">
+    <div class="container-fluid p-4">
 
-            <div class="back mb-4 d-flex justify-content-between">
-                <h2>Search Records</h2>
-                <button class="btn btn-info text-white d-flex align-items-center" id="export-btn">
-                    <span class="material-symbols-outlined border-circle text-white">
-                        share_windows
-                    </span>
-                    <span class="ms-2 d-none d-md-inline">Export Data to Excel</span>
-                </button>
-            </div>
-
-            <div class="recordsSection bg-body rounded-3 custom-shadow">
-                <form class="container-fluid p-3" id="search-filters">
-                    <input type="number" asp-for="PageNumber" id="PageNumber" hidden />
-                    <div class="row">
-                        <div class="col-sm-6 col-lg-3">
-                            <div class="mb-3">
-                                <select asp-for="RequestStatus" id="status-list" class="form-select p-3" asp-items="@Html.GetEnumSelectList<DashboardRequestStatus>()">
-                                    <option value="" selected>Select Request Status</option>
-                                </select>
-                                <span asp-validation-for="RequestStatus" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-lg-3">
-                            <div class="form-floating mb-3">
-                                <input type="text" asp-for="PatientName" class="form-control" id="PatientName"
-                                       placeholder="Patient Name">
-                                <label asp-for="PatientName">Patient Name</label>
-                                <span asp-validation-for="PatientName" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-lg-3">
-                            <div class="mb-3">
-                                <select asp-for="RequestType" id="type-list" class="form-select p-3" asp-items="@Html.GetEnumSelectList<HalloDocServices.Constants.RequestTypes>()">
-                                    <option value="" selected>Select Request Type</option>
-                                </select>
-                                <span asp-validation-for="RequestType" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-lg-3">
-                            <div class="form-floating mb-3">
-                                <input type="date" asp-for="FromDateOfService" class="form-control" id="FromDateOfService" placeholder="From Date Of Service">
-                                <label for="FromDateOfService">From Date Of Service</label>
-                                <span class="text-danger" asp-validation-for="FromDateOfService"></span>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-lg-3">
-                            <div class="form-floating mb-3">
-                                <input type="date" asp-for="ToDateOfService" class="form-control" id="ToDateOfService" placeholder="To Date Of Service">
-                                <label for="ToDateOfService">To Date Of Service</label>
-                                <span class="text-danger" asp-validation-for="ToDateOfService"></span>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-lg-3">
-                            <div class="form-floating mb-3">
-                                <input type="text" asp-for="ProviderName" class="form-control" id="ProviderName"
-                                       placeholder="Provider Name">
-                                <label asp-for="ProviderName">Provider Name</label>
-                                <span asp-validation-for="ProviderName" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-lg-3">
-                            <div class="form-floating mb-3">
-                                <input type="text" asp-for="Email" class="form-control" id="Email"
-                                       placeholder="Email">
-                                <label asp-for="Email">Email</label>
-                                <span asp-validation-for="Email" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-lg-3">
-                            <div class="form-floating mb-3">
-                                <input type="text" asp-for="PhoneNumber" class="form-control" id="PhoneNumber"
-                                       placeholder="PhoneNumber">
-                                <label asp-for="PhoneNumber">Phone Number</label>
-                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <input type="reset" value="Clear" id="reset-btn" class="btn btn-outline-info me-2" />
-                        <button type="button" id="search-btn" class="btn btn-info text-white" >Search</button>
-                    </div>
-
-                </form>
-
-                <div id="partial-container">
-                    
-                </div>
-            </div>
-
+        <div class="back mb-4 d-flex justify-content-between">
+            <h2>Search Records</h2>
+            <button class="btn btn-info text-white d-flex align-items-center" id="export-btn">
+                <span class="material-symbols-outlined border-circle text-white">
+                    share_windows
+                </span>
+                <span class="ms-2 d-none d-md-inline">Export Data to Excel</span>
+            </button>
         </div>
+
+        <div class="recordsSection bg-body rounded-3 custom-shadow">
+            <form class="container-fluid p-3" id="search-filters">
+                <input type="number" asp-for="PageNumber" id="PageNumber" hidden />
+                <div class="row">
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="mb-3">
+                            <select asp-for="RequestStatus" id="status-list" class="form-select p-3" asp-items="@Html.GetEnumSelectList<DashboardRequestStatus>()">
+                                <option value="" selected>Select Request Status</option>
+                            </select>
+                            <span asp-validation-for="RequestStatus" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="PatientName" class="form-control" id="PatientName"
+                                   placeholder="Patient Name">
+                            <label asp-for="PatientName">Patient Name</label>
+                            <span asp-validation-for="PatientName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="mb-3">
+                            <select asp-for="RequestType" id="type-list" class="form-select p-3" asp-items="@Html.GetEnumSelectList<HalloDocServices.Constants.RequestTypes>()">
+                                <option value="" selected>Select Request Type</option>
+                            </select>
+                            <span asp-validation-for="RequestType" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="form-floating mb-3">
+                            <input type="date" asp-for="FromDateOfService" class="form-control" id="FromDateOfService" placeholder="From Date Of Service">
+                            <label for="FromDateOfService">From Date Of Service</label>
+                            <span class="text-danger" asp-validation-for="FromDateOfService"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="form-floating mb-3">
+                            <input type="date" asp-for="ToDateOfService" class="form-control" id="ToDateOfService" placeholder="To Date Of Service">
+                            <label for="ToDateOfService">To Date Of Service</label>
+                            <span class="text-danger" asp-validation-for="ToDateOfService"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="ProviderName" class="form-control" id="ProviderName"
+                                   placeholder="Provider Name">
+                            <label asp-for="ProviderName">Provider Name</label>
+                            <span asp-validation-for="ProviderName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="Email" class="form-control" id="Email"
+                                   placeholder="Email">
+                            <label asp-for="Email">Email</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="form-floating mb-3">
+                            <input type="text" asp-for="PhoneNumber" class="form-control" id="PhoneNumber"
+                                   placeholder="PhoneNumber">
+                            <label asp-for="PhoneNumber">Phone Number</label>
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <input type="reset" value="Clear" id="reset-btn" class="btn btn-outline-info me-2" />
+                    <button type="button" id="search-btn" class="btn btn-info text-white">Search</button>
+                </div>
+
+            </form>
+
+            <div id="partial-container">
+            </div>
+        </div>
+
+    </div>
 
 </div>
 
 @section AddScript
-{
+    {
     <partial name="_ToastMessageScriptsPartial" />
 
     <script>
-        $('document').ready(function(){
-            function GetRecordsList(){
+        $('document').ready(function () {
+            function GetRecordsList() {
                 var formData = $('#search-filters').serialize();
 
                 $.ajax({
@@ -152,7 +151,7 @@
                         }
                         console.error("HTTP status code:", jqXHR.status);
 
-                        if(jqXHR.responseJSON.status == 414){
+                        if (jqXHR.responseJSON.status == 414) {
                             window.location.href = '/Login';
                         }
                     }
@@ -160,6 +159,9 @@
             }
 
             GetRecordsList();
+
+            const date = new Date().toISOString().split("T")[0];
+            $('#FromDateOfService').attr('max', date);
 
             $('#FromDateOfService').change(function () {
                 // Get the selected date from From Date Of Service input
@@ -169,7 +171,7 @@
                 $('#ToDateOfService').attr('min', fromDate);
             });
 
-            $('#search-btn').click(function(event){
+            $('#search-btn').click(function (event) {
                 event.preventDefault();
                 $('#PageNumber').val(1);
 
@@ -199,9 +201,29 @@
                         }
                     });
 
-                    
+                    //const json = await response.json();
+                    //console.log(json);
+
+                    //if(!json.isExportable){
+                    //    Swal.fire({
+                    //        text: "Cannot export empty file",
+                    //        icon: "error"
+                    //    });
+                    //    $('#loader').fadeOut();
+                    //    return;
+                    //}
 
                     if (!response.ok) {
+                        console.log(response);
+                        if (response.status == 400) {
+                            $('#loader').fadeOut();
+                            Swal.fire({
+                                text: "Cannot export empty file",
+                                icon: "error"
+                            });
+                            
+                            return;
+                        }
                         throw new Error(`Error fetching data: ${response.statusText}`);
                     }
 
@@ -225,9 +247,9 @@
                 }
             });
 
-            function partialEventListeners(){
-                $('.page-number').each(function(){
-                    $(this).click(function(event){
+            function partialEventListeners() {
+                $('.page-number').each(function () {
+                    $(this).click(function (event) {
                         const pageNumber = $(this).attr('data-page-number');
                         console.log(pageNumber);
 
@@ -240,5 +262,4 @@
         });
     </script>
 }
-   
-   
+

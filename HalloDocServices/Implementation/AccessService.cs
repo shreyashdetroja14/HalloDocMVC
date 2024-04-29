@@ -107,27 +107,28 @@ namespace HalloDocServices.Implementation
             return true;
         }
 
-        public async Task<bool> DeleteRole(int roleId, string modifiedBy)
+        public int GetUserCountByRoleId(int roleId)
         {
             var role = _roleRepository.GetRoleById(roleId);
 
-            if(role.AccountType == (int)AccountType.Admin)
+            if (role.AccountType == (int)AccountType.Admin)
             {
-                var admin = _adminRepository.GetAdminByRoleId(role.RoleId);
-                if(admin.AdminId != 0)
-                {
-                    return false;
-                }
+                var adminCount = _adminRepository.GetAdminCountByRoleId(roleId);
+                return adminCount;
             }
-            
-            if(role.AccountType == (int)AccountType.Physician)
+
+            if (role.AccountType == (int)AccountType.Physician)
             {
-                var physician = _physicianRepository.GetPhysicianByRoleId(role.RoleId);
-                if(physician.PhysicianId != 0)
-                {
-                    return false;
-                }
+                var physicianCount = _physicianRepository.GetPhysicianCountByRoleId(roleId);
+                return physicianCount;
             }
+
+            return 0;
+        }
+
+        public async Task<bool> DeleteRole(int roleId, string modifiedBy)
+        {
+            var role = _roleRepository.GetRoleById(roleId);
 
             role.IsDeleted = true;
             role.ModifiedDate = DateTime.Now;

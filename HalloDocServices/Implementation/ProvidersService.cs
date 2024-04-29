@@ -637,7 +637,7 @@ namespace HalloDocServices.Implementation
             {
                 regionList = _commonRepository.GetAllRegions();
 
-                var physicianList = _physicianRepository.GetAllPhysicians();
+                var physicianList = _physicianRepository.GetAllPhysicians().Where(x => x.IsDeleted != true);
 
                 foreach (var physian in physicianList)
                 {
@@ -671,7 +671,7 @@ namespace HalloDocServices.Implementation
         {
             //var physicians = _physicianRepository.GetPhysiciansByRegionId(regionId);
             
-            var physicians = _physicianRepository.GetIQueryablePhysicians().Where(x => x.PhysicianRegions.Where(x => regionId == 0 || x.RegionId == regionId).Any());
+            var physicians = _physicianRepository.GetIQueryablePhysicians().Where(x => x.IsDeleted != true && x.PhysicianRegions.Where(x => regionId == 0 || x.RegionId == regionId).Any());
 
             List<SelectListItem> physicianList = new List<SelectListItem>();
 
@@ -985,7 +985,7 @@ namespace HalloDocServices.Implementation
                     });
                 }
 
-                var physicianList = _physicianRepository.GetAllPhysicians();
+                var physicianList = _physicianRepository.GetAllPhysicians().Where(x => x.IsDeleted != true);
 
                 foreach (var physian in physicianList)
                 {

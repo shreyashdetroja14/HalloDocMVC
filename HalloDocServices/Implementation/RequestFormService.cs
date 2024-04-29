@@ -243,6 +243,10 @@ namespace HalloDocServices.Implementation
 
         public bool CheckBlockRequest(string email)
         {
+            if(email == null)
+            {
+                return false;
+            }
             var blockRequest = _requestRepository.GetBlockRequestByEmail(email);
             if(blockRequest.BlockRequestId != 0)
             {

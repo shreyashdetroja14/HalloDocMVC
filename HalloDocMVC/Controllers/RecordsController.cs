@@ -1,4 +1,5 @@
-﻿using HalloDocEntities.Models;
+﻿using DocumentFormat.OpenXml.InkML;
+using HalloDocEntities.Models;
 using HalloDocMVC.Auth;
 using HalloDocServices.Implementation;
 using HalloDocServices.Interface;
@@ -7,6 +8,7 @@ using HalloDocServices.ViewModels.AdminViewModels;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Core.Types;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 
 namespace HalloDocMVC.Controllers
@@ -90,6 +92,11 @@ namespace HalloDocMVC.Controllers
         public IActionResult ExportRecords(SearchRecordsViewModel SearchFilters)
         {
             var excelFile = _recordsService.ExportToExcel(SearchFilters);
+            if(excelFile.Length == 0)
+            {
+                 
+                return StatusCode(400);
+            }
 
             return File(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "records.xlsx");
         }

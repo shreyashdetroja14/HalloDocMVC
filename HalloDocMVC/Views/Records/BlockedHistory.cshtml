@@ -122,6 +122,9 @@
 
             GetBlockedList();
 
+            const date = new Date().toISOString().split("T")[0];
+            $('#CreatedDate').attr('max', date);
+
             $('#search-btn').click(function (event) {
                 event.preventDefault();
                 $('#PageNumber').val(1);

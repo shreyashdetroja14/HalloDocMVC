@@ -1,0 +1,129 @@
+﻿@model HalloDocServices.ViewModels.PatientRequestViewModel
+
+<div class="info mb-4">
+    <h2 class="mb-3">Patient Information</h2>
+    <div class="row">
+        <div class="col-12">
+            <div class="form-floating mb-3">
+                <textarea asp-for="Symptoms" class="form-control" placeholder="Enter Symptoms" id="Symptoms"
+                          style="height: 100px"></textarea>
+                <label asp-for="Symptoms">Enter Brief Details of Symptoms</label>
+                <span asp-validation-for="Symptoms"></span>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-floating mb-3">
+                <input type="text" asp-for="FirstName" class="form-control" id="FirstName"
+                       placeholder="First Name">
+                <label asp-for="FirstName">First Name</label>
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-floating mb-3">
+                <input type="text" asp-for="LastName" class="form-control" id="LastName"
+                       placeholder="Last Name">
+                <label asp-for="LastName">Last Name</label>
+                <span asp-validation-for="LastName"></span>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-floating mb-3">
+                <input type="date" asp-for="DOB" class="form-control" id="DOB" placeholder="DOB">
+                <label asp-for="DOB">Date Of Birth</label>
+                <span asp-validation-for="DOB"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="contact-info mb-4">
+    <h2 class="mb-3">Patient Contact Information</h2>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-floating mb-3">
+                <input type="text" asp-for="Email" class="form-control" name="PatientInfo.Email" id="Email"
+                       placeholder="abc@xyz.pqr">
+                <label asp-for="Email">Email</label>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-sm-6 pb-3">
+            <input type="tel" asp-for="PhoneNumber" class="form-control w-100" id="PhoneNumber" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+
+        </div>
+        <div class="col-sm-6 d-none" id="passfield">
+            <div class="form-floating mb-3">
+                <input type="password" asp-for="Password" class="form-control" id="Password"
+                       placeholder="Password">
+                <label asp-for="Password">Password</label>
+                <span class="material-symbols-outlined text-body icon-label" id="eye1">
+                    visibility_off
+                </span>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <span class="text-danger">@ViewBag.Msg</span>
+        </div>
+
+        <div class="col-sm-6 d-none" id="confirmpassfield">
+            <div class="form-floating mb-3">
+                <input type="password" asp-for="ConfirmPassword" class="form-control" id="ConfirmPassword"
+                       placeholder="Confirm Password">
+                <label asp-for="ConfirmPassword">Confirm Password</label>
+                <span class="material-symbols-outlined text-body icon-label" id="eye2">
+                    visibility_off
+                </span>
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <span class="text-danger">@ViewBag.Msg</span>
+        </div>
+    </div>
+</div>
+
+<div class="location-info mb-4">
+    <h2 class="mb-3">Patient Location</h2>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-floating mb-3">
+                <input type="text" asp-for="Street" class="form-control" id="Street"
+                       placeholder="Street">
+                <label asp-for="Street">Street</label>
+                <span asp-validation-for="Street"></span>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-floating mb-3">
+                <input type="text" asp-for="City" class="form-control" id="City"
+                       placeholder="City">
+                <label asp-for="City">City</label>
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <select asp-for="RegionId" id="region-list" class="form-select p-3" asp-items="@ViewBag.RegionList">
+                    <option value="" selected>Select State</option>
+                </select>
+                <span asp-validation-for="RegionId" class="text-danger"></span>
+                <input type="text" asp-for="State" id="State" hidden />
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-floating mb-3">
+                <input type="text" asp-for="ZipCode" class="form-control" id="ZipCode"
+                       placeholder="Zipcode">
+                <label asp-for="ZipCode">Zipcode</label>
+                <span asp-validation-for="ZipCode"></span>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-floating mb-3">
+                <input type="text" asp-for="Room" class="form-control" id="Room"
+                       placeholder="Room">
+                <label asp-for="Room">Room # / Suite (Optional)</label>
+                <span asp-validation-for="Room"></span>
+            </div>
+        </div>
+    </div>
+</div>

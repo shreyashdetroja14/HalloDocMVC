@@ -98,6 +98,13 @@ namespace HalloDocMVC.Controllers
         [RoleAuthorize("Role")]
         public async Task<IActionResult> DeleteRole(int roleId)
         {
+            int userCount = _accessService.GetUserCountByRoleId(roleId);
+            if(userCount != 0)
+            {
+                TempData["ErrorMessage"] = "Cannot Delete Role. Currently assigned to: " + userCount + " user/s";
+                return RedirectToAction("Accounts");
+            }
+
             string modifiedBy = GetClaimsData().AspNetUserId ?? "";
             bool isRoleDeleted = await _accessService.DeleteRole(roleId, modifiedBy);
 

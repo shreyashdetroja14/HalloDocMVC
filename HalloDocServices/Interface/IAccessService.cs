@@ -15,6 +15,8 @@ namespace HalloDocServices.Interface
 
         Task<bool> CreateRole(CreateRoleViewModel CreateRoleData);
 
+        int GetUserCountByRoleId(int roleId);
+
         Task<bool> DeleteRole(int roleId, string modifiedBy);
 
         Task<bool> EditRole(CreateRoleViewModel EditRoleData);

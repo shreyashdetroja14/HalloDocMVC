@@ -160,6 +160,11 @@ namespace HalloDocServices.Implementation
         {
             var rawData = FilterRequests(SearchFilter);
 
+            if(rawData.Count() == 0)
+            {
+                return new byte[0];
+            }
+
             var data = rawData.Select(request => new
             {
                 request,

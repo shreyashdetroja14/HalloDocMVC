@@ -571,7 +571,7 @@ conciergeBtn.addEventListener('click', async () => {
 
 const searchbar = document.querySelector('.searchbar');
 searchbar.addEventListener('keyup', async () => {
-    const searchPattern = searchbar.value;
+    const searchPattern = searchbar.value.trim();
 
     if (searchPattern !== "") {
         urlparams.searchPattern = searchPattern;

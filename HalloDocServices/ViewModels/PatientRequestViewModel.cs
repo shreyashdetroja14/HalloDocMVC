@@ -6,7 +6,7 @@ namespace HalloDocServices.ViewModels
 {
     public class PatientRequestViewModel
     {
-        
+        [Required(ErrorMessage = "Please enter symptoms")]
         public string? Symptoms { get; set; }
 
         [Required(ErrorMessage = "Please Enter First Name")]

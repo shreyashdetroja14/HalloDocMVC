@@ -473,14 +473,14 @@ namespace HalloDocServices.Implementation
                 });
             }
 
-            foreach (var physician in physicians)
+            /*foreach (var physician in physicians)
             {
                 AssignCase.PhysicianList.Add(new SelectListItem
                 {
                     Value = physician.PhysicianId.ToString(),
                     Text = physician.FirstName + " " + physician.LastName,
                 });
-            }
+            }*/
 
 
             return AssignCase;
