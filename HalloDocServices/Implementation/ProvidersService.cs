@@ -31,8 +31,9 @@ namespace HalloDocServices.Implementation
         private readonly IShiftRepository _shiftRepository;
         private readonly IMailService _mailService;
         private readonly IEmailSMSLogRepository _emailSMSLogRepository;
+        private readonly IInvoiceRepository _invoiceRepository;
 
-        public ProvidersService(IUserRepository userRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IRoleRepository roleRepository, IShiftRepository shiftRepository, IMailService mailService, IEmailSMSLogRepository emailSMSLogRepository)
+        public ProvidersService(IUserRepository userRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IRoleRepository roleRepository, IShiftRepository shiftRepository, IMailService mailService, IEmailSMSLogRepository emailSMSLogRepository, IInvoiceRepository invoiceRepository)
         {
             _userRepository = userRepository;
             _physicianRepository = physicianRepository;
@@ -42,6 +43,7 @@ namespace HalloDocServices.Implementation
             _shiftRepository = shiftRepository;
             _mailService = mailService;
             _emailSMSLogRepository = emailSMSLogRepository;
+            _invoiceRepository = invoiceRepository;
         }
 
         #region PROVIDERS LIST
@@ -524,6 +526,47 @@ namespace HalloDocServices.Implementation
 
         #endregion
 
+        #region PAYRATE
+
+        public List<PayrateCategoryViewModel> GetPayrateViewModelData(int providerId)
+        {
+            var payrates = _invoiceRepository.GetPayratesByPhysicianId(providerId);
+
+            List<PayrateCategoryViewModel> payrateList = new List<PayrateCategoryViewModel>();
+            foreach (var payrate in payrates)
+            {
+                payrateList.Add(new PayrateCategoryViewModel
+                {
+                    PayrateId = payrate.PayrateId,
+                    PayrateCategoryId = payrate.PayrateCategoryId ?? 0,
+                    Payrate = payrate.Payrate1 ?? 0,
+                    CategoryName = payrate.PayrateCategory?.CategoryName,
+                    PhysicianId = providerId,
+
+                });
+            }
+
+            return payrateList;
+        }
+
+        public async Task<bool> EditPayrate(PayrateCategoryViewModel payrateDetails)
+        {
+            Payrate payrate = _invoiceRepository.GetPayrateByPayrateId(payrateDetails.PayrateId);
+            if (payrate == null)
+            {
+                return false;
+            }
+
+            payrate.Payrate1 = payrateDetails.Payrate;
+            payrate.ModifiedDate = DateTime.Now;
+
+            await _invoiceRepository.UpdatePayrate(payrate);
+
+            return true;
+        }
+
+        #endregion
+
         #region CREATE PROVIDER
 
         public async Task<bool> CreateProvider(EditProviderViewModel ProviderInfo)
@@ -538,7 +581,7 @@ namespace HalloDocServices.Implementation
 
             aspnetuserNew.Id = Guid.NewGuid().ToString();
 
-            aspnetuserNew.UserName = ProviderInfo.Username;
+            aspnetuserNew.UserName = ProviderInfo.Username ?? "";
             aspnetuserNew.PasswordHash = ProviderInfo.Password != null ? BCrypt.Net.BCrypt.HashPassword(ProviderInfo.Password) : null;
             aspnetuserNew.Email = ProviderInfo.Email;
             aspnetuserNew.PhoneNumber = ProviderInfo.PhoneNumber;
@@ -608,6 +651,20 @@ namespace HalloDocServices.Implementation
 
             await _physicianRepository.CreatePhysicianLocation(location);
 
+            List<Payrate> payrates = new List<Payrate>();
+            for(int i = 1; i <= 7; i++)
+            {
+                payrates.Add(new Payrate
+                {
+                    PhysicianId = provider.PhysicianId,
+                    PayrateCategoryId = i,
+                    Payrate1 = 10,
+                    CreatedBy = ProviderInfo.CreatedBy,
+                    CreatedDate = DateTime.Now,
+                });
+            }
+
+            await _invoiceRepository.CreatePayrates(payrates);
 
             return true;
         }

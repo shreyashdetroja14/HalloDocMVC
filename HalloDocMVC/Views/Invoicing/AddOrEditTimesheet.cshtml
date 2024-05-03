@@ -1,0 +1,94 @@
+﻿@using System.Globalization;
+
+@{
+    ViewData["Title"] = "Edit Timesheet";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+@model HalloDocServices.ViewModels.AdminViewModels.TimesheetViewModel
+
+<div class="main">
+    <div class="container-xl p-4">
+
+        <div class="heading d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h2 mb-3">Bi-weekly Sheet</h1>
+            <button class="btn btn-outline-info d-flex align-items-center" onclick="window.history.back()">
+                <span class="material-symbols-outlined text-info fs-6">
+                    arrow_back_ios
+                </span>
+                <span>Back</span>
+            </button>
+        </div>
+
+        <div class="bg-body rounded-3 custom-shadow mb-3" >
+            <form asp-action="AddOrEditTimesheet">
+                <input type="number" asp-for="TimesheetId" hidden />
+                <input type="number" asp-for="PhysicianId" hidden />
+                <input type="text" asp-for="TimesheetStartDate" hidden />
+                <input type="text" asp-for="TimesheetEndDate" hidden />
+                <div class="biweekly-sheet table-responsive">
+                    <table class="table mb-0 mt-3">
+                        <thead>
+                            <tr class="bg-body-secondary">
+                                <th scope="col" class="p-3">Date</th>
+                                <th scope="col" class="py-3">On-Call Hours</th>
+                                <th scope="col" class="py-3">Total Hours</th>
+                                <th scope="col" class="py-3">Weekend/ Holiday</th>
+                                <th scope="col" class="py-3">Number of Housecalls</th>
+                                <th scope="col" class="py-3">Number of Phone Consults</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.TimesheetDetails.Count(); i++)
+                            {
+                                <tr>
+                                    <td class="p-3">
+                                        @Model.TimesheetDetails[i].TimesheetDetailDate
+
+                                        <input type="number" asp-for="@Model.TimesheetDetails[i].TimesheetDetailId" hidden />
+                                        <input type="text" asp-for="@Model.TimesheetDetails[i].TimesheetDetailDate" hidden />
+                                    </td>
+
+                                    <td class="py-3">
+                                        @Model.TimesheetDetails[i].OnCallHours
+                                        <input type="number" asp-for="@Model.TimesheetDetails[i].OnCallHours" hidden/>
+                                    </td>
+
+                                    <td class="py-3">
+                                        <input type="number" asp-for="@Model.TimesheetDetails[i].TotalHours" class="form-control" />
+                                    </td>
+
+                                    <td class="py-3">
+                                        <input type="checkbox" asp-for="@Model.TimesheetDetails[i].IsNightWeekend" class="form-check-input" />
+                                    </td>
+
+                                    <td class="py-3">
+                                        <input type="number" asp-for="@Model.TimesheetDetails[i].HousecallsCount" class="form-control" />
+                                    </td>
+
+                                    <td class="py-3">
+                                        <input type="number" asp-for="@Model.TimesheetDetails[i].PhoneconsultCount" class="form-control" />
+                                    </td>
+                                </tr>
+
+                            }
+
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-end p-3">
+                        <input type="submit" value="Submit" class="btn btn-info text-white" />
+                    </div>
+                </div>
+
+                
+            </form>
+        </div>
+
+        <button class="btn btn-info text-white mb-3">Add Receipts</button>
+
+        <div class="d-flex justify-content-end">
+            <a class="btn btn-info text-white">Finalize</a>
+        </div>
+    </div>
+</div>
+

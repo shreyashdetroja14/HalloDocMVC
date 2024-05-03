@@ -43,6 +43,10 @@ namespace HalloDocServices.Interface
 
         Task<bool> DeleteProvider(int providerId);
 
+        List<PayrateCategoryViewModel> GetPayrateViewModelData(int providerId);
+
+        Task<bool> EditPayrate(PayrateCategoryViewModel payrateDetails);
+
         #endregion
 
         #region CREATE PROVIDER 

@@ -112,7 +112,10 @@
                                         {
                                             <li><a class="dropdown-item" asp-action="Scheduling" asp-controller="Providers">Scheduling</a></li>
                                         }
-                                        @*<li><a class="dropdown-item" href="#">Invoicing</a></li>*@
+                                        @if (AvailableMenus.Contains("Invoicing"))
+                                        {
+                                            <li><a class="dropdown-item" asp-action="Index" asp-controller="Invoicing">Invoicing</a></li>
+                                        }
                                     </ul>
                                 </li>
                             }
@@ -185,6 +188,13 @@
                                     <a asp-action="Index" asp-controller="Profile" class="myprofile nav-link">My Profile</a>
                                 </li>
                             }
+                            
+                            @if (AvailableMenus.Contains("Invoicing"))
+                            {
+                                <li class="nav-item">
+                                    <a class="invoicing nav-link" asp-action="Index" asp-controller="Invoicing">Invoicing</a>
+                                </li>
+                            }
 
                             @if (AvailableMenus.Contains("Scheduling"))
                             {
@@ -237,6 +247,10 @@
                                 @if (AvailableMenus.Contains("Scheduling"))
                                 {
                                     <li><a class="dropdown-item" asp-action="Scheduling" asp-controller="Providers">Scheduling</a></li>
+                                }
+                                @if (AvailableMenus.Contains("Invoicing"))
+                                {
+                                    <li><a class="dropdown-item" asp-action="Index" asp-controller="Invoicing">Invoicing</a></li>
                                 }
                             </ul>
                         </li>
@@ -318,6 +332,13 @@
                     {
                         <li class="nav-item" role="presentation">
                             <a asp-action="Index" asp-controller="Profile" class="myprofile nav-link">My Profile</a>
+                        </li>
+                    }
+
+                    @if (AvailableMenus.Contains("Invoicing"))
+                    {
+                        <li class="nav-item">
+                            <a class="invoicing nav-link" asp-action="Index" asp-controller="Invoicing">Invoicing</a>
                         </li>
                     }
 

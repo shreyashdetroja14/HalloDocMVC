@@ -147,6 +147,9 @@ public partial class Physician
     public virtual AspNetUser? ModifiedByNavigation { get; set; }
 
     [InverseProperty("Physician")]
+    public virtual ICollection<Payrate> Payrates { get; set; } = new List<Payrate>();
+
+    [InverseProperty("Physician")]
     public virtual ICollection<PhysicianLocation> PhysicianLocations { get; set; } = new List<PhysicianLocation>();
 
     [InverseProperty("Physician")]
@@ -177,4 +180,7 @@ public partial class Physician
 
     [InverseProperty("Physician")]
     public virtual ICollection<SmsLog> SmsLogs { get; set; } = new List<SmsLog>();
+
+    [InverseProperty("Physician")]
+    public virtual ICollection<Timesheet> Timesheets { get; set; } = new List<Timesheet>();
 }

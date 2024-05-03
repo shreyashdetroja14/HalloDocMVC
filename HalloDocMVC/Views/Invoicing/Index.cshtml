@@ -1,0 +1,126 @@
+﻿@{
+    ViewData["Title"] = "Invoicing";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+@section AddStyles
+    {
+    <style>
+        
+
+    </style>
+}
+
+@model List<HalloDocServices.ViewModels.AdminViewModels.PayrateCategoryViewModel>
+
+<div class="main">
+    <div class="container-xl p-4">
+        <div class="heading d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h2 mb-3">Timesheets</h1>
+            <button class="btn btn-outline-info d-flex align-items-center" onclick="window.history.back()">
+                <span class="material-symbols-outlined text-info fs-6">
+                    arrow_back_ios
+                </span>
+                <span>Back</span>
+            </button>
+        </div>
+        <div class="bg-body rounded-3 custom-shadow" style="overflow:hidden">
+            <div class="d-flex justify-content-between align-items-start p-3">
+                <div class="form-floating ">
+                    <select class="form-select " id="timesheet-list" >
+                        @*<option><span>2024/03/01</span> - <span>2024/03/14</span></option>*@
+                        @*@for (int i = 1; i <= 12; i++)
+                        {
+                            // Calculate start and end dates
+                            var startDate = new DateTime(DateTime.Now.Year, i, 1);
+                            var endDate = new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month));
+
+                            <option value="@startDate.ToString("yyyy-MM-dd")">
+                                <span>@startDate.ToString("yyyy/MM/dd")</span> - <span>@endDate.ToString("yyyy/MM/dd")</span>
+                            </option>
+                        }*@
+
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            // Calculate start and end dates for the first fortnight (1st to 15th)
+                            var startDate1 = new DateTime(DateTime.Now.Year, i, 1);
+                            var endDate1 = new DateTime(startDate1.Year, startDate1.Month, Math.Min(14, DateTime.DaysInMonth(startDate1.Year, startDate1.Month)));
+
+                            // Calculate start and end dates for the second fortnight (16th to last day)
+                            var startDate2 = startDate1.AddDays(14);
+                            var endDate2 = new DateTime(startDate2.Year, startDate2.Month, DateTime.DaysInMonth(startDate2.Year, startDate2.Month));
+
+                            var isSelected = DateTime.Now >= startDate1 && DateTime.Now <= endDate1;
+                            <option value="@startDate1.ToString("yyyy-MM-dd")-@(endDate1.ToString("yyyy-MM-dd"))" selected="@isSelected">
+                                <span>@startDate1.ToString("yyyy/MM/dd")</span> - <span>@endDate1.ToString("yyyy/MM/dd")</span>
+                            </option>
+
+                            @if (endDate2.Month == i)
+                            {
+                                isSelected = DateTime.Now >= startDate2 && DateTime.Now <= endDate2;
+                                <option value="@startDate2.ToString("yyyy-MM-dd")-@(endDate2.ToString("yyyy-MM-dd"))" selected="@isSelected">
+                                    <span>@startDate2.ToString("yyyy/MM/dd")</span> - <span>@endDate2.ToString("yyyy/MM/dd")</span>
+                                </option>
+                            }
+                        }
+                    </select>
+                    <label for="timesheet-list">Search by Timesheetperiod</label>
+                </div>
+                <button class="btn btn-outline-info" id="finalize-btn">
+                    Finalize Timesheet
+                </button>
+            </div>
+
+            <div id="partial-container">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section AddScript{
+    <partial name="_ToastMessageScriptsPartial" />
+
+    <script>
+        
+    </script>
+
+    <script>
+        $("#timesheet-list").change(function(){
+            console.log($("#timesheet-list").val());
+            GetTimesheet();
+            
+        })
+
+        function GetTimesheet(){
+            $.ajax({
+                url: '/Invoicing/GetTimesheet',
+                data: {
+                    selectedDatePeriod: $("#timesheet-list").val()
+                },
+                type: 'GET',
+                success: function (data) {
+                    $('#partial-container').html(data);
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error fetching data:", textStatus);
+                    if (errorThrown) {
+                        console.error("Specific error:", errorThrown);
+                    }
+                    console.error("HTTP status code:", jqXHR.status);
+
+                    if (jqXHR.responseJSON.status == 414) {
+                        window.location.href = '/Login';
+                    }
+                }
+            });
+        }
+
+        $('#finalize-btn').click(function(){
+            var selectedDatePeriod = $("#timesheet-list").val();
+            window.location.href = `/Invoicing/AddOrEditTimesheet?selectedDatePeriod=${selectedDatePeriod}`;
+        })
+    </script>
+}
+

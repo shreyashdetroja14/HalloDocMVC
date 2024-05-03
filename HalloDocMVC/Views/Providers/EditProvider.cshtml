@@ -159,6 +159,10 @@
                 </div>
 
                 <div class="submit d-flex justify-content-end">
+                    @if (!Model.IsAccessProvider)
+                    {
+                        <a asp-action="Payrate" asp-route-providerId="@Model.ProviderId" class="btn btn-info text-white">Enter Payrate</a>
+                    }
                     <button type="button" class="btn btn-outline-info py-2 px-3 ms-3" id="physician-info-editbtn">Edit</button>
                     <input type="submit" value="Save" id="physician-info-save" class="btn btn-info py-2 px-3 ms-3 text-white d-none">
                     <input type="reset" value="Cancel" id="physician-info-cancel" class="btn cancelbtn btn-outline-danger py-2 px-3 ms-3 d-none">

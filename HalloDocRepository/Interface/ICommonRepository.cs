@@ -33,5 +33,8 @@ namespace HalloDocRepository.Interface
         Task<bool> UpdateEncounterForm(EncounterForm encounterForm);
 
         Task<EncounterForm> CreateEncounterForm(EncounterForm encounterForm);
+
+
+        
     }
 }

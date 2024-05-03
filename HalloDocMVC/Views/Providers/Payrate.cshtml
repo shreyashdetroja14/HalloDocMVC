@@ -1,0 +1,140 @@
+﻿@{
+    ViewData["Title"] = "Payrate";
+    Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
+}
+
+@section AddStyles
+    {
+    <style>
+        tr {
+            vertical-align: middle;
+            font-weight: 500;
+        }
+
+            tr p {
+                margin: 0;
+            }
+
+        th, td {
+            text-align: center;
+        }
+
+        .submit-btn, .cancel-btn {
+            display: none;
+        }
+
+    </style>
+}
+
+@model List<HalloDocServices.ViewModels.AdminViewModels.PayrateCategoryViewModel>
+
+<div class="main">
+    <div class="container-xl p-4">
+        <div class="heading d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h2 mb-3">Payrate</h1>
+            <button class="btn btn-outline-info d-flex align-items-center" onclick="window.history.back()">
+                <span class="material-symbols-outlined text-info fs-6">
+                    arrow_back_ios
+                </span>
+                <span>Back</span>
+            </button>
+        </div>
+        <div class="bg-body rounded-3 pt-3 custom-shadow" style="overflow:hidden">
+            <div class="payrate table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr class="bg-body-secondary">
+                            <th scope="col" class="p-3">Category</th>
+                            <th scope="col" class="py-3">Payrate</th>
+                            <th scope="col" class="py-3" style="min-width: 15rem">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="p-3">@item.CategoryName</td>
+                                <td class="py-3 payrate-form">
+                                    <form asp-action="EditPayrate">
+                                        <input type="number" name="PayrateId" value="@item.PayrateId" hidden />
+                                        <input type="number" name="PhysicianId" value="@item.PhysicianId" hidden />
+                                        <input type="number" name="PayrateCategoryId" value="@item.PayrateCategoryId" hidden />
+                                        <div class="form-floating">
+                                            <input type="number" name="Payrate" value="@item.Payrate" class="form-control payrate-input" id="category-@item.PayrateCategoryId" placeholder="Payrate" disabled>
+                                            <label for="category-@item.PayrateCategoryId">Payrate</label>
+                                        </div>
+                                        <input type="submit" id="submit-@item.PayrateCategoryId" hidden />
+                                        <input type="reset" id="reset-@item.PayrateCategoryId" hidden />
+                                    </form>
+                                </td>
+                                <td class="py-3">
+                                    <button class="btn btn-info text-white edit-btn px-4">
+                                        Edit
+                                    </button>
+                                    <label for="submit-@item.PayrateCategoryId" class="btn btn-info text-white submit-btn">Save</label>
+                                    <label for="reset-@item.PayrateCategoryId" class="btn btn-info text-white cancel-btn">Cancel</label>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section AddScript{
+    <partial name="_ToastMessageScriptsPartial" />
+
+    <script>
+        //$('.edit-btn').each(function(){
+        //    $(this).click(function () {
+        //        console.log($(this));
+        //        var payrateInput = $(this).closest('.payrate-form').find('.payrate-input');
+        //        console.log(payrateInput)
+        //        payrateInput.prop('disabled', false);
+
+        //        var submitBtn = $(this).closest('.submit-btn');
+        //        var cancelBtn = $(this).closest('.cancel-btn');
+
+        //        submitBtn.show();
+        //        cancelBtn.show();
+        //    });
+        //});
+
+        $(".edit-btn").click(function () {
+            console.log("Edit button clicked!");
+            var row = $(this).closest('tr');
+            var payrateInput = row.find('.payrate-input');
+            console.log(payrateInput)
+            payrateInput.prop('disabled', false);
+
+            var submitBtn = row.find('.submit-btn');
+            var cancelBtn = row.find('.cancel-btn');
+
+            submitBtn.show();
+            cancelBtn.show();
+
+            $(this).hide();
+        });
+
+        $(".cancel-btn").click(function () {
+            console.log("cancel button clicked!");
+            var row = $(this).closest('tr');
+            var payrateInput = row.find('.payrate-input');
+            console.log(payrateInput)
+            payrateInput.prop('disabled', true);
+
+            var submitBtn = row.find('.submit-btn');
+            var editBtn = row.find('.edit-btn');
+
+            submitBtn.hide();
+            editBtn.show();
+
+            $(this).hide();
+        });
+    </script>
+
+}
+

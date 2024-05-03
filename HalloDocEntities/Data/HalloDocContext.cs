@@ -46,6 +46,10 @@ public partial class HalloDocContext : DbContext
 
     public virtual DbSet<OrderDetail> OrderDetails { get; set; }
 
+    public virtual DbSet<Payrate> Payrates { get; set; }
+
+    public virtual DbSet<PayrateCategory> PayrateCategories { get; set; }
+
     public virtual DbSet<Physician> Physicians { get; set; }
 
     public virtual DbSet<PhysicianLocation> PhysicianLocations { get; set; }
@@ -79,6 +83,10 @@ public partial class HalloDocContext : DbContext
     public virtual DbSet<ShiftDetailRegion> ShiftDetailRegions { get; set; }
 
     public virtual DbSet<SmsLog> SmsLogs { get; set; }
+
+    public virtual DbSet<Timesheet> Timesheets { get; set; }
+
+    public virtual DbSet<TimesheetDetail> TimesheetDetails { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -234,6 +242,24 @@ public partial class HalloDocContext : DbContext
             entity.HasOne(d => d.Request).WithMany(p => p.OrderDetails).HasConstraintName("fk_request");
 
             entity.HasOne(d => d.Vendor).WithMany(p => p.OrderDetails).HasConstraintName("fk_vendor");
+        });
+
+        modelBuilder.Entity<Payrate>(entity =>
+        {
+            entity.HasKey(e => e.PayrateId).HasName("payrate_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.PayrateCategory).WithMany(p => p.Payrates).HasConstraintName("fk_category");
+
+            entity.HasOne(d => d.Physician).WithMany(p => p.Payrates)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_physician");
+        });
+
+        modelBuilder.Entity<PayrateCategory>(entity =>
+        {
+            entity.HasKey(e => e.CategoryId).HasName("payrate_category_pkey");
         });
 
         modelBuilder.Entity<Physician>(entity =>
@@ -438,6 +464,28 @@ public partial class HalloDocContext : DbContext
             entity.HasOne(d => d.Physician).WithMany(p => p.SmsLogs).HasConstraintName("fk_physician");
 
             entity.HasOne(d => d.Request).WithMany(p => p.SmsLogs).HasConstraintName("fk_request");
+        });
+
+        modelBuilder.Entity<Timesheet>(entity =>
+        {
+            entity.HasKey(e => e.TimesheetId).HasName("timesheet_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.Physician).WithMany(p => p.Timesheets)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_physician");
+        });
+
+        modelBuilder.Entity<TimesheetDetail>(entity =>
+        {
+            entity.HasKey(e => e.TimesheetDetailId).HasName("timesheet_detail_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.Timesheet).WithMany(p => p.TimesheetDetails)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_timesheet");
         });
 
         modelBuilder.Entity<User>(entity =>

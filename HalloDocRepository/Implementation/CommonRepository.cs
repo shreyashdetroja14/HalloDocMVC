@@ -1,6 +1,7 @@
 ﻿using HalloDocEntities.Data;
 using HalloDocEntities.Models;
 using HalloDocRepository.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,5 +69,6 @@ namespace HalloDocRepository.Implementation
 
             return encounterForm;
         }
+
     }
 }

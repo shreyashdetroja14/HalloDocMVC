@@ -278,6 +278,32 @@ namespace HalloDocMVC.Controllers
 
         #endregion
 
+        #region PAYRATE
+
+        public IActionResult Payrate(int providerId)
+        {
+            List<PayrateCategoryViewModel> payrateList = _providersService.GetPayrateViewModelData(providerId);
+            return View(payrateList);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditPayrate(PayrateCategoryViewModel payrateDetails)
+        {
+            bool isPayrateUpdated = await _providersService.EditPayrate(payrateDetails);
+            if (isPayrateUpdated)
+            {
+                TempData["SuccessMessage"] = "Payrate Updated Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Update Payrate.";
+            }
+
+            return RedirectToAction("Payrate", new {providerId = payrateDetails.PhysicianId});
+        }
+
+        #endregion
+
         #region CREATE PROVIDER
 
         [CustomAuthorize("admin")]

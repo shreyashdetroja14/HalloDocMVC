@@ -25,6 +25,7 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 builder.Services.AddScoped<IEmailSMSLogRepository, EmailSMSLogRepository>();
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
 
 builder.Services.AddScoped<ILoginService, LoginService>();
@@ -39,6 +40,7 @@ builder.Services.AddScoped<IAccessService, AccessService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IRecordsService, RecordsService>();
 builder.Services.AddScoped<IRoleAuthService, RoleAuthService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
 
 var app = builder.Build();
