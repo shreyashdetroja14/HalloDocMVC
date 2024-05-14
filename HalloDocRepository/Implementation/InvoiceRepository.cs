@@ -58,6 +58,11 @@ namespace HalloDocRepository.Implementation
             return _context.Timesheets.FirstOrDefault(x => x.TimesheetId == timesheetId) ?? new Timesheet();
         }
 
+        public IQueryable<Timesheet> GetIQueryableTimesheets()
+        {
+            return _context.Timesheets;
+        }
+
         public List<TimesheetDetail> GetTimesheetDetailsByTimesheetId(int timesheetId)
         {
             return _context.TimesheetDetails.Where(x => x.TimesheetId == timesheetId).ToList();
@@ -78,6 +83,35 @@ namespace HalloDocRepository.Implementation
             await _context.SaveChangesAsync();
 
             return timesheetDetails;
+        }
+
+        public TimesheetReceipt GetTimesheetReceiptById(int receiptId)
+        {
+            return _context.TimesheetReceipts.FirstOrDefault(x => x.ReceiptId == receiptId) ?? new TimesheetReceipt();
+        }
+
+        public async Task<TimesheetReceipt> CreateTimesheetReceipt(TimesheetReceipt timesheetReceipt)
+        {
+            _context.TimesheetReceipts.Add(timesheetReceipt);
+            await _context.SaveChangesAsync();
+
+            return timesheetReceipt;
+        }
+
+        public async Task<TimesheetReceipt> UpdateTimesheetReceipt(TimesheetReceipt timesheetReceipt)
+        {
+            _context.TimesheetReceipts.Update(timesheetReceipt);
+            await _context.SaveChangesAsync();
+
+            return timesheetReceipt;
+        }
+
+        public async Task<Timesheet> UpdateTimesheet(Timesheet timesheet)
+        {
+            _context.Timesheets.Update(timesheet);
+            await _context.SaveChangesAsync();
+
+            return timesheet;
         }
     }
 }

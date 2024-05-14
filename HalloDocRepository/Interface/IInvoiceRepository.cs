@@ -27,6 +27,10 @@ namespace HalloDocRepository.Interface
 
         Timesheet GetTimesheetById(int timesheetId);
 
+        IQueryable<Timesheet> GetIQueryableTimesheets();
+
+        Task<Timesheet> UpdateTimesheet(Timesheet timesheet);
+
         #endregion
 
         #region TIMESHEET DETAIL
@@ -36,6 +40,16 @@ namespace HalloDocRepository.Interface
         Task<List<TimesheetDetail>> UpdateTimeshiftDetails(List<TimesheetDetail> timesheetDetails);
 
         Task<List<TimesheetDetail>> AddTimeshiftDetails(List<TimesheetDetail> timesheetDetails);
+
+        #endregion
+
+        #region TIMESHEET RECEIPT
+
+        TimesheetReceipt GetTimesheetReceiptById(int receiptId);
+
+        Task<TimesheetReceipt> CreateTimesheetReceipt(TimesheetReceipt timesheetReceipt);
+
+        Task<TimesheetReceipt> UpdateTimesheetReceipt(TimesheetReceipt timesheetReceipt);
 
         #endregion
     }

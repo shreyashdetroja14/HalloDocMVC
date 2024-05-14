@@ -88,6 +88,8 @@ public partial class HalloDocContext : DbContext
 
     public virtual DbSet<TimesheetDetail> TimesheetDetails { get; set; }
 
+    public virtual DbSet<TimesheetReceipt> TimesheetReceipts { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -486,6 +488,15 @@ public partial class HalloDocContext : DbContext
             entity.HasOne(d => d.Timesheet).WithMany(p => p.TimesheetDetails)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_timesheet");
+        });
+
+        modelBuilder.Entity<TimesheetReceipt>(entity =>
+        {
+            entity.HasKey(e => e.ReceiptId).HasName("timesheet_receipts_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("LOCALTIMESTAMP");
+
+            entity.HasOne(d => d.Timesheet).WithMany(p => p.TimesheetReceipts).HasConstraintName("fk_timesheet");
         });
 
         modelBuilder.Entity<User>(entity =>

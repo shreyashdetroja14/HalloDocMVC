@@ -6,6 +6,8 @@
 
         public string? TimesheetDetailDate { get; set; }
 
+        public int ShiftCount { get; set; }
+
         public int OnCallHours { get; set; }
 
         public int TotalHours { get; set; }

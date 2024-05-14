@@ -43,10 +43,19 @@ public partial class Timesheet
     [Column("modified_date", TypeName = "timestamp without time zone")]
     public DateTime? ModifiedDate { get; set; }
 
+    [Column("is_finalized")]
+    public bool? IsFinalized { get; set; }
+
+    [Column("is_approved")]
+    public bool? IsApproved { get; set; }
+
     [ForeignKey("PhysicianId")]
     [InverseProperty("Timesheets")]
     public virtual Physician Physician { get; set; } = null!;
 
     [InverseProperty("Timesheet")]
     public virtual ICollection<TimesheetDetail> TimesheetDetails { get; set; } = new List<TimesheetDetail>();
+
+    [InverseProperty("Timesheet")]
+    public virtual ICollection<TimesheetReceipt> TimesheetReceipts { get; set; } = new List<TimesheetReceipt>();
 }

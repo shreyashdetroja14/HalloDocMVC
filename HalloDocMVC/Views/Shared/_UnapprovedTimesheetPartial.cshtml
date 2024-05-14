@@ -1,10 +1,48 @@
 ﻿@model HalloDocServices.ViewModels.AdminViewModels.TimesheetViewModel
 
 <div id="timesheet" class="pt-3">
+    <input type="text" id="AspNetUserRole" value="@Model.AspNetUserRole" hidden />
+    <input type="checkbox" id="is-approved" checked="@Model.IsApproved" hidden />
 
-    @if(Model.TimesheetId != 0)
+    @if (Model.TimesheetId == 0 || Model.IsFinalized == false)
     {
-        <input type="checkbox" id="is-finalized" checked="@Model.IsFinalized" hidden />
+        <div class="mx-4 fw-bold text-center pb-3">Timesheet has not been finalized yet.</div>
+    }
+    else if (Model.IsFinalized == true && Model.IsApproved == false)
+    {
+        <table class="table mb-0">
+            <thead>
+                <tr class="bg-body-secondary">
+                    <th scope="col" class="p-3">Start Date</th>
+                    <th scope="col" class="py-3">End Date</th>
+                    <th scope="col" class="py-3">Status</th>
+                    <th scope="col" class="py-3" style="min-width:9rem;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="p-3">
+                        @Model.TimesheetStartDate
+                    </td>
+
+                    <td class="py-3">
+                        @Model.TimesheetEndDate
+                    </td>
+
+                    <td class="py-3">
+                        Pending
+                    </td>
+
+                    <td class="py-3">
+                        <button class="btn btn-outline-info" id="approve-btn">Approve</button>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    }
+    else if (Model.IsFinalized == true && Model.IsApproved == true)
+    {
         <table class="table mb-0">
             <thead>
                 <tr class="bg-body-secondary">
@@ -45,11 +83,11 @@
                         <td class="py-3">
                             @(!Model.TimesheetDetails[i].IsNightWeekend ? Model.TimesheetDetails[i].PhoneconsultCount ?? 0 : 0)
                         </td>
-                        
+
                         <td class="py-3">
                             @(Model.TimesheetDetails[i].IsNightWeekend ? Model.TimesheetDetails[i].PhoneconsultCount ?? 0 : 0)
                         </td>
-                        
+
                         <td class="py-3">
                             0
                         </td>
@@ -59,9 +97,5 @@
 
             </tbody>
         </table>
-    }
-    else
-    {
-        <div class="mx-4 fw-bold text-center pb-3">No Record(s) Found</div>
     }
 </div>

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HalloDocServices.ViewModels.AdminViewModels
+﻿namespace HalloDocServices.ViewModels.AdminViewModels
 {
     public class PagerViewModel
     {
@@ -12,7 +6,7 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public int CurrentPage { get; set; }
 
-        public int PageSize{ get; set; }
+        public int PageSize { get; set; }
 
         public int TotalPages { get; set; }
 
@@ -30,15 +24,15 @@ namespace HalloDocServices.ViewModels.AdminViewModels
             int startPage = currentPage - 2;
             int endPage = currentPage + 2;
 
-            if(startPage <= 0)
+            if (startPage <= 0)
             {
                 endPage = endPage - (startPage - 1);
                 startPage = 1;
             }
-            if(endPage > totalPages)
+            if (endPage > totalPages)
             {
                 endPage = totalPages;
-                if(endPage > 5)
+                if (endPage > 5)
                 {
                     startPage = endPage - 4;
                 }

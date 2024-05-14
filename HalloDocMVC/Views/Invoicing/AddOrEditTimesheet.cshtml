@@ -5,6 +5,28 @@
     Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
 }
 
+@section AddStyles
+    {
+    <style>
+        tr {
+            vertical-align: middle;
+        }
+
+            tr p {
+                margin: 0;
+            }
+
+        .submit-btn, .cancel-btn {
+            display: none;
+        }
+
+        .hidden-cell {
+            display: none;
+        }
+
+    </style>
+}
+
 @model HalloDocServices.ViewModels.AdminViewModels.TimesheetViewModel
 
 <div class="main">
@@ -12,83 +34,582 @@
 
         <div class="heading d-flex justify-content-between align-items-center mb-3">
             <h1 class="h2 mb-3">Bi-weekly Sheet</h1>
-            <button class="btn btn-outline-info d-flex align-items-center" onclick="window.history.back()">
+            <a asp-action="Index" class="btn btn-outline-info d-flex align-items-center">
                 <span class="material-symbols-outlined text-info fs-6">
                     arrow_back_ios
                 </span>
                 <span>Back</span>
-            </button>
+            </a>
         </div>
 
-        <div class="bg-body rounded-3 custom-shadow mb-3" >
-            <form asp-action="AddOrEditTimesheet">
-                <input type="number" asp-for="TimesheetId" hidden />
-                <input type="number" asp-for="PhysicianId" hidden />
-                <input type="text" asp-for="TimesheetStartDate" hidden />
-                <input type="text" asp-for="TimesheetEndDate" hidden />
-                <div class="biweekly-sheet table-responsive">
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert alert-info" role="alert">
+                @ViewBag.Message
+            </div>
+        }
+        else
+        {
+            <div class="bg-body rounded-3 custom-shadow mb-3">
+                <form asp-action="AddOrEditTimesheet">
+                    <input type="number" asp-for="TimesheetId" hidden />
+                    <input type="number" asp-for="PhysicianId" hidden />
+                    <input type="text" asp-for="TimesheetStartDate" hidden />
+                    <input type="text" asp-for="TimesheetEndDate" hidden />
+                    <input type="text" asp-for="SelectedDatePeriod" hidden />
+
+                    <div class="biweekly-sheet table-responsive">
+                        <table class="table mb-0 mt-3">
+                            <thead>
+                                <tr class="bg-body-secondary">
+                                    <th scope="col" class="p-3">Date</th>
+                                    <th scope="col" class="py-3">On-Call Hours</th>
+                                    <th scope="col" class="py-3">Total Hours</th>
+                                    <th scope="col" class="py-3">Weekend/ Holiday</th>
+                                    <th scope="col" class="py-3">Number of Housecalls</th>
+                                    <th scope="col" class="py-3">Number of Phone Consults</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.TimesheetDetails.Count(); i++)
+                                {
+                                    <tr>
+                                        <td class="p-3">
+                                            @Model.TimesheetDetails[i].TimesheetDetailDate
+
+                                            <input type="number" asp-for="@Model.TimesheetDetails[i].TimesheetDetailId" hidden />
+                                            <input type="text" asp-for="@Model.TimesheetDetails[i].TimesheetDetailDate" hidden />
+                                        </td>
+
+                                        <td class="py-3">
+                                            @Model.TimesheetDetails[i].OnCallHours
+                                            <input type="number" asp-for="@Model.TimesheetDetails[i].OnCallHours" hidden />
+                                        </td>
+
+                                        <td class="py-3">
+                                            <input type="number" asp-for="@Model.TimesheetDetails[i].TotalHours" class="form-control" />
+                                        </td>
+
+                                        <td class="py-3">
+                                            <input type="checkbox" asp-for="@Model.TimesheetDetails[i].IsNightWeekend" class="form-check-input" />
+                                        </td>
+
+                                        <td class="py-3">
+                                            <input type="number" asp-for="@Model.TimesheetDetails[i].HousecallsCount" class="form-control" />
+                                        </td>
+
+                                        <td class="py-3">
+                                            <input type="number" asp-for="@Model.TimesheetDetails[i].PhoneconsultCount" class="form-control" />
+                                        </td>
+                                    </tr>
+
+                                }
+
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-end p-3">
+                            <input type="submit" value="Submit" class="btn btn-info text-white" />
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+
+
+            @if (Model.TimesheetId != 0)
+            {
+                <button class="btn btn-info text-white mb-3" id="add-receipts-btn">Add Receipts</button>
+            }
+
+
+            <div class="bg-body rounded-3 custom-shadow mb-3" id="receipts-container" style="display: none; overflow: hidden;">
+                <div class="table-responsive">
                     <table class="table mb-0 mt-3">
                         <thead>
                             <tr class="bg-body-secondary">
-                                <th scope="col" class="p-3">Date</th>
-                                <th scope="col" class="py-3">On-Call Hours</th>
-                                <th scope="col" class="py-3">Total Hours</th>
-                                <th scope="col" class="py-3">Weekend/ Holiday</th>
-                                <th scope="col" class="py-3">Number of Housecalls</th>
-                                <th scope="col" class="py-3">Number of Phone Consults</th>
+                                <th scope="col" class="p-3" style="width: 10rem">Date</th>
+                                <th scope="col" class="py-3">Item</th>
+                                <th scope="col" class="py-3">Amount</th>
+                                <th scope="col" class="py-3" style="width: 18rem">Bill</th>
+                                <th scope="col" class="py-3" style="width: 18rem">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @for (int i = 0; i < Model.TimesheetDetails.Count(); i++)
+                            @for (int i = 0; i < Model.TimesheetReceipts.Count(); i++)
                             {
-                                <tr>
+                                <tr data-row-index="@i">
                                     <td class="p-3">
-                                        @Model.TimesheetDetails[i].TimesheetDetailDate
+                                        @Model.TimesheetReceipts[i].ReceiptDate
+                                    </td>
+                                    <td class="py-3 receipt-info-edit @(Model.TimesheetReceipts[i].ReceiptId != 0 ? "hidden-cell" : "")">
+                                        <input type="text" class="form-control item-name" value="@Model.TimesheetReceipts[i].ItemName" />
+                                    </td>
+                                    <td class="py-3 receipt-info-edit @(Model.TimesheetReceipts[i].ReceiptId != 0 ? "hidden-cell" : "")">
+                                        <input type="number" class="form-control amount" value="@Model.TimesheetReceipts[i].Amount" />
+                                    </td>
+                                    <td class="py-3 receipt-info-edit @(Model.TimesheetReceipts[i].ReceiptId != 0 ? "hidden-cell" : "")">
+                                        <form asp-action="AddReceipt" enctype="multipart/form-data" id="receipt-form-@i" class="receipt-form">
 
-                                        <input type="number" asp-for="@Model.TimesheetDetails[i].TimesheetDetailId" hidden />
-                                        <input type="text" asp-for="@Model.TimesheetDetails[i].TimesheetDetailDate" hidden />
+                                            <input type="number" asp-for="@Model.TimesheetReceipts[i].ReceiptId" name="ReceiptId" class="hidden-receipt-id" hidden />
+                                            <input type="number" asp-for="@Model.TimesheetReceipts[i].TimesheetId" name="TimesheetId" value="@Model.TimesheetId" hidden />
+                                            <input type="text" asp-for="@Model.TimesheetReceipts[i].ReceiptDate" name="ReceiptDate" hidden />
+                                            <input type="text" asp-for="@Model.TimesheetReceipts[i].ItemName" name="ItemName" class="hidden-item-name" hidden />
+                                            <input type="number" asp-for="@Model.TimesheetReceipts[i].Amount" name="Amount" class="hidden-amount" hidden />
+
+                                            <div class="input-group">
+                                                <input type="file" accept=".jpg,.jpeg,.png" asp-for="@Model.TimesheetReceipts[i].FileToUpload" name="FileToUpload" class="form-control px-3 py-2 file-upload d-none" id="Photo-@i">
+
+                                                <label class="input-group-text w-100 d-flex justify-content-between p-0 rounded-3 upload-label bg-body" for="Photo-@i">
+                                                    <span class="px-3 py-2 photo-span" id="photoSpan-@i" style="overflow:hidden; text-overflow: ellipsis; max-width: 14rem;">Select File</span>
+                                                    <div class="btn btn-info p-3 text-white fw-bold ">
+                                                        <img src="/images/uploadIcon.svg" class="me-2" alt="">Upload
+                                                    </div>
+                                                </label>
+                                            </div>
+
+                                            <input type="submit" id="submit-input-@i" hidden />
+                                            <input type="reset" id="reset-input-@i" hidden />
+                                        </form>
+                                    </td>
+
+                                    <td class="py-3 receipt-info-read @(Model.TimesheetReceipts[i].ReceiptId == 0 ? "hidden-cell" : "")" style="overflow:hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 18rem;">
+                                        @Model.TimesheetReceipts[i].ItemName
+                                    </td>
+
+                                    <td class="py-3 receipt-info-read @(Model.TimesheetReceipts[i].ReceiptId == 0 ? "hidden-cell" : "")" style="overflow:hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 18rem;">
+                                        @Model.TimesheetReceipts[i].Amount
+                                    </td>
+
+                                    <td class="py-3 receipt-info-read @(Model.TimesheetReceipts[i].ReceiptId == 0 ? "hidden-cell" : "")" style="overflow:hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 18rem;">
+                                        @Model.TimesheetReceipts[i].FileName
                                     </td>
 
                                     <td class="py-3">
-                                        @Model.TimesheetDetails[i].OnCallHours
-                                        <input type="number" asp-for="@Model.TimesheetDetails[i].OnCallHours" hidden/>
+                                        @*save-cancel btn for edit receipt*@
+                                        <label for="submit-input-@i" class="btn btn-outline-info submit-btn">Save</label>
+                                        <label for="reset-input-@i" class="btn btn-outline-info cancel-btn">Cancel</label>
+
+                                        <button class="btn btn-outline-info edit-btn" style="@(Model.TimesheetReceipts[i].ReceiptId == 0 ? "display: none;" : "")">Edit</button>
+                                        <button class="btn btn-outline-info delete-btn" style="@(Model.TimesheetReceipts[i].ReceiptId == 0 ? "display: none;" : "")" data-receipt-id="@Model.TimesheetReceipts[i].ReceiptId">Delete</button>
+                                        <button class="btn btn-outline-info view-btn" style="@(Model.TimesheetReceipts[i].ReceiptId == 0 ? "display: none;" : "")" data-file-path="@Model.TimesheetReceipts[i].FilePath">View</button>
+
+                                        @*save-cancel btn for add receipt*@
+                                        <label for="submit-input-@i" class="btn btn-outline-info save-btn" style="@(Model.TimesheetReceipts[i].ReceiptId != 0 ? "display: none;" : "")">Save</label>
+                                        <label for="reset-input-@i" class="btn btn-outline-info reset-btn" style="@(Model.TimesheetReceipts[i].ReceiptId != 0 ? "display: none;" : "")">Cancel</label>
+
                                     </td>
 
-                                    <td class="py-3">
-                                        <input type="number" asp-for="@Model.TimesheetDetails[i].TotalHours" class="form-control" />
-                                    </td>
-
-                                    <td class="py-3">
-                                        <input type="checkbox" asp-for="@Model.TimesheetDetails[i].IsNightWeekend" class="form-check-input" />
-                                    </td>
-
-                                    <td class="py-3">
-                                        <input type="number" asp-for="@Model.TimesheetDetails[i].HousecallsCount" class="form-control" />
-                                    </td>
-
-                                    <td class="py-3">
-                                        <input type="number" asp-for="@Model.TimesheetDetails[i].PhoneconsultCount" class="form-control" />
-                                    </td>
                                 </tr>
-
                             }
-
                         </tbody>
                     </table>
-                    <div class="d-flex justify-content-end p-3">
-                        <input type="submit" value="Submit" class="btn btn-info text-white" />
+                </div>
+            </div>
+
+
+            <div class="modal fade" id="document-modal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-info text-white">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Receipt</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <iframe id="doc-iframe"></iframe>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                
-            </form>
-        </div>
 
-        <button class="btn btn-info text-white mb-3">Add Receipts</button>
+            @if (Model.TimesheetId != 0)
+            {
+                @if(Model.AspNetUserRole == "admin")
+                {
+                    <form asp-action="ApproveTimesheet" class="d-flex justify-content-end ">
+                        <input type="number" asp-for="TimesheetId" hidden />
 
-        <div class="d-flex justify-content-end">
-            <a class="btn btn-info text-white">Finalize</a>
-        </div>
+                        <div class="form-floating me-3">
+                            <input type="number" asp-for="BonusAmount" class="form-control" placeholder="BonusAmount" />
+                            <label asp-for="BonusAmount">Bonus Amount</label>
+                        </div>
+                        
+                        <div class="form-floating me-3">
+                            <input type="text" asp-for="AdminDescription" class="form-control" placeholder="AdminDescription" />
+                            <label asp-for="AdminDescription">Admin Description</label>
+                        </div>
+                        
+                        <input type="submit" value="Approve" class="btn btn-info text-white p-3" />
+                    </form>
+                }
+                else
+                {
+                    <div class="d-flex justify-content-end">
+                        <a asp-action="FinalizeTimesheet" asp-route-timesheetId="@Model.TimesheetId" class="btn btn-info text-white">Finalize</a>
+                    </div>
+                }
+            }
+        }
+
     </div>
 </div>
 
+
+@section AddScript{
+
+    <partial name="_ToastMessageScriptsPartial" />
+
+    @* SHOW/HIDE RECEIPT TABLE SCRIPT *@
+    <script>
+        $('#add-receipts-btn').click(function () {
+            $('#receipts-container').toggle();
+        });
+    </script>
+
+
+    @* VIEW BTN SCRIPT *@
+    <script>
+        $('.view-btn').click(function () {
+            var filePath = $(this).attr('data-file-path');
+
+            $('#doc-iframe').attr('src', filePath);
+            $('#document-modal').modal('show');
+        })
+    </script>
+
+
+    @* DELETE BTN *@
+    <script>
+        $('.delete-btn').click(function () {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        let receiptId = $(this).attr('data-receipt-id');
+
+                        DeleteReceipt(receiptId);
+
+                        var row = $(this).closest('tr');
+
+                        var cellsToHide = row.find('.receipt-info-read');
+                        var cellsToShow = row.find('.receipt-info-edit');
+
+                        cellsToHide.hide();
+                        cellsToShow.show();
+
+                        var cancelBtn = row.find('.cancel-btn');
+                        var submitBtn = row.find('.submit-btn');
+                        var saveBtn = row.find('.save-btn');
+                        var resetBtn = row.find('.reset-btn');
+                        var editBtn = row.find('.edit-btn');
+                        var deleteBtn = row.find('.delete-btn');
+                        var viewBtn = row.find('.view-btn');
+
+                        submitBtn.hide();
+                        cancelBtn.hide();
+                        editBtn.hide();
+                        deleteBtn.hide();
+                        viewBtn.hide();
+
+                        saveBtn.show();
+                        resetBtn.show();
+
+                        var itemInput = row.find('.item-name');
+                        var amountInput = row.find('.amount');
+                        var photoSpan = row.find('.photo-span');
+
+                        itemInput.val("");
+                        amountInput.val("");
+                        photoSpan.text("Select File");
+                    }
+                });
+        });
+
+        function DeleteReceipt(receiptId) {
+            $.ajax({
+                url: '/Invoicing/DeleteReceipt',
+                type: 'POST',
+                data: {
+                    receiptId: receiptId
+                },
+                success: function (response) {
+                    console.log(response);
+                    if (response.result == "success") {
+                        Swal.fire({
+                            text: "Receipt deleted successfully" + receiptId,
+                            icon: "success"
+                        });
+
+                    }
+                    else {
+                        Swal.fire({
+                            text: "Unable to delete receipt",
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error fetching data:", textStatus);
+                    if (errorThrown) {
+                        console.error("Specific error:", errorThrown);
+                    }
+                    console.error("HTTP status code:", jqXHR.status);
+
+                    if (jqXHR.responseJSON.status == 414) {
+                        window.location.href = '/Login';
+                    }
+                }
+            });
+
+
+        }
+    </script>
+
+
+    @* EDIT BTN SCRIPT *@
+    <script>
+        function resetForm(row) {
+            //find form for that row and trigger reset
+            var form = row.find('.receipt-form');
+            //form.trigger('reset');
+
+            //find visible-hidden inputs, upload-btn-span
+            var itemInput = row.find('.item-name');
+            var hiddenItemNameInputValue = row.find('.hidden-item-name').val();
+            var amountInput = row.find('.amount');
+            var hiddenAmountInputValue = row.find('.hidden-amount').val();
+            var photoSpan = row.find('.photo-span');
+
+            //reset value of visible input
+            itemInput.val("");
+            amountInput.val("");
+            photoSpan.text("Select File");
+        }
+
+        $(".edit-btn").click(function () {
+            console.log("Edit button clicked!");
+            var row = $(this).closest('tr');
+
+            var submitBtn = row.find('.submit-btn');
+            var cancelBtn = row.find('.cancel-btn');
+            var deleteBtn = row.find('.delete-btn');
+            var viewBtn = row.find('.view-btn');
+
+            submitBtn.show();
+            cancelBtn.show();
+
+            deleteBtn.hide();
+            viewBtn.hide();
+
+            $(this).hide();
+
+            //toogle read/edit cells
+            var cellsToHide = row.find('.receipt-info-read');
+            var cellsToShow = row.find('.receipt-info-edit');
+
+            cellsToHide.hide();
+
+            cellsToShow.show();
+        });
+
+        $(".cancel-btn").click(function (e) {
+            e.preventDefault();
+            console.log("cancel button clicked!");
+
+            //find closest row
+            var row = $(this).closest('tr');
+
+            resetForm(row);
+
+            //show-hide submit, delete, view, edit btn
+            var submitBtn = row.find('.submit-btn');
+            var editBtn = row.find('.edit-btn');
+            var deleteBtn = row.find('.delete-btn');
+            var viewBtn = row.find('.view-btn');
+
+            submitBtn.hide();
+            editBtn.show();
+
+            deleteBtn.show();
+            viewBtn.show();
+
+            $(this).hide();
+
+            //toogle read/edit cells
+            var cellsToHide = row.find('.receipt-info-edit');
+            var cellsToShow = row.find('.receipt-info-read');
+
+            cellsToHide.hide();
+
+            cellsToShow.show();
+        });
+
+        $(".reset-btn").click(function (e) {
+            e.preventDefault();
+            console.log('reset-btn clicked');
+
+            //find closest row
+            var row = $(this).closest('tr');
+
+            resetForm(row);
+
+        });
+    </script>
+
+
+    @* HIDDEN INPUT VALUES SCRIPT *@
+    <script>
+        $(".item-name").change(function () {
+            var value = $(this).val();
+
+            var row = $(this).closest('tr');
+
+            var hiddenItemNameInput = row.find('.hidden-item-name');
+            hiddenItemNameInput.val(value);
+
+            console.log(hiddenItemNameInput.val());
+        });
+
+        $(".amount").change(function () {
+            var value = $(this).val();
+
+            var row = $(this).closest('tr');
+
+            var hiddenAmountInput = row.find('.hidden-amount');
+            hiddenAmountInput.val(value);
+
+            console.log(hiddenAmountInput.val());
+        });
+    </script>
+
+
+    @* SUBMIT RECEIPT FORM *@
+    <script>
+        $('.receipt-form').submit(function (event) {
+            event.preventDefault();
+
+            //get form id
+            var formId = $(this).attr('id');
+            //create new formdata object
+            var formData = new FormData($('#' + formId)[0]);
+
+            console.log(formId);
+            console.log($('#' + formId));
+            console.log(formData);
+
+            for (var pair of formData.entries()) {
+                console.log(pair[0] + ', ' + pair[1]);
+            }
+
+            //ajax call to the controller-action
+            $.ajax({
+                url: '/Invoicing/AddOrEditReceipt',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log(response);
+                    if (response.result == "success") {
+                        Swal.fire({
+                            text: "Receipt uploaded successfully",
+                            icon: "success"
+                        });
+
+                        var row = $('#' + formId).closest('tr');
+                        console.log(row);
+
+                        var itemCell = row.find('.receipt-info-read').eq(0);
+                        var amountCell = row.find('.receipt-info-read').eq(1);
+                        var fileCell = row.find('.receipt-info-read').eq(2);
+
+                        var receiptIdInput = row.find('.hidden-receipt-id');
+                        receiptIdInput.val(response.receiptId);
+
+                        itemCell.text(response.itemName);
+                        amountCell.text(response.amount);
+                        fileCell.text(response.fileName);
+
+                        var cellsToHide = row.find('.receipt-info-edit');
+                        var cellsToShow = row.find('.receipt-info-read');
+
+                        cellsToHide.hide();
+                        cellsToShow.show();
+
+                        var cancelBtn = row.find('.cancel-btn');
+                        var submitBtn = row.find('.submit-btn');
+                        var saveBtn = row.find('.save-btn');
+                        var resetBtn = row.find('.reset-btn');
+                        var editBtn = row.find('.edit-btn');
+                        var deleteBtn = row.find('.delete-btn');
+                        var viewBtn = row.find('.view-btn');
+
+                        submitBtn.hide();
+                        cancelBtn.hide();
+                        saveBtn.hide();
+                        resetBtn.hide();
+
+                        editBtn.show();
+                        deleteBtn.show();
+                        viewBtn.show();
+
+                        if (deleteBtn.attr('data-receipt-id') == 0) {
+                            deleteBtn.attr('data-receipt-id', response.receiptId);
+                        }
+                    }
+                    else {
+                        Swal.fire({
+                            text: "Unable to upload receipt",
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error fetching data:", textStatus);
+                    if (errorThrown) {
+                        console.error("Specific error:", errorThrown);
+                    }
+                    console.error("HTTP status code:", jqXHR.status);
+
+                    if (jqXHR.responseJSON.status == 414) {
+                        window.location.href = '/Login';
+                    }
+                }
+            });
+
+        });
+    </script>
+
+
+    @* FILE INPUT FILENAME SCRIPT *@
+    <script>
+        const photoInputs = document.querySelectorAll('.file-upload');
+        //const photoSpan = document.getElementById('photoSpan');
+
+        photoInputs.forEach(photoInput => {
+            photoInput.addEventListener('change', (event) => {
+
+                var parentDiv = photoInput.closest('.input-group');
+                console.log(parentDiv);
+                var photoSpan = parentDiv.querySelector('.photo-span');
+
+                const photoFile = event.target.files[0];
+                if (photoFile) {
+                    photoSpan.textContent = photoFile.name;
+                } else {
+                    photoSpan.textContent = "Select File";
+                }
+            });
+        })
+    </script>
+
+}                            
