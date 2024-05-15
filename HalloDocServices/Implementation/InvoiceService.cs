@@ -110,12 +110,12 @@ namespace HalloDocServices.Implementation
                 });
             }
 
-            if(TimesheetData.IsFinalized == true && TimesheetData.AspNetUserRole == "admin")
+            if (TimesheetData.IsFinalized == true && TimesheetData.AspNetUserRole == "admin")
             {
                 var payrates = _invoiceRepository.GetPayratesByPhysicianId(TimesheetData.PhysicianId);
 
                 TimesheetData.PayrateTotals.Add(
-                    payrates.FirstOrDefault(x => x.PayrateCategoryId == (int)PayrateCategories.Shift)?.Payrate1 ?? 0, 
+                    payrates.FirstOrDefault(x => x.PayrateCategoryId == (int)PayrateCategories.Shift)?.Payrate1 ?? 0,
                     TimesheetData.TimesheetDetails.Sum(x => x.TotalHours)
                 );
                 TimesheetData.PayrateTotals.Add(
@@ -230,7 +230,7 @@ namespace HalloDocServices.Implementation
             {
                 await _invoiceRepository.CreateTimesheetReceipt(timesheetReceipt);
             }
-            
+
 
             return timesheetReceipt.ReceiptId;
         }
@@ -238,7 +238,7 @@ namespace HalloDocServices.Implementation
         public async Task<bool> DeleteReceipt(int receiptId)
         {
             TimesheetReceipt timesheetReceipt = _invoiceRepository.GetTimesheetReceiptById(receiptId);
-            if(timesheetReceipt.ReceiptId == 0)
+            if (timesheetReceipt.ReceiptId == 0)
             {
                 return false;
             }
@@ -308,7 +308,7 @@ namespace HalloDocServices.Implementation
             DateTime startDateTime = DateTime.ParseExact(TimesheetData.TimesheetStartDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
             DateTime endDateTime = DateTime.ParseExact(TimesheetData.TimesheetEndDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-            Timesheet? timesheet = _invoiceRepository.GetIQueryableTimesheets().Where(x => DateOnly.FromDateTime(x.StartDate ?? DateTime.Now) == DateOnly.FromDateTime(startDateTime)).FirstOrDefault();
+            Timesheet? timesheet = _invoiceRepository.GetIQueryableTimesheets().Include(x => x.TimesheetDetails).Include(x => x.TimesheetReceipts).Where(x => (TimesheetData.PhysicianId == 0 || x.PhysicianId == TimesheetData.PhysicianId) && DateOnly.FromDateTime(x.StartDate ?? DateTime.Now) == DateOnly.FromDateTime(startDateTime)).FirstOrDefault();
 
             return timesheet?.IsApproved ?? false;
         }
