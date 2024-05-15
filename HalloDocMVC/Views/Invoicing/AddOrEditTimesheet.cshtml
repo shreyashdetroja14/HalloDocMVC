@@ -63,12 +63,16 @@
                         <table class="table mb-0 mt-3">
                             <thead>
                                 <tr class="bg-body-secondary">
-                                    <th scope="col" class="p-3">Date</th>
+                                        <th scope="col" class="p-3" style="width: 10rem">Date</th>
                                     <th scope="col" class="py-3">On-Call Hours</th>
                                     <th scope="col" class="py-3">Total Hours</th>
                                     <th scope="col" class="py-3">Weekend/ Holiday</th>
                                     <th scope="col" class="py-3">Number of Housecalls</th>
                                     <th scope="col" class="py-3">Number of Phone Consults</th>
+                                    @if(Model.AspNetUserRole == "admin")
+                                    {
+                                        <th scope="col" class="py-3">Total</th>
+                                    }
                                 </tr>
                             </thead>
                             <tbody>
@@ -102,8 +106,44 @@
                                         <td class="py-3">
                                             <input type="number" asp-for="@Model.TimesheetDetails[i].PhoneconsultCount" class="form-control" />
                                         </td>
+                                        @if(Model.AspNetUserRole == "admin")
+                                        {
+                                            <td></td>
+                                        }
                                     </tr>
 
+                                }
+
+                                @if(Model.AspNetUserRole == "admin")
+                                {
+                                            <tr>
+                                            <td class="p-3">Payrate</td>
+                                            <td class="py-3"></td>
+                                        @foreach (var item in Model.PayrateTotals)
+                                        {
+                                                    <td class="py-3">
+                                                        <input type="number" class="form-control" value="@item.Key" readonly/>
+                                                    </td>
+                                        }
+                                            <td class="py-3"></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="p-3">Invoice Total</td>
+                                            <td class="py-3"></td>
+
+                                        @{
+                                            int total = 0;
+                                            foreach (var item in Model.PayrateTotals)
+                                            {
+                                                total += (item.Key * item.Value);
+                                                            <td class="py-3">
+                                                                <input type="number" class="form-control" value="@(item.Key * item.Value)" readonly/>
+                                                            </td>
+                                            }
+                                                    <td class="py-3"><input type="number" class="form-control" value="@total" readonly/></td>
+                                        }
+                                        </tr>
                                 }
 
                             </tbody>

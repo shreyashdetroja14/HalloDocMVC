@@ -1163,7 +1163,7 @@ namespace HalloDocServices.Implementation
 
             var activeMDs = _physicianRepository.GetIQueryablePhysicians().Where(z => z.Shifts.Where(y => y.ShiftDetails.Where(x => x.IsDeleted == false && DateOnly.FromDateTime(x.ShiftDate) == DateOnly.FromDateTime(DateTime.Now) && x.StartTime <= TimeOnly.FromDateTime(DateTime.Now) && x.EndTime >= TimeOnly.FromDateTime(DateTime.Now)).Any()).Any());
 
-            var inactiveMDs = _physicianRepository.GetIQueryablePhysicians().Except(activeMDs);
+            var inactiveMDs = _physicianRepository.GetIQueryablePhysicians().Except(activeMDs).Where(x => x.IsDeleted == false);
 
             if (regionId != 0)
             {

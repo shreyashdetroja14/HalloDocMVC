@@ -123,6 +123,16 @@ namespace HalloDocMVC.Controllers
                 }
             }
 
+            if (claimsData.AspNetUserRole == "admin")
+            {
+                bool isSheetApproved = _invoiceService.CheckApprovedStatus(TimesheetData);
+                if (isSheetApproved)
+                {
+                    ViewBag.Message = "The timesheet has already been approved";
+                    return View();
+                }
+            }
+
             TimesheetData = _invoiceService.GetTimesheetViewModelData(TimesheetData);
 
             return View(TimesheetData); 
@@ -206,10 +216,20 @@ namespace HalloDocMVC.Controllers
             return RedirectToAction("Index");
         }
 
-        /*[HttpPost]
+        [HttpPost]
         public async Task<IActionResult> ApproveTimesheet(TimesheetViewModel TimesheetData)
         {
-            return 
-        }*/
+            bool isFinalized = await _invoiceService.ApproveTimesheet(TimesheetData);
+            if (isFinalized)
+            {
+                TempData["SuccessMessage"] = "Timesheet Approved Successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed To Approve Timesheet.";
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }

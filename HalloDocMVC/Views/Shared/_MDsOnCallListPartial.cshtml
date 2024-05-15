@@ -17,10 +17,10 @@
     <div class="row">
         @foreach (var md in Model.AvailableMDs)
         {
-            <div class="col-sm-6 col-md-4 d-flex mb-3">
+            <div class="col-sm-6 col-md-4 d-flex mb-3 align-items-center">
                 @if(md.ProfilePhotoPath != "")
                 {
-                    <img src="@md.ProfilePhotoPath" class="img-fluid h-100 w-25 me-2 " />
+                    <img src="@md.ProfilePhotoPath" class="img-fluid h-100 w-25 me-2 rounded-circle" />
                 }
                 else
                 {

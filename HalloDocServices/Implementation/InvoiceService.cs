@@ -1,6 +1,7 @@
 ﻿using HalloDocEntities.Models;
 using HalloDocRepository.Implementation;
 using HalloDocRepository.Interface;
+using HalloDocServices.Constants;
 using HalloDocServices.Interface;
 using HalloDocServices.ViewModels.AdminViewModels;
 using Microsoft.AspNetCore.Http;
@@ -107,6 +108,30 @@ namespace HalloDocServices.Implementation
                     FileName = filename,
                     FilePath = timesheetReceipt?.FileName
                 });
+            }
+
+            if(TimesheetData.IsFinalized == true && TimesheetData.AspNetUserRole == "admin")
+            {
+                var payrates = _invoiceRepository.GetPayratesByPhysicianId(TimesheetData.PhysicianId);
+
+                TimesheetData.PayrateTotals.Add(
+                    payrates.FirstOrDefault(x => x.PayrateCategoryId == (int)PayrateCategories.Shift)?.Payrate1 ?? 0, 
+                    TimesheetData.TimesheetDetails.Sum(x => x.TotalHours)
+                );
+                TimesheetData.PayrateTotals.Add(
+                    payrates.FirstOrDefault(x => x.PayrateCategoryId == (int)PayrateCategories.ShiftNightWeekend)?.Payrate1 ?? 0,
+                    TimesheetData.TimesheetDetails.Where(x => x.IsNightWeekend).Count()
+                );
+                TimesheetData.PayrateTotals.Add(
+                    payrates.FirstOrDefault(x => x.PayrateCategoryId == (int)PayrateCategories.Housecall)?.Payrate1 ?? 0,
+                    TimesheetData.TimesheetDetails.Sum(x => x.HousecallsCount) ?? 0
+                );
+                TimesheetData.PayrateTotals.Add(
+                    payrates.FirstOrDefault(x => x.PayrateCategoryId == (int)PayrateCategories.PhoneConsult)?.Payrate1 ?? 0,
+                    TimesheetData.TimesheetDetails.Sum(x => x.PhoneconsultCount) ?? 0
+                );
+
+                //100 20 15 30
             }
 
 
@@ -263,6 +288,29 @@ namespace HalloDocServices.Implementation
             }
 
             return physicianList;
+        }
+
+        public async Task<bool> ApproveTimesheet(TimesheetViewModel TimesheetData)
+        {
+            Timesheet timesheet = _invoiceRepository.GetTimesheetById(TimesheetData.TimesheetId);
+            if (timesheet.TimesheetId == 0) return false;
+
+            timesheet.IsApproved = true;
+            timesheet.BonusAmount = TimesheetData.BonusAmount;
+            timesheet.AdminDescription = TimesheetData.AdminDescription;
+
+            await _invoiceRepository.UpdateTimesheet(timesheet);
+            return true;
+        }
+
+        public bool CheckApprovedStatus(TimesheetViewModel TimesheetData)
+        {
+            DateTime startDateTime = DateTime.ParseExact(TimesheetData.TimesheetStartDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            DateTime endDateTime = DateTime.ParseExact(TimesheetData.TimesheetEndDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+            Timesheet? timesheet = _invoiceRepository.GetIQueryableTimesheets().Where(x => DateOnly.FromDateTime(x.StartDate ?? DateTime.Now) == DateOnly.FromDateTime(startDateTime)).FirstOrDefault();
+
+            return timesheet?.IsApproved ?? false;
         }
     }
 }

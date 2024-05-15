@@ -27,5 +27,7 @@
         public List<TimesheetDetailViewModel> TimesheetDetails { get; set; } = new List<TimesheetDetailViewModel>();
 
         public List<TimesheetReceiptViewModel> TimesheetReceipts { get; set; } = new List<TimesheetReceiptViewModel>();
+
+        public Dictionary<int, int> PayrateTotals { get; set; } = new Dictionary<int, int>();
     }
 }

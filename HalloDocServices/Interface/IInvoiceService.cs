@@ -25,5 +25,9 @@ namespace HalloDocServices.Interface
         bool CheckFinalizeStatus(TimesheetViewModel TimesheetData);
 
         List<SelectListItem> GetPhysicianList();
+
+        Task<bool> ApproveTimesheet(TimesheetViewModel TimesheetData);
+
+        bool CheckApprovedStatus(TimesheetViewModel TimesheetData);
     }
 }

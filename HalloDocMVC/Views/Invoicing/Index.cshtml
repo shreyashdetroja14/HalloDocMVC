@@ -205,6 +205,12 @@
         $('#finalize-btn').click(function () {
             var selectedDatePeriod = $("#timesheet-list").val();
             var physicianId = $("#physician-list").val();
+            var physicianListDefined = typeof physicianId !== 'undefined';
+            if(!physicianListDefined){
+                physicianId = null;
+            }
+            console.log(physicianId);
+
             window.location.href = `/Invoicing/AddOrEditTimesheet?selectedDatePeriod=${selectedDatePeriod}&physicianId=${physicianId}`;
         });
     </script>

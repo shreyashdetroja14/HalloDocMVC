@@ -148,4 +148,15 @@ namespace HalloDocServices.Constants
         PhysicianSendOrder = 18,
         Records = 19,
     }
+
+    public enum PayrateCategories
+    {
+        Shift = 1,
+        ShiftNightWeekend = 2,
+        Housecall = 3,
+        HousecallNightWeekend = 4,
+        PhoneConsult = 5,
+        PhoneConsultNightWeekend = 6,
+        BatchTesting = 7,
+    }
 }
