@@ -693,6 +693,58 @@ function addEventListnersForPartial() {
             });
         });
     }
+
+    /*  CHAT BUTTONS  */
+    $('.provider-chat-btn').click(function(){
+      let aspnetuserId = $(this).attr('data-aspnetuserid');
+      if(aspnetuserId == ''){
+        Swal.fire({
+            text: "No physician assigned to this request",
+            icon: "error"
+        });
+        return;
+      }
+      console.log(`physician chat btn clicked: ${aspnetuserId}`);
+
+      $.ajax({
+        url: '/AdminDashboard/Chatbox',
+        data: {
+            aspnetuserId: aspnetuserId,
+        },
+        type: 'GET',
+        success: function (data) {
+            //console.log(data);
+            $('#offcanvas-container').html(data);
+
+            const offcanvas = new bootstrap.Offcanvas('#chatbox-offcanvas');
+            offcanvas.show();
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error("Error fetching data:", textStatus);
+            if (errorThrown) {
+                console.error("Specific error:", errorThrown);
+            }
+            console.error("HTTP status code:", jqXHR.status);
+
+            if (jqXHR.responseJSON.status == 414) {
+                window.location.href = '/Login';
+            }
+        }
+    });
+
+    });
+
+    $('.patient-chat-btn').click(function(){
+        let aspnetuserId = $(this).attr('data-aspnetuserid');
+        if(aspnetuserId == ''){
+          Swal.fire({
+              text: "Patient has not yet created an account.",
+              icon: "error"
+          });
+          return;
+        }
+        console.log(`patient chat btn clicked: ${aspnetuserId}`);
+      });
 }
 
 

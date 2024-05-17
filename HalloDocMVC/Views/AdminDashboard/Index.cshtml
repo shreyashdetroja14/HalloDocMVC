@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_AdminDashboardLayout.cshtml";
 }
 
-@section AddStyles{
+@section AddStyles {
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
@@ -12,6 +12,29 @@
         .iti--allow-dropdown {
             width: 100%;
             height: 60px;
+        }
+    </style>
+
+    <style>
+        .sender-message {
+            background-color: #cff;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        @*margin-left:30%;*@
+        }
+
+        .receiver-message {
+            background-color: #ffc;
+            padding: 10px;
+            border-radius: 10px;
+        @*margin-right:30%;*@max-width: 80%;
+        }
+
+        .sender-message small,
+        .receiver-message small {
+            font-size: 0.8em;
+            color: #666;
         }
     </style>
 }
@@ -28,7 +51,8 @@
             <div class="col-12 col-lg-6">
                 <div class="row">
                     <div class="col-4 pb-3">
-                        <div class="new-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                        <div
+                            class="new-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
                             <div class="d-flex">
                                 <i class="material-symbols-outlined d-none d-md-inline me-2">
                                     new_releases
@@ -42,7 +66,8 @@
                         <div class="triangle mx-auto d-none d-lg-block"></div>
                     </div>
                     <div class="col-4 pb-3">
-                        <div class="pending-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                        <div
+                            class="pending-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
                             <div class="d-flex">
                                 <i class="material-symbols-outlined d-none d-md-inline me-2">
                                     pending_actions
@@ -56,7 +81,8 @@
                         <div class="triangle mx-auto d-none d-lg-block"></div>
                     </div>
                     <div class="col-4 pb-3">
-                        <div class="active-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                        <div
+                            class="active-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
                             <div class="d-flex">
                                 <i class="material-symbols-outlined d-none d-md-inline me-2">
                                     task_alt
@@ -74,7 +100,8 @@
             <div class="col-12 col-lg-6">
                 <div class="row">
                     <div class="col-4 pb-3">
-                        <div class="conclude-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                        <div
+                            class="conclude-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
                             <div class="d-flex">
                                 <i class="material-symbols-outlined d-none d-md-inline me-2">
                                     av_timer
@@ -88,7 +115,8 @@
                         <div class="triangle mx-auto d-none d-lg-block"></div>
                     </div>
                     <div class="col-4 pb-3">
-                        <div class="to-close-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                        <div
+                            class="to-close-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
                             <div class="d-flex">
                                 <i class="material-symbols-outlined d-none d-md-inline me-2">
                                     person_remove
@@ -102,7 +130,8 @@
                         <div class="triangle mx-auto d-none d-lg-block"></div>
                     </div>
                     <div class="col-4 pb-3">
-                        <div class="unpaid-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
+                        <div
+                            class="unpaid-btn status-btn px-2 py-4 fw-bold d-flex flex-column align-items-center align-items-md-start shadow">
                             <div class="d-flex">
                                 <i class="material-symbols-outlined d-none d-md-inline me-2">
                                     monetization_on
@@ -122,7 +151,7 @@
 
         <div class="utility-bar d-flex justify-content-between mb-3">
             <p class="h4 d-flex flex-column flex-md-row">
-                <span>Patients</span> 
+                <span>Patients</span>
                 <span id="request-status-name"></span>
             </p>
             <div class="utility-buttons">
@@ -131,17 +160,17 @@
                     <span class="d-none d-lg-inline">Send Link</span>
                 </button>
 
-                    <a asp-action="CreateRequest" class="btn btn-info text-white">
+                <a asp-action="CreateRequest" class="btn btn-info text-white">
                     <i class="bi bi-file-earmark-text"></i>
                     <span class="d-none d-lg-inline">Create Requests</span>
                 </a>
 
-                    <button class="btn btn-info text-white" id="export-btn">
+                <button class="btn btn-info text-white" id="export-btn">
                     <i class="bi bi-upload"></i>
                     <span class="d-none d-lg-inline">Export</span>
                 </button>
 
-                    <button class="btn btn-info text-white" id="export-all">
+                <button class="btn btn-info text-white" id="export-all">
                     <i class="bi bi-file-earmark-arrow-up"></i>
                     <span class="d-none d-lg-inline">Export All</span>
                 </button>
@@ -164,34 +193,39 @@
                         <form id="sendlinkform" asp-action="SendLink" class="row">
                             <div class="col-12">
                                 <div class="form-floating mb-3">
-                                    <input type="text" asp-for="SendLinkData.FirstName" class="form-control" id="FirstName" placeholder="First Name" required>
+                                    <input type="text" asp-for="SendLinkData.FirstName" class="form-control"
+                                        id="FirstName" placeholder="First Name" required>
                                     <label for="FirstName" class="col-form-label">First Name</label>
                                     <span asp-validation-for="SendLinkData.Email" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form-floating mb-3">
-                                    <input type="text" asp-for="SendLinkData.LastName" class="form-control" id="LastName" placeholder="Last Name" required>
+                                    <input type="text" asp-for="SendLinkData.LastName" class="form-control"
+                                        id="LastName" placeholder="Last Name" required>
                                     <label for="LastName" class="col-form-label">Last Name</label>
                                     <span asp-validation-for="SendLinkData.Email" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form-floating mb-3">
-                                    <input type="tel" asp-for="SendLinkData.PhoneNumber" class="form-control w-100 h-100" id="PhoneNumber" />
+                                    <input type="tel" asp-for="SendLinkData.PhoneNumber"
+                                        class="form-control w-100 h-100" id="PhoneNumber" />
                                     <span asp-validation-for="SendLinkData.PhoneNumber" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form-floating mb-3">
-                                    <input type="text" asp-for="SendLinkData.Email" class="form-control" id="Email" placeholder="Email" required>
+                                    <input type="text" asp-for="SendLinkData.Email" class="form-control" id="Email"
+                                        placeholder="Email" required>
                                     <label for="Email" class="col-form-label">Recipient</label>
                                     <span asp-validation-for="SendLinkData.Email" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end">
                                 <button type="button" id="send-link-btn" class="btn btn-info text-white">Send</button>
-                                <button type="button" class="btn btn-outline-info ms-2" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-outline-info ms-2"
+                                    data-bs-dismiss="modal">Close</button>
                             </div>
                         </form>
                     </div>
@@ -207,20 +241,23 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p class="">To all unscheduled physicians: We are short on coverage and need additional support On Call to respond to requests.</p>
+                        <p class="">To all unscheduled physicians: We are short on coverage and need additional support
+                            On Call to respond to requests.</p>
                         <form id="reqsupportform" asp-action="RequestSupport" class="row">
                             <div class="col-12">
                                 <div class="form-floating mb-3">
                                     <div class="form-floating mb-3">
-                                        <textarea asp-for="SupportMessage" class="form-control" placeholder="Enter Message" id="SupportMessage"
-                                                  style="height: 100px" ></textarea>
+                                        <textarea asp-for="SupportMessage" class="form-control"
+                                            placeholder="Enter Message" id="SupportMessage"
+                                            style="height: 100px"></textarea>
                                         <label asp-for="SupportMessage">Support Message</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end">
                                 <button type="button" id="req-support-btn" class="btn btn-info text-white">Send</button>
-                                <button type="button" class="btn btn-outline-info ms-2" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-outline-info ms-2"
+                                    data-bs-dismiss="modal">Close</button>
                             </div>
                         </form>
                     </div>
@@ -231,7 +268,8 @@
         <div class="request-table rounded-3">
             <div class="search-filter-bar d-flex flex-column flex-lg-row justify-content-lg-between p-3">
                 <div class="d-flex flex-column flex-md-row">
-                    <input type="text" class="form-control searchbar me-2 mb-2" placeholder="&#128269; Search Patient" />
+                    <input type="text" class="form-control searchbar me-2 mb-2"
+                        placeholder="&#128269; Search Patient" />
                     <select class="form-select selectlist me-2 mb-2">
                         <option selected disabled>Search by Region</option>
                         <option value="0">All Regions</option>
@@ -267,8 +305,11 @@
 
             </div>
 
-                <div id="modal-container">
-                </div>
+            <div id="modal-container">
+            </div>
+
+            <div id="offcanvas-container">
+            </div>
         </div>
     </div>
 </div>
@@ -289,5 +330,5 @@
     </script>
 
     <partial name="_ToastMessageScriptsPartial" />
-        <script src="~/js/admin/admindashboard.js"></script>
+    <script src="~/js/admin/admindashboard.js"></script>
 }

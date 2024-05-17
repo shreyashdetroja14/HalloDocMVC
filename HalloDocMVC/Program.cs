@@ -4,6 +4,7 @@ using HalloDocRepository.Interface;
 using Microsoft.EntityFrameworkCore;
 using HalloDocServices.Implementation;
 using HalloDocServices.Interface;
+using HalloDocMVC.ChatHub;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +43,8 @@ builder.Services.AddScoped<IRecordsService, RecordsService>();
 builder.Services.AddScoped<IRoleAuthService, RoleAuthService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
+builder.Services.AddSignalR();
+
 
 var app = builder.Build();
 
@@ -69,5 +72,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "admin",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

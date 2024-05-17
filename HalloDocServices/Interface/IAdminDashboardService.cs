@@ -109,5 +109,7 @@ namespace HalloDocServices.Interface
 
         Task<byte[]> GenerateEncounterPdf(DownloadFormViewModel DownloadFormData);
 
+        ChatBoxViewModel GetChatBoxViewModelData(ChatBoxViewModel ChatBoxData);
+
     }
 }

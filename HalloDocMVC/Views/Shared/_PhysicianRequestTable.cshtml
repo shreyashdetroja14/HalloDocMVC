@@ -1,7 +1,7 @@
 ﻿@using HalloDocServices.ViewModels.AdminViewModels
 
 @*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 
 @model List<HalloDocServices.ViewModels.AdminViewModels.RequestRowViewModel>
@@ -31,17 +31,19 @@
                 <th scope="col" class="ps-3" style="min-width: 12rem">Name</th>
                 <th scope="col" style="min-width: 12rem">Phone</th>
                 <th scope="col" style="min-width: 7rem">Address</th>
-                @if(status == 3)
+                @if (status == 3)
                 {
                     <th scope="col" style="min-width: 10rem">Status</th>
                 }
+                <th scope="col" style="min-width: 16rem">Chat With</th>
                 <th scope="col" style="min-width: 7rem">Actions</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var request in Model)
             {
-                <tr class="@(request.RequestType == 1?"bg-business":"") @(request.RequestType == 2?"bg-patient":"") @(request.RequestType == 3?"bg-family":"") @(request.RequestType == 4?"bg-concierge":"") ">
+                <tr
+                    class="@(request.RequestType == 1?"bg-business":"") @(request.RequestType == 2?"bg-patient":"") @(request.RequestType == 3?"bg-family":"") @(request.RequestType == 4?"bg-concierge":"") ">
                     <td class="ps-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <span>@request.PatientFullName</span>
@@ -82,12 +84,28 @@
                     @if (status == 3)
                     {
                         <td>
-                            @if(request.CallType != "0")
+                            @if (request.CallType != "0")
                             {
-                                <a asp-route="HouseCall" asp-route-requestId="@request.RequestId" class="btn btn-info text-white border">@request.CallType</a>
+                                <a asp-route="HouseCall" asp-route-requestId="@request.RequestId"
+                                    class="btn btn-info text-white border">@request.CallType</a>
                             }
                         </td>
                     }
+
+                    <td>
+                        <button class="btn border-dark patient-chat-btn" data-aspnetuserid="@request.PatientAspNetUserId">
+                            <span class="material-symbols-outlined fs-6">
+                                person_add
+                            </span>
+                            Patient
+                        </button>
+                        <button class="btn border-dark admin-chat-btn" data-aspnetuserid="@request.AdminAspNetUserId">
+                            <span class="material-symbols-outlined fs-6">
+                                person_add
+                            </span>
+                            Admin
+                        </button>
+                    </td>
 
                     <td>
                         <div class="dropdown">
@@ -98,7 +116,8 @@
                                 @if (status == 4)
                                 {
                                     <li>
-                                        <a class="dropdown-item" asp-route="ConcludeCare" asp-route-requestId="@request.RequestId">
+                                        <a class="dropdown-item" asp-route="ConcludeCare"
+                                            asp-route-requestId="@request.RequestId">
                                             <i class="bi bi-list-check pe-3"></i>Conclude Care
                                         </a>
                                     </li>
@@ -107,7 +126,8 @@
                                 @if (status == 1)
                                 {
                                     <li>
-                                        <a class="dropdown-item" asp-route="AcceptCase" asp-route-requestId="@request.RequestId">
+                                        <a class="dropdown-item" asp-route="AcceptCase"
+                                            asp-route-requestId="@request.RequestId">
                                             <i class="bi bi-card-list pe-3"></i>Accept
                                         </a>
                                     </li>
@@ -122,30 +142,33 @@
                                         <i class="bi bi-card-list pe-3"></i>View Notes
                                     </a>
                                 </li>
-                                
+
                                 @if (status == 2)
                                 {
                                     <li>
-                                        <a class="dropdown-item send-agreement-btn" style="cursor: pointer" data-request-id="@request.RequestId">
+                                        <a class="dropdown-item send-agreement-btn" style="cursor: pointer"
+                                            data-request-id="@request.RequestId">
                                             <i class="bi bi-file-text pe-3"></i>Agreement
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item transfer-case-btn" style="cursor: pointer" data-request-id="@request.RequestId">
+                                        <a class="dropdown-item transfer-case-btn" style="cursor: pointer"
+                                            data-request-id="@request.RequestId">
                                             <i class="bi bi-file-medical pe-3"></i>Transfer
                                         </a>
                                     </li>
                                 }
-                                
+
                                 @if (status != 1)
                                 {
                                     <li>
-                                        <a class="dropdown-item" asp-route="ViewUploads" asp-route-requestId="@request.RequestId">
+                                        <a class="dropdown-item" asp-route="ViewUploads"
+                                            asp-route-requestId="@request.RequestId">
                                             <i class="bi bi-file-earmark-arrow-up pe-3"></i>View Uploads
                                         </a>
                                     </li>
                                 }
-                                
+
                                 @if (status == 3)
                                 {
                                     <li>
@@ -157,10 +180,11 @@
 
                                 @if (status == 3 || status == 4)
                                 {
-                                    @if(request.CallType == "0" || request.CallType == null)
+                                    @if (request.CallType == "0" || request.CallType == null)
                                     {
                                         <li>
-                                            <a class="dropdown-item care-type-btn" style="cursor: pointer" data-request-id="@request.RequestId">
+                                            <a class="dropdown-item care-type-btn" style="cursor: pointer"
+                                                data-request-id="@request.RequestId">
                                                 <i class="bi bi-file-text pe-3"></i>Encounter
                                             </a>
                                         </li>
@@ -170,7 +194,8 @@
                                         @if (request.IsFinalized)
                                         {
                                             <li>
-                                                <a class="dropdown-item download-btn" style="cursor: pointer" data-request-id="@request.RequestId">
+                                                <a class="dropdown-item download-btn" style="cursor: pointer"
+                                                    data-request-id="@request.RequestId">
                                                     <i class="bi bi-file-medical pe-3"></i>Encounter
                                                 </a>
                                             </li>
@@ -178,7 +203,8 @@
                                         else
                                         {
                                             <li>
-                                                <a class="dropdown-item" asp-route="EncounterForm" asp-route-requestId="@request.RequestId">
+                                                <a class="dropdown-item" asp-route="EncounterForm"
+                                                    asp-route-requestId="@request.RequestId">
                                                     <i class="bi bi-file-medical pe-3"></i>Encounter
                                                 </a>
                                             </li>
@@ -208,12 +234,12 @@
         {
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button flex-column align-items-start" type="button" data-bs-toggle="collapse" data-bs-target="#item-@request.RequestId">
+                    <button class="accordion-button flex-column align-items-start" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#item-@request.RequestId">
                         <div class="w-100 d-flex justify-content-between">
                             <p>@request.PatientFullName</p>
                             <p>
-                                <i class="bi bi-circle-fill" 
-                                style="color:@(request.RequestType == 1 ? "#ffb3cc" : "")
+                                <i class="bi bi-circle-fill" style="color:@(request.RequestType == 1 ? "#ffb3cc" : "")
                                 @(request.RequestType == 2 ? "#00b33c" : "")
                                 @(request.RequestType == 3 ? "#ff9933" : "")
                                 @(request.RequestType == 4 ? "#66a3ff" : "")"></i>
@@ -227,7 +253,7 @@
                         <div class="w-50">
                             <p>@request.Address</p>
                         </div>
-                        
+
                     </button>
                 </h2>
                 <div id="item-@request.RequestId" class="accordion-collapse collapse">
@@ -261,13 +287,14 @@
                                 </div>
                             }
                         </div>
-                        
-                        
+
+
                         <div class="row mb-3">
                             @if (status == 4)
                             {
                                 <div class="col-6">
-                                    <a asp-route="ConcludeCare" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">
+                                    <a asp-route="ConcludeCare" asp-route-requestId="@request.RequestId"
+                                        class="btn btn-success rounded-pill mb-2 w-75">
                                         Conclude Care
                                     </a>
                                 </div>
@@ -276,18 +303,21 @@
                             @if (status == 1)
                             {
                                 <div class="col-6">
-                                    <a asp-action="AcceptCase" asp-route-requestId="@request.RequestId" class="btn btn-info rounded-pill mb-2 w-75">
+                                    <a asp-action="AcceptCase" asp-route-requestId="@request.RequestId"
+                                        class="btn btn-info rounded-pill mb-2 w-75">
                                         Accept
                                     </a>
                                 </div>
                             }
                             <div class="col-6">
-                                <a asp-route="ViewCase" asp-route-requestId="@request.RequestId" class="btn btn-primary rounded-pill mb-2 w-75">
+                                <a asp-route="ViewCase" asp-route-requestId="@request.RequestId"
+                                    class="btn btn-primary rounded-pill mb-2 w-75">
                                     View Case
                                 </a>
                             </div>
                             <div class="col-6">
-                                <a asp-route="ViewNotes" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">
+                                <a asp-route="ViewNotes" asp-route-requestId="@request.RequestId"
+                                    class="btn btn-success rounded-pill mb-2 w-75">
                                     View Notes
                                 </a>
                             </div>
@@ -295,12 +325,14 @@
                             @if (status == 2)
                             {
                                 <div class="col-6">
-                                    <button class="btn btn-warning rounded-pill mb-2 w-75 send-agreement-btn" data-request-id="@request.RequestId">
+                                    <button class="btn btn-warning rounded-pill mb-2 w-75 send-agreement-btn"
+                                        data-request-id="@request.RequestId">
                                         Agreement
                                     </button>
                                 </div>
                                 <div class="col-6">
-                                    <button class="btn btn-info rounded-pill mb-2 w-75 transfer-case-btn" data-request-id="@request.RequestId">
+                                    <button class="btn btn-info rounded-pill mb-2 w-75 transfer-case-btn"
+                                        data-request-id="@request.RequestId">
                                         Transfer
                                     </button>
                                 </div>
@@ -309,7 +341,8 @@
                             @if (status != 1)
                             {
                                 <div class="col-6">
-                                    <a asp-route="ViewUploads" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">
+                                    <a asp-route="ViewUploads" asp-route-requestId="@request.RequestId"
+                                        class="btn btn-success rounded-pill mb-2 w-75">
                                         View Uploads
                                     </a>
                                 </div>
@@ -318,7 +351,8 @@
                             @if (status == 3)
                             {
                                 <div class="col-6">
-                                    <a asp-route="Orders" asp-route-requestId="@request.RequestId" class="btn btn-warning rounded-pill mb-2 w-75">
+                                    <a asp-route="Orders" asp-route-requestId="@request.RequestId"
+                                        class="btn btn-warning rounded-pill mb-2 w-75">
                                         Orders
                                     </a>
                                 </div>
@@ -326,7 +360,8 @@
                                 @if (request.CallType != "0")
                                 {
                                     <div class="col-6">
-                                        <a asp-route="HouseCall" asp-route-requestId="@request.RequestId" class="btn btn-info text-white rounded-pill mb-2 w-75">@request.CallType</a>
+                                        <a asp-route="HouseCall" asp-route-requestId="@request.RequestId"
+                                            class="btn btn-info text-white rounded-pill mb-2 w-75">@request.CallType</a>
                                     </div>
 
                                 }
@@ -337,7 +372,8 @@
                                 @if (request.CallType == "0" || request.CallType == null)
                                 {
                                     <div class="col-6">
-                                        <button class="btn btn-info rounded-pill mb-2 w-75 care-type-btn" data-request-id="@request.RequestId">
+                                        <button class="btn btn-info rounded-pill mb-2 w-75 care-type-btn"
+                                            data-request-id="@request.RequestId">
                                             Encounter
                                         </button>
                                     </div>
@@ -347,7 +383,8 @@
                                     @if (request.IsFinalized)
                                     {
                                         <div class="col-6">
-                                            <button class="btn btn-info rounded-pill mb-2 w-75 download-btn" data-request-id="@request.RequestId">
+                                            <button class="btn btn-info rounded-pill mb-2 w-75 download-btn"
+                                                data-request-id="@request.RequestId">
                                                 Encounter
                                             </button>
                                         </div>
@@ -355,24 +392,41 @@
                                     else
                                     {
                                         <div class="col-6">
-                                            <a asp-route="EncounterForm" asp-route-requestId="@request.RequestId" class="btn btn-success rounded-pill mb-2 w-75">
+                                            <a asp-route="EncounterForm" asp-route-requestId="@request.RequestId"
+                                                class="btn btn-success rounded-pill mb-2 w-75">
                                                 Encounter
                                             </a>
                                         </div>
                                     }
                                 }
 
-                                
+
                             }
-                            
+
                             <div class="col-6">
                                 <button class="btn btn-success rounded-pill mb-2 w-75">
                                     Email
                                 </button>
                             </div>
 
-                            
-                            
+                            <div class="d-flex justify-content-end align-items-center">
+                                <span>Chat With: </span>
+                                <button class="btn btn-outline-info patient-chat-btn"
+                                    data-aspnetuserid="@request.PatientAspNetUserId">
+                                    <span class="material-symbols-outlined fs-6">
+                                        person_add
+                                    </span>
+                                    Patient
+                                </button>
+                                <button class="btn btn-outline-info admin-chat-btn"
+                                    data-aspnetuserid="@request.AdminAspNetUserId">
+                                    <span class="material-symbols-outlined fs-6">
+                                        person_add
+                                    </span>
+                                    Admin
+                                </button>
+                            </div>
+
                         </div>
                     </div>
                 </div>

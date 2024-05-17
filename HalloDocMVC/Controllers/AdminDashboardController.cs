@@ -1,22 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HalloDocServices.ViewModels.AdminViewModels;
 using HalloDocServices.Interface;
-using HalloDocEntities.Models;
-using HalloDocServices.Implementation;
 using HalloDocServices.ViewModels;
-using System.IO.Compression;
 using HalloDocMVC.Auth;
-using NuGet.Common;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authorization;
-using System.Dynamic;
-using System.Security.Claims;
 using HalloDocServices.Constants;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HalloDocMVC.Controllers
 {
-    
+
     public class AdminDashboardController : Controller
     {
         private readonly IAdminDashboardService _adminDashboardService;
@@ -30,30 +22,6 @@ namespace HalloDocMVC.Controllers
             _jwtService = jwtService;
         }
 
-        #region JWT TOKEN DATA
-
-        /*public ClaimsData GetClaimsData()
-        {
-            ClaimsData claimsData = new ClaimsData();
-
-            string token = Request.Cookies["jwt"] ?? "";
-
-            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
-            {
-                claimsData.AspNetUserId = jwtToken.Claims.FirstOrDefault(x => x.Type == "aspnetuserId")?.Value;
-                claimsData.Email = jwtToken?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-                claimsData.AspNetUserRole = jwtToken?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
-                claimsData.Username = jwtToken?.Claims.FirstOrDefault(x => x.Type == "username")?.Value;
-                claimsData.RoleId = int.Parse(jwtToken?.Claims.FirstOrDefault(x => x.Type == "roleId")?.Value ?? "0");
-                claimsData.Id = int.Parse(jwtToken?.Claims.FirstOrDefault(x => x.Type == "id")?.Value ?? "");
-            }
-
-            return claimsData;
-        }*/
-
-        #endregion
-
-
 
         [Route("Dashboard", Name = "Dashboard")]
         [CustomAuthorize("admin", "physician")]
@@ -64,9 +32,9 @@ namespace HalloDocMVC.Controllers
 
             AdminDashboardViewModel viewModel = new AdminDashboardViewModel();
             int reqStatus;
-            reqStatus = requestStatus?? 1;
-            
-            if(claimsData.AspNetUserRole == "physician")
+            reqStatus = requestStatus ?? 1;
+
+            if (claimsData.AspNetUserRole == "physician")
             {
                 viewModel = await _adminDashboardService.GetViewModelData(reqStatus, claimsData.Id);
                 viewModel.AspNetUserRole = claimsData.AspNetUserRole;
@@ -82,7 +50,7 @@ namespace HalloDocMVC.Controllers
             viewModel.Username = claimsData.Username;
 
             return View(viewModel);
-            
+
 
         }
 
@@ -95,7 +63,7 @@ namespace HalloDocMVC.Controllers
 
             PaginatedListViewModel<RequestRowViewModel> PaginatedList = new PaginatedListViewModel<RequestRowViewModel>();
 
-            if(claimsData.AspNetUserRole == "physician")
+            if (claimsData.AspNetUserRole == "physician")
             {
                 PaginatedList = _adminDashboardService.GetViewModelData(requestStatus, requestType, searchPattern, searchRegion, pageNumber, physicianId: claimsData.Id);
                 ViewBag.PagerData = PaginatedList.PagerData;
@@ -107,9 +75,6 @@ namespace HalloDocMVC.Controllers
                 ViewBag.PagerData = PaginatedList.PagerData;
                 return PartialView("_RequestTable", PaginatedList.DataRows);
             }
-
-
-            
         }
 
 
@@ -137,11 +102,11 @@ namespace HalloDocMVC.Controllers
 
         [Route("Dashboard/ViewCase", Name = "ViewCase")]
         [CustomAuthorize("admin", "physician")]
-        public IActionResult ViewCase(int requestId) 
+        public IActionResult ViewCase(int requestId)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
 
-            if(claimsData.AspNetUserRole == "physician")
+            if (claimsData.AspNetUserRole == "physician")
             {
                 bool isValidRequest = _adminDashboardService.CheckValidRequest(requestId, claimsData.Id);
                 if (!isValidRequest)
@@ -153,10 +118,10 @@ namespace HalloDocMVC.Controllers
             ViewCaseViewModel CaseInfo = new ViewCaseViewModel();
             CaseInfo.RequestId = requestId;
             CaseInfo.IsPhysician = claimsData.AspNetUserRole == "physician" ? true : false;
-            
-            CaseInfo =  _adminDashboardService.GetViewCaseViewModelData(CaseInfo);
 
-            return View(CaseInfo); 
+            CaseInfo = _adminDashboardService.GetViewCaseViewModelData(CaseInfo);
+
+            return View(CaseInfo);
         }
 
 
@@ -164,7 +129,7 @@ namespace HalloDocMVC.Controllers
         [ValidateAntiForgeryToken]
         [Route("Dashboard/ViewCase", Name = "EditViewCase")]
         [CustomAuthorize("admin", "physician")]
-        public async Task<IActionResult> ViewCase (ViewCaseViewModel CaseInfo)
+        public async Task<IActionResult> ViewCase(ViewCaseViewModel CaseInfo)
         {
             bool isInfoUpdated = await _adminDashboardService.UpdateViewCaseInfo(CaseInfo);
 
@@ -197,7 +162,7 @@ namespace HalloDocMVC.Controllers
 
             ViewNotesViewModel ViewNotes = new ViewNotesViewModel();
             ViewNotes = await _adminDashboardService.GetViewNotesViewModelData(requestId);
-            
+
             ViewNotes.RequestId = requestId;
             ViewNotes.IsPhysician = claimsData.AspNetUserRole == "physician" ? true : false;
 
@@ -256,7 +221,7 @@ namespace HalloDocMVC.Controllers
             }
 
             bool isCaseCancelled = await _adminDashboardService.CancelCase(CancelCase);
-            if(isCaseCancelled)
+            if (isCaseCancelled)
             {
                 TempData["SuccessMessage"] = "Case Cancelled Successfully.";
             }
@@ -356,9 +321,9 @@ namespace HalloDocMVC.Controllers
 
 
         [CustomAuthorize("admin")]
-        public async Task<IActionResult> BlockRequest(int requestId) 
+        public async Task<IActionResult> BlockRequest(int requestId)
         {
-            BlockRequestViewModel BlockRequest = new BlockRequestViewModel(); 
+            BlockRequestViewModel BlockRequest = new BlockRequestViewModel();
             BlockRequest.RequestId = requestId;
             BlockRequest = await _adminDashboardService.GetBlockRequestViewModelData(BlockRequest);
 
@@ -433,7 +398,7 @@ namespace HalloDocMVC.Controllers
         {
             var downloadedFile = await _adminDashboardService.DownloadFile(fileId);
 
-            if (downloadedFile != null) 
+            if (downloadedFile != null)
             {
                 TempData["SuccessMessage"] = "File downloaded successfully";
                 return File(downloadedFile.Data, "application/octet-stream", downloadedFile.Filename);
@@ -441,7 +406,7 @@ namespace HalloDocMVC.Controllers
             else
             {
                 TempData["ErrorMessage"] = "Failed To Download File.";
-                return RedirectToRoute("ViewUploads", new { requestId = downloadedFile?.RequestId});
+                return RedirectToRoute("ViewUploads", new { requestId = downloadedFile?.RequestId });
             }
         }
 
@@ -508,7 +473,7 @@ namespace HalloDocMVC.Controllers
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
             requestData.SenderRole = claimsData.AspNetUserRole;
-            if(claimsData.AspNetUserRole == "physician")
+            if (claimsData.AspNetUserRole == "physician")
             {
                 requestData.PhysicianId = claimsData.Id;
             }
@@ -597,7 +562,7 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Failed To Send Order.";
             }
 
-            return RedirectToRoute("Orders", new {requestId = Order.RequestId});
+            return RedirectToRoute("Orders", new { requestId = Order.RequestId });
         }
 
 
@@ -615,7 +580,7 @@ namespace HalloDocMVC.Controllers
         public async Task<IActionResult> ClearCase(ClearCaseViewModel ClearCase)
         {
             bool isCaseCleared = await _adminDashboardService.ClearCase(ClearCase);
-            if(isCaseCleared)
+            if (isCaseCleared)
             {
 
             }
@@ -641,7 +606,7 @@ namespace HalloDocMVC.Controllers
         public async Task<IActionResult> SendAgreement(SendAgreementViewModel SendAgreementInfo)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
-            if(claimsData.AspNetUserRole == "physician")
+            if (claimsData.AspNetUserRole == "physician")
             {
                 SendAgreementInfo.PhysicianId = claimsData.Id;
             }
@@ -693,7 +658,7 @@ namespace HalloDocMVC.Controllers
             {
                 TempData["ErrorMessage"] = "Failed To Update Case Info.";
             }
-            return RedirectToAction("CloseCase", new {requestId =  ViewCase.RequestId});
+            return RedirectToAction("CloseCase", new { requestId = ViewCase.RequestId });
         }
 
 
@@ -766,7 +731,7 @@ namespace HalloDocMVC.Controllers
             EncounterFormDetails.RequestId = requestId;
             EncounterFormDetails.UserRole = claimsData.AspNetUserRole;
 
-            EncounterFormDetails = _adminDashboardService.GetEncounterFormViewModelData(EncounterFormDetails); 
+            EncounterFormDetails = _adminDashboardService.GetEncounterFormViewModelData(EncounterFormDetails);
 
             return View(EncounterFormDetails);
         }
@@ -875,7 +840,7 @@ namespace HalloDocMVC.Controllers
         public async Task<IActionResult> SendLink(SendLinkViewModel SendLinkData)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
-            if(claimsData.AspNetUserRole == "physician")
+            if (claimsData.AspNetUserRole == "physician")
             {
                 SendLinkData.PhysicianId = claimsData.Id;
             }
@@ -920,7 +885,7 @@ namespace HalloDocMVC.Controllers
         public IActionResult Export(int requestStatus, int? requestType, string? searchPattern, int? searchRegion, int? pageNumber)
         {
             var excelFile = _adminDashboardService.ExportToExcel(requestStatus, requestType, searchPattern, searchRegion, pageNumber);
-            
+
             return File(excelFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "requests.xlsx");
         }
 
@@ -952,7 +917,7 @@ namespace HalloDocMVC.Controllers
             PatientInfo.CreatedBy = claimsData.Id;
             PatientInfo.CreatorRole = claimsData.AspNetUserRole;
             PatientInfo.CreatorAspId = claimsData.AspNetUserId;
-            
+
 
             PatientInfo.EmailToken = _jwtService.GenerateEmailToken(PatientInfo.Email, isExpireable: false);
 
@@ -967,7 +932,7 @@ namespace HalloDocMVC.Controllers
                 TempData["ErrorMessage"] = "Unable to Create Request.";
                 return RedirectToRoute("CreateRequest");
             }
-            
+
         }
 
 
@@ -988,13 +953,27 @@ namespace HalloDocMVC.Controllers
         {
             var encounterData = await _adminDashboardService.GenerateEncounterPdf(DownloadFormData);
 
-            if(encounterData == null)
+            if (encounterData == null)
             {
                 TempData["ErrorMessage"] = "Unable to download encounter form.";
                 return RedirectToRoute("Dashboard");
             }
 
             return File(encounterData, "application/pdf", "EncounterForm.pdf");
+        }
+
+        public IActionResult ChatBox(string aspnetuserId)
+        {
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            ChatBoxViewModel ChatBoxData = new ChatBoxViewModel
+            {
+                //SenderId = claimsData.AspNetUserId ?? "",
+                //SenderName = claimsData.Username,
+                //SenderRole = claimsData.AspNetUserRole
+                ReceiverId = aspnetuserId,
+            };
+            ChatBoxData = _adminDashboardService.GetChatBoxViewModelData(ChatBoxData);
+            return PartialView("_ChatBoxPartial", ChatBoxData);
         }
     }
 }

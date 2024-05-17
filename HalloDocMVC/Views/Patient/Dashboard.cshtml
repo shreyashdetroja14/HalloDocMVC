@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_PatientLayout.cshtml";
 }
 
-@section AddStyles{
+@section AddStyles {
 
     <link href="@Url.Content("~/css/dashboard.css")" rel="stylesheet" type="text/css" />
 }
@@ -38,14 +38,16 @@
 
         <!-- Modal toggler -->
         <div class=" py-3 d-flex justify-content-end">
-            <button type="button" data-bs-toggle="modal" data-bs-target="#requesttype" class="btn btn-outline-info ">Create New Request</button>
+            <button type="button" data-bs-toggle="modal" data-bs-target="#requesttype"
+                class="btn btn-outline-info ">Create New Request</button>
 
         </div>
 
         <div class="req-header row p-3 d-flex align-items-center bg-body-secondary">
             <div class="col-3 fw-bold">Created Date</div>
-            <div class="col-6 fw-bold">Current Status</div>
-            <div class="col-3 fw-bold">Document</div>
+            <div class="col-4 fw-bold">Current Status</div>
+            <div class="col-3 fw-bold">Chat With</div>
+            <div class="col-2 fw-bold">Document</div>
         </div>
 
         @{
@@ -53,11 +55,26 @@
             {
                 <div class="row p-3 d-flex align-items-center">
                     <div class="col-3">@request.CreateDate</div>
-                    <div class="col-6">@(((RequestStatus)(request.Status)).ToString())</div>
+                    <div class="col-4">@(((RequestStatus)(request.Status)).ToString())</div>
                     <div class="col-3">
+                        <button class="btn btn-outline-info ">
+                            <span class="material-symbols-outlined fs-6">
+                                person_add
+                            </span>
+                            Provider
+                        </button>
+                        <button class="btn btn-outline-info ">
+                            <span class="material-symbols-outlined fs-6">
+                                person_add
+                            </span>
+                            Admin
+                        </button>
+                    </div>
+                    <div class="col-2">
                         @if (request.Count != 0)
                         {
-                            <a asp-controller="Patient" asp-action="ViewDocuments" asp-route-requestid="@request.RequestId" class="btn btn-outline-info">(@request.Count) documents</a>
+                            <a asp-controller="Patient" asp-action="ViewDocuments" asp-route-requestid="@request.RequestId"
+                                class="btn btn-outline-info">(@request.Count) documents</a>
                         }
                     </div>
                 </div>
@@ -67,7 +84,8 @@
 
     <div class="requests rounded-3 d-flex d-md-none flex-column bg-body shadow">
         <div class=" p-3 d-flex justify-content-end">
-            <button href="#" type="button" data-bs-toggle="modal" data-bs-target="#requesttype" class="btn btn-outline-info p-2"><img src="~/images/plusIcon.svg" alt=""></button>
+            <button href="#" type="button" data-bs-toggle="modal" data-bs-target="#requesttype"
+                class="btn btn-outline-info p-2"><img src="~/images/plusIcon.svg" alt=""></button>
         </div>
         <div class="accordion accordion-flush bg-info" id="accordionFlushExample">
             @{
@@ -76,7 +94,7 @@
                     <div class="accordion-item">
                         <h2 class="accordion-header">
                             <button class="accordion-button collapsed d-flex" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#flush-collapse-@request.RequestId">
+                                data-bs-target="#flush-collapse-@request.RequestId">
                                 <img src="~/images/clockIcon.svg" alt="">
                                 <span class="px-2 fw-bold">Created Date: </span>
                                 <span>@request.CreateDate</span>
@@ -106,7 +124,9 @@
                                 @if (request.Count != 0)
                                 {
                                     <div>
-                                        <a asp-controller="Patient" asp-action="ViewDocuments" asp-route-requestid="@request.RequestId" class="btn btn-outline-info w-100">(@request.Count) documents</a>
+                                        <a asp-controller="Patient" asp-action="ViewDocuments"
+                                            asp-route-requestid="@request.RequestId"
+                                            class="btn btn-outline-info w-100">(@request.Count) documents</a>
                                     </div>
                                 }
                             </div>
@@ -119,7 +139,6 @@
     </div>
 </div>
 
-@section AddScript{
+@section AddScript {
     <partial name="_ToastMessageScriptsPartial" />
 }
-

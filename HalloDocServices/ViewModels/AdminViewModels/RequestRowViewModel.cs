@@ -18,13 +18,23 @@ namespace HalloDocServices.ViewModels.AdminViewModels
 
         public string? PatientFullName { get; set; }
 
-        public string? PatientEmail{ get; set; }
+        public string? PatientEmail { get; set; }
 
         public string? DateOfBirth { get; set; }
 
+        public string? PatientAspNetUserId { get; set; }
+
+        public int PatientUserId { get; set; }
+
+        public string? PhysicianAspNetUserId { get; set; }
+
         public string? RequestorName { get; set; }
 
+        public int PhysicianId { get; set; }
+
         public string? PhysicianName { get; set; }
+
+        public string? AdminAspNetUserId { get; set; }
 
         public string? DateOfService { get; set; }
 

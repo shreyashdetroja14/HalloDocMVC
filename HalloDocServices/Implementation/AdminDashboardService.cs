@@ -38,8 +38,9 @@ namespace HalloDocServices.Implementation
         private readonly IVendorRepository _vendorRepository;
         private readonly IMailService _mailService;
         private readonly IEmailSMSLogRepository _emailSMSLogRepository;
+        private readonly IAdminRepository _adminRepository;
 
-        public AdminDashboardService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IVendorRepository vendorRepository, IMailService mailService, IEmailSMSLogRepository emailSMSLogRepository)
+        public AdminDashboardService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IVendorRepository vendorRepository, IMailService mailService, IEmailSMSLogRepository emailSMSLogRepository, IAdminRepository adminRepository)
         {
             _userRepository = userRepository;
             _requestRepository = requestRepository;
@@ -49,6 +50,7 @@ namespace HalloDocServices.Implementation
             _vendorRepository = vendorRepository;
             _mailService = mailService;
             _emailSMSLogRepository = emailSMSLogRepository;
+            _adminRepository = adminRepository;
         }
 
         public async Task<AdminDashboardViewModel> GetViewModelData(int requestStatus, int? physicianId = null)
@@ -76,7 +78,7 @@ namespace HalloDocServices.Implementation
             return viewModel;
         }
 
-        
+
 
         #region Encode_Decode
         public string Encode(string encodeMe)
@@ -99,7 +101,7 @@ namespace HalloDocServices.Implementation
 
             int[] myarray = new CommonMethods().GetRequestStatus(requestStatus);
 
-            requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Include(x => x.RequestStatusLogs).Include(x => x.EncounterForms).Where(x => x.IsDeleted != true && myarray.Contains(x.Status));
+            requests = requests.AsQueryable().Include(x => x.RequestClients).Include(x => x.Physician).Include(x => x.RequestStatusLogs).ThenInclude(x => x.Admin).Include(x => x.EncounterForms).Include(x => x.User).Where(x => x.IsDeleted != true && myarray.Contains(x.Status));
 
 
             if (requestType != null)
@@ -142,7 +144,7 @@ namespace HalloDocServices.Implementation
 
                 EncounterForm? encounterForm = request.EncounterForms.FirstOrDefault();
                 bool isFinalized;
-                if(encounterForm == null || encounterForm.IsFinalized != true)
+                if (encounterForm == null || encounterForm.IsFinalized != true)
                 {
                     isFinalized = false;
                 }
@@ -171,8 +173,14 @@ namespace HalloDocServices.Implementation
                     PatientFullName = requestClient?.FirstName + " " + requestClient?.LastName,
                     PatientEmail = requestClient?.Email,
                     DateOfBirth = month + " " + date + "," + year,
+                    PatientAspNetUserId = request.User?.AspNetUserId,
+                    PatientUserId = request.UserId ?? 0,
                     RequestorName = request.FirstName + " " + request.LastName,
+                    PhysicianAspNetUserId = request.Physician?.AspNetUserId,
+                    PhysicianId = request.Physician?.PhysicianId ?? 0,
                     PhysicianName = request.Physician?.FirstName + " " + request.Physician?.LastName,
+                    //AdminAspNetUserId = requestStatusLogs.FirstOrDefault(x => x.Status == 1)?.Admin?.AspNetUserId,
+                    AdminAspNetUserId = "74502e9b-b4b3-49ab-b883-d00dbfd57ad2",
                     DateOfService = request.AcceptedDate.ToString(),
                     RequestedDate = request.CreatedDate.ToLongDateString(),
                     PatientPhoneNumber = requestClient?.PhoneNumber,
@@ -185,9 +193,11 @@ namespace HalloDocServices.Implementation
                 });
             }
 
-            PaginatedListViewModel<RequestRowViewModel> PaginatedData = new PaginatedListViewModel<RequestRowViewModel>();
-            PaginatedData.PagerData = PagerData;
-            PaginatedData.DataRows = requestRows;
+            PaginatedListViewModel<RequestRowViewModel> PaginatedData = new PaginatedListViewModel<RequestRowViewModel>
+            {
+                PagerData = PagerData,
+                DataRows = requestRows
+            };
 
             return PaginatedData;
         }
@@ -195,7 +205,7 @@ namespace HalloDocServices.Implementation
         public bool CheckValidRequest(int requestId, int physicianId)
         {
             var request = _requestRepository.GetRequest(requestId);
-            if(request.RequestId == 0 || request.PhysicianId != physicianId)
+            if (request.RequestId == 0 || request.PhysicianId != physicianId)
             {
                 return false;
             }
@@ -856,7 +866,7 @@ namespace HalloDocServices.Implementation
                 emailLog.SentDate = DateTime.Now;
                 emailLog.IsEmailSent = isMailSent;
                 emailLog.SentTries = 1;
-                emailLog.RecipientName = requestData.EmailValue?.Split('@')[0]; 
+                emailLog.RecipientName = requestData.EmailValue?.Split('@')[0];
 
                 await _emailSMSLogRepository.CreateEmailLog(emailLog);
 
@@ -943,7 +953,7 @@ namespace HalloDocServices.Implementation
                 CreatedDate = DateTime.Now
             };
 
-            if(order.VendorId == 0)
+            if (order.VendorId == 0)
             {
                 return false;
             }
@@ -1354,7 +1364,7 @@ namespace HalloDocServices.Implementation
 
             await _requestRepository.UpdateRequest(request);
 
-            if(ConcludeCareData.ProviderNotes != null)
+            if (ConcludeCareData.ProviderNotes != null)
             {
                 var requestNote = await _notesAndLogsRepository.GetNoteByRequestId(request.RequestId);
                 if (requestNote == null)
@@ -1684,7 +1694,7 @@ namespace HalloDocServices.Implementation
             string body = "To all unscheduled physicians: We are short on coverage and need additional support On Call to respond to requests. " + SupportMessageData.SupportMessage ?? "";
 
             bool isMailSent = await _mailService.SendMail(receiverMds, subject, body, false, new List<string>());
-            
+
             return true;
         }
 
@@ -1711,7 +1721,7 @@ namespace HalloDocServices.Implementation
                 table.AddHeaderCell("Property");
                 table.AddHeaderCell("Value");
 
-                if(DownloadFormData.RequestId == 0 || encounter == null)
+                if (DownloadFormData.RequestId == 0 || encounter == null)
                 {
                     document.Add(table);
                     document.Close();
@@ -1787,6 +1797,20 @@ namespace HalloDocServices.Implementation
 
                 return memoryStream.ToArray();
             }
+        }
+
+        public ChatBoxViewModel GetChatBoxViewModelData(ChatBoxViewModel ChatBoxData)
+        {
+            //var receiver = _userRepository.GetAspNetUserById(ChatBoxData.ReceiverId);
+            var receiver = _userRepository.GetIQueryableAspNetUsers()
+                            //.Include(x => x.AspNetUserRoles)
+                            //.Include(x => x.AspNetUserRoles).ThenInclude(x => x.Role)
+                            .Where(x => x.Id == ChatBoxData.ReceiverId).FirstOrDefault();
+
+            ChatBoxData.ReceiverName = receiver?.UserName;
+            //ChatBoxData.ReceiverRole = receiver?.AspNetUserRoles.FirstOrDefault()?.Role.Name;
+
+            return ChatBoxData;
         }
     }
 }
