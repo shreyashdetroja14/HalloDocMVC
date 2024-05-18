@@ -35,6 +35,8 @@ namespace HalloDocMVC.ChatHub
             MessageDetails.Message = message;
             MessageDetails.SentTime = sentTime;
 
+
+
             await Clients.Client(connectionId).SendAsync("ReceiveMessage", MessageDetails);
         }
 

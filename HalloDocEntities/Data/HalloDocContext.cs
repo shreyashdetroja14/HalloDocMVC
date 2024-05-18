@@ -44,6 +44,8 @@ public partial class HalloDocContext : DbContext
 
     public virtual DbSet<Menu> Menus { get; set; }
 
+    public virtual DbSet<MessageDetail> MessageDetails { get; set; }
+
     public virtual DbSet<OrderDetail> OrderDetails { get; set; }
 
     public virtual DbSet<Payrate> Payrates { get; set; }
@@ -231,6 +233,11 @@ public partial class HalloDocContext : DbContext
         modelBuilder.Entity<Menu>(entity =>
         {
             entity.HasKey(e => e.MenuId).HasName("menu_pkey");
+        });
+
+        modelBuilder.Entity<MessageDetail>(entity =>
+        {
+            entity.HasKey(e => e.MessageId).HasName("message_details_pkey");
         });
 
         modelBuilder.Entity<OrderDetail>(entity =>
