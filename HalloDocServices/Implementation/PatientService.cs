@@ -61,7 +61,8 @@ namespace HalloDocServices.Implementation
             {
                 count = x.RequestWiseFiles.Count,
                 request = x,
-                physicianName = x.Physician?.FirstName + " " + x.Physician?.LastName
+                physicianName = x.Physician?.FirstName + " " + x.Physician?.LastName,
+                physicianAspNetUserId = x.Physician?.AspNetUserId
             });
 
             List<DashboardRequestViewModel> requestlist = new List<DashboardRequestViewModel>();
@@ -74,7 +75,9 @@ namespace HalloDocServices.Implementation
                     CreateDate = DateOnly.FromDateTime(r.request.CreatedDate),
                     Status = r.request.Status,
                     Count = r.count,
-                    PhysicianName = r.physicianName
+                    PhysicianName = r.physicianName,
+                    PhysicianAspNetUserId = r.physicianAspNetUserId ?? "",
+                    AdminAspNetUserId = "74502e9b-b4b3-49ab-b883-d00dbfd57ad2"
                 });
             }
 
@@ -125,7 +128,7 @@ namespace HalloDocServices.Implementation
         public async Task<string> GetAspNetUserIdByUserId(int userId)
         {
             var userFetched = await _userRepository.GetUserByUserId(userId);
-            return userFetched.AspNetUserId?? "";
+            return userFetched.AspNetUserId ?? "";
         }
 
         public async Task UploadFiles(IEnumerable<IFormFile> MultipleFiles, int requestId)
@@ -234,7 +237,7 @@ namespace HalloDocServices.Implementation
             var requestsFetched = await _requestRepository.GetRequestsByEmail(ProfileDetails.Email);
             var requestClientsFetched = await _requestRepository.GetRequestsClientsByEmail(ProfileDetails.Email);
 
-            if(aspnetuserFetched == null || userFetched == null)
+            if (aspnetuserFetched == null || userFetched == null)
             {
                 return false;
             }
@@ -245,7 +248,7 @@ namespace HalloDocServices.Implementation
 
                 await _userRepository.UpdateAspNetUser(aspnetuserFetched);
             }
-            
+
             if (userFetched != null)
             {
                 userFetched.FirstName = ProfileDetails.FirstName;
@@ -616,7 +619,7 @@ namespace HalloDocServices.Implementation
             var requestFetched = await _requestRepository.GetRequestByRequestId(AgreementInfo.RId);
             if (requestFetched != null)
             {
-                if(requestFetched.Status != 2)
+                if (requestFetched.Status != 2)
                 {
                     AgreementInfo.IsAgreementFilled = true;
                     return AgreementInfo;
@@ -638,7 +641,7 @@ namespace HalloDocServices.Implementation
         public bool CheckValidRequest(int requestId, int userId)
         {
             var request = _requestRepository.GetRequest(requestId);
-            if(request.RequestId == 0 || request.UserId != userId)
+            if (request.RequestId == 0 || request.UserId != userId)
             {
                 return false;
             }

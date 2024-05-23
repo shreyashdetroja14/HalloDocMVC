@@ -1,0 +1,53 @@
+<script>
+    var notificationConnection;
+    if (notificationConnection != null || notificationConnection != undefined) {
+        notificationConnection.stop();
+    }
+    notificationConnection = new signalR.HubConnectionBuilder()
+        .withUrl("/notificationHub")
+        .build();
+
+    notificationConnection.on("SendNotification", (messageDetails) => {
+        if (!("Notification" in window)) {
+            alert('this browser doesn\'t support notifications.');
+        }
+
+        else if (Notification.permission === "granted") {
+            var notification = new Notification(`New Message from ${messageDetails.senderName}`);
+            notification.onclick = function () {
+                Chat(`${messageDetails.senderId}`);
+            };
+            const notificationOptions = {
+                closeButton: true,
+                timeOut: 5000, // Adjust timeout as needed
+                onclick: () => Chat(`${messageDetails.senderId}`),
+            };
+
+            toastr.info(`New Message from ${messageDetails.senderName}`, "Notification", notificationOptions);
+        }
+
+        else if (Notification.permission !== 'denied') {
+            Notification.requestPermission(function (permission) {
+                if (permission === "granted") {
+                    var notification = new Notification(`New Message from ${messageDetails.senderName}`);
+                    notification.onclick = function () {
+                        Chat(`${messageDetails.senderId}`);
+                    };
+
+                    const notificationOptions = {
+                        closeButton: true,
+                        timeOut: 5000, // Adjust timeout as needed
+                        onclick: () => Chat(`${messageDetails.senderId}`),
+                    };
+
+                    toastr.info(`New Message from ${messageDetails.senderName}`, "Notification", notificationOptions);
+                }
+            });
+        }
+    });
+
+    notificationConnection.start()
+        .catch(err => {
+            console.error(err.toString());
+        });
+</script>

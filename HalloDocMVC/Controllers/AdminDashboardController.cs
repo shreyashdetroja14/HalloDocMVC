@@ -967,7 +967,7 @@ namespace HalloDocMVC.Controllers
             ClaimsData claimsData = _jwtService.GetClaimValues();
             ChatBoxViewModel ChatBoxData = new ChatBoxViewModel
             {
-                //SenderId = claimsData.AspNetUserId ?? "",
+                SenderId = claimsData.AspNetUserId ?? "",
                 //SenderName = claimsData.Username,
                 //SenderRole = claimsData.AspNetUserRole
                 ReceiverId = aspnetuserId,

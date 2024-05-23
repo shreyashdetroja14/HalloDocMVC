@@ -9,7 +9,8 @@ namespace HalloDocServices.ViewModels.AdminViewModels
         public string? ReceiverRole { get; set; }
         public string? ReceiverName { get; set; }
         public string? Message { get; set; }
-        public string? SentTime { get; set; }
+        public string SentTime { get; set; } = string.Empty;
+        public bool IsRead { get; set; }
 
     }
 }

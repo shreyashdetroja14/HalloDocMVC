@@ -7,6 +7,30 @@
 @section AddStyles {
 
     <link href="@Url.Content("~/css/dashboard.css")" rel="stylesheet" type="text/css" />
+    <style>
+        .message div {
+            max-width: 80%;
+        }
+
+        .sender-message {
+            background-color: #cff;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 0 !important;
+        }
+
+        .receiver-message {
+            background-color: #ffc;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 0 !important;
+        }
+
+        .message-date {
+            font-size: 0.8em;
+            color: #666;
+        }
+    </style>
 }
 
 @model List<HalloDocServices.ViewModels.DashboardRequestViewModel>
@@ -57,13 +81,14 @@
                     <div class="col-3">@request.CreateDate</div>
                     <div class="col-4">@(((RequestStatus)(request.Status)).ToString())</div>
                     <div class="col-3">
-                        <button class="btn btn-outline-info ">
+                        <button class="btn btn-outline-info provider-chat-btn"
+                            data-aspnetuserid="@request.PhysicianAspNetUserId">
                             <span class="material-symbols-outlined fs-6">
                                 person_add
                             </span>
                             Provider
                         </button>
-                        <button class="btn btn-outline-info ">
+                        <button class="btn btn-outline-info admin-chat-btn" data-aspnetuserid="@request.AdminAspNetUserId">
                             <span class="material-symbols-outlined fs-6">
                                 person_add
                             </span>
@@ -129,6 +154,24 @@
                                             class="btn btn-outline-info w-100">(@request.Count) documents</a>
                                     </div>
                                 }
+
+                                <div class="d-flex justify-content-end align-items-center">
+                                    <span>Chat With: </span>
+                                    <button class="btn btn-outline-info provider-chat-btn"
+                                        data-aspnetuserid="@request.PhysicianAspNetUserId">
+                                        <span class="material-symbols-outlined fs-6">
+                                            person_add
+                                        </span>
+                                        Provider
+                                    </button>
+                                    <button class="btn btn-outline-info admin-chat-btn"
+                                        data-aspnetuserid="@request.AdminAspNetUserId">
+                                        <span class="material-symbols-outlined fs-6">
+                                            person_add
+                                        </span>
+                                        Admin
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -137,8 +180,66 @@
         </div>
 
     </div>
+    <div id="offcanvas-container">
+    </div>
 </div>
 
 @section AddScript {
     <partial name="_ToastMessageScriptsPartial" />
+
+    <script>
+        $(".provider-chat-btn").click(function () {
+            let aspnetuserId = $(this).attr("data-aspnetuserid");
+            if (aspnetuserId == "") {
+                Swal.fire({
+                    text: "No physician assigned to this request",
+                    icon: "error",
+                });
+                return;
+            }
+            console.log(`physician chat btn clicked: ${aspnetuserId}`);
+            Chat(aspnetuserId);
+        });
+
+        $(".admin-chat-btn").click(function () {
+            let aspnetuserId = $(this).attr("data-aspnetuserid");
+            if (aspnetuserId == "") {
+                Swal.fire({
+                    text: "Admin unavailable.",
+                    icon: "error",
+                });
+                return;
+            }
+            console.log(`admin chat btn clicked: ${aspnetuserId}`);
+            Chat(aspnetuserId);
+        });
+
+        function Chat(aspnetuserId) {
+            $.ajax({
+                url: "/AdminDashboard/Chatbox",
+                data: {
+                    aspnetuserId: aspnetuserId,
+                },
+                type: "GET",
+                success: function (data) {
+                    //console.log(data);
+                    $("#offcanvas-container").html(data);
+
+                    const offcanvas = new bootstrap.Offcanvas("#chatbox-offcanvas");
+                    offcanvas.show();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error fetching data:", textStatus);
+                    if (errorThrown) {
+                        console.error("Specific error:", errorThrown);
+                    }
+                    console.error("HTTP status code:", jqXHR.status);
+
+                    if (jqXHR.responseJSON.status == 414) {
+                        window.location.href = "/Login";
+                    }
+                },
+            });
+        }
+    </script>
 }

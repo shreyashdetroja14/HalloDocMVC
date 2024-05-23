@@ -238,6 +238,8 @@ public partial class HalloDocContext : DbContext
         modelBuilder.Entity<MessageDetail>(entity =>
         {
             entity.HasKey(e => e.MessageId).HasName("message_details_pkey");
+
+            entity.Property(e => e.SentTime).HasDefaultValueSql("LOCALTIMESTAMP");
         });
 
         modelBuilder.Entity<OrderDetail>(entity =>

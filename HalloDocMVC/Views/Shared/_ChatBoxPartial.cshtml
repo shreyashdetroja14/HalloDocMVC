@@ -1,3 +1,4 @@
+@using System.Globalization
 @model HalloDocServices.ViewModels.AdminViewModels.ChatBoxViewModel
 
 <div class="offcanvas offcanvas-end" tabindex="-1" id="chatbox-offcanvas" aria-labelledby="offcanvasExampleLabel">
@@ -8,13 +9,43 @@
     <div class="offcanvas-body d-flex flex-column">
         <div class="chat-area flex-grow-1 mb-2 " style="overflow-y: scroll;">
             <ul id="messagesList" class="list-group">
-                @* <li class="message list-group-item border rounded mb-2">Hello</li> *@
+                @foreach (var message in Model.MessageList)
+                {
+                    @if (message.ReceiverId == Model.ReceiverId)
+                    {
+                        <li class="message list-group-item border-0 px-0 rounded d-flex justify-content-end">
+                            <div class="d-flex flex-column align-items-end">
+                                <p class="sender-message">
+                                    @message.Message
+                                </p>
+                                <p class="message-date mb-0 text-end">
+                                    @message.SentTime
+                                    <i class="readstatus bi @(message.IsRead ? "bi-check-all" : "bi-check")"></i>
+                                </p>
+                            </div>
+                        </li>
+
+                    }
+                    else
+                    {
+                        <li class="message list-group-item border-0 px-0 rounded d-flex justify-content-start">
+                            <div class="d-flex flex-column align-items-start">
+                                <p class="receiver-message">
+                                    @message.Message
+                                </p>
+                                <p class="message-date mb-0">
+                                    @message.SentTime
+                                </p>
+                            </div>
+                        </li>
+                    }
+                }
             </ul>
         </div>
         <div class="message-box d-flex">
             <input type="text" id="receiverId" value="@Model.ReceiverId" hidden>
             <input type="text" id="receiverName" value="@Model.ReceiverName" hidden>
-            @* <input type="text" id="senderId" value="@Model.SenderId" hidden> *@
+            <input type="text" id="senderId" value="@Model.SenderId" hidden>
             <input type="text" class="form-control me-2" id="message-input" />
             <button class="btn btn-info text-white" id="sendMessage">Send</button>
         </div>
@@ -23,35 +54,96 @@
 
 <script>
     // initialize connection instance
-    var connection = new signalR.HubConnectionBuilder()
+    var connection;
+    if (connection != null || connection != undefined) {
+        connection.stop();
+    }
+    connection = new signalR.HubConnectionBuilder()
         .withUrl("/chatHub")
         .build();
 
-
+    // event handler for receive message
     connection.on("ReceiveMessage", (messageDetails) => {
-
         console.log(messageDetails);
         const receiverId = document.getElementById("receiverId").value;
-        //alert(senderId, "hi", userId);
 
         //check if the user from which the current message has been received is the one to whom we are chatting
         if (receiverId == messageDetails.senderId) {
             addNewMessageToList(messageDetails.message, messageDetails.sentTime, true);
         }
         else {
-            Swal.fire({
-                text: `new message from ${messageDetails.senderName}`,
-                icon: "info"
-            });
+            //toastr.error(`new message from ${messageDetails.senderName}`);
+            notificationConnection.invoke("SendNotification", messageDetails).catch(err => console.error(err.toString()));
+    @* if (!("Notification" in window)) {
+                alert('this browser doesn\'t support notifications.');
+                }
+
+                else if (Notification.permission === "granted") {
+                var notification = new Notification(`New Message from ${messageDetails.senderName}`);
+                notification.onclick = function () {
+                Chat(`${messageDetails.senderId}`);
+                };
+                }
+
+                else if (Notification.permission !== 'denied') {
+                Notification.requestPermission(function (permission) {
+                if (permission === "granted") {
+                var notification = new Notification(`New Message from ${messageDetails.senderName}`);
+                notification.onclick = function () {
+                Chat(`${messageDetails.senderId}`);
+                };
+                }
+                });
+                } *@
         }
     });
 
+    //event handler for checking read status
+    connection.on("CheckReadStatus", (idToBeUpdated) => {
+        const receiverId = document.getElementById("receiverId").value;
+        const ownId = document.getElementById("senderId").value;
+        let isRead = receiverId == idToBeUpdated ? true : false;
+        connection.invoke("UpdateReadStatus", idToBeUpdated, ownId, isRead).catch(err => console.error(err.toString()));
+    });
+
+    //event handler for updating read status
+    connection.on("UpdateReadStatus", (isRead) => {
+        console.log(isRead);
+        if (!isRead) {
+            return;
+        }
+
+        const readStatusIcons = $('.readstatus');
+        console.log(readStatusIcons);
+        readStatusIcons.removeClass('bi-check');
+        readStatusIcons.addClass('bi-check-all');
+
+    });
+
+    //event handler for sending notification
+    connection.on("SendNotification", (messageDetails) => {
+        notificationConnection.invoke("SendNotification", messageDetails).catch(err => console.error(err.toString()));
+    });
+
     // initialize connection - calls OnConnectedAsync Method on Hub
-    connection.start().catch(err => console.error(err.toString()));
+    connection.start()
+        .then(() => {
+            console.log('connection successful');
+            const chatArea = document.querySelector('.chat-area');
+            chatArea.scrollTop = chatArea.scrollHeight;
+
+            const receiverId = document.getElementById("receiverId").value;
+            const ownId = document.getElementById("senderId").value;
+            connection.invoke("UpdateReadStatus", receiverId, ownId, true).catch(err => console.error(err.toString()));
+        })
+        .catch(err => {
+            console.error(err.toString());
+        });
 
     // event listener for send btn
     document.getElementById("sendMessage").addEventListener("click", event => {
         const receiverId = document.getElementById("receiverId").value;
+        console.log(receiverId);
         const receiverName = document.getElementById("receiverName").value;
         const message = document.getElementById("message-input").value;
 
@@ -74,34 +166,44 @@
 
     // add new message to chat
     function addNewMessageToList(message, sentTime, isReceivedMessage) {
-        //const li = document.createElement("li");
-        //li.className = "message list-group-item border rounded mb-2";
-        //li.textContent = message;
-        //document.getElementById("messagesList").appendChild(li);
-
         const li = document.createElement("li");
+        const messageContainer = document.createElement("div");
+        const messageText = document.createElement("p");
+        const messageTime = document.createElement("p");
+        const readStatusIcon = document.createElement("i");
+
         if (isReceivedMessage) {
-            li.className = "list-group-item d-flex justify-content-start border-0 p-0 rounded mb-2";
+            li.className = "message list-group-item border-0 px-0 rounded d-flex justify-content-start";
+            messageContainer.className = "d-flex flex-column align-items-start";
+            messageText.className = "receiver-message";
+            messageTime.className = "message-date mb-0";
         }
         else {
-            li.className = "list-group-item d-flex justify-content-end border-0 p-0 rounded mb-2";
+            li.className = "message list-group-item border-0 px-0 rounded  d-flex justify-content-end";
+            messageContainer.className = "d-flex flex-column align-items-end";
+            messageText.className = "sender-message";
+            messageTime.className = "message-date mb-0 text-end";
+        }
+        readStatusIcon.className = "readstatus bi bi-check";
+
+        messageText.textContent = message;
+        messageTime.textContent = sentTime;
+        if (!isReceivedMessage) {
+            messageTime.appendChild(readStatusIcon);
         }
 
-        const messageContainer = document.createElement("div");
-        messageContainer.className = isReceivedMessage ? "receiver-message" : "sender-message";
-
-        const messageText = document.createElement("p");
-        messageText.className = "mb-2";
-        messageText.textContent = message;
         messageContainer.appendChild(messageText);
-
-        const messageMeta = document.createElement("small");
-        //messageMeta.textContent = new Date().toLocaleString();
-        messageMeta.textContent = sentTime;
-        messageContainer.appendChild(messageMeta);
-
+        messageContainer.appendChild(messageTime);
         li.appendChild(messageContainer);
         document.getElementById("messagesList").appendChild(li);
+
+        const chatArea = document.querySelector('.chat-area');
+        chatArea.scrollTop = chatArea.scrollHeight;
+
+        if (!isReceivedMessage) {
+            const receiverId = document.getElementById("receiverId").value;
+            connection.invoke("CheckReadStatus", receiverId).catch(err => console.error(err.toString()));
+        }
     }
 
 </script>

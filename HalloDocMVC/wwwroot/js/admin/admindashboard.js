@@ -1,6 +1,4 @@
-﻿
-
-/*window.addEventListener("pageshow", function (event) {
+﻿/*window.addEventListener("pageshow", function (event) {
     var historyTraversal = event.persisted ||
         (typeof window.performance != "undefined" &&
             window.performance.navigation.type === 2);
@@ -10,340 +8,307 @@
     }
 });*/
 
-
 //status buttons
 
-const newBtn = document.querySelector('.new-btn');
-const pendingBtn = document.querySelector('.pending-btn');
-const activeBtn = document.querySelector('.active-btn');
-const concludeBtn = document.querySelector('.conclude-btn');
-const toCloseBtn = document.querySelector('.to-close-btn');
-const unpaidBtn = document.querySelector('.unpaid-btn');
+const newBtn = document.querySelector(".new-btn");
+const pendingBtn = document.querySelector(".pending-btn");
+const activeBtn = document.querySelector(".active-btn");
+const concludeBtn = document.querySelector(".conclude-btn");
+const toCloseBtn = document.querySelector(".to-close-btn");
+const unpaidBtn = document.querySelector(".unpaid-btn");
 
-const triangles = document.querySelectorAll('.triangle');
+const triangles = document.querySelectorAll(".triangle");
 
-const requestStatusNameSpan = document.querySelector('#request-status-name');
-
+const requestStatusNameSpan = document.querySelector("#request-status-name");
 
 //url parameters for filters
 
 const urlparams = {
-    requestStatus: localStorage.status,
-    requestType: null,
-    searchPattern: null,
-    searchRegion: null,
-    pageNumber: 1
-}
-
+  requestStatus: localStorage.status,
+  requestType: null,
+  searchPattern: null,
+  searchRegion: null,
+  pageNumber: 1,
+};
 
 //on document ready, call partial view
 
 document.addEventListener("DOMContentLoaded", async () => {
-    let requestStatus = 1;
-    if (localStorage.status) {
-        urlparams.requestStatus = localStorage.status;
-    }
-    else {
-        localStorage.status = requestStatus;
-        urlparams.requestStatus = requestStatus;
-    }
-    console.log('localstorage value: ', urlparams.requestStatus);
-    console.log('reqstatus value: ', requestStatus);
+  let requestStatus = 1;
+  if (localStorage.status) {
+    urlparams.requestStatus = localStorage.status;
+  } else {
+    localStorage.status = requestStatus;
+    urlparams.requestStatus = requestStatus;
+  }
+  console.log("localstorage value: ", urlparams.requestStatus);
+  console.log("reqstatus value: ", requestStatus);
 
-    addActiveTabClass(localStorage.status);
-    await GetPartialViewData(urlparams);
-    console.log("DOM is loaded and ready!");
+  addActiveTabClass(localStorage.status);
+  await GetPartialViewData(urlparams);
+  console.log("DOM is loaded and ready!");
 });
 
 // validate cookie
 async function ValidateCookie() {
-    try {
-        //cookie validate url
-        const validationurl = "/Login/ValidateCookie";
+  try {
+    //cookie validate url
+    const validationurl = "/Login/ValidateCookie";
 
+    const validateResponse = await fetch(validationurl);
 
-        const validateResponse = await fetch(validationurl);
+    //console.log(validateResponse);
+    console.log("***************************************");
+    console.log(
+      "Cookie response: ",
+      validateResponse.statusText,
+      validateResponse.status
+    );
+    if (!validateResponse.ok) {
+      console.log("invalid cookiee");
 
-        //console.log(validateResponse);
-        console.log('***************************************');
-        console.log('Cookie response: ', validateResponse.statusText, validateResponse.status);
-        if (!validateResponse.ok) {
-            console.log('invalid cookiee');
+      if (validateResponse.status === 401) {
+        console.log("Unauthorized access, redirecting to login");
+        window.location.reload();
+      } else {
+        throw new Error(`Something else! `);
+      }
 
-
-
-            if (validateResponse.status === 401) {
-                console.log('Unauthorized access, redirecting to login');
-                window.location.reload();
-
-            } else {
-                throw new Error(`Something else! `);
-            }
-
-            return false;
-        }
-
-        return true;
+      return false;
     }
-    catch (error) {
-        console.error('HTTP VALIDATION error: ', error);
-        return false;
-    }
+
+    return true;
+  } catch (error) {
+    console.error("HTTP VALIDATION error: ", error);
+    return false;
+  }
 }
-
-
 
 // requests partial view data ajax call
 
 async function GetPartialViewData(urlparams) {
-    try {
+  try {
+    const isCookieValid = await ValidateCookie();
+    console.log("is cookie valid? ", isCookieValid);
+    console.log("urlparams: ", urlparams);
 
-        const isCookieValid = await ValidateCookie();
-        console.log('is cookie valid? ', isCookieValid);
-        console.log('urlparams: ', urlparams);
+    if (isCookieValid) {
+      let url = `/FetchRequests?requestStatus=${urlparams.requestStatus}`;
 
-        if (isCookieValid) {
+      if (urlparams.requestType) {
+        url += `&requestType=${urlparams.requestType}`;
+      }
 
-            let url = `/FetchRequests?requestStatus=${urlparams.requestStatus}`;
+      if (urlparams.searchPattern) {
+        url += `&searchPattern=${encodeURIComponent(urlparams.searchPattern)}`;
+      }
 
-            if (urlparams.requestType) {
-                url += `&requestType=${urlparams.requestType}`;
-            }
+      if (urlparams.searchRegion) {
+        url += `&searchRegion=${encodeURIComponent(urlparams.searchRegion)}`;
+      }
 
-            if (urlparams.searchPattern) {
-                url += `&searchPattern=${encodeURIComponent(urlparams.searchPattern)}`;
-            }
+      url += `&pageNumber=${encodeURIComponent(urlparams.pageNumber)}`;
 
-            if (urlparams.searchRegion) {
-                url += `&searchRegion=${encodeURIComponent(urlparams.searchRegion)}`;
-            }
+      console.log("url: ", url);
 
-            url += `&pageNumber=${encodeURIComponent(urlparams.pageNumber)}`;
+      const response = await fetch(url);
 
-            console.log('url: ', url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-            const response = await fetch(url);
+      //console.log(response);
+      console.log("response is ok");
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+      const partialViewHtml = await response.text();
+      //console.log(partialViewHtml);
 
-            }
+      const partialViewContainer = document.getElementById("requests");
+      partialViewContainer.innerHTML = partialViewHtml;
 
-            //console.log(response);
-            console.log('response is ok');
-
-            const partialViewHtml = await response.text();
-            //console.log(partialViewHtml);
-
-            const partialViewContainer = document.getElementById('requests');
-            partialViewContainer.innerHTML = partialViewHtml;
-
-            addEventListnersForPartial();
-        }
-
-    } catch (error) {
-        console.error('Error fetching partial view:', error);
+      addEventListnersForPartial();
     }
+  } catch (error) {
+    console.error("Error fetching partial view:", error);
+  }
 }
-
 
 // cancel case modal data ajax call
 
 async function GetCancelCaseModalData(requestId) {
+  try {
+    const isCookieValid = await ValidateCookie();
+    if (isCookieValid) {
+      let url = `/AdminDashBoard/CancelCase?requestId=${requestId}`;
+      const response = await fetch(url);
 
-    try {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-        const isCookieValid = await ValidateCookie();
-        if (isCookieValid) {
+      const cancelCaseModalHtml = await response.text();
+      const modalContainer = document.getElementById("modal-container");
+      modalContainer.innerHTML = cancelCaseModalHtml;
 
-            let url = `/AdminDashBoard/CancelCase?requestId=${requestId}`;
-            const response = await fetch(url);
+      (function () {
+        "use strict";
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll(".needs-validation");
 
-            const cancelCaseModalHtml = await response.text();
-            const modalContainer = document.getElementById('modal-container');
-            modalContainer.innerHTML = cancelCaseModalHtml;
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach(function (form) {
+          form.addEventListener(
+            "submit",
+            function (event) {
+              if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
 
-            (function () {
-                'use strict'
-
-                // Fetch all the forms we want to apply custom Bootstrap validation styles to
-                var forms = document.querySelectorAll('.needs-validation')
-
-                // Loop over them and prevent submission
-                Array.prototype.slice.call(forms)
-                    .forEach(function (form) {
-                        form.addEventListener('submit', function (event) {
-                            if (!form.checkValidity()) {
-                                event.preventDefault()
-                                event.stopPropagation()
-                            }
-
-                            form.classList.add('was-validated')
-                        }, false)
-                    })
-            })()
-        }
+              form.classList.add("was-validated");
+            },
+            false
+          );
+        });
+      })();
     }
-    catch (error) {
-        console.error('Error fetching partial view:', error);
-    }
+  } catch (error) {
+    console.error("Error fetching partial view:", error);
+  }
 }
-
 
 //assign case modal data ajax call
 
 async function GetAssignCaseModalData(requestId, isTransferRequest = null) {
+  try {
+    const isCookieValid = await ValidateCookie();
+    if (isCookieValid) {
+      let url = `/AdminDashBoard/AssignCase?requestId=${requestId}&isTransferRequest=${isTransferRequest}`;
+      const response = await fetch(url);
 
-    try {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-        const isCookieValid = await ValidateCookie();
-        if (isCookieValid) {
+      const assignCaseModalHtml = await response.text();
+      const modalContainer = document.getElementById("modal-container");
+      modalContainer.innerHTML = assignCaseModalHtml;
 
-            let url = `/AdminDashBoard/AssignCase?requestId=${requestId}&isTransferRequest=${isTransferRequest}`;
-            const response = await fetch(url);
+      const regionSelectList = document.querySelector(".region-select");
+      regionSelectList.addEventListener("change", async () => {
+        const regionId = regionSelectList.value;
+        try {
+          let url = `/AdminDashBoard/GetPhysicianSelectList?regionId=${regionId}`;
+          const response = await fetch(url);
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
 
-            const assignCaseModalHtml = await response.text();
-            const modalContainer = document.getElementById('modal-container');
-            modalContainer.innerHTML = assignCaseModalHtml;
+          const data = await response.json();
 
-            const regionSelectList = document.querySelector('.region-select');
-            regionSelectList.addEventListener('change', async () => {
-                const regionId = regionSelectList.value;
-                try {
-                    let url = `/AdminDashBoard/GetPhysicianSelectList?regionId=${regionId}`;
-                    const response = await fetch(url);
+          let options = '<option value="" selected>Select Physician</option>';
+          data.forEach((physician) => {
+            options += `<option value="${physician.value}">${physician.text}</option>`;
+          });
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+          console.log(options);
 
-                    const data = await response.json();
-
-                    let options = '<option value="" selected>Select Physician</option>';
-                    data.forEach(physician => {
-                        options += `<option value="${physician.value}">${physician.text}</option>`;
-                    });
-
-                    console.log(options);
-
-                    const physicianList = document.getElementById('assign-physician-list');
-                    physicianList.innerHTML = options;
-                }
-                catch (error) {
-                    console.error('Error fetching partial view:', error);
-                }
-
-            });
-
-            (function () {
-                'use strict'
-
-                // Fetch all the forms we want to apply custom Bootstrap validation styles to
-                var forms = document.querySelectorAll('.needs-validation')
-
-                // Loop over them and prevent submission
-                Array.prototype.slice.call(forms)
-                    .forEach(function (form) {
-                        form.addEventListener('submit', function (event) {
-                            if (!form.checkValidity()) {
-                                event.preventDefault()
-                                event.stopPropagation()
-                            }
-
-                            form.classList.add('was-validated')
-                        }, false)
-                    })
-            })()
-
-            const myModal = new bootstrap.Modal('#assign-case-modal')
-            myModal.show();
-
-            
+          const physicianList = document.getElementById(
+            "assign-physician-list"
+          );
+          physicianList.innerHTML = options;
+        } catch (error) {
+          console.error("Error fetching partial view:", error);
         }
+      });
 
+      (function () {
+        "use strict";
 
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll(".needs-validation");
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach(function (form) {
+          form.addEventListener(
+            "submit",
+            function (event) {
+              if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+
+              form.classList.add("was-validated");
+            },
+            false
+          );
+        });
+      })();
+
+      const myModal = new bootstrap.Modal("#assign-case-modal");
+      myModal.show();
     }
-    catch (error) {
-        console.error('Error fetching partial view:', error);
-    }
+  } catch (error) {
+    console.error("Error fetching partial view:", error);
+  }
 }
-
 
 // block request modal data ajax call
 
 async function GetBlockRequestModalData(requestId) {
+  try {
+    const isCookieValid = await ValidateCookie();
+    if (isCookieValid) {
+      let url = `/AdminDashBoard/BlockRequest?requestId=${requestId}`;
+      const response = await fetch(url);
 
-    try {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-        const isCookieValid = await ValidateCookie();
-        if (isCookieValid) {
-
-            let url = `/AdminDashBoard/BlockRequest?requestId=${requestId}`;
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const blockRequestModalHtml = await response.text();
-            const modalContainer = document.getElementById('modal-container');
-            modalContainer.innerHTML = blockRequestModalHtml;
-        }
-
+      const blockRequestModalHtml = await response.text();
+      const modalContainer = document.getElementById("modal-container");
+      modalContainer.innerHTML = blockRequestModalHtml;
     }
-    catch (error) {
-        console.error('Error fetching partial view:', error);
-    }
+  } catch (error) {
+    console.error("Error fetching partial view:", error);
+  }
 }
-
 
 // block case modal data ajax call
 
 async function GetClearCaseModalData(requestId) {
+  try {
+    const isCookieValid = await ValidateCookie();
+    if (isCookieValid) {
+      let url = `/AdminDashBoard/ClearCase?requestId=${requestId}`;
 
-    try {
+      const response = await fetch(url);
 
-        const isCookieValid = await ValidateCookie();
-        if (isCookieValid) {
-            let url = `/AdminDashBoard/ClearCase?requestId=${requestId}`;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const clearCaseModalHtml = await response.text();
-            const modalContainer = document.getElementById('modal-container');
-            modalContainer.innerHTML = clearCaseModalHtml;
-        }
+      const clearCaseModalHtml = await response.text();
+      const modalContainer = document.getElementById("modal-container");
+      modalContainer.innerHTML = clearCaseModalHtml;
     }
-    catch (error) {
-        console.error('Error fetching partial view:', error);
-    }
+  } catch (error) {
+    console.error("Error fetching partial view:", error);
+  }
 }
-
 
 //send agreement modal data ajax call
 
 async function GetSendAgreementModalData(requestId) {
+  try {
+    const isCookieValid = await ValidateCookie();
+    if (isCookieValid) {
+      let url = `/DashBoard/SendAgreement?requestId=${requestId}`;
 
-    try {
-
-        const isCookieValid = await ValidateCookie();
-        if (isCookieValid) {
-
-            let url = `/DashBoard/SendAgreement?requestId=${requestId}`;
-
-            /*const response = await fetch(url);
+      /*const response = await fetch(url);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -356,495 +321,466 @@ async function GetSendAgreementModalData(requestId) {
             const myModal = new bootstrap.Modal('#send-agreement-modal');
             myModal.show();*/
 
-            fetch(url)
-                .then((response) => {
-                    return response.text();
-                })
-                .then((data) => {
-                    console.log(data);
-                    const sendAgreementModalHtml = data;
-                    const modalContainer = document.getElementById('modal-container');
-                    modalContainer.innerHTML = sendAgreementModalHtml;
+      fetch(url)
+        .then((response) => {
+          return response.text();
+        })
+        .then((data) => {
+          console.log(data);
+          const sendAgreementModalHtml = data;
+          const modalContainer = document.getElementById("modal-container");
+          modalContainer.innerHTML = sendAgreementModalHtml;
 
-                    
-                    $.validator.unobtrusive.parse($('#send-agreement-form'));
+          $.validator.unobtrusive.parse($("#send-agreement-form"));
 
-                    const myModal = new bootstrap.Modal('#send-agreement-modal');
-                    myModal.show()
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-
-        }
+          const myModal = new bootstrap.Modal("#send-agreement-modal");
+          myModal.show();
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
-    catch (error) {
-        console.error('Error fetching partial view:', error);
-    }
+  } catch (error) {
+    console.error("Error fetching partial view:", error);
+  }
 }
-
 
 //active button functions
 
 function removeActiveTabClass() {
-    const statusBtns = document.querySelectorAll('.status-btn');
-    statusBtns.forEach(btn => {
-        btn.classList.remove('active-tab');
-    });
+  const statusBtns = document.querySelectorAll(".status-btn");
+  statusBtns.forEach((btn) => {
+    btn.classList.remove("active-tab");
+  });
 
-    triangles.forEach(triangle => {
-        triangle.classList.remove('visible');
-    })
+  triangles.forEach((triangle) => {
+    triangle.classList.remove("visible");
+  });
 }
 
 function addActiveTabClass() {
-    let button = null;
-    let triangle = null;
-    if (urlparams.requestStatus == 1) {
-        button = newBtn;
-        triangle = triangles[0];
-        requestStatusNameSpan.textContent = "(New)";
-    }
-    else if (urlparams.requestStatus == 2) {
-        button = pendingBtn;
-        triangle = triangles[1];
-        requestStatusNameSpan.textContent = "(Pending)";
-    }
-    else if (urlparams.requestStatus == 3) {
-        button = activeBtn;
-        triangle = triangles[2];
-        requestStatusNameSpan.textContent = "(Active)";
-    }
-    else if (urlparams.requestStatus == 4) {
-        button = concludeBtn;
-        triangle = triangles[3];
-        requestStatusNameSpan.textContent = "(Conclude)";
-    }
-    else if (urlparams.requestStatus == 5) {
-        button = toCloseBtn;
-        triangle = triangles[4];
-        requestStatusNameSpan.textContent = "(To Close)";
-    }
-    else if (urlparams.requestStatus == 6) {
-        button = unpaidBtn;
-        triangle = triangles[5];
-        requestStatusNameSpan.textContent = "(Unpaid)";
-    }
+  let button = null;
+  let triangle = null;
+  if (urlparams.requestStatus == 1) {
+    button = newBtn;
+    triangle = triangles[0];
+    requestStatusNameSpan.textContent = "(New)";
+  } else if (urlparams.requestStatus == 2) {
+    button = pendingBtn;
+    triangle = triangles[1];
+    requestStatusNameSpan.textContent = "(Pending)";
+  } else if (urlparams.requestStatus == 3) {
+    button = activeBtn;
+    triangle = triangles[2];
+    requestStatusNameSpan.textContent = "(Active)";
+  } else if (urlparams.requestStatus == 4) {
+    button = concludeBtn;
+    triangle = triangles[3];
+    requestStatusNameSpan.textContent = "(Conclude)";
+  } else if (urlparams.requestStatus == 5) {
+    button = toCloseBtn;
+    triangle = triangles[4];
+    requestStatusNameSpan.textContent = "(To Close)";
+  } else if (urlparams.requestStatus == 6) {
+    button = unpaidBtn;
+    triangle = triangles[5];
+    requestStatusNameSpan.textContent = "(Unpaid)";
+  }
 
-    button.classList.add('active-tab');
-    triangle.classList.add('visible');
+  button.classList.add("active-tab");
+  triangle.classList.add("visible");
 }
-
 
 //request status buttons event listeners
 
-newBtn.addEventListener('click', async () => {
-    localStorage.status = 1;
-    urlparams.requestStatus = 1;
-    urlparams.pageNumber = 1;
+newBtn.addEventListener("click", async () => {
+  localStorage.status = 1;
+  urlparams.requestStatus = 1;
+  urlparams.pageNumber = 1;
 
-    removeActiveTabClass();
-    addActiveTabClass();
-    await GetPartialViewData(urlparams);
-
+  removeActiveTabClass();
+  addActiveTabClass();
+  await GetPartialViewData(urlparams);
 });
 
+pendingBtn.addEventListener("click", async () => {
+  localStorage.status = 2;
+  urlparams.requestStatus = 2;
+  urlparams.pageNumber = 1;
 
-pendingBtn.addEventListener('click', async () => {
-    localStorage.status = 2;
-    urlparams.requestStatus = 2;
-    urlparams.pageNumber = 1;
-
-    removeActiveTabClass();
-    addActiveTabClass();
-    await GetPartialViewData(urlparams);
+  removeActiveTabClass();
+  addActiveTabClass();
+  await GetPartialViewData(urlparams);
 });
 
+activeBtn.addEventListener("click", async () => {
+  localStorage.status = 3;
+  urlparams.requestStatus = 3;
+  urlparams.pageNumber = 1;
 
-activeBtn.addEventListener('click', async () => {
-    localStorage.status = 3;
-    urlparams.requestStatus = 3;
-    urlparams.pageNumber = 1;
-
-    removeActiveTabClass();
-    addActiveTabClass();
-    await GetPartialViewData(urlparams);
+  removeActiveTabClass();
+  addActiveTabClass();
+  await GetPartialViewData(urlparams);
 });
 
+concludeBtn.addEventListener("click", async () => {
+  localStorage.status = 4;
+  urlparams.requestStatus = 4;
+  urlparams.pageNumber = 1;
 
-concludeBtn.addEventListener('click', async () => {
-    localStorage.status = 4;
-    urlparams.requestStatus = 4;
-    urlparams.pageNumber = 1;
-
-    removeActiveTabClass();
-    addActiveTabClass();
-    await GetPartialViewData(urlparams);
+  removeActiveTabClass();
+  addActiveTabClass();
+  await GetPartialViewData(urlparams);
 });
 
+toCloseBtn.addEventListener("click", async () => {
+  localStorage.status = 5;
+  urlparams.requestStatus = 5;
+  urlparams.pageNumber = 1;
 
-toCloseBtn.addEventListener('click', async () => {
-    localStorage.status = 5;
-    urlparams.requestStatus = 5;
-    urlparams.pageNumber = 1;
-
-    removeActiveTabClass();
-    addActiveTabClass();
-    await GetPartialViewData(urlparams);
+  removeActiveTabClass();
+  addActiveTabClass();
+  await GetPartialViewData(urlparams);
 });
 
+unpaidBtn.addEventListener("click", async () => {
+  localStorage.status = 6;
+  urlparams.requestStatus = 6;
+  urlparams.pageNumber = 1;
 
-unpaidBtn.addEventListener('click', async () => {
-    localStorage.status = 6;
-    urlparams.requestStatus = 6;
-    urlparams.pageNumber = 1;
-
-    removeActiveTabClass();
-    addActiveTabClass();
-    await GetPartialViewData(urlparams);
+  removeActiveTabClass();
+  addActiveTabClass();
+  await GetPartialViewData(urlparams);
 });
-
 
 // request type buttons
 
-const allBtn = document.querySelector('.all-btn');
-const patientBtn = document.querySelector('.patient-btn');
-const familyBtn = document.querySelector('.family-btn');
-const businessBtn = document.querySelector('.business-btn');
-const conciergeBtn = document.querySelector('.concierge-btn');
+const allBtn = document.querySelector(".all-btn");
+const patientBtn = document.querySelector(".patient-btn");
+const familyBtn = document.querySelector(".family-btn");
+const businessBtn = document.querySelector(".business-btn");
+const conciergeBtn = document.querySelector(".concierge-btn");
 
-const typeBtns = document.querySelectorAll('.type-btn');
+const typeBtns = document.querySelectorAll(".type-btn");
 
 function removeTypeBtnBorders() {
-    typeBtns.forEach(btn => {
-        btn.classList.remove('border');
-    })
+  typeBtns.forEach((btn) => {
+    btn.classList.remove("border");
+  });
 }
 
-allBtn.addEventListener('click', async () => {
-    urlparams.requestType = null;
-    urlparams.pageNumber = 1;
+allBtn.addEventListener("click", async () => {
+  urlparams.requestType = null;
+  urlparams.pageNumber = 1;
 
-    removeTypeBtnBorders()
-    allBtn.classList.add('border');
-    await GetPartialViewData(urlparams);
+  removeTypeBtnBorders();
+  allBtn.classList.add("border");
+  await GetPartialViewData(urlparams);
 });
 
-patientBtn.addEventListener('click', async () => {
-    urlparams.requestType = 2;
-    urlparams.pageNumber = 1;
+patientBtn.addEventListener("click", async () => {
+  urlparams.requestType = 2;
+  urlparams.pageNumber = 1;
 
-    removeTypeBtnBorders()
-    patientBtn.classList.add('border');
-    await GetPartialViewData(urlparams);
+  removeTypeBtnBorders();
+  patientBtn.classList.add("border");
+  await GetPartialViewData(urlparams);
 });
 
-familyBtn.addEventListener('click', async () => {
-    urlparams.requestType = 3;
-    urlparams.pageNumber = 1;
+familyBtn.addEventListener("click", async () => {
+  urlparams.requestType = 3;
+  urlparams.pageNumber = 1;
 
-    removeTypeBtnBorders()
-    familyBtn.classList.add('border');
-    await GetPartialViewData(urlparams);
+  removeTypeBtnBorders();
+  familyBtn.classList.add("border");
+  await GetPartialViewData(urlparams);
 });
 
-businessBtn.addEventListener('click', async () => {
-    urlparams.requestType = 1;
-    urlparams.pageNumber = 1;
+businessBtn.addEventListener("click", async () => {
+  urlparams.requestType = 1;
+  urlparams.pageNumber = 1;
 
-    removeTypeBtnBorders()
-    businessBtn.classList.add('border');
-    await GetPartialViewData(urlparams);
+  removeTypeBtnBorders();
+  businessBtn.classList.add("border");
+  await GetPartialViewData(urlparams);
 });
 
-conciergeBtn.addEventListener('click', async () => {
-    urlparams.requestType = 4;
-    urlparams.pageNumber = 1;
+conciergeBtn.addEventListener("click", async () => {
+  urlparams.requestType = 4;
+  urlparams.pageNumber = 1;
 
-    removeTypeBtnBorders()
-    conciergeBtn.classList.add('border');
-    await GetPartialViewData(urlparams);
+  removeTypeBtnBorders();
+  conciergeBtn.classList.add("border");
+  await GetPartialViewData(urlparams);
 });
-
 
 //searchbar
 
-const searchbar = document.querySelector('.searchbar');
-searchbar.addEventListener('keyup', async () => {
-    const searchPattern = searchbar.value.trim();
+const searchbar = document.querySelector(".searchbar");
+searchbar.addEventListener("keyup", async () => {
+  const searchPattern = searchbar.value.trim();
 
-    if (searchPattern !== "") {
-        urlparams.searchPattern = searchPattern;
-    } else {
-        urlparams.searchPattern = null;
+  if (searchPattern !== "") {
+    urlparams.searchPattern = searchPattern;
+  } else {
+    urlparams.searchPattern = null;
+  }
+  urlparams.pageNumber = 1;
 
-    }
-    urlparams.pageNumber = 1;
-
-    await GetPartialViewData(urlparams);
-})
-
+  await GetPartialViewData(urlparams);
+});
 
 //selectlist
 
-const selectList = document.querySelector('.selectlist');
+const selectList = document.querySelector(".selectlist");
 
-selectList.addEventListener('change', async () => {
-    const regionValue = selectList.value;
+selectList.addEventListener("change", async () => {
+  const regionValue = selectList.value;
 
-    if (regionValue == 0) {
-        urlparams.searchRegion = null;
-    } else {
-        urlparams.searchRegion = regionValue;
-    }
-    urlparams.pageNumber = 1;
+  if (regionValue == 0) {
+    urlparams.searchRegion = null;
+  } else {
+    urlparams.searchRegion = regionValue;
+  }
+  urlparams.pageNumber = 1;
 
-    await GetPartialViewData(urlparams);
-})
-
+  await GetPartialViewData(urlparams);
+});
 
 // event listeners for dropdown action modals
 
 function addEventListnersForPartial() {
+  const cancelCaseBtn = document.querySelectorAll(".cancel-case-btn");
+  const assignCaseBtn = document.querySelectorAll(".assign-case-btn");
+  const blockRequestBtn = document.querySelectorAll(".block-request-btn");
+  const clearCaseBtn = document.querySelectorAll(".clear-case-btn");
+  const sendAgreementBtn = document.querySelectorAll(".send-agreement-btn");
+  const pageNumberLinks = document.querySelectorAll(".page-number");
+  //const nextPageLink = document.querySelector('page-next');
 
-    const cancelCaseBtn = document.querySelectorAll('.cancel-case-btn');
-    const assignCaseBtn = document.querySelectorAll('.assign-case-btn');
-    const blockRequestBtn = document.querySelectorAll('.block-request-btn');
-    const clearCaseBtn = document.querySelectorAll('.clear-case-btn');
-    const sendAgreementBtn = document.querySelectorAll('.send-agreement-btn');
-    const pageNumberLinks = document.querySelectorAll('.page-number');
-    //const nextPageLink = document.querySelector('page-next');
+  pageNumberLinks.forEach((link) => {
+    link.addEventListener("click", async (event) => {
+      const pageNumber = event.target.dataset.pageNumber;
+      console.log("page number: ", pageNumber);
+      urlparams.pageNumber = pageNumber;
 
-
-    pageNumberLinks.forEach(link => {
-        link.addEventListener('click', async (event) => {
-            const pageNumber = event.target.dataset.pageNumber;
-            console.log('page number: ', pageNumber);
-            urlparams.pageNumber = pageNumber;
-
-            await GetPartialViewData(urlparams);
-        });
+      await GetPartialViewData(urlparams);
     });
+  });
 
-    if (cancelCaseBtn !== null) {
-        cancelCaseBtn.forEach(item => {
-            item.addEventListener('click', async (event) => {
-                const requestId = event.target.dataset.requestId;
-                console.log(requestId);
+  if (cancelCaseBtn !== null) {
+    cancelCaseBtn.forEach((item) => {
+      item.addEventListener("click", async (event) => {
+        const requestId = event.target.dataset.requestId;
+        console.log(requestId);
 
-                await GetCancelCaseModalData(requestId);
+        await GetCancelCaseModalData(requestId);
 
-                const myModal = new bootstrap.Modal('#cancel-case-modal')
-                myModal.show();
-            });
-        });
-    }
-
-    if (assignCaseBtn !== null) {
-        assignCaseBtn.forEach(item => {
-            item.addEventListener('click', async (event) => {
-                const requestId = event.target.dataset.requestId;
-                const isTransferRequest = event.target.dataset.isTransferRequest;
-                console.log(requestId);
-                console.log(isTransferRequest);
-
-                await GetAssignCaseModalData(requestId, isTransferRequest);
-            })
-        })
-    }
-
-    if (blockRequestBtn !== null) {
-        blockRequestBtn.forEach(item => {
-            item.addEventListener('click', async (event) => {
-                const requestId = event.target.dataset.requestId;
-                console.log(requestId);
-
-                await GetBlockRequestModalData(requestId);
-
-                const myModal = new bootstrap.Modal('#block-request-modal');
-                myModal.show();
-            });
-        });
-    }
-
-    if (clearCaseBtn !== null) {
-        clearCaseBtn.forEach(item => {
-            item.addEventListener('click', async (event) => {
-                const requestId = event.target.dataset.requestId;
-                console.log(requestId);
-
-                await GetClearCaseModalData(requestId);
-
-                const myModal = new bootstrap.Modal('#clear-case-modal');
-                myModal.show();
-            });
-        });
-    }
-
-    if (sendAgreementBtn !== null) {
-        sendAgreementBtn.forEach(item => {
-            item.addEventListener('click', async (event) => {
-                const requestId = event.target.dataset.requestId;
-                console.log(requestId);
-
-                await GetSendAgreementModalData(requestId);
-
-                
-            });
-        });
-    }
-
-    /*  CHAT BUTTONS  */
-    $('.provider-chat-btn').click(function(){
-      let aspnetuserId = $(this).attr('data-aspnetuserid');
-      if(aspnetuserId == ''){
-        Swal.fire({
-            text: "No physician assigned to this request",
-            icon: "error"
-        });
-        return;
-      }
-      console.log(`physician chat btn clicked: ${aspnetuserId}`);
-
-      $.ajax({
-        url: '/AdminDashboard/Chatbox',
-        data: {
-            aspnetuserId: aspnetuserId,
-        },
-        type: 'GET',
-        success: function (data) {
-            //console.log(data);
-            $('#offcanvas-container').html(data);
-
-            const offcanvas = new bootstrap.Offcanvas('#chatbox-offcanvas');
-            offcanvas.show();
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.error("Error fetching data:", textStatus);
-            if (errorThrown) {
-                console.error("Specific error:", errorThrown);
-            }
-            console.error("HTTP status code:", jqXHR.status);
-
-            if (jqXHR.responseJSON.status == 414) {
-                window.location.href = '/Login';
-            }
-        }
-    });
-
-    });
-
-    $('.patient-chat-btn').click(function(){
-        let aspnetuserId = $(this).attr('data-aspnetuserid');
-        if(aspnetuserId == ''){
-          Swal.fire({
-              text: "Patient has not yet created an account.",
-              icon: "error"
-          });
-          return;
-        }
-        console.log(`patient chat btn clicked: ${aspnetuserId}`);
+        const myModal = new bootstrap.Modal("#cancel-case-modal");
+        myModal.show();
       });
+    });
+  }
+
+  if (assignCaseBtn !== null) {
+    assignCaseBtn.forEach((item) => {
+      item.addEventListener("click", async (event) => {
+        const requestId = event.target.dataset.requestId;
+        const isTransferRequest = event.target.dataset.isTransferRequest;
+        console.log(requestId);
+        console.log(isTransferRequest);
+
+        await GetAssignCaseModalData(requestId, isTransferRequest);
+      });
+    });
+  }
+
+  if (blockRequestBtn !== null) {
+    blockRequestBtn.forEach((item) => {
+      item.addEventListener("click", async (event) => {
+        const requestId = event.target.dataset.requestId;
+        console.log(requestId);
+
+        await GetBlockRequestModalData(requestId);
+
+        const myModal = new bootstrap.Modal("#block-request-modal");
+        myModal.show();
+      });
+    });
+  }
+
+  if (clearCaseBtn !== null) {
+    clearCaseBtn.forEach((item) => {
+      item.addEventListener("click", async (event) => {
+        const requestId = event.target.dataset.requestId;
+        console.log(requestId);
+
+        await GetClearCaseModalData(requestId);
+
+        const myModal = new bootstrap.Modal("#clear-case-modal");
+        myModal.show();
+      });
+    });
+  }
+
+  if (sendAgreementBtn !== null) {
+    sendAgreementBtn.forEach((item) => {
+      item.addEventListener("click", async (event) => {
+        const requestId = event.target.dataset.requestId;
+        console.log(requestId);
+
+        await GetSendAgreementModalData(requestId);
+      });
+    });
+  }
+
+  /*  CHAT BUTTONS  */
+  $(".provider-chat-btn").click(function () {
+    let aspnetuserId = $(this).attr("data-aspnetuserid");
+    if (aspnetuserId == "") {
+      Swal.fire({
+        text: "No physician assigned to this request",
+        icon: "error",
+      });
+      return;
+    }
+    console.log(`physician chat btn clicked: ${aspnetuserId}`);
+    Chat(aspnetuserId);
+  });
+
+  $(".patient-chat-btn").click(function () {
+    let aspnetuserId = $(this).attr("data-aspnetuserid");
+    if (aspnetuserId == "") {
+      Swal.fire({
+        text: "Patient has not yet created an account.",
+        icon: "error",
+      });
+      return;
+    }
+    console.log(`patient chat btn clicked: ${aspnetuserId}`);
+    Chat(aspnetuserId);
+  });
 }
 
+function Chat(aspnetuserId) {
+  $.ajax({
+    url: "/AdminDashboard/Chatbox",
+    data: {
+      aspnetuserId: aspnetuserId,
+    },
+    type: "GET",
+    success: function (data) {
+      //console.log(data);
+      $("#offcanvas-container").html(data);
 
-const exportAllBtn = document.querySelector('#export-all');
-exportAllBtn.addEventListener('click',async () => {
-    const url = `/AdminDashboard/Export/?requestStatus=${urlparams.requestStatus}`;
-    try {
-        console.log(urlparams.requestStatus);
-        console.log(url)
+      const offcanvas = new bootstrap.Offcanvas("#chatbox-offcanvas");
+      offcanvas.show();
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.error("Error fetching data:", textStatus);
+      if (errorThrown) {
+        console.error("Specific error:", errorThrown);
+      }
+      console.error("HTTP status code:", jqXHR.status);
 
-        $('#loader').fadeIn();
+      if (jqXHR.responseJSON.status == 414) {
+        window.location.href = "/Login";
+      }
+    },
+  });
+}
 
-        const response = await fetch(url);
+const exportAllBtn = document.querySelector("#export-all");
+exportAllBtn.addEventListener("click", async () => {
+  const url = `/AdminDashboard/Export/?requestStatus=${urlparams.requestStatus}`;
+  try {
+    console.log(urlparams.requestStatus);
+    console.log(url);
 
-        console.log(response);
+    $("#loader").fadeIn();
 
-        const blob = await response.blob(); // Convert response to blob
+    const response = await fetch(url);
 
-        $('#loader').fadeOut();
+    console.log(response);
 
-        // Create download link
-        const downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(blob);
-        downloadLink.download = 'requests.xlsx';
+    const blob = await response.blob(); // Convert response to blob
 
-        // Trigger download
-        downloadLink.click();
+    $("#loader").fadeOut();
 
-        // Clean up
-        window.URL.revokeObjectURL(downloadLink.href);
-    }
-    catch (error) {
-        console.log(error);
-    }
+    // Create download link
+    const downloadLink = document.createElement("a");
+    downloadLink.href = window.URL.createObjectURL(blob);
+    downloadLink.download = "requests.xlsx";
+
+    // Trigger download
+    downloadLink.click();
+
+    // Clean up
+    window.URL.revokeObjectURL(downloadLink.href);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
-const exportBtn = document.querySelector('#export-btn');
-exportBtn.addEventListener('click', async () => {
+const exportBtn = document.querySelector("#export-btn");
+exportBtn.addEventListener("click", async () => {
+  let url = `/AdminDashBoard/Export?requestStatus=${urlparams.requestStatus}`;
 
-    let url = `/AdminDashBoard/Export?requestStatus=${urlparams.requestStatus}`;
+  if (urlparams.requestType) {
+    url += `&requestType=${urlparams.requestType}`;
+  }
 
-    if (urlparams.requestType) {
-        url += `&requestType=${urlparams.requestType}`;
-    }
+  if (urlparams.searchPattern) {
+    url += `&searchPattern=${encodeURIComponent(urlparams.searchPattern)}`;
+  }
 
-    if (urlparams.searchPattern) {
-        url += `&searchPattern=${encodeURIComponent(urlparams.searchPattern)}`;
-    }
+  if (urlparams.searchRegion) {
+    url += `&searchRegion=${encodeURIComponent(urlparams.searchRegion)}`;
+  }
 
-    if (urlparams.searchRegion) {
-        url += `&searchRegion=${encodeURIComponent(urlparams.searchRegion)}`;
-    }
+  url += `&pageNumber=${encodeURIComponent(urlparams.pageNumber)}`;
+  try {
+    //console.log(urlparams.requestStatus);
+    console.log(url);
 
-    url += `&pageNumber=${encodeURIComponent(urlparams.pageNumber)}`;
-    try {
-        //console.log(urlparams.requestStatus);
-        console.log(url)
+    $("#loader").fadeIn();
 
-        $('#loader').fadeIn();
+    const response = await fetch(url);
 
-        const response = await fetch(url);
+    console.log(response);
 
-        console.log(response);
+    const blob = await response.blob(); // Convert response to blob
 
-        const blob = await response.blob(); // Convert response to blob
+    $("#loader").fadeOut();
 
-        $('#loader').fadeOut();
+    // Create download link
+    const downloadLink = document.createElement("a");
+    downloadLink.href = window.URL.createObjectURL(blob);
+    downloadLink.download = "requests.xlsx";
 
-        // Create download link
-        const downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(blob);
-        downloadLink.download = 'requests.xlsx';
+    // Trigger download
+    downloadLink.click();
 
-        // Trigger download
-        downloadLink.click();
-
-        // Clean up
-        window.URL.revokeObjectURL(downloadLink.href);
-    }
-    catch (error) {
-        console.log(error);
-    }
+    // Clean up
+    window.URL.revokeObjectURL(downloadLink.href);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 //SEND LINK LOADER ON SUBMIT
 
-$('#send-link-btn').click(function () {
-    
-
-    if ($('#sendlinkform').valid()) {
-        $('#loader').fadeIn();
-    }
-    $('#sendlinkform').submit();
-    console.log('form submitted');
+$("#send-link-btn").click(function () {
+  if ($("#sendlinkform").valid()) {
+    $("#loader").fadeIn();
+  }
+  $("#sendlinkform").submit();
+  console.log("form submitted");
 });
 
-$('#req-support-btn').click(function () {
-    
-    $('#loader').fadeIn();
+$("#req-support-btn").click(function () {
+  $("#loader").fadeIn();
 
-    $('#reqsupportform').submit();
-    console.log('form submitted');
+  $("#reqsupportform").submit();
+  console.log("form submitted");
 });

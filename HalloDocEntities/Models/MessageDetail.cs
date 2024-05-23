@@ -24,7 +24,9 @@ public partial class MessageDetail
     [Column("message_text", TypeName = "character varying")]
     public string? MessageText { get; set; }
 
-    [Column("sent_time")]
-    [StringLength(128)]
-    public string? SentTime { get; set; }
+    [Column("sent_time", TypeName = "timestamp without time zone")]
+    public DateTime SentTime { get; set; }
+
+    [Column("is_read")]
+    public bool IsRead { get; set; }
 }

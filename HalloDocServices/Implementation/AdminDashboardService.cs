@@ -7,22 +7,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.IO.Compression;
-using System.Net.Mail;
-using System.Net;
 using HalloDocServices.Constants;
 using System.Data;
 using ClosedXML.Excel;
-using HalloDocRepository.Implementation;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Formats.Asn1;
-using DocumentFormat.OpenXml.Office2016.Excel;
-using Microsoft.AspNetCore.Http.HttpResults;
-using DocumentFormat.OpenXml.Wordprocessing;
-using System.Diagnostics.Metrics;
 using iText.Kernel.Pdf;
 using iText.Layout.Properties;
-using iText.Layout;
-using iText.Layout.Element;
 using Paragraph = iText.Layout.Element.Paragraph;
 using TextAlignment = iText.Layout.Properties.TextAlignment;
 
@@ -38,9 +28,10 @@ namespace HalloDocServices.Implementation
         private readonly IVendorRepository _vendorRepository;
         private readonly IMailService _mailService;
         private readonly IEmailSMSLogRepository _emailSMSLogRepository;
-        private readonly IAdminRepository _adminRepository;
+        private readonly IMessageRepository _messageRepository;
 
-        public AdminDashboardService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IVendorRepository vendorRepository, IMailService mailService, IEmailSMSLogRepository emailSMSLogRepository, IAdminRepository adminRepository)
+
+        public AdminDashboardService(IUserRepository userRepository, IRequestRepository requestRepository, IPhysicianRepository physicianRepository, INotesAndLogsRepository notesAndLogsRepository, ICommonRepository commonRepository, IVendorRepository vendorRepository, IMailService mailService, IEmailSMSLogRepository emailSMSLogRepository, IMessageRepository messageRepository)
         {
             _userRepository = userRepository;
             _requestRepository = requestRepository;
@@ -50,7 +41,7 @@ namespace HalloDocServices.Implementation
             _vendorRepository = vendorRepository;
             _mailService = mailService;
             _emailSMSLogRepository = emailSMSLogRepository;
-            _adminRepository = adminRepository;
+            _messageRepository = messageRepository;
         }
 
         public async Task<AdminDashboardViewModel> GetViewModelData(int requestStatus, int? physicianId = null)
@@ -1801,14 +1792,25 @@ namespace HalloDocServices.Implementation
 
         public ChatBoxViewModel GetChatBoxViewModelData(ChatBoxViewModel ChatBoxData)
         {
-            //var receiver = _userRepository.GetAspNetUserById(ChatBoxData.ReceiverId);
             var receiver = _userRepository.GetIQueryableAspNetUsers()
                             //.Include(x => x.AspNetUserRoles)
                             //.Include(x => x.AspNetUserRoles).ThenInclude(x => x.Role)
                             .Where(x => x.Id == ChatBoxData.ReceiverId).FirstOrDefault();
 
             ChatBoxData.ReceiverName = receiver?.UserName;
-            //ChatBoxData.ReceiverRole = receiver?.AspNetUserRoles.FirstOrDefault()?.Role.Name;
+
+            List<MessageDetail> messages = _messageRepository.GetMessageDetailList(ChatBoxData.SenderId, ChatBoxData.ReceiverId);
+            foreach (var message in messages)
+            {
+                ChatBoxData.MessageList.Add(new MessageViewModel
+                {
+                    SenderId = message.SenderId ?? "",
+                    ReceiverId = message.ReceiverId ?? "",
+                    Message = message.MessageText,
+                    SentTime = message.SentTime.ToString(),
+                    IsRead = message.IsRead,
+                });
+            }
 
             return ChatBoxData;
         }

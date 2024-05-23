@@ -8,10 +8,12 @@ namespace HalloDocMVC.ChatHub
     public class ChatHub : Hub
     {
         private readonly IJwtService _jwtService;
+        private readonly IMessageService _messageService;
         public static Dictionary<string, string> ConnectionsStorage = new Dictionary<string, string>();
-        public ChatHub(IJwtService jwtService)
+        public ChatHub(IJwtService jwtService, IMessageService messageService)
         {
             _jwtService = jwtService;
+            _messageService = messageService;
         }
         public override async Task OnConnectedAsync()
         {
@@ -19,9 +21,17 @@ namespace HalloDocMVC.ChatHub
             string connectionId = Context.ConnectionId;
 
             ConnectionsStorage.Add(claimsData.AspNetUserId ?? "", connectionId);
+            //Groups.AddToGroupAsync("testname", connectionId);
 
             await base.OnConnectedAsync();
         }
+
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            ConnectionsStorage.Remove(claimsData.AspNetUserId ?? "");
+        }
+
         public async Task SendMessage(string receiverId, string receiverName, string message, string sentTime)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
@@ -34,16 +44,52 @@ namespace HalloDocMVC.ChatHub
             MessageDetails.ReceiverName = receiverName;
             MessageDetails.Message = message;
             MessageDetails.SentTime = sentTime;
+            MessageDetails.IsRead = false;
 
+            await _messageService.CreateMessageDetail(MessageDetails);
 
-
-            await Clients.Client(connectionId).SendAsync("ReceiveMessage", MessageDetails);
+            if (connectionId != null)
+            {
+                await Clients.Client(connectionId).SendAsync("ReceiveMessage", MessageDetails);
+            }
+            else
+            {
+                string senderConnectionId = ConnectionsStorage.FirstOrDefault(x => x.Key == MessageDetails.SenderId).Value;
+                await Clients.Client(senderConnectionId).SendAsync("SendNotification", MessageDetails);
+            }
+            //await Clients.Group(connectionId).SendAsync("ReceiveMessage", MessageDetails);
         }
 
-        public override async Task OnDisconnectedAsync(Exception? exception)
+        public async Task CheckReadStatus(string receiverId)
         {
             ClaimsData claimsData = _jwtService.GetClaimValues();
-            ConnectionsStorage.Remove(claimsData.AspNetUserId ?? "");
+            string senderId = claimsData.AspNetUserId ?? "";
+            string receiverConnectionId = ConnectionsStorage.FirstOrDefault(x => x.Key == receiverId).Value;
+            string senderConnectionId = ConnectionsStorage.FirstOrDefault(x => x.Key == senderId).Value;
+            if (receiverConnectionId == null)
+            {
+                //await Clients.Client(senderConnectionId).SendAsync("UpdateReadStatus", false);
+                await UpdateReadStatus(senderId, receiverId, false);
+            }
+            else
+            {
+                await Clients.Client(receiverConnectionId).SendAsync("CheckReadStatus", senderId);
+            }
         }
+
+        public async Task UpdateReadStatus(string senderId, string receiverId, bool isRead)
+        {
+            string senderConnectionId = ConnectionsStorage.FirstOrDefault(x => x.Key == senderId).Value;
+            if (isRead)
+            {
+                await _messageService.UpdateMessageReadStatus(senderId, receiverId, isRead);
+            }
+            if (senderConnectionId != null)
+            {
+                await Clients.Client(senderConnectionId).SendAsync("UpdateReadStatus", isRead);
+            }
+        }
+
+
     }
 }
