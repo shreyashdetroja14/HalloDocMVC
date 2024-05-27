@@ -90,6 +90,36 @@ namespace HalloDocMVC.ChatHub
             }
         }
 
+        public async Task AddToGroup(string groupname)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupname);
 
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            await Clients.Group(groupname).SendAsync("Announcement", $"{claimsData.Username} has joined the group {groupname}.");
+        }
+
+        public async Task RemoveFromGroup(string groupName)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+
+            await Clients.Group(groupName).SendAsync("Announcement", $"{Context.ConnectionId} has left the group {groupName}.");
+        }
+
+        public async Task SendGroupMessage(string groupname, string message)
+        {
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+
+            MessageViewModel MessageDetails = new MessageViewModel();
+            MessageDetails.SenderId = claimsData.AspNetUserId ?? "";
+            MessageDetails.SenderName = claimsData.Username;
+            MessageDetails.GroupName = groupname;
+            MessageDetails.Message = message;
+            MessageDetails.MessageDateTime = DateTime.Now;
+            MessageDetails.SentTime = MessageDetails.MessageDateTime.ToString();
+            MessageDetails.MessageDate = MessageDetails.MessageDateTime.ToShortDateString();
+            MessageDetails.MessageTime = MessageDetails.MessageDateTime.ToShortTimeString();
+
+            await Clients.Group(groupname).SendAsync("ReceiveGroupMessage", MessageDetails);
+        }
     }
 }

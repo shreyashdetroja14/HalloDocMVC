@@ -7,30 +7,8 @@
 @section AddStyles {
 
     <link href="@Url.Content("~/css/dashboard.css")" rel="stylesheet" type="text/css" />
-    <style>
-        .message div {
-            max-width: 80%;
-        }
+    <link href="@Url.Content("~/css/chatbox.css")" rel="stylesheet" type="text/css" />
 
-        .sender-message {
-            background-color: #cff;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 0 !important;
-        }
-
-        .receiver-message {
-            background-color: #ffc;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 0 !important;
-        }
-
-        .message-date {
-            font-size: 0.8em;
-            color: #666;
-        }
-    </style>
 }
 
 @model List<HalloDocServices.ViewModels.DashboardRequestViewModel>
@@ -93,6 +71,12 @@
                                 person_add
                             </span>
                             Admin
+                        </button>
+                        <button class="btn btn-outline-info group-chat-btn" data-groupname="Group-@request.RequestId">
+                            <span class="material-symbols-outlined fs-6">
+                                person_add
+                            </span>
+                            Group Chat
                         </button>
                     </div>
                     <div class="col-2">
@@ -171,6 +155,13 @@
                                         </span>
                                         Admin
                                     </button>
+                                    <button class="btn btn-outline-info group-chat-btn"
+                                        data-groupname="Group-@request.RequestId">
+                                        <span class="material-symbols-outlined fs-6">
+                                            person_add
+                                        </span>
+                                        Group Chat
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -214,6 +205,11 @@
             Chat(aspnetuserId);
         });
 
+        $(".group-chat-btn").click(function () {
+            let groupname = $(this).attr("data-groupname");
+            GroupChat(groupname);
+        });
+
         function Chat(aspnetuserId) {
             $.ajax({
                 url: "/AdminDashboard/Chatbox",
@@ -226,6 +222,33 @@
                     $("#offcanvas-container").html(data);
 
                     const offcanvas = new bootstrap.Offcanvas("#chatbox-offcanvas");
+                    offcanvas.show();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error fetching data:", textStatus);
+                    if (errorThrown) {
+                        console.error("Specific error:", errorThrown);
+                    }
+                    console.error("HTTP status code:", jqXHR.status);
+
+                    if (jqXHR.responseJSON.status == 414) {
+                        window.location.href = "/Login";
+                    }
+                },
+            });
+        }
+
+        function GroupChat(groupname) {
+            $.ajax({
+                url: "/AdminDashboard/GroupChatBox",
+                data: {
+                    groupname: groupname,
+                },
+                type: "GET",
+                success: function (data) {
+                    $("#offcanvas-container").html(data);
+
+                    const offcanvas = new bootstrap.Offcanvas("#group-chatbox-offcanvas");
                     offcanvas.show();
                 },
                 error: function (jqXHR, textStatus, errorThrown) {

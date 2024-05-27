@@ -1,0 +1,154 @@
+@model HalloDocServices.ViewModels.AdminViewModels.GroupChatBoxViewModel
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="group-chatbox-offcanvas">
+    <div class="offcanvas-header bg-info text-white">
+        <h5 class="offcanvas-title">@Model.GroupName</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column">
+        <input type="text" value="" id="lastMessageDate" hidden />
+        <div class="chat-area flex-grow-1 mb-2 " style="overflow-y: scroll;">
+            <ul id="messagesList" class="list-group">
+
+            </ul>
+        </div>
+        <div class="message-box d-flex">
+            <input type="text" id="senderId" value="@Model.SenderId" hidden>
+            <input type="text" id="groupname" value="@Model.GroupName" hidden>
+            <input type="text" class="form-control me-2" id="message-input" />
+            <button class="btn btn-info text-white" id="sendMessage">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var connection;
+    if (connection != null || connection != undefined) {
+        connection.stop();
+    }
+    connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chatHub")
+        .build();
+
+    connection.start()
+        .then(() => {
+            console.log('connection successful');
+            const chatArea = document.querySelector('.chat-area');
+            chatArea.scrollTop = chatArea.scrollHeight;
+
+            const groupname = document.getElementById("groupname").value;
+            connection.invoke("AddToGroup", groupname).catch(err => console.error(err.toString()));
+        })
+        .catch(err => {
+            console.error(err.toString());
+        });
+
+    connection.on("Announcement", (announcement) => {
+        console.log(announcement);
+        const li = document.createElement("li");
+        const messageContainer = document.createElement("div");
+
+        li.className = "list-group-item border-0 px-0";
+        messageContainer.className = "alert alert-info mb-0";
+        messageContainer.textContent = announcement;
+        li.appendChild(messageContainer);
+
+        document.getElementById("messagesList").appendChild(li);
+        const chatArea = document.querySelector('.chat-area');
+        chatArea.scrollTop = chatArea.scrollHeight;
+    });
+
+    connection.on("ReceiveGroupMessage", (messageDetails) => {
+        console.log(messageDetails);
+        const groupname = document.getElementById("groupname").value;
+
+        //check if the user from which the current message has been received is the one to whom we are chatting
+        if (groupname == messageDetails.groupName) {
+            addNewMessageToList(messageDetails);
+        }
+        else {
+            //sends notification to receiver. calls SendNotification method of Notification Hub
+            //notificationConnection.invoke("SendNotification", messageDetails).catch(err => console.error(err.toString()));
+        }
+
+    });
+
+    document.getElementById("sendMessage").addEventListener("click", event => {
+        const groupname = document.getElementById("groupname").value;
+        const message = document.getElementById("message-input").value;
+
+        if (message == null || message == "") {
+            return;
+        }
+
+        //calls SendMessage Method on Hub
+        connection.invoke("SendGroupMessage", groupname, message).catch(err => console.error(err.toString()));
+
+        document.getElementById("message-input").value = '';
+        event.preventDefault();
+    });
+
+    document.getElementById('group-chatbox-offcanvas').addEventListener('hidden.bs.offcanvas', function () {
+        const groupname = document.getElementById("groupname").value;
+        //connection.invoke("RemoveFromGroup", groupname).catch(err => console.error(err.toString()));
+        // closes connection - calls OnDisconnectedAsync Method on Hub
+        connection.stop();
+    });
+
+    function addNewMessageToList(messageDetails) {
+        const lastMessageDate = document.getElementById("lastMessageDate").value;
+        if (lastMessageDate == "") {
+            const newDate = messageDetails.messageDate;
+            document.getElementById("lastMessageDate").value = newDate;
+            console.log(newDate);
+
+            const liForDate = document.createElement("li");
+            liForDate.className = "list-item-group border-0 px-0 text-center";
+
+            const dateSpan = document.createElement("span");
+            dateSpan.className = "badge text-bg-secondary";
+            dateSpan.textContent = messageDetails.messageDate;
+
+            liForDate.appendChild(dateSpan);
+            document.getElementById("messagesList").appendChild(liForDate);
+        }
+
+        const senderId = document.getElementById("senderId").value;
+
+        const li = document.createElement("li");
+        const messageContainer = document.createElement("div");
+        const messageSender = document.createElement("p");
+        const messageText = document.createElement("p");
+        const messageTime = document.createElement("p");
+        //const readStatusIcon = document.createElement("i");
+
+        if (messageDetails.senderId != senderId) {
+            li.className = "message list-group-item border-0 px-0 rounded d-flex justify-content-start";
+            messageContainer.className = "d-flex flex-column align-items-start";
+            messageText.className = "receiver-message";
+            messageTime.className = "message-date mb-0";
+            messageSender.className = "message-date mb-0";
+        }
+        else {
+            li.className = "message list-group-item border-0 px-0 rounded  d-flex justify-content-end";
+            messageContainer.className = "d-flex flex-column align-items-end";
+            messageText.className = "sender-message";
+            messageTime.className = "message-date mb-0 text-end";
+            messageSender.className = "message-date mb-0 text-end";
+        }
+        //readStatusIcon.className = "readstatus bi bi-check";
+        messageSender.textContent = messageDetails.senderName;
+        messageText.textContent = messageDetails.message;
+        messageTime.textContent = messageDetails.messageTime;
+
+
+        messageContainer.appendChild(messageSender);
+        messageContainer.appendChild(messageText);
+        messageContainer.appendChild(messageTime);
+        li.appendChild(messageContainer);
+        document.getElementById("messagesList").appendChild(li);
+
+        const chatArea = document.querySelector('.chat-area');
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+</script>

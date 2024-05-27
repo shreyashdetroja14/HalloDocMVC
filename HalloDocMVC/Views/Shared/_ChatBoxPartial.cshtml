@@ -1,4 +1,3 @@
-@using System.Globalization
 @model HalloDocServices.ViewModels.AdminViewModels.ChatBoxViewModel
 
 <div class="offcanvas offcanvas-end" tabindex="-1" id="chatbox-offcanvas" aria-labelledby="offcanvasExampleLabel">
@@ -72,29 +71,8 @@
             addNewMessageToList(messageDetails.message, messageDetails.sentTime, true);
         }
         else {
-            //toastr.error(`new message from ${messageDetails.senderName}`);
+            //sends notification to receiver. calls SendNotification method of Notification Hub
             notificationConnection.invoke("SendNotification", messageDetails).catch(err => console.error(err.toString()));
-    @* if (!("Notification" in window)) {
-                alert('this browser doesn\'t support notifications.');
-                }
-
-                else if (Notification.permission === "granted") {
-                var notification = new Notification(`New Message from ${messageDetails.senderName}`);
-                notification.onclick = function () {
-                Chat(`${messageDetails.senderId}`);
-                };
-                }
-
-                else if (Notification.permission !== 'denied') {
-                Notification.requestPermission(function (permission) {
-                if (permission === "granted") {
-                var notification = new Notification(`New Message from ${messageDetails.senderName}`);
-                notification.onclick = function () {
-                Chat(`${messageDetails.senderId}`);
-                };
-                }
-                });
-                } *@
         }
     });
 
@@ -103,6 +81,7 @@
         const receiverId = document.getElementById("receiverId").value;
         const ownId = document.getElementById("senderId").value;
         let isRead = receiverId == idToBeUpdated ? true : false;
+        // calls UpdateReadStatus on ChatHub
         connection.invoke("UpdateReadStatus", idToBeUpdated, ownId, isRead).catch(err => console.error(err.toString()));
     });
 
@@ -120,8 +99,9 @@
 
     });
 
-    //event handler for sending notification
+    //event handler for sending notification 
     connection.on("SendNotification", (messageDetails) => {
+        //sends notification to receiver. calls SendNotification method of Notification Hub
         notificationConnection.invoke("SendNotification", messageDetails).catch(err => console.error(err.toString()));
     });
 

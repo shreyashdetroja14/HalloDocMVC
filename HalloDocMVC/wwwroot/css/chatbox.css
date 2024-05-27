@@ -1,0 +1,24 @@
+.message div {
+  max-width: 80%;
+}
+
+.sender-message {
+  background-color: #cff;
+  padding: 10px;
+  border-radius: 10px;
+  border-bottom-right-radius: 0;
+  margin-bottom: 0 !important;
+}
+
+.receiver-message {
+  background-color: #ffc;
+  padding: 10px;
+  border-radius: 10px;
+  border-bottom-left-radius: 0;
+  margin-bottom: 0 !important;
+}
+
+.message-date {
+  font-size: 0.8em;
+  color: #666;
+}

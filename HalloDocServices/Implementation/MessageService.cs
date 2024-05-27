@@ -31,7 +31,7 @@ namespace HalloDocServices.Implementation
 
         public async Task<bool> UpdateMessageReadStatus(string senderId, string receiverId, bool isRead)
         {
-            List<MessageDetail> messageDetails = _messageRepository.GetMessageDetailListBySender(senderId, receiverId);
+            List<MessageDetail> messageDetails = _messageRepository.GetMessageDetailListBySender(senderId, receiverId).Where(x => x.IsRead != true).ToList();
             foreach (var messageDetail in messageDetails)
             {
                 messageDetail.IsRead = isRead;

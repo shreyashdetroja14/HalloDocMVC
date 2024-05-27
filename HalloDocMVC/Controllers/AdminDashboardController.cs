@@ -975,5 +975,17 @@ namespace HalloDocMVC.Controllers
             ChatBoxData = _adminDashboardService.GetChatBoxViewModelData(ChatBoxData);
             return PartialView("_ChatBoxPartial", ChatBoxData);
         }
+
+        public IActionResult GroupChatBox(string groupname)
+        {
+            ClaimsData claimsData = _jwtService.GetClaimValues();
+            GroupChatBoxViewModel GroupChatBoxData = new()
+            {
+                SenderId = claimsData.AspNetUserId ?? "",
+                GroupName = groupname
+            };
+            //ChatBoxData = _adminDashboardService.GetChatBoxViewModelData(ChatBoxData);
+            return PartialView("_GroupChatBoxPartial", GroupChatBoxData);
+        }
     }
 }

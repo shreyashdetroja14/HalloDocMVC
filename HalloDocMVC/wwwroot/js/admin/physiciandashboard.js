@@ -497,6 +497,11 @@ function addEventListnersForPartial() {
     console.log(`patient chat btn clicked: ${aspnetuserId}`);
     Chat(aspnetuserId);
   });
+
+  $(".group-chat-btn").click(function () {
+    let groupname = $(this).attr("data-groupname");
+    GroupChat(groupname);
+  });
 }
 
 function Chat(aspnetuserId) {
@@ -511,6 +516,33 @@ function Chat(aspnetuserId) {
       $("#offcanvas-container").html(data);
 
       const offcanvas = new bootstrap.Offcanvas("#chatbox-offcanvas");
+      offcanvas.show();
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.error("Error fetching data:", textStatus);
+      if (errorThrown) {
+        console.error("Specific error:", errorThrown);
+      }
+      console.error("HTTP status code:", jqXHR.status);
+
+      if (jqXHR.responseJSON.status == 414) {
+        window.location.href = "/Login";
+      }
+    },
+  });
+}
+
+function GroupChat(groupname) {
+  $.ajax({
+    url: "/AdminDashboard/GroupChatBox",
+    data: {
+      groupname: groupname,
+    },
+    type: "GET",
+    success: function (data) {
+      $("#offcanvas-container").html(data);
+
+      const offcanvas = new bootstrap.Offcanvas("#group-chatbox-offcanvas");
       offcanvas.show();
     },
     error: function (jqXHR, textStatus, errorThrown) {
